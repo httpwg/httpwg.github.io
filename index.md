@@ -5,7 +5,8 @@ title: HTTP
 
 _This is the home page for the [IETF](http://www.ietf.org/) HTTP Working Group (a.k.a. HTTPbis). We maintain and develop the Hypertext Transfer Protocol - the core protocol of the World Wide Web._
 
-<br>
+
+
 <div class="container">
   <div class="row special">
     <div class="col-md-4 jumbotron special">
