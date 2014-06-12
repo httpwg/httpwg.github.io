@@ -1,0 +1,6 @@
+html,body {height:100%;}
+.special,.special .jumbotron {height:100%;}
+body {
+  padding-top: 6em;
+  padding-bottom: 4em;
+}
