@@ -16,8 +16,7 @@ This is the home page for the [IETF](http://www.ietf.org/) HTTP Working Group (a
     </div>
     <div class="col-md-4 jumbotron special">
       <h2>Under Development</h2>
-      <p>HTTP specifications under development <br>
-        (includes HTTP/2)</p>
+      <p>What we're working on, what's next</p>
     </div>
   </div>
   <div class="row special">
