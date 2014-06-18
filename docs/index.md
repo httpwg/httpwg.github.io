@@ -21,7 +21,7 @@ Additionally, the following specifications are optional to implement, but widely
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068** and **RFC2616**.
 
 
-## HTTP Extension Registries
+## HTTP Extensions
 
 There are a large number of HTTP extensions, including methods, status codes and headers. It's important to note that they are all "part of" HTTP, as long as they're listed in the appropriate registries:
 
@@ -41,6 +41,6 @@ Individual headers have their own registries that regulate permissible values, i
 
 We have a number of FAQ listings, split up by the intended audience:
 
-* Developer FAQs
-* Operations FAQs
-* Specification FAQs
+* [General HTTP FAQs](faq/) - *go here first*
+* [Implementation FAQs](faq_dev/) - *questions about implementing HTTP servers and clients*
+* [Specification FAQs](faq_spec/) - *how to read the HTTP specs and write extensions*
