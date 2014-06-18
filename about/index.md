@@ -5,6 +5,8 @@ title: About Us
 
 The **HTTP Working Group** (a.k.a. HTTPbis) is part of the [IETF](http://www.ietf.org/), an internet standards-setting organization.
 
+Our mandate and scope of work is outlined in our [charter](http://datatracker.ietf.org/wg/httpbis/charter/).
+
 You can learn more about participating in the IETF by reading [The Tao of the IETF](http://www.ietf.org/tao.html).
 
 ## Meetings
