@@ -13,7 +13,7 @@ We meet face-to-face at most IETF meetings, and sometimes hold additional "inter
 
 During our official meetings, we use an XMPP (Jabber) channel at xmpp://httpbis@jabber.ietf.org?join (​archives) provided by the IETF.
 
-## Contributing
+## Participate
 
 As with all IETF Working Groups, almost all discussion and decisions are made on our [mailing list](http://lists.w3.org/Archives/Public/ietf-http-wg/). Joining this list is "joining" the Working Group, and is the best way to participate.
 
