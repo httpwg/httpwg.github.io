@@ -11,7 +11,7 @@ _This is the home page for the [IETF](http://www.ietf.org/) HTTP Working Group (
   <div class="row special">
     <div class="col-md-3 jumbotron special">
       <h2><a href="/docs/">Documentation</a></h2>
-      <p>Specifications defining and related to HTTP</p>
+      <p>Specifications defining and related to HTTP, along with FAQs</p>
     </div>
     <div class="col-sm-1 padding">
     </div>
@@ -23,7 +23,7 @@ _This is the home page for the [IETF](http://www.ietf.org/) HTTP Working Group (
     </div>
     <div class="col-md-3 jumbotron special">
       <h2><a href="/about/">About</a></h2>
-      <p>Learn about the Working Group and the IETF</p>
+      <p>Learn about the Working Group and the IETF, and how to participate</p>
     </div>
   </div>
 </div>
