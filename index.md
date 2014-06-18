@@ -20,6 +20,7 @@ _This is the home page for the [IETF](http://www.ietf.org/) HTTP Working Group (
       <p>What's under development and what's coming</p>
     </div>
     <div class="col-sm-1 padding">
+    </div>
     <div class="col-md-3 jumbotron special">
       <h2><a href="/about/">About</a></h2>
       <p>Learn about the Working Group and the IETF</p>
