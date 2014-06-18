@@ -15,7 +15,7 @@ During our official meetings, we use an XMPP (Jabber) channel at xmpp://httpbis@
 
 ## Contributing
 
-As with all IETF Working Groups, almost all discussion and decisions are made on our mailing list. Joining this list is "joining" the Working Group, and is the best way to participate.
+As with all IETF Working Groups, almost all discussion and decisions are made on our [mailing list](http://lists.w3.org/Archives/Public/ietf-http-wg/). Joining this list is "joining" the Working Group, and is the best way to participate.
 
 You can track our [current efforts](/wip/) on this site, as well as in our [github repositories](https://github.com/httpwg/).
 
