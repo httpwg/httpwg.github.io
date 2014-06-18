@@ -1,3 +1,10 @@
+---
+layout: page
+title: HTTP Documentation
+---
+
+
+
  * RFC7230 - [HTTP/1.1: Message Syntax and Routing](http://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230.html) - low-level message parsing and connection management 
  * RFC7231 - [HTTP/1.1: Semantics and Content](http://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7231.html) - methods, status codes and headers 
  * RFC7232 - [HTTP/1.1: Conditional Requests](http://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7232.html) - e.g., If-Modified-Since 
