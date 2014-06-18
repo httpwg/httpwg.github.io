@@ -1,8 +1,8 @@
 html,body {height:100%;}
 .special,.special .jumbotron {height:100%;}
 body {
-  padding-top: 6em;
-  padding-bottom: 4em;
+  padding-top: 2em;
+  padding-bottom: 2em;
 }
 .container {
   padding-top: 2em;
