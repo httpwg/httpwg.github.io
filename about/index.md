@@ -9,7 +9,7 @@ You can learn more about participating in the IETF by reading [The Tao of the IE
 
 ## Meetings
 
-We meet face-to-face at most IETF meetings, and sometimes hold additional "interim" meetings; related materials from past and upcoming meetings can be found in our [meeting materials repository]().
+We meet face-to-face at most IETF meetings, and sometimes hold additional "interim" meetings; related materials from past and upcoming meetings can be found in our [meeting materials repository](https://github.com/httpwg/wg-materials).
 
 During our official meetings, we use an XMPP (Jabber) channel at xmpp://httpbis@jabber.ietf.org?join (​archives) provided by the IETF.
 
