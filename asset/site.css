@@ -9,4 +9,6 @@ body {
   height: 75px; 
   visibility: hidden; 
 }
-
+.navbar-right {
+  padding-right: 15px;
+}
