@@ -13,7 +13,8 @@ title: HTTP
 	<img src="/asset/http.svg" class="img-responsive">
 </div>
 
-<p>This is the home page of the <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong>. We maintain and develop the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
+<p>This is the home page of the <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong>.</p>
+<p>We maintain and develop the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
 
 </div>
 </div>
