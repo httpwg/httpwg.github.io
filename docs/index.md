@@ -41,6 +41,6 @@ Individual headers have their own registries that regulate permissible values, i
 
 We have a number of FAQ listings, split up by the intended audience:
 
-* [General HTTP FAQs](faq/) - *go here first*
+* [General HTTP FAQs](faq/) - *try here first*
 * [Implementation FAQs](faq_dev/) - *questions about implementing HTTP servers and clients*
 * [Specification FAQs](faq_spec/) - *how to read the HTTP specs and write extensions*
