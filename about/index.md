@@ -1,6 +1,7 @@
 ---
 layout: page
 title: About Us
+banner_img: /asset/wg_japan.jpg
 ---
 
 The **HTTP Working Group** (a.k.a. HTTPbis) is part of the [IETF](http://www.ietf.org/), an internet standards-setting organization.
@@ -22,4 +23,3 @@ As with all IETF Working Groups, almost all discussion and decisions are made on
 You can track our [current efforts](/wip/) on this site, as well as in our [github repositories](https://github.com/httpwg/).
 
 ALL contributors and participants in the Working Group (i.e., on the mailing list and in physical meetings) MUST read and understand the ​[NOTE WELL](http://www.ietf.org/about/note-well.html) statement.
-
