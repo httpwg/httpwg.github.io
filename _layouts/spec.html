@@ -3,7 +3,6 @@
 <html lang="en"><head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>{{ page.title }}</title>
    <script>
 function getMeta(rfcno, container) {
@@ -147,7 +146,7 @@ address {
   margin-left: 2em;
   font-style: normal;
 }
-body {
+#content {
   color: black;
   font-family: cambria, helvetica, arial, sans-serif;
   font-size: 12pt;
@@ -523,11 +522,14 @@ body {
   padding-top: 55px;
   height: 100%;
 }
-</style>
 
+</style>
+<link href="/components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head><body onload="getMeta({{page.rfcnum}},&#34;rfc.meta&#34;);">
   {% include navbar.html %}
+  <div id="content">
   {{ content }}
+  </div>
   <script src="/components/jquery/dist/jquery.min.js"></script>
   <script src="/components/bootstrap/dist/js/bootstrap.min.js"></script>
 </body></html>
