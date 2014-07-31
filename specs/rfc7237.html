@@ -1,503 +1,97 @@
-
 <!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html lang="en"><head profile="http://dublincore.org/documents/2008/08/04/dc-html/">
-      <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <title>Initial Hypertext&nbsp;Transfer&nbsp;Protocol&nbsp;(HTTP)
-  Method&nbsp;Registrations</title><script>
-function getMeta(rfcno, container) {
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://tools.ietf.org/draft/rfc" + rfcno + "/state.xml", true);
-  xhr.onload = function (e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        var doc = xhr.responseXML;
-        var info = getChildByName(doc.documentElement, "info");
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head profile="http://dublincore.org/documents/2008/08/04/dc-html/"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Initial Hypertext&nbsp;Transfer&nbsp;Protocol&nbsp;(HTTP)
+  Method&nbsp;Registrations</title><link rel="stylesheet" type="text/css" href="/components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+    body {
+      padding-top: 80px;
+      padding-bottom: 80px;
+      position: relative;
+    }
+    .table.header th, .table.header td { 
+      border-top: none; 
+      padding: 0;
+    }
+    .nav-sublist {
+      padding-left: 20px;
+      padding-right: 10px;
+      font-size: 90%;
+    }
+  </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Security Considerations" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" href="#rfc.section.4" title="4 Normative References"><link rel="Alternate" title="Authorative ASCII Version" href="http://www.ietf.org/rfc/rfc7237.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7237"><link rel="Help" title="Additional Information on tools.ietf.org" href="http://tools.ietf.org/html/rfc7237"><meta name="generator" content="http://greenbytes.de/tech/webdav/rfc2629.xslt, Revision 1.662, 2014/07/19 09:19:17, XSLT vendor: SAXON 9.1.0.8 from Saxonica http://www.saxonica.com/"><meta name="keywords" content="Hypertext Transfer Protocol, HTTP, Request Method"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Reschke, J. F."><meta name="dct.identifier" content="urn:ietf:rfc:7237"><meta name="dct.issued" scheme="ISO8601" content="2014-06"><meta name="dct.abstract" content="This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established."><meta name="dct.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established."></head><body data-spy="scroll" data-target="#rfc.toc"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23"></a>
+  </div>
   
-        var cont = document.getElementById(container);
-        // empty the container
-        while (cont.firstChild) {
-          cont.removeChild(myNode.firstChild);
-        }      
-  
-        var c = getChildByName(info, "stdstatus");
-        if (c !== null) {
-          var bld = newElementWithText("b", c.textContent);
-          cont.appendChild(bld);
-        }
-  
-        c = getChildByName(info, "updatedby");
-        if (c !== null) {
-          cont.appendChild(newElement("br"));
-          cont.appendChild(newText("Updated by: "));
-          appendRfcLinks(cont, c.textContent);
-        }
-  
-        c = getChildByName(info, "obsoletedby");
-        if (c !== null) {
-          cont.appendChild(newElement("br"));
-          cont.appendChild(newText("Obsoleted by: "));
-          appendRfcLinks(cont, c.textContent);
-        }
-        
-        insertErrata(rfcno, cont);
-  
-        cont.style.display = "block";
-      } else {
-        console.error(xhr.statusText);
-      }
-    }
-  };
-  xhr.onerror = function (e) {
-    console.error(xhr.status + " " + xhr.statusText);
-  };
-  xhr.send(null);
-}
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      
+      
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/docs/">HTTP Documentation Home</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-header">HTTP Specs</li>
+            <li><a href="/specs/rfc7230.html">HTTP/1.1: Message Syntax and Routing</a></li>
+            <li><a href="/specs/rfc7231.html">HTTP/1.1: Semantics and Content</a></li>
+            <li><a href="/specs/rfc7232.html">HTTP/1.1: Conditional Requests </a></li>
+            <li><a href="/specs/rfc7233.html">HTTP/1.1: Range Requests</a></li>
+            <li><a href="/specs/rfc7234.html">HTTP/1.1: Caching</a></li>
+            <li><a href="/specs/rfc7235.html">HTTP/1.1: Authentication</a></li>
+            <li><a href="http://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-header">Extension Registries</li>
+            <li><a href="http://www.iana.org/assignments/http-methods/">HTTP Method Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-status-codes/">HTTP Status Code Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/message-headers/">Message Header Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-authschemes/">HTTP Authentication Scheme Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-cache-directives/">HTTP Cache Directive Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-parameters/">HTTP Parameters Registry</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-header">Frequently Asked Questions</li>
+            <li><a href="/doc/faq/">General HTTP FAQs</a></li>            
+            <li><a href="/doc/faq_dev/">HTTP Implementation FAQs</a></li>            
+            <li><a href="/doc/faq_spec/">HTTP Specification FAQs</a></li>            
+          </ul>
+      </li>
 
-function insertErrata(rfcno, container) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://greenbytes.de/tech/webdav/rfcerrata.raw", true);
-  xhr.onload = function (e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        var t = "\n" + xhr.responseText + "\n";
-        if (t.indexOf(rfcno) >= 0) {
-          container.appendChild(newElement("br"));
-          var link = newElementWithText("a", "errata");
-          link.setAttribute("href", "http://www.rfc-editor.org/errata_search.php?rfc=" + rfcno);
-          var errata = newElementWithText("i", "This document has ");
-          errata.appendChild(link);
-          errata.appendChild(newText("."));
-          container.appendChild(errata);
-        }
-      } else {
-        console.error(xhr.statusText);
-      }
-    }
-  };
-  xhr.onerror = function (e) {
-    console.error(xhr.status + " " + xhr.statusText);
-  };
-  xhr.send(null);
-}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Work in Progress<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">HTTP/2</li>
+            <li><a href="https://http2.github.io/">HTTP/2 Home</a></li>
+            <li><a href="https://github.com/http2/http2-spec">HTTP/2 Spec Repository</a></li>
+            <li><a href="https://github.com/http2/http2-spec/issues">HTTP/2 Issues</a></li>
+            <li><a href="https://github.com/http2/http2-spec/wiki/Implementations">HTTP/2 Implementations</a></li>
+            <li class="divider"></li>
+            <li><a href="https://github.com/httpwg/http-extensions">HTTP Extensions</a></li>
+          </ul>
+      </li>
 
-// DOM helpers
-function newElement(name) {
-  return document.createElement(name);
-}
-function newElementWithText(name, txt) {
-  var e = document.createElement(name);
-  e.appendChild(newText(txt));
-  return e;
-}
-function newText(text) {
-  return document.createTextNode(text);
-}
-
-function getChildByName(parent, name) {
-  if (parent === null) {
-    return null;
-  }
-  else {
-    for (var c = parent.firstChild; c !== null; c = c.nextSibling) {
-      if (name == c.nodeName) {
-        return c;
-      }
-    }
-    return null;
-  }
-}
-
-function appendRfcLinks(parent, text) {
-  var updates = text.split(",");
-  for (var i = 0; i < updates.length; i++) {
-    var rfc = updates[i].trim();
-    if (rfc.substring(0, 3) == "rfc") {
-      var link = newElement("a");
-      link.setAttribute("href", "http://tools.ietf.org/html/" + rfc);
-      link.appendChild(newText(rfc.substring(3)));
-      parent.appendChild(link);
-    } else {
-      parent.appendChild(newText(rfc));
-    }
-    if (i != updates.length - 1) {
-      parent.appendChild(newText(", "));
-    }
-  }
-}
-</script><style type="text/css" title="Xml2Rfc (sans serif)">
-a {
-  text-decoration: none;
-}
-a.smpl {
-  color: black;
-}
-a:hover {
-  text-decoration: underline;
-}
-a:active {
-  text-decoration: underline;
-}
-address {
-  margin-top: 1em;
-  margin-left: 2em;
-  font-style: normal;
-}
-body {
-  color: black;
-  font-family: cambria, helvetica, arial, sans-serif;
-  font-size: 12pt;
-  margin: 2em auto;
-  max-width: 1000px;
-}
-samp, tt, code, pre {
-  font-family: consolas, monospace;
-}
-cite {
-  font-style: normal;
-}
-dl {
-  margin-left: 2em;
-}
-ul.empty {
-  list-style-type: none;
-}
-ul.empty li {
-  margin-top: .5em;
-}
-dl p {
-  margin-left: 0em;
-}
-dt {
-  margin-top: .5em;
-}
-h1 {
-  font-size: 130%;
-  line-height: 21pt;
-  page-break-after: avoid;
-}
-h1.np {
-  page-break-before: always;
-}
-h2 {
-  font-size: 120%;
-  line-height: 15pt;
-  page-break-after: avoid;
-}
-h3 {
-  font-size: 110%;
-  page-break-after: avoid;
-}
-h4, h5, h6 {
-  page-break-after: avoid;
-}
-h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-  color: black;
-}
-img {
-  margin-left: 3em;
-}
-li {
-  margin-left: 2em;
-}
-ol {
-  margin-left: 2em;
-}
-ol.la {
-  list-style-type: lower-alpha;
-}
-ol.ua {
-  list-style-type: upper-alpha;
-}
-ol p {
-  margin-left: 0em;
-}
-p {
-  margin-left: 2em;
-}
-pre {
-  font-size: 11pt;
-  margin-left: 3em;
-  background-color: lightyellow;
-  padding: .25em;
-  page-break-inside: avoid;
-}
-pre.text2 {
-  border-style: dotted;
-  border-width: 1px;
-  background-color: #f0f0f0;
-}
-pre.inline {
-  background-color: white;
-  padding: 0em;
-}
-pre.text {
-  border-style: dotted;
-  border-width: 1px;
-  background-color: #f8f8f8;
-}
-pre.drawing {
-  border-style: solid;
-  border-width: 1px;
-  background-color: #f8f8f8;
-  padding: 2em;
-}
-table {
-  margin-left: 2em;
-}
-table.tt {
-  vertical-align: top;
-  border-color: gray;
-}
-table.tt th {
-  border-color: gray;
-}
-table.tt td {
-  border-color: gray;
-}
-table.all {
-  border-style: solid;
-  border-width: 2px;
-}
-table.full {
-  border-style: solid;
-  border-width: 2px;
-}
-table.tt td {
-  vertical-align: top;
-}
-table.all td {
-  border-style: solid;
-  border-width: 1px;
-}
-table.full td {
-  border-style: none solid;
-  border-width: 1px;
-}
-table.tt th {
-  vertical-align: top;
-}
-table.all th {
-  border-style: solid;
-  border-width: 1px;
-}
-table.full th {
-  border-style: solid;
-  border-width: 1px 1px 2px 1px;
-}
-table.headers th {
-  border-style: none none solid none;
-  border-width: 2px;
-}
-table.left {
-  margin-right: auto;
-}
-table.right {
-  margin-left: auto;
-}
-table.center {
-  margin-left: auto;
-  margin-right: auto;
-}
-caption {
-  caption-side: bottom;
-  font-weight: bold;
-  font-size: 10pt;
-  margin-top: .5em;
-}
-
-table.header {
-  border-spacing: 1px;
-  width: 95%;
-  font-size: 11pt;
-  color: white;
-}
-td.top {
-  vertical-align: top;
-}
-td.topnowrap {
-  vertical-align: top;
-  white-space: nowrap;
-}
-table.header td {
-  background-color: gray;
-  width: 50%;
-}
-td.reference {
-  vertical-align: top;
-  white-space: nowrap;
-  padding-right: 1em;
-}
-thead {
-  display:table-header-group;
-}
-ul.toc, ul.toc ul {
-  list-style: none;
-  margin-left: 1.5em;
-  padding-left: 0em;
-}
-ul.toc li {
-  line-height: 150%;
-  font-weight: bold;
-  margin-left: 0em;
-}
-ul.toc li li {
-  line-height: normal;
-  font-weight: normal;
-  font-size: 11pt;
-  margin-left: 0em;
-}
-li.excluded {
-  font-size: 0pt;
-}
-ul p {
-  margin-left: 0em;
-}
-.title, .filename, h1, h2, h3, h4 {
-  font-family: candara, helvetica, arial, sans-serif;
-}
-samp, tt, code, pre {
-  font: consolas, monospace;
-}
-
-.comment {
-  background-color: yellow;
-}
-.center {
-  text-align: center;
-}
-.error {
-  color: red;
-  font-style: italic;
-  font-weight: bold;
-}
-.figure {
-  font-weight: bold;
-  text-align: center;
-  font-size: 10pt;
-}
-.filename {
-  color: #333333;
-  font-size: 75%;
-  font-weight: bold;
-  line-height: 21pt;
-  text-align: center;
-}
-.fn {
-  font-weight: bold;
-}
-.left {
-  text-align: left;
-}
-.right {
-  text-align: right;
-}
-.title {
-  color: green;
-  font-size: 150%;
-  line-height: 18pt;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 36pt;
-}
-.warning {
-  font-size: 130%;
-  background-color: yellow;
-}
-.self {
-    color: #999999;
-    margin-left: .3em;
-    text-decoration: none;
-    visibility: hidden;
-    -webkit-user-select: none; 
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-.self:hover {
-    text-decoration: none;
-}
-p:hover .self {
-    visibility: visible;
-}
-
-@media screen {
-  pre.text, pre.text2 {
-    width: 69em;
-  }
-}
-
-@media print {
-  .noprint {
-    display: none;
-  }
-
-  a {
-    color: black;
-    text-decoration: none;
-  }
-
-  table.header {
-    width: 90%;
-  }
-
-  td.header {
-    width: 50%;
-    color: black;
-    background-color: white;
-    vertical-align: top;
-    font-size: 110%;
-  }
-
-  ul.toc a:nth-child(2)::after {
-    content: leader('.') target-counter(attr(href), page);
-  }
-
-  ul.ind li li a {
-    content: target-counter(attr(href), page);
-  }
-
-  pre {
-    font-size: 10pt;
-  }
-
-  .print2col {
-    column-count: 2;
-    -moz-column-count: 2;
-    column-fill: auto;
-  }
-}
-
-@page {
-  @top-left {
-       content: "RFC 7237";
-  }
-  @top-right {
-       content: "June 2014";
-  }
-  @top-center {
-       content: "HTTP Method Registrations";
-  }
-  @bottom-left {
-       content: "Reschke";
-  }
-  @bottom-center {
-       content: "Informational";
-  }
-  @bottom-right {
-       content: "[Page " counter(page) "]";
-  }
-}
-
-@page:first {
-    @top-left {
-      content: normal;
-    }
-    @top-right {
-      content: normal;
-    }
-    @top-center {
-      content: normal;
-    }
-}
-</style><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Security Considerations" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" href="#rfc.section.4" title="4 Normative References"><link rel="Alternate" title="Authorative ASCII Version" href="http://www.ietf.org/rfc/rfc7237.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7237"><link rel="Help" title="Additional Information on tools.ietf.org" href="http://tools.ietf.org/html/rfc7237"><meta name="generator" content="http://greenbytes.de/tech/webdav/rfc2629.xslt, Revision 1.662, 2014/07/19 09:19:17, XSLT vendor: SAXON 6.5.5 from Michael Kay http://saxon.sf.net/"><meta name="keywords" content="Hypertext Transfer Protocol, HTTP, Request Method"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Reschke, J. F."><meta name="dct.identifier" content="urn:ietf:rfc:7237"><meta name="dct.issued" scheme="ISO8601" content="2014-06"><meta name="dct.abstract" content="This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established."><meta name="dct.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established."></head><body onload="getMeta(7237,&#34;rfc.meta&#34;);"><table class="header" id="rfc.headerblock"><tbody><tr><td class="left">Internet Engineering Task Force (IETF)</td><td class="right">J. Reschke</td></tr><tr><td class="left">Request for Comments: 7237</td><td class="right">greenbytes</td></tr><tr><td class="left">Category: Informational</td><td class="right">June 2014</td></tr><tr><td class="left">ISSN: 2070-1721</td><td class="right"></td></tr></tbody></table><p class="title" id="rfc.title">Initial Hypertext&nbsp;Transfer&nbsp;Protocol&nbsp;(HTTP) Method&nbsp;Registrations</p><h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1><p>This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established.</p><div id="rfc.meta" style="float: right; border: 1px solid black; margin: 2em; padding: 1em; display: none;"></div><div id="rfc.status"><h1><a href="#rfc.status">Status of This Memo</a></h1><p>This document is not an Internet Standards Track specification; it is published for informational purposes.</p><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Not all documents approved by the IESG are a candidate for any level of Internet Standard; see Section 2 of RFC 5741.</p><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="http://www.rfc-editor.org/info/rfc7237">http://www.rfc-editor.org/info/rfc7237</a>.</p></div><div id="rfc.copyrightnotice"><h1><a href="#rfc.copyrightnotice">Copyright Notice</a></h1><p>Copyright &copy; 2014 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div><hr class="noprint"><div id="rfc.toc"><h1 class="np"><a href="#rfc.toc">Table of Contents</a></h1><ul class="toc"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#security.considerations">Security Considerations</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#iana.considerations">IANA Considerations</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">Normative References</a></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div><div id="introduction"><h1 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h1><p id="rfc.section.1.p.1">This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs other than <a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a> before the IANA HTTP Method Registry was established.<a class="self" href="#rfc.section.1.p.1">&para;</a></p></div><div id="security.considerations"><h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#security.considerations">Security Considerations</a></h1><p id="rfc.section.2.p.1">There are no security considerations related to the registration itself.<a class="self" href="#rfc.section.2.p.1">&para;</a></p><p id="rfc.section.2.p.2">Security considerations applicable to the individual HTTP methods ought to be discussed in the specifications that define them.<a class="self" href="#rfc.section.2.p.2">&para;</a></p></div><div id="iana.considerations"><h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#iana.considerations">IANA Considerations</a></h1><p id="rfc.section.3.p.1">The table below provides registrations of HTTP method names that have been added to the IANA "Hypertext Transfer Protocol (HTTP) Method Registry" at &lt;<a href="http://www.iana.org/assignments/http-methods">http://www.iana.org/assignments/http-methods</a>&gt; (see <a href="rfc7231.html#method.registry" title="Method Registry">Section 8.1</a> of <a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a>).<a class="self" href="#rfc.section.3.p.1">&para;</a></p><div id="rfc.table.u.1"><table class="tt full left" cellpadding="3" cellspacing="0"><thead><tr><th>Method Name</th><th>Safe</th><th>Idempotent</th><th>Reference</th></tr></thead><tbody><tr><td class="left">ACL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3744"><cite title="Web Distributed Authoring and Versioning (WebDAV) Access Control Protocol">[RFC3744]</cite></a>, <a href="https://tools.ietf.org/html/rfc3744#section-8.1">Section 8.1</a></td></tr><tr><td class="left">BASELINE-CONTROL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-12.6">Section 12.6</a></td></tr><tr><td class="left">BIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-4">Section 4</a></td></tr><tr><td class="left">CHECKIN</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.4">Section 4.4</a> and <a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-9.4">Section 9.4</a></td></tr><tr><td class="left">CHECKOUT</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.3">Section 4.3</a> and <a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-8.8">Section 8.8</a></td></tr><tr><td class="left">COPY</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.8">Section 9.8</a></td></tr><tr><td class="left">LABEL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-8.2">Section 8.2</a></td></tr><tr><td class="left">LINK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC2068"><cite title="Hypertext Transfer Protocol -- HTTP/1.1">[RFC2068]</cite></a>, <a href="https://tools.ietf.org/html/rfc2068#section-19.6.1.2">Section 19.6.1.2</a></td></tr><tr><td class="left">LOCK</td><td class="left">no</td><td class="left">no</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.10">Section 9.10</a></td></tr><tr><td class="left">MERGE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-11.2">Section 11.2</a></td></tr><tr><td class="left">MKACTIVITY</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-13.5">Section 13.5</a></td></tr><tr><td class="left">MKCALENDAR</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4791"><cite title="Calendaring Extensions to WebDAV (CalDAV)">[RFC4791]</cite></a>, <a href="https://tools.ietf.org/html/rfc4791#section-5.3.1">Section 5.3.1</a></td></tr><tr><td class="left">MKCOL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.3">Section 9.3</a></td></tr><tr><td class="left">MKREDIRECTREF</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4437"><cite title="Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources">[RFC4437]</cite></a>, <a href="https://tools.ietf.org/html/rfc4437#section-6">Section 6</a></td></tr><tr><td class="left">MKWORKSPACE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-6.3">Section 6.3</a></td></tr><tr><td class="left">MOVE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.9">Section 9.9</a></td></tr><tr><td class="left">ORDERPATCH</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3648"><cite title="Web Distributed Authoring and Versioning (WebDAV) Ordered Collections Protocol">[RFC3648]</cite></a>, <a href="https://tools.ietf.org/html/rfc3648#section-7">Section 7</a></td></tr><tr><td class="left">PATCH</td><td class="left">no</td><td class="left">no</td><td class="left"><a href="#RFC5789"><cite title="PATCH Method for HTTP">[RFC5789]</cite></a>, <a href="https://tools.ietf.org/html/rfc5789#section-2">Section 2</a></td></tr><tr><td class="left">PROPFIND</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.1">Section 9.1</a></td></tr><tr><td class="left">PROPPATCH</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.2">Section 9.2</a></td></tr><tr><td class="left">REBIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-6">Section 6</a></td></tr><tr><td class="left">REPORT</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-3.6">Section 3.6</a></td></tr><tr><td class="left">SEARCH</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC5323"><cite title="Web Distributed Authoring and Versioning (WebDAV) SEARCH">[RFC5323]</cite></a>, <a href="https://tools.ietf.org/html/rfc5323#section-2">Section 2</a></td></tr><tr><td class="left">UNBIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-5">Section 5</a></td></tr><tr><td class="left">UNCHECKOUT</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.5">Section 4.5</a></td></tr><tr><td class="left">UNLINK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC2068"><cite title="Hypertext Transfer Protocol -- HTTP/1.1">[RFC2068]</cite></a>, <a href="https://tools.ietf.org/html/rfc2068#section-19.6.1.3">Section 19.6.1.3</a></td></tr><tr><td class="left">UNLOCK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.11">Section 9.11</a></td></tr><tr><td class="left">UPDATE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-7.1">Section 7.1</a></td></tr><tr><td class="left">UPDATEREDIRECTREF</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4437"><cite title="Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources">[RFC4437]</cite></a>, <a href="https://tools.ietf.org/html/rfc4437#section-7">Section 7</a></td></tr><tr><td class="left">VERSION-CONTROL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-3.5">Section 3.5</a></td></tr></tbody></table></div></div><h1 id="rfc.references"><a href="#rfc.section.4" id="rfc.section.4">4.</a> Normative References</h1><table><tr><td class="reference"><b id="RFC2068">[RFC2068]</b></td><td class="top"><a href="mailto:fielding@ics.uci.edu">Fielding, R.</a>, <a href="mailto:jg@w3.org">Gettys, J.</a>, <a href="mailto:mogul@wrl.dec.com">Mogul, J.</a>, <a href="mailto:frystyk@w3.org">Nielsen, H.</a>, and <a href="mailto:timbl@w3.org">T. Berners-Lee</a>, &#8220;<a href="https://tools.ietf.org/html/rfc2068">Hypertext Transfer Protocol -- HTTP/1.1</a>&#8221;, RFC&nbsp;2068, January&nbsp;1997.</td></tr><tr><td class="reference"><b id="RFC3253">[RFC3253]</b></td><td class="top"><a href="mailto:geoffrey.clemm@rational.com">Clemm, G.</a>, <a href="mailto:jamsden@us.ibm.com">Amsden, J.</a>, <a href="mailto:tim_ellison@uk.ibm.com">Ellison, T.</a>, <a href="mailto:ckaler@microsoft.com">Kaler, C.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, &#8220;<a href="https://tools.ietf.org/html/rfc3253">Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)</a>&#8221;, RFC&nbsp;3253, March&nbsp;2002.</td></tr><tr><td class="reference"><b id="RFC3648">[RFC3648]</b></td><td class="top"><a href="mailto:ejw@cse.ucsc.edu">Whitehead, J.</a> and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, &#8220;<a href="https://tools.ietf.org/html/rfc3648">Web Distributed Authoring and Versioning (WebDAV) Ordered Collections Protocol</a>&#8221;, RFC&nbsp;3648, December&nbsp;2003.</td></tr><tr><td class="reference"><b id="RFC3744">[RFC3744]</b></td><td class="top"><a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, <a href="mailto:julian.reschke@greenbytes.de">Reschke, J.</a>, <a href="mailto:eric.sedlar@oracle.com">Sedlar, E.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, &#8220;<a href="https://tools.ietf.org/html/rfc3744">Web Distributed Authoring and Versioning (WebDAV) Access Control Protocol</a>&#8221;, RFC&nbsp;3744, May&nbsp;2004.</td></tr><tr><td class="reference"><b id="RFC4437">[RFC4437]</b></td><td class="top"><a href="mailto:ejw@cse.ucsc.edu">Whitehead, J.</a>, <a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, &#8220;<a href="https://tools.ietf.org/html/rfc4437">Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources</a>&#8221;, RFC&nbsp;4437, March&nbsp;2006.</td></tr><tr><td class="reference"><b id="RFC4791">[RFC4791]</b></td><td class="top"><a href="mailto:cyrus@daboo.name">Daboo, C.</a>, <a href="mailto:bernard.desruisseaux@oracle.com">Desruisseaux, B.</a>, and <a href="mailto:ldusseault@commerce.net">L. Dusseault</a>, &#8220;<a href="https://tools.ietf.org/html/rfc4791">Calendaring Extensions to WebDAV (CalDAV)</a>&#8221;, RFC&nbsp;4791, March&nbsp;2007.</td></tr><tr><td class="reference"><b id="RFC4918">[RFC4918]</b></td><td class="top"><a href="mailto:ldusseault@commerce.net">Dusseault, L., Ed.</a>, &#8220;<a href="https://tools.ietf.org/html/rfc4918">HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)</a>&#8221;, RFC&nbsp;4918, June&nbsp;2007.</td></tr><tr><td class="reference"><b id="RFC5323">[RFC5323]</b></td><td class="top"><a href="mailto:julian.reschke@greenbytes.de">Reschke, J., Ed.</a>, <a href="mailto:Surendra.Reddy@mitrix.com">Reddy, S.</a>, <a href="mailto:jrd3@alum.mit.edu">Davis, J.</a>, and <a href="mailto:ababich@us.ibm.com">A. Babich</a>, &#8220;<a href="https://tools.ietf.org/html/rfc5323">Web Distributed Authoring and Versioning (WebDAV) SEARCH</a>&#8221;, RFC&nbsp;5323, November&nbsp;2008.</td></tr><tr><td class="reference"><b id="RFC5789">[RFC5789]</b></td><td class="top"><a href="mailto:lisa.dusseault@gmail.com">Dusseault, L.</a> and <a href="mailto:jasnell@gmail.com">J. Snell</a>, &#8220;<a href="https://tools.ietf.org/html/rfc5789">PATCH Method for HTTP</a>&#8221;, RFC&nbsp;5789, March&nbsp;2010.</td></tr><tr><td class="reference"><b id="RFC5842">[RFC5842]</b></td><td class="top"><a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, <a href="mailto:ccjason@us.ibm.com">Crawford, J.</a>, <a href="mailto:julian.reschke@greenbytes.de">Reschke, J., Ed.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, &#8220;<a href="https://tools.ietf.org/html/rfc5842">Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)</a>&#8221;, RFC&nbsp;5842, April&nbsp;2010.</td></tr><tr><td class="reference"><b id="RFC7231">[RFC7231]</b></td><td class="top"><a href="mailto:fielding@gbiv.com">Fielding, R., Ed.</a> and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, &#8220;<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>&#8221;, RFC&nbsp;7231, June&nbsp;2014.</td></tr></table><div class="avoidbreak"><h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1><p><b>Julian F. Reschke</b><br>greenbytes GmbH<br>Hafenweg 16<br>Muenster, NW&nbsp;48155<br>Germany<br>Email: <a href="mailto:julian.reschke@greenbytes.de">julian.reschke@greenbytes.de</a><br>URI: <a href="http://greenbytes.de/tech/webdav/">http://greenbytes.de/tech/webdav/</a></p></div></body></html>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/about/">About the HTTP Working Group</a></li>
+            <li class="divider"></li>
+            <li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
+            <li><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List <span class="glyphicon glyphicon-envelope"></span></a></li>
+            <li><a href="https://github.com/httpwg/wg-materials">Meeting Materials Repository</a></li>
+            <li><a href="http://tools.ietf.org/wg/httpbis/minutes">Official Meeting Minutes</a></li>
+            <li><a href="http://www.ietf.org/jabber/logs/httpbis/">Jabber Logs</a></li>
+          </ul>
+      </li>
+            
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="https://twitter.com/http_wg"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="22" height="16"></a></li>
+    </ul>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-md-4 sidebarhidden-print hidden-sm hidden-xs pull-right" role="navigation"><div class="navbar affix pull-right"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>7237</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#introduction">Introduction</a></li><li><a href="#security.considerations">Security Considerations</a></li><li><a href="#iana.considerations">IANA Considerations</a></li><li><a href="#rfc.references" data-toggle="collapse" data-target="#toc.references">Normative References</a></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 main" role="main"><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">J. Reschke</td></tr><tr><td class="text-left"><strong>Request for Comments: </strong>7237</td><td class="text-right">greenbytes</td></tr><tr><td class="text-left"><strong>Category: </strong>Informational</td><td class="text-right">June 2014</td></tr><tr><td class="text-left"><strong>ISSN:</strong> 2070-1721</td><td class="text-right"></td></tr></tbody></table><div class="page-header"><h1 class="title" id="rfc.title">Initial Hypertext&nbsp;Transfer&nbsp;Protocol&nbsp;(HTTP) Method&nbsp;Registrations</h1></div><h1 id="rfc.abstract">Abstract</h1><div class="lead"><p>This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs before the IANA HTTP Method Registry was established.</p></div><div id="rfc.status"><h1>Status of This Memo</h1><p>This document is not an Internet Standards Track specification; it is published for informational purposes.</p><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Not all documents approved by the IESG are a candidate for any level of Internet Standard; see Section 2 of RFC 5741.</p><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="http://www.rfc-editor.org/info/rfc7237">http://www.rfc-editor.org/info/rfc7237</a>.</p></div><div id="rfc.copyrightnotice"><h1>Copyright Notice</h1><p>Copyright © 2014 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div><div id="introduction"><h1 id="rfc.section.1" class="np">1.&nbsp;Introduction</h1><p id="rfc.section.1.p.1">This document registers those Hypertext Transfer Protocol (HTTP) methods that have been defined in RFCs other than <a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a> before the IANA HTTP Method Registry was established.</p></div><div id="security.considerations"><h1 id="rfc.section.2">2.&nbsp;Security Considerations</h1><p id="rfc.section.2.p.1">There are no security considerations related to the registration itself.</p><p id="rfc.section.2.p.2">Security considerations applicable to the individual HTTP methods ought to be discussed in the specifications that define them.</p></div><div id="iana.considerations"><h1 id="rfc.section.3">3.&nbsp;IANA Considerations</h1><p id="rfc.section.3.p.1">The table below provides registrations of HTTP method names that have been added to the IANA "Hypertext Transfer Protocol (HTTP) Method Registry" at &lt;<a href="http://www.iana.org/assignments/http-methods">http://www.iana.org/assignments/http-methods</a>&gt; (see <a href="rfc7231.html#method.registry" title="Method Registry">Section 8.1</a> of <a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a>).</p><div id="rfc.table.u.1"><table class="table table-condensed table-striped text-left"><thead><tr><th>Method Name</th><th>Safe</th><th>Idempotent</th><th>Reference</th></tr></thead><tbody><tr><td class="left">ACL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3744"><cite title="Web Distributed Authoring and Versioning (WebDAV) Access Control Protocol">[RFC3744]</cite></a>, <a href="https://tools.ietf.org/html/rfc3744#section-8.1">Section 8.1</a></td></tr><tr><td class="left">BASELINE-CONTROL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-12.6">Section 12.6</a></td></tr><tr><td class="left">BIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-4">Section 4</a></td></tr><tr><td class="left">CHECKIN</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.4">Section 4.4</a> and <a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-9.4">Section 9.4</a></td></tr><tr><td class="left">CHECKOUT</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.3">Section 4.3</a> and <a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-8.8">Section 8.8</a></td></tr><tr><td class="left">COPY</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.8">Section 9.8</a></td></tr><tr><td class="left">LABEL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-8.2">Section 8.2</a></td></tr><tr><td class="left">LINK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC2068"><cite title="Hypertext Transfer Protocol -- HTTP/1.1">[RFC2068]</cite></a>, <a href="https://tools.ietf.org/html/rfc2068#section-19.6.1.2">Section 19.6.1.2</a></td></tr><tr><td class="left">LOCK</td><td class="left">no</td><td class="left">no</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.10">Section 9.10</a></td></tr><tr><td class="left">MERGE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-11.2">Section 11.2</a></td></tr><tr><td class="left">MKACTIVITY</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-13.5">Section 13.5</a></td></tr><tr><td class="left">MKCALENDAR</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4791"><cite title="Calendaring Extensions to WebDAV (CalDAV)">[RFC4791]</cite></a>, <a href="https://tools.ietf.org/html/rfc4791#section-5.3.1">Section 5.3.1</a></td></tr><tr><td class="left">MKCOL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.3">Section 9.3</a></td></tr><tr><td class="left">MKREDIRECTREF</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4437"><cite title="Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources">[RFC4437]</cite></a>, <a href="https://tools.ietf.org/html/rfc4437#section-6">Section 6</a></td></tr><tr><td class="left">MKWORKSPACE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-6.3">Section 6.3</a></td></tr><tr><td class="left">MOVE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.9">Section 9.9</a></td></tr><tr><td class="left">ORDERPATCH</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3648"><cite title="Web Distributed Authoring and Versioning (WebDAV) Ordered Collections Protocol">[RFC3648]</cite></a>, <a href="https://tools.ietf.org/html/rfc3648#section-7">Section 7</a></td></tr><tr><td class="left">PATCH</td><td class="left">no</td><td class="left">no</td><td class="left"><a href="#RFC5789"><cite title="PATCH Method for HTTP">[RFC5789]</cite></a>, <a href="https://tools.ietf.org/html/rfc5789#section-2">Section 2</a></td></tr><tr><td class="left">PROPFIND</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.1">Section 9.1</a></td></tr><tr><td class="left">PROPPATCH</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.2">Section 9.2</a></td></tr><tr><td class="left">REBIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-6">Section 6</a></td></tr><tr><td class="left">REPORT</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-3.6">Section 3.6</a></td></tr><tr><td class="left">SEARCH</td><td class="left">yes</td><td class="left">yes</td><td class="left"><a href="#RFC5323"><cite title="Web Distributed Authoring and Versioning (WebDAV) SEARCH">[RFC5323]</cite></a>, <a href="https://tools.ietf.org/html/rfc5323#section-2">Section 2</a></td></tr><tr><td class="left">UNBIND</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC5842"><cite title="Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)">[RFC5842]</cite></a>, <a href="https://tools.ietf.org/html/rfc5842#section-5">Section 5</a></td></tr><tr><td class="left">UNCHECKOUT</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-4.5">Section 4.5</a></td></tr><tr><td class="left">UNLINK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC2068"><cite title="Hypertext Transfer Protocol -- HTTP/1.1">[RFC2068]</cite></a>, <a href="https://tools.ietf.org/html/rfc2068#section-19.6.1.3">Section 19.6.1.3</a></td></tr><tr><td class="left">UNLOCK</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, <a href="https://tools.ietf.org/html/rfc4918#section-9.11">Section 9.11</a></td></tr><tr><td class="left">UPDATE</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-7.1">Section 7.1</a></td></tr><tr><td class="left">UPDATEREDIRECTREF</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC4437"><cite title="Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources">[RFC4437]</cite></a>, <a href="https://tools.ietf.org/html/rfc4437#section-7">Section 7</a></td></tr><tr><td class="left">VERSION-CONTROL</td><td class="left">no</td><td class="left">yes</td><td class="left"><a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, <a href="https://tools.ietf.org/html/rfc3253#section-3.5">Section 3.5</a></td></tr></tbody></table></div></div><h1 id="rfc.references"><a href="#rfc.section.4" id="rfc.section.4">4.</a> Normative References</h1><dl class="dl-horizontal"><dt><span id="RFC2068">[RFC2068]</span></dt><dd><a href="mailto:fielding@ics.uci.edu">Fielding, R.</a>, <a href="mailto:jg@w3.org">Gettys, J.</a>, <a href="mailto:mogul@wrl.dec.com">Mogul, J.</a>, <a href="mailto:frystyk@w3.org">Nielsen, H.</a>, and <a href="mailto:timbl@w3.org">T. Berners-Lee</a>, “<a href="https://tools.ietf.org/html/rfc2068">Hypertext Transfer Protocol -- HTTP/1.1</a>”, RFC&nbsp;2068, January&nbsp;1997.</dd><dt><span id="RFC3253">[RFC3253]</span></dt><dd><a href="mailto:geoffrey.clemm@rational.com">Clemm, G.</a>, <a href="mailto:jamsden@us.ibm.com">Amsden, J.</a>, <a href="mailto:tim_ellison@uk.ibm.com">Ellison, T.</a>, <a href="mailto:ckaler@microsoft.com">Kaler, C.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, “<a href="https://tools.ietf.org/html/rfc3253">Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)</a>”, RFC&nbsp;3253, March&nbsp;2002.</dd><dt><span id="RFC3648">[RFC3648]</span></dt><dd><a href="mailto:ejw@cse.ucsc.edu">Whitehead, J.</a> and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, “<a href="https://tools.ietf.org/html/rfc3648">Web Distributed Authoring and Versioning (WebDAV) Ordered Collections Protocol</a>”, RFC&nbsp;3648, December&nbsp;2003.</dd><dt><span id="RFC3744">[RFC3744]</span></dt><dd><a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, <a href="mailto:julian.reschke@greenbytes.de">Reschke, J.</a>, <a href="mailto:eric.sedlar@oracle.com">Sedlar, E.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, “<a href="https://tools.ietf.org/html/rfc3744">Web Distributed Authoring and Versioning (WebDAV) Access Control Protocol</a>”, RFC&nbsp;3744, May&nbsp;2004.</dd><dt><span id="RFC4437">[RFC4437]</span></dt><dd><a href="mailto:ejw@cse.ucsc.edu">Whitehead, J.</a>, <a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, “<a href="https://tools.ietf.org/html/rfc4437">Web Distributed Authoring and Versioning (WebDAV) Redirect&nbsp;Reference&nbsp;Resources</a>”, RFC&nbsp;4437, March&nbsp;2006.</dd><dt><span id="RFC4791">[RFC4791]</span></dt><dd><a href="mailto:cyrus@daboo.name">Daboo, C.</a>, <a href="mailto:bernard.desruisseaux@oracle.com">Desruisseaux, B.</a>, and <a href="mailto:ldusseault@commerce.net">L. Dusseault</a>, “<a href="https://tools.ietf.org/html/rfc4791">Calendaring Extensions to WebDAV (CalDAV)</a>”, RFC&nbsp;4791, March&nbsp;2007.</dd><dt><span id="RFC4918">[RFC4918]</span></dt><dd><a href="mailto:ldusseault@commerce.net">Dusseault, L., Ed.</a>, “<a href="https://tools.ietf.org/html/rfc4918">HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)</a>”, RFC&nbsp;4918, June&nbsp;2007.</dd><dt><span id="RFC5323">[RFC5323]</span></dt><dd><a href="mailto:julian.reschke@greenbytes.de">Reschke, J., Ed.</a>, <a href="mailto:Surendra.Reddy@mitrix.com">Reddy, S.</a>, <a href="mailto:jrd3@alum.mit.edu">Davis, J.</a>, and <a href="mailto:ababich@us.ibm.com">A. Babich</a>, “<a href="https://tools.ietf.org/html/rfc5323">Web Distributed Authoring and Versioning (WebDAV) SEARCH</a>”, RFC&nbsp;5323, November&nbsp;2008.</dd><dt><span id="RFC5789">[RFC5789]</span></dt><dd><a href="mailto:lisa.dusseault@gmail.com">Dusseault, L.</a> and <a href="mailto:jasnell@gmail.com">J. Snell</a>, “<a href="https://tools.ietf.org/html/rfc5789">PATCH Method for HTTP</a>”, RFC&nbsp;5789, March&nbsp;2010.</dd><dt><span id="RFC5842">[RFC5842]</span></dt><dd><a href="mailto:geoffrey.clemm@us.ibm.com">Clemm, G.</a>, <a href="mailto:ccjason@us.ibm.com">Crawford, J.</a>, <a href="mailto:julian.reschke@greenbytes.de">Reschke, J., Ed.</a>, and <a href="mailto:ejw@cse.ucsc.edu">J. Whitehead</a>, “<a href="https://tools.ietf.org/html/rfc5842">Binding Extensions to Web Distributed Authoring and Versioning (WebDAV)</a>”, RFC&nbsp;5842, April&nbsp;2010.</dd><dt><span id="RFC7231">[RFC7231]</span></dt><dd><a href="mailto:fielding@gbiv.com">Fielding, R., Ed.</a> and <a href="mailto:julian.reschke@greenbytes.de">J. Reschke, Ed.</a>, “<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>”, RFC&nbsp;7231, June&nbsp;2014.</dd></dl><div class="avoidbreak"><h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1><p><b>Julian F. Reschke</b><br>greenbytes GmbH<br>Hafenweg 16<br>Muenster, NW&nbsp;48155<br>Germany<br>Email: <a href="mailto:julian.reschke@greenbytes.de">julian.reschke@greenbytes.de</a><br>URI: <a href="http://greenbytes.de/tech/webdav/">http://greenbytes.de/tech/webdav/</a></p></div></div></div></div><script src="/components/jquery/dist/jquery.min.js"></script><script src="/components/bootstrap/dist/js/bootstrap.min.js"></script><script type="text/javascript">
+        $('.nav a').on('click', function(a) {$(a.target.dataset.target.replace( /(:|\.|\[|\])/g, "\\$1" )).collapse('toggle')})
+      </script></body></html>
