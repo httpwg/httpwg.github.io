@@ -1,12 +1,12 @@
 body {
-  padding-top: 55px;
+  padding-top: 100px;
   height: 100%;
 }
-*[id]:before { 
+*:not(*[href])[id]:before  { 
   display: block; 
   content: " "; 
-  margin-top: -75px; 
-  height: 75px; 
+  margin-top: -65px; 
+  height: 65px; 
   visibility: hidden; 
 }
 .navbar-right {
