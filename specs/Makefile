@@ -7,12 +7,15 @@ saxparam ?= bootstrapJsUrl='/components/bootstrap/dist/js/bootstrap.min.js' \
 						navbar='../../_includes/navbar.html'
 stylesheet := lib/rfcbootstrap.xslt
 
-specs := rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235 rfc7236 rfc7237
+specs := rfc6265 rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235 rfc7236 rfc7237
 TARGETS := $(addsuffix .html,$(specs))
 
-.PHONY: all 
+.PHONY: all clean
 
 all: $(TARGETS)
+
+clean:
+	rm -f $(TARGETS)
 
 %.html: %.xml $(stylesheet)
 	$(saxon) $< $(stylesheet) $(saxparam) > $@
