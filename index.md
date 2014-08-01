@@ -14,6 +14,8 @@ title: HTTP
 </div>
 
 <p>This is the home page of the <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong>.</p>
+<br clear="all" class="hidden-xs hidden-md hidden-lg">
+<br clear="all" class="hidden-xs hidden-md hidden-lg">
 <p>We maintain and develop the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
 
 </div>
@@ -22,8 +24,8 @@ title: HTTP
 <div class="row">
 	
 	<div class="col-sm-4">
-		<h2><a href="/docs/">Learn about HTTP</a></h2>
-		<p>Core specifications, extensions and FAQs</p>
+		<h2><a href="/specs/">HTTP Specifications</a></h2>
+		<p>Read the documents that define HTTP</p>
 	</div>
 
 	<div class="col-sm-4">
@@ -32,7 +34,7 @@ title: HTTP
 	</div>
 
 	<div class="col-sm-4">
-		<h2><a href="/about/">About Us</a></h2>
+		<h2><a href="/about/">Participate</a></h2>
 		<p>Learn about the Working Group and the IETF, and how to participate</p>
 	</div>
 </div>
