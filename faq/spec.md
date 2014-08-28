@@ -49,15 +49,27 @@ RFC1945, RFC2068 and RFC2616 should not be referenced, unless you specifically n
 
 ## How do I create a new HTTP header?
 
-### What's appropriate to put into a HTTP header?
+The best place to start is [Considerations for New Header
+Fields](http://httpwg.github.io/specs/rfc7231.html#considerations.for.new.header
+.fields) in RFC7230; it covers most common questions, and has a checklist for
+header authors.
 
-### How do I specify a new header?
+If you have questions, the best place to ask is the [HTTP Working Group mailing
+list](http://lists.w3.org/Archives/Public/ietf-http-wg/).
 
-### What should I name my header?
+New HTTP headers ought to be registered, to assure that you don't collide with
+other headers, and so that people can more easily find out more about your
+header when they see it. [RFC3864](http://tools.ietf.org/html/rfc3864) explains
+how.
 
-### Can header values be UTF-8? Binary?
+The [Permanent Message Header
+Registry](http://www.iana.org/assignments/message-headers/message-headers.xhtml#
+perm-headers) is for standard headers; if you just want to avoid collisions,
+you can get your header registered much more easily in the [Provisional Message
+Header
+Registry](http://www.iana.org/assignments/message-headers/message-headers.xhtml#
+prov-headers).
 
-### Can header values be JSON?
 
 ## How do I create a new HTTP method?
 
