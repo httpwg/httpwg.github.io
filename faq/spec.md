@@ -9,14 +9,10 @@ title: General HTTP FAQ
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [Creating New HTTP Headers](#creating-new-http-headers)
-  - [What's appropriate to put into a HTTP header?](#whats-appropriate-to-put-into-a-http-header)
-  - [How do I specify a new header?](#how-do-i-specify-a-new-header)
-  - [What should I name my header?](#what-should-i-name-my-header)
-  - [Can header values be UTF-8? Binary?](#can-header-values-be-utf-8-binary)
-  - [Can header values be JSON?](#can-header-values-be-json)
-- [Creating New HTTP Methods](#creating-new-http-methods)
-- [Creating New HTTP Status Codes](#creating-new-http-status-codes)
+- [How do I reference the HTTP specification?](#how-do-i-reference-the-http-specification)
+- [How do I create a new HTTP header?](#how-do-i-create-a-new-http-header)
+- [How do I create a new HTTP method?](#how-do-i-create-a-new-http-method)
+- [How do I create a new HTTP Status Code?](#how-do-i-create-a-new-http-status-code)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
