@@ -76,15 +76,28 @@ prov-headers).
 New HTTP methods are relatively uncommon, because a lot of the value in HTTP is
 having a constrained, generic set of methods.
 
-If you have an idea for a new method, the best thing to do is to bring it up on
-the [HTTP Working Group mailing
-list](http://lists.w3.org/Archives/Public/ietf-http-wg/), where people can
-discuss it and point you in the right direction if a new method isn't the best
-solution for your problem.
-
 [Considerations for New
 Methods](http://httpwg.github.io/specs/rfc7231.html#considerations.for.new.metho
-ds) in RFC7231 is also a good resource for those thinking about creating a
+ds) in RFC7231 is a good place to start for those thinking about creating a
 method.
 
+If your idea for a new method seems like a good idea after reading that, the
+best thing to do is to bring it up on the [HTTP Working Group mailing
+list](http://lists.w3.org/Archives/Public/ietf-http-wg/).
+
+
 ## How do I create a new HTTP Status Code?
+
+Like methods, new HTTP status codes are fairly rare -- not least because there
+are only a limited number of unused codes available.
+
+[Considerations for New Status
+Codes](http://httpwg.github.io/specs/rfc7231.html#considerations.for.new.status.
+codes) in RFC7231 is a good place to start for those thinking about creating a
+status code.
+
+If you have an idea for a new status code, the best thing to do is to bring it
+up on the [HTTP Working Group mailing
+list](http://lists.w3.org/Archives/Public/ietf-http-wg/), where people can
+discuss it and point you in the right direction if this isn't the best solution
+for your problem.
