@@ -73,5 +73,18 @@ prov-headers).
 
 ## How do I create a new HTTP method?
 
+New HTTP methods are relatively uncommon, because a lot of the value in HTTP is
+having a constrained, generic set of methods.
+
+If you have an idea for a new method, the best thing to do is to bring it up on
+the [HTTP Working Group mailing
+list](http://lists.w3.org/Archives/Public/ietf-http-wg/), where people can
+discuss it and point you in the right direction if a new method isn't the best
+solution for your problem.
+
+[Considerations for New
+Methods](http://httpwg.github.io/specs/rfc7231.html#considerations.for.new.metho
+ds) in RFC7231 is also a good resource for those thinking about creating a
+method.
 
 ## How do I create a new HTTP Status Code?
