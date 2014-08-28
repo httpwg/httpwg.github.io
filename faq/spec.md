@@ -3,7 +3,7 @@ layout: page
 title: General HTTP FAQ
 ---
 
-*This page lists Frequently Asked Questions from people who are specifying HTTP extensions like new header fields. See also our [general FAQ](/faq/).*
+*This page lists Frequently Asked Questions from people who are specifying HTTP extensions like new header fields.*
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
