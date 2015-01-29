@@ -1,8 +1,8 @@
 saxpath ?= "lib/saxon9.jar"
 saxon ?= java -classpath $(saxpath) net.sf.saxon.Transform -novw -l
-saxparam ?= bootstrapJsUrl='/components/bootstrap/dist/js/bootstrap.min.js' \
-					  bootstrapCssUrl='/components/bootstrap/dist/css/bootstrap.min.css' \
-						jqueryJsUrl='/components/jquery/dist/jquery.min.js' \
+saxparam ?= bootstrapJsUrl='/bower_components/bootstrap/dist/js/bootstrap.min.js' \
+					  bootstrapCssUrl='/bower_components/bootstrap/dist/css/bootstrap.min.css' \
+						jqueryJsUrl='/bower_components/jquery/dist/jquery.min.js' \
 						siteCssUrl='/asset/site.css' \
 						navbar='../../_includes/navbar.html'
 stylesheet := lib/rfcbootstrap.xslt

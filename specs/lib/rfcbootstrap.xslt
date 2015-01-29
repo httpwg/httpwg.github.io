@@ -2253,8 +2253,8 @@
 
       <div class="container" id="top">
         <div class="row">
-          <div class="col-md-4 sidebarhidden-print hidden-sm hidden-xs pull-right" role="navigation">
-            <div class="navbar affix pull-right">
+          <div class="col-md-4 col-md-push-8 affix hidden-sm hidden-xs" role="navigation">
+            <div class="navbar">
               <div class="navbar-brand">
                 <a href="#top">
                   <xsl:choose>
@@ -4176,6 +4176,9 @@ function appendRfcLinks(parent, text) {
       padding-left: 20px;
       padding-right: 10px;
       font-size: 90%;
+    }
+    .nav > li > a {
+      padding: 5px 10px;
     }
   </style>
   <xsl:if test="$siteCssUrl!=''">
