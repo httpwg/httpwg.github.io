@@ -4177,8 +4177,8 @@ function appendRfcLinks(parent, text) {
       padding-right: 10px;
       font-size: 90%;
     }
-    .nav > li > a {
-      padding: 5px 10px;
+    .container .nav > li > a {
+      padding: 5px 15px;
     }
   </style>
   <xsl:if test="$siteCssUrl!=''">
