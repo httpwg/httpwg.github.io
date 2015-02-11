@@ -3,7 +3,7 @@ layout: page
 title: HTTP Specifications
 ---
 
-## Core Specifications
+## Core Specs
 
 **The core specifications defining the HTTP protocol are:**
 
@@ -21,7 +21,7 @@ Additionally, the following specifications are optional to implement, but widely
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068** and **RFC2616**.
 
 
-## HTTP Extensions
+## Extension Registries
 
 There are a large number of HTTP extensions, including methods, status codes and headers. It's important to note that they are all "part of" HTTP, as long as they're listed in the appropriate registries:
 
