@@ -1,11 +1,11 @@
 ---
 layout: page
-title: HTTP Specifications
+title: HTTP Documentation
 ---
 
 ## Core Specs
 
-**The core specifications defining the HTTP protocol are:**
+The "core" of the HTTP protocol is defined by two specifications:
 
  * **RFC7230** - [HTTP/1.1: Message Syntax and Routing](/specs/rfc7230.html) - overview, *message parsing and connections* 
  * **RFC7231** - [HTTP/1.1: Semantics and Content](/specs/rfc7231.html) - *methods, status codes and headers* 

@@ -24,7 +24,7 @@ title: HTTP
 <div class="row">
 	
 	<div class="col-sm-4">
-		<h2><a href="/specs/">HTTP Specifications</a></h2>
+		<h2><a href="/specs/">Documentation</a></h2>
 		<p>Read the documents that define HTTP</p>
 	</div>
 
