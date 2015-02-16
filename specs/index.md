@@ -20,7 +20,7 @@ Additionally, the following specifications are optional to implement, but widely
  
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068** and **RFC2616**.
 
-*If you find issues in the HTTP/1.1 specifications, you can report them as [errata](http://www.rfc-editor.org/errata.php) on the appropriate specification, or log an issue in [this repo](https://github.com/httpwg/http11bis/issues).*
+*If you find problems with the HTTP/1.1 specifications, you can report them as [errata](http://www.rfc-editor.org/errata.php) on the appropriate specification, or log an issue in [this repo](https://github.com/httpwg/http11bis/issues).*
 
 ## Extension Registries
 
