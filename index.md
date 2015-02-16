@@ -53,8 +53,8 @@ title: HTTP
 		<ul>
 			<li><a href="/about/policies/">WG Policies</a></li>
 			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Our Charter</a></li>
-			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing list</a></li>
-			<li><a href="https://github.com/httpwg/wg-materials">Meeting materials</a></li>
+			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing List</a></li>
+			<li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a> - <em>e.g., agendas and minutes</em></li>
 	</div>
 </div>
 
