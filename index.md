@@ -38,7 +38,7 @@ title: HTTP
 	</div>
 
 	<div class="col-sm-4">
-		<h2><a href="/wip/">Work In Progress</a></h2>
+		<h2>Work In Progress</h2>
 		<p>What's under development and what's coming, including:</p>
 		<ul>
 			<li><a href="https://http2.github.io/">HTTP/2</a></li>
