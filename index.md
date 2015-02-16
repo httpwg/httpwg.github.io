@@ -49,7 +49,12 @@ title: HTTP
 
 	<div class="col-sm-4">
 		<h2><a href="/about/">Participate</a></h2>
-		<p>Learn about the Working Group and the IETF, and how to participate.</p>
+		<p>Learn about the Working Group and the IETF, and how to participate. Related materials include:</p>
+		<ul>
+			<li><a href="/about/policies/">WG Policies</a></li>
+			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Our Charter</a></li>
+			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/"></a>Mailing list</li>
+			<li><a href="https://github.com/httpwg/wg-materials">Meeting materials</a></li>
 	</div>
 </div>
 
