@@ -25,12 +25,12 @@ These RFCs collectively obsolete all preceding RFCs defining HTTP, including **R
 
 There are a large number of HTTP extensions, including methods, status codes and headers. It's important to note that they are all "part of" HTTP, as long as they're listed in the appropriate registries:
 
-* [HTTP Method Registry](http://www.iana.org/assignments/http-methods/)
-* [HTTP Status Code Registry](http://www.iana.org/assignments/http-status-codes/)
-* [Message Header Registry](http://www.iana.org/assignments/message-headers/) - *where protocol is 'http'*
+* [HTTP Method Registry](http://www.iana.org/assignments/http-methods/) ([more info](/specs/rfc7231.html#method.registry))
+* [HTTP Status Code Registry](http://www.iana.org/assignments/http-status-codes/) ([more info](/specs/rfc7231.html#status.code.registry))
+* [Message Header Registry](http://www.iana.org/assignments/message-headers/) - *where protocol is 'http'* ([more info](http://tools.ietf.org/html/rfc3864))
 
 Individual headers have their own registries that regulate permissible values, including:
 
-* [HTTP Authentication Scheme Registry](http://www.iana.org/assignments/http-authschemes/) - *WWW-Authenticate, Proxy-Authenticate and related headers*
-* [HTTP Cache Directive Registry](http://www.iana.org/assignments/http-cache-directives/) - *Cache-Control*
+* [HTTP Authentication Scheme Registry](http://www.iana.org/assignments/http-authschemes/) - *WWW-Authenticate, Proxy-Authenticate and related headers* ([more info](/specs/rfc7235.html#authentication.scheme.registry))
+* [HTTP Cache Directive Registry](http://www.iana.org/assignments/http-cache-directives/) - *Cache-Control* ([more info](/specs/rfc7234.html#cache.directive.registry))
 * [HTTP Parameters](http://www.iana.org/assignments/http-parameters/) - *Content-codings, transfer-codings, Forwarded, Prefer, and Range-related headers*
