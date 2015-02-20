@@ -42,7 +42,7 @@ title: HTTP
 		<p>What's under development and what's coming, including:</p>
 		<ul>
 			<li><a href="https://http2.github.io/">HTTP/2</a></li>
-			<li><a href="https://github.com/httpwg/http-extensions#draft-http--extension-specifications">HTTP Extensions</a></li>
+			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
 			<li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a> under consideration</li>
 		</ul>
 	</div>
