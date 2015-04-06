@@ -396,11 +396,11 @@
 
 <!-- Library URLs -->
 <xsl:param name="bootstrapCssUrl"
-         select="'//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'" />
+         select="'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'" />
 <xsl:param name="bootstrapJsUrl"
-         select="'//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'" />
+         select="'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'" />
 <xsl:param name="jqueryJsUrl" 
-         select="'//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'" />
+         select="'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'" />
 
 <!-- navbar -->
 <xsl:param name="navbar" select="''" />
