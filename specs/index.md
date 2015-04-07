@@ -38,7 +38,7 @@ Individual headers have their own registries that regulate permissible values, i
 ## Related Specifications
 
 This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
-list of HTTP extensions, see the relevant 2registry listed above.
+list of HTTP extensions, see the relevant registry listed above.
 
 * **RFC5789** - [PATCH Method for HTTP](/specs/rfc5789.html)
 * **RFC5988** - [Web Linking](/specs/rfc5988.html) - *Framework, Link header and relation registry*
