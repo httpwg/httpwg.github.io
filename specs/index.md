@@ -35,21 +35,13 @@ Individual headers have their own registries that regulate permissible values, i
 * [HTTP Cache Directive Registry](http://www.iana.org/assignments/http-cache-directives/) - *Cache-Control* ([more info](/specs/rfc7234.html#cache.directive.registry))
 * [HTTP Parameters](http://www.iana.org/assignments/http-parameters/) - *Content-codings, transfer-codings, Forwarded, Prefer, and Range-related headers*
 
-## Extension Specifications
+## Related Specifications
 
 This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
-list, see the relevant extension registry listed above.
-
-### Methods
+list of HTTP extensions, see the relevant 2registry listed above.
 
 * **RFC5789** - [PATCH Method for HTTP](/specs/rfc5789.html)
-
-### Status Codes
-
-* **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
-* **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
- 
-### Header Fields
-
 * **RFC5988** - [Web Linking](/specs/rfc5988.html) - *Framework, Link header and relation registry*
 * **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies*
+* **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
+* **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
