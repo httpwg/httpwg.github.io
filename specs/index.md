@@ -40,6 +40,10 @@ Individual headers have their own registries that regulate permissible values, i
 This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
 list, see the relevant extension registry listed above.
 
+### Methods
+
+* **RFC5789** - [PATCH Method for HTTP](/specs/rfc5789.html)
+
 ### Status Codes
 
 * **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
