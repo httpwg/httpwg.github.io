@@ -7,7 +7,7 @@ saxparam ?= bootstrapJsUrl='/bower_components/bootstrap/dist/js/bootstrap.min.js
 						navbar='../../_includes/navbar.html'
 stylesheet := lib/rfcbootstrap.xslt
 
-specs := rfc6265 rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235 rfc7236 rfc7237
+specs := rfc6265 rfc7230 rfc7231 rfc7232 rfc7233 rfc7234 rfc7235 rfc7236 rfc7237 rfc7538
 TARGETS := $(addsuffix .html,$(specs))
 
 .PHONY: all clean
