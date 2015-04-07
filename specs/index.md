@@ -47,4 +47,5 @@ list, see the relevant extension registry listed above.
  
 ### Header Fields
 
+* **RFC5988** - [Web Linking](/specs/rfc5988.html) - *Framework, Link header and relation registry*
 * **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies*
