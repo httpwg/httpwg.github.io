@@ -3,7 +3,7 @@ layout: page
 title: HTTP Documentation
 ---
 
-## Core Specs
+## Core Specifications
 
 The "core" of the HTTP protocol is defined by two specifications:
 
@@ -16,7 +16,6 @@ Additionally, the following specifications are optional to implement, but widely
  * **RFC7233** - [HTTP/1.1: Range Requests](/specs/rfc7233.html) - *getting partial content* 
  * **RFC7234** - [HTTP/1.1: Caching](/specs/rfc7234.html) - *browser and intermediary caches* 
  * **RFC7235** - [HTTP/1.1: Authentication](/specs/rfc7235.html) - *HTTP authentication framework* 
- * **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies (not a HTTP WG product)*
  
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068** and **RFC2616**.
 
@@ -35,3 +34,17 @@ Individual headers have their own registries that regulate permissible values, i
 * [HTTP Authentication Scheme Registry](http://www.iana.org/assignments/http-authschemes/) - *WWW-Authenticate, Proxy-Authenticate and related headers* ([more info](/specs/rfc7235.html#authentication.scheme.registry))
 * [HTTP Cache Directive Registry](http://www.iana.org/assignments/http-cache-directives/) - *Cache-Control* ([more info](/specs/rfc7234.html#cache.directive.registry))
 * [HTTP Parameters](http://www.iana.org/assignments/http-parameters/) - *Content-codings, transfer-codings, Forwarded, Prefer, and Range-related headers*
+
+## Extension Specifications
+
+This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
+list, see the relevant extension registry listed above.
+
+### Status Codes
+
+* **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
+ 
+ 
+### Header Fields
+
+* **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies*
