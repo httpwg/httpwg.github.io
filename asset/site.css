@@ -1,6 +1,6 @@
 body {
   padding-top: 100px;
-  padding-bottom: 200px;
+  padding-bottom: 100px;
   height: 100%;
 }
 *:not(*[href])[id]:before  { 
