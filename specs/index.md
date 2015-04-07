@@ -42,8 +42,8 @@ list, see the relevant extension registry listed above.
 
 ### Status Codes
 
+* **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
 * **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
- 
  
 ### Header Fields
 
