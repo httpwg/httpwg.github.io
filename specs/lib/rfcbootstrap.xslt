@@ -5139,7 +5139,7 @@ function appendRfcLinks(parent, text) {
           </del>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:if test="false and $number != '' and not(contains($number,'unnumbered-'))">
+          <xsl:if test="$number != '' and not(contains($number,'unnumbered-'))">
             <a href="#{$anchor-prefix}.section.{$number}">
               <xsl:call-template name="emit-section-number">
                 <xsl:with-param name="no" select="$number"/>
