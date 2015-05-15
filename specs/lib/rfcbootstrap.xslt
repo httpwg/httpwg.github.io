@@ -2267,7 +2267,7 @@
               <div class="">
                 <xsl:if test="$xml2rfc-toc='yes'">
                   <xsl:apply-templates select="/" mode="toc" />
-                  <xsl:call-template name="insertTocAppendix" />
+                  <!-- xsl:call-template name="insertTocAppendix" / -->
                 </xsl:if>
               </div>
             </div>
