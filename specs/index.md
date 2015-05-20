@@ -9,6 +9,11 @@ The "core" of the HTTP protocol is defined by two specifications:
 
  * **RFC7230** - [HTTP/1.1: Message Syntax and Routing](/specs/rfc7230.html) - overview, *message parsing and connections* 
  * **RFC7231** - [HTTP/1.1: Semantics and Content](/specs/rfc7231.html) - *methods, status codes and headers* 
+
+HTTP/2 is an updated way to use HTTP "on the wire"; it does not obsolete any of the other HTTP RFCs, but instead serves as an alternative to parts of RFC7230. See <a href="https://http2.github.io/">HTTP/2 Home</a> for more.
+
+ * **RFC7540** - [Hypertext Transfer Protocol Version 2 (HTTP/2)](/specs/rfc7540.html)
+ * **RFC7541** - [HPACK: Header Compression for HTTP/2](/specs/rfc7541.html)
  
 Additionally, the following specifications are optional to implement, but widely used: 
  
@@ -34,6 +39,7 @@ Individual headers have their own registries that regulate permissible values, i
 * [HTTP Authentication Scheme Registry](http://www.iana.org/assignments/http-authschemes/) - *WWW-Authenticate, Proxy-Authenticate and related headers* ([more info](/specs/rfc7235.html#authentication.scheme.registry))
 * [HTTP Cache Directive Registry](http://www.iana.org/assignments/http-cache-directives/) - *Cache-Control* ([more info](/specs/rfc7234.html#cache.directive.registry))
 * [HTTP Parameters](http://www.iana.org/assignments/http-parameters/) - *Content-codings, transfer-codings, Forwarded, Prefer, and Range-related headers*
+* [HTTP/2 Parameters](http://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml) - *Frame types, Settings, Error Codes*
 
 ## Related Specifications
 

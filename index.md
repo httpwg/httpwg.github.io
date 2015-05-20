@@ -33,6 +33,7 @@ title: HTTP
             <li><a href="/specs/rfc7233.html">RFC7233: HTTP/1.1 Range Requests</a></li>
             <li><a href="/specs/rfc7234.html">RFC7234: HTTP/1.1 Caching</a></li>
             <li><a href="/specs/rfc7235.html">RFC7235: HTTP/1.1 Authentication</a></li>
+            <li><a href="/specs/rfc7540.html">RFC7540: HTTP/2</a> (see also <a href="https://http2.github.io/">HTTP/2's Home</a></li>)</li>
 		</ul>
 		<p>See the <a href="/specs/">complete listing</a> for other specifications and related extension registries.</p>
 	</div>
@@ -41,7 +42,6 @@ title: HTTP
 		<h2>Work In Progress</h2>
 		<p>What's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://http2.github.io/">HTTP/2</a></li>
 			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
 			<li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a> under consideration</li>
 		</ul>
