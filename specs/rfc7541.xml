@@ -1,20 +1,27 @@
-<?xml version="1.0" encoding="US-ASCII"?>
-
+<?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet type='text/xsl' href='lib/rfc2629.xslt' ?>
+
 <?rfc toc="yes"?>
 <?rfc symrefs="yes"?>
 <?rfc sortrefs="yes"?>
-<?rfc linkmailto="no"?>
-<?rfc editing="no"?>
-<?rfc rfcedstyle="yes"?>  
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
+<?rfc linkmailto="no"?>
+<?rfc editing="no"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc rfcedstyle="yes"?>
+<?rfc-ext allow-markup-in-artwork="yes" ?>
+<?rfc-ext include-index="no" ?>
 
-<!DOCTYPE rfc
-  PUBLIC "" "lib/rfc2629.dtd">
-
-<rfc number="7541" category="std" ipr="trust200902" submissionType="IETF" consensus="yes">
-    
+<!DOCTYPE rfc [
+  <!ENTITY mdash "&#8212;">
+]>
+<rfc category="std"
+    ipr="trust200902"
+    number="7541"
+    x:maturity-level="proposed"
+    xmlns:x="http://purl.org/net/xml2rfc/ext">
     <front>
         <title abbrev="HPACK">HPACK: Header Compression for HTTP/2</title>
 
@@ -25,21 +32,18 @@
             </address>
         </author>
 
-        <author initials="H." surname="Ruellan" fullname="Herve Ruellan">
+        <author initials="H." surname="Ruellan" fullname="Hervé Ruellan">
             <organization>Canon CRF</organization>
             <address>
                 <email>herve.ruellan@crf.canon.fr</email>
             </address>
         </author>
 
-        <date month="May" year="2015"/>
+        <date year="2015"/>
         <area>Applications</area>
-        <workgroup>HTTPbis Working Group</workgroup>
+        <workgroup>HTTPbis</workgroup>
         <keyword>HTTP</keyword>
         <keyword>Header</keyword>
-
-
-
         <abstract>
             <t>
                 This specification defines HPACK, a compression format for
@@ -48,6 +52,22 @@
             </t>
         </abstract>
 
+      <note title="Editorial Note (To be removed by RFC Editor)">
+        <t>
+          Discussion of this draft takes place on the HTTPBIS working group
+          mailing list (ietf-http-wg@w3.org), which is archived at <eref
+          target="https://lists.w3.org/Archives/Public/ietf-http-wg/"/>.
+        </t>
+        <t>
+          Working Group information can be found at <eref
+          target="http://tools.ietf.org/wg/httpbis/"/>; that specific to HTTP/2
+          are at <eref target="http://http2.github.io/"/>.
+        </t>
+        <!--<t>
+          The changes in this draft are summarized in <xref
+          target="changes.since.draft-ietf-httpbis-header-compression-09"/>.
+        </t>-->
+      </note>
     </front>
 
     <middle>
@@ -62,18 +82,21 @@
 
             <t>
                 <xref target="SPDY">SPDY</xref> initially addressed this
-                redundancy by compressing header fields using the <xref target="DEFLATE">DEFLATE</xref> format, which proved very
+                redundancy by compressing header fields using the <xref
+                    target="DEFLATE">DEFLATE</xref> format, which proved very
                 effective at efficiently representing the redundant header
                 fields.  However, that approach exposed a security risk as
-                demonstrated by the CRIME (Compression Ratio Info-leak Made Easy) attack (see <xref target="CRIME"/>).
+                demonstrated by the CRIME (Compression Ratio Info-leak Made Easy)
+                attack (see <xref target="CRIME"/>).
             </t>
 
             <t>
-                This specification defines HPACK, a new compressor 
-                that eliminates redundant header fields, limits
+                This specification defines HPACK, a new compressor that
+                eliminates redundant header fields, limits
                 vulnerability to known security attacks, and has a bounded
                 memory requirement for use in constrained environments.
-                Potential security concerns for HPACK are described in <xref target="Security"/>.
+                Potential security concerns for HPACK are described in <xref
+                    target="Security"/>.
             </t>
 
             <t>
@@ -121,11 +144,12 @@
                 </t>
                 <t>
                     Examples illustrating the use of these different mechanisms
-                    to represent header fields are available in <xref target="examples"/>.
+                    to represent header fields are available in <xref
+                    target="examples"/>.
                 </t>
             </section>
 
-            <section anchor="conventions" title="Conventions">
+            <section title="Conventions" anchor="conventions">
                 <t>
                     The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
                     "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
@@ -140,7 +164,7 @@
 
             </section>
 
-            <section anchor="encoding.concepts" title="Terminology">
+            <section title="Terminology" anchor="encoding.concepts">
                 <t>
                     This specification uses the following terms:
                     <list style="hanging">
@@ -149,7 +173,8 @@
                             treated as opaque sequences of octets.
                         </t>
                         <t hangText="Dynamic Table:">
-                            The dynamic table (see <xref target="dynamic.table"/>) is a table that
+                            The dynamic table (see <xref
+                                target="dynamic.table"/>) is a table that
                             associates stored header fields with index values.
                             This table is dynamic and specific to an encoding or
                             decoding context.
@@ -171,7 +196,8 @@
                         </t>
                         <t hangText="Header Field Representation:">
                             A header field can be represented in encoded form
-                            either as a literal or as an index (see <xref target="header.representation"/>).
+                            either as a literal or as an index (see <xref
+                                target="header.representation"/>).
                         </t>
                         <t hangText="Header Block:">
                             An ordered list of header field representations,
@@ -182,7 +208,7 @@
             </section>
         </section>
 
-        <section anchor="header.encoding" title="Compression Process Overview">
+        <section title="Compression Process Overview" anchor="header.encoding">
             <t>
                 This specification does not describe a specific algorithm for an
                 encoder.  Instead, it defines precisely how a decoder is
@@ -190,7 +216,8 @@
                 that this definition permits.
             </t>
 
-            <section anchor="header.list.ordering" title="Header List Ordering">
+            <section title="Header List Ordering"
+                anchor="header.list.ordering">
                 <t>
                     HPACK preserves the ordering of header fields inside the
                     header list. An encoder MUST order header field
@@ -201,10 +228,12 @@
                 </t>
             </section>
 
-            <section anchor="encoding.context" title="Encoding and Decoding Contexts">
+            <section title="Encoding and Decoding Contexts"
+                anchor="encoding.context">
                 <t>
                     To decompress header blocks, a decoder only needs to
-                    maintain a dynamic table (see <xref target="dynamic.table"/>) as a decoding context. No
+                    maintain a dynamic table (see <xref
+                        target="dynamic.table"/>) as a decoding context. No
                     other dynamic state is needed.
                 </t>
                 <t>
@@ -215,10 +244,12 @@
                 </t>
             </section>
 
-            <section anchor="indexing.tables" title="Indexing Tables">
+            <section title="Indexing Tables"
+                anchor="indexing.tables">
                 <t>
                     HPACK uses two tables for associating header fields to
-                    indexes. The static table (see <xref target="static.table"/>) is predefined and contains
+                    indexes. The static table (see <xref
+                        target="static.table"/>) is predefined and contains
                     common header fields (most of them with an empty value). The
                     dynamic table (see <xref target="dynamic.table"/>) is
                     dynamic and can be used by the encoder to index header
@@ -226,17 +257,19 @@
                 </t>
                 <t>
                     These two tables are combined into a single address space
-                    for defining index values (see <xref target="index.address.space"/>).
+                    for defining index values (see <xref
+                        target="index.address.space"/>).
                 </t>
 
-                <section anchor="static.table" title="Static Table">
+                <section title="Static Table" anchor="static.table">
                     <t>
                         The static table consists of a predefined static list of
-                        header fields. Its entries are defined in <xref target="static.table.definition"/>.
+                        header fields. Its entries are defined in <xref
+                            target="static.table.definition"/>.
                     </t>
                 </section>
 
-                <section anchor="dynamic.table" title="Dynamic Table">
+                <section title="Dynamic Table" anchor="dynamic.table">
                     <t>
                         The dynamic table consists of a list of header fields
                         maintained in first-in, first-out order.  The first and
@@ -268,7 +301,8 @@
                     </t>
                 </section>
 
-                <section anchor="index.address.space" title="Index Address Space">
+                <section title="Index Address Space"
+                    anchor="index.address.space">
                     <t>
                         The static table and the dynamic table are combined into
                         a single index address space.
@@ -280,7 +314,8 @@
                     </t>
                     <t>
                         Indices strictly greater than the length of the static
-                        table refer to elements in the dynamic table (see <xref target="dynamic.table"/>).  The length
+                        table refer to elements in the dynamic table (see <xref
+                            target="dynamic.table"/>).  The length
                         of the static table is subtracted to find the index into
                         the dynamic table.
                     </t>
@@ -289,7 +324,8 @@
                         both tables MUST be treated as a decoding error.
                     </t>
 
-                    <figure anchor="Index.Address.Space" title="Index Address Space">
+                    <figure anchor="Index.Address.Space"
+                            title="Index Address Space">
                         <preamble>
                             For a static table size of s and a dynamic table
                             size of k, the following diagram shows the entire
@@ -309,7 +345,8 @@
                 </section>
             </section>
 
-            <section anchor="header.representation" title="Header Field Representation">
+            <section title="Header Field Representation"
+                     anchor="header.representation">
                 <t>
                     An encoded header field can be represented either as an
                     index or as a literal.
@@ -317,7 +354,8 @@
                 <t>
                     An indexed representation defines a header field as a
                     reference to an entry in either the static table or the
-                    dynamic table (see <xref target="indexed.header.representation"/>).
+                    dynamic table (see <xref
+                    target="indexed.header.representation"/>).
                 </t>
                 <t>
                     A literal representation defines a header field by
@@ -332,21 +370,25 @@
                         <t>
                             A literal representation that adds the header field
                             as a new entry at the beginning of the dynamic table
-                            (see <xref target="literal.header.with.incremental.indexing"/>).
+                            (see <xref
+                            target="literal.header.with.incremental.indexing"/>).
                         </t>
                         <t>
                             A literal representation that does not add the
-                            header field to the dynamic table (see <xref target="literal.header.without.indexing"/>).
+                            header field to the dynamic table (see <xref
+                            target="literal.header.without.indexing"/>).
                         </t>
                         <t>
                             A literal representation that does not add the
                             header field to the dynamic table, with the
                             additional stipulation that this header field always
                             use a literal representation, in particular when
-                            re-encoded by an intermediary (see <xref target="literal.header.never.indexed"/>). This
+                            re-encoded by an intermediary (see <xref
+                                target="literal.header.never.indexed"/>). This
                             representation is intended for protecting header
                             field values that are not to be put at risk by
-                            compressing them (see <xref target="never.indexed.literals"/> for more
+                            compressing them (see <xref
+                                target="never.indexed.literals"/> for more
                             details).
                         </t>
                     </list>
@@ -354,18 +396,22 @@
                 <t>
                     The selection of one of these literal representations can be
                     guided by security considerations, in order to protect
-                    sensitive header field values (see <xref target="compression.based.attacks"/>).
+                    sensitive header field values (see <xref
+                        target="compression.based.attacks"/>).
                 </t>
                 <t>
                     The literal representation of a header field name or of a
                     header field value can encode the sequence of octets either
-                    directly or using a static Huffman code (see <xref target="string.literal.representation"/>).
+                    directly or using a static Huffman code (see <xref
+                        target="string.literal.representation"/>).
                 </t>
             </section>
         </section>
 
-        <section anchor="header.block.decoding" title="Header Block Decoding">
-            <section anchor="header.block.processing" title="Header Block Processing">
+        <section title="Header Block Decoding"
+                 anchor="header.block.decoding">
+            <section title="Header Block Processing"
+                anchor="header.block.processing">
                 <t>
                     A decoder processes a header block sequentially to
                     reconstruct the original header list.
@@ -373,7 +419,8 @@
                 <t>
                     A header block is the concatenation of header field
                     representations. The different possible header field
-                    representations are described in <xref target="detailed.format"/>.
+                    representations are described in <xref
+                        target="detailed.format"/>.
                 </t>
                 <t>
                     Once a header field is decoded and added to the
@@ -381,7 +428,6 @@
                     removed. A header field added to the header list can be
                     safely passed to the application.
                 </t>
-
                 <t>
                     By passing the resulting header fields to the application,
                     a decoder can be implemented with minimal transitory memory
@@ -389,7 +435,8 @@
                 </t>
             </section>
 
-            <section anchor="header.representation.processing" title="Header Field Representation Processing">
+            <section title="Header Field Representation Processing"
+                     anchor="header.representation.processing">
                 <t>
                     The processing of a header block to obtain a header list is
                     defined in this section.  To ensure that the decoding will
@@ -445,47 +492,51 @@
             </section>
         </section>
 
-        <section anchor="dynamic.table.management" title="Dynamic Table Management">
+        <section title="Dynamic Table Management"
+                 anchor="dynamic.table.management">
             <t>
                 To limit the memory requirements on the decoder side, the
                 dynamic table is constrained in size.
             </t>
 
-            <section anchor="calculating.table.size" title="Calculating Table Size">
+            <section title="Calculating Table Size"
+                     anchor="calculating.table.size">
                 <t>
                     The size of the dynamic table is the sum of the size of its
                     entries.
                 </t>
                 <t>
                     The size of an entry is the sum of its name's length in
-                    octets (as defined in <xref target="string.literal.representation"/>), its value's
+                    octets (as defined in <xref
+                    target="string.literal.representation" />), its value's
                     length in octets, and 32.
                 </t>
                 <t>
                     The size of an entry is calculated using the length of its
                     name and value without any Huffman encoding applied.
                 </t>
-                <t>
-                    <list>
-                        <t>
-                            Note: The additional 32 octets account for an estimated
-                            overhead associated with an entry. For example, an
-                            entry structure using two 64-bit pointers to
-                            reference the name and the value of the entry and
-                            two 64-bit integers for counting the number of
-                            references to the name and value would have 32
-                            octets of overhead.
-                        </t>
-                    </list>
-                </t>
+                <x:note>
+                  <t>
+                    <x:h>Note:</x:h>
+                    The additional 32 octets account for an estimated
+                    overhead associated with an entry. For example, an
+                    entry structure using two 64-bit pointers to
+                    reference the name and the value of the entry and
+                    two 64-bit integers for counting the number of
+                    references to the name and value would have 32
+                    octets of overhead.
+                  </t>
+                </x:note>
             </section>
 
-            <section anchor="maximum.table.size" title="Maximum Table Size">
+            <section title="Maximum Table Size"
+                     anchor="maximum.table.size">
                 <t>
                     Protocols that use HPACK determine the maximum size that the
                     encoder is permitted to use for the dynamic table.  In
                     HTTP/2, this value is determined by the
-                    SETTINGS_HEADER_TABLE_SIZE setting (see Section 6.5.2 of <xref target="HTTP2"/>).
+                    SETTINGS_HEADER_TABLE_SIZE setting (see <xref target="HTTP2"
+                        x:fmt="of" x:rel="#SettingValues"/>).
                 </t>
                 <t>
                     An encoder can choose to use less capacity than this maximum
@@ -493,14 +544,14 @@
                     chosen size MUST stay lower than or equal to the maximum set
                     by the protocol.
                 </t>
-
-
                 <t>
                     A change in the maximum size of the dynamic table is
-                    signaled via a dynamic table size update (see <xref target="encoding.context.update"/>).  This dynamic table size
+                    signaled via a dynamic table size update (see <xref
+                    target="encoding.context.update"/>).  This dynamic table size
                     update MUST occur at the beginning of the first header block
                     following the change to the dynamic table size.  In HTTP/2,
-                    this follows a settings acknowledgment (see Section 6.5.3 of <xref target="HTTP2"/>).
+                    this follows a settings acknowledgment (see <xref
+                    target="HTTP2" x:fmt="of" x:rel="#SettingsSync"/>).
                 </t>
                 <t>
                     Multiple updates to the maximum table size can occur between
@@ -520,7 +571,8 @@
                 </t>
             </section>
 
-            <section anchor="entry.eviction" title="Entry Eviction When Dynamic Table Size Changes">
+            <section title="Entry Eviction When Dynamic Table Size Changes"
+                     anchor="entry.eviction">
                 <t>
                     Whenever the maximum size for the dynamic table is reduced,
                     entries are evicted from the end of the dynamic table until
@@ -529,7 +581,8 @@
                 </t>
             </section>
 
-            <section anchor="entry.addition" title="Entry Eviction When Adding New Entries">
+            <section title="Entry Eviction When Adding New Entries"
+                     anchor="entry.addition">
                 <t>
                     Before a new entry is added to the dynamic table, entries
                     are evicted from the end of the dynamic table until the size
@@ -555,12 +608,15 @@
             </section>
         </section>
 
-        <section anchor="low-level.representation" title="Primitive Type Representations">
+        <section title="Primitive Type Representations"
+                 anchor="low-level.representation">
             <t>
-                HPACK encoding uses two primitive types: unsigned variable-length integers and strings of octets.
+                HPACK encoding uses two primitive types: unsigned variable-length
+                integers and strings of octets.
             </t>
 
-            <section anchor="integer.representation" title="Integer Representation">
+            <section title="Integer Representation"
+                     anchor="integer.representation">
                 <t>
                     Integers are used to represent name indexes, header field
                     indexes, or string lengths. An integer representation can
@@ -577,10 +633,12 @@
                 </t>
                 <t>
                     If the integer value is small enough, i.e., strictly less
-                    than 2^N-1, it is encoded within the N-bit
+                    than 2<x:sup>N</x:sup>-1, it is encoded within the N-bit
                     prefix.
                 </t>
-                <figure anchor="Integer.Value.Encoded.within.the.Prefix.shown.for.N.5" title="Integer Value Encoded within the Prefix (Shown for N = 5)">
+                <figure
+                    anchor="Integer.Value.Encoded.within.the.Prefix.shown.for.N.5"
+                    title="Integer Value Encoded within the Prefix (Shown for N = 5)">
                     <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -590,13 +648,15 @@
                 </figure>
                 <t>
                     Otherwise, all the bits of the prefix are set to 1, and the
-                    value, decreased by 2^N-1, is encoded using a
+                    value, decreased by 2<x:sup>N</x:sup>-1, is encoded using a
                     list of one or more octets. The most significant bit of each
                     octet is used as a continuation flag: its value is set to 1
                     except for the last octet in the list. The remaining bits of
                     the octets are used to encode the decreased value.
                 </t>
-                <figure anchor="Integer.Value.Encoded.after.the.Prefix.shown.for.N.5" title="Integer Value Encoded after the Prefix (Shown for N = 5)">
+                <figure
+                    anchor="Integer.Value.Encoded.after.the.Prefix.shown.for.N.5"
+                    title="Integer Value Encoded after the Prefix (Shown for N = 5)">
                     <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -615,7 +675,7 @@
                     reversing the order of the octets in the list. Then, for
                     each octet, its most significant bit is removed. The
                     remaining bits of the octets are concatenated, and the
-                    resulting value is increased by 2^N-1 to
+                    resulting value is increased by 2<x:sup>N</x:sup>-1 to
                     obtain the integer value.
                 </t>
                 <t>
@@ -627,7 +687,7 @@
                     <preamble>
                         Pseudocode to represent an integer I is as follows:
                     </preamble>
-                    <artwork type="inline"><![CDATA[
+                    <artwork type = "inline"><![CDATA[
 if I < 2^N - 1, encode I on N bits
 else
     encode (2^N - 1) on N bits
@@ -664,14 +724,15 @@ else
                     size.  It is also possible for an encoder to send a large
                     number of zero values, which can waste octets and could be
                     used to overflow integer values.  Integer encodings that
-                    exceed implementation limits -- in value or octet length --
+                    exceed implementation limits &mdash; in value or octet length &mdash;
                     MUST be treated as decoding errors.  Different limits can
                     be set for each of the different uses of integers, based on
                     implementation constraints.
                 </t>
             </section>
 
-            <section anchor="string.literal.representation" title="String Literal Representation">
+            <section title="String Literal Representation"
+                     anchor="string.literal.representation">
                 <t>
                     Header field names and header field values can be
                     represented as string literals. A string literal is encoded
@@ -679,7 +740,8 @@ else
                     string literal's octets or by using a Huffman code
                     (see <xref target="HUFFMAN"/>).
                 </t>
-                <figure anchor="String.Literal.Representation" title="String Literal Representation">
+                <figure anchor="String.Literal.Representation"
+                        title="String Literal Representation">
                     <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -714,8 +776,10 @@ else
                 <t>
                     String literals that use Huffman encoding are encoded with
                     the Huffman code defined in <xref target="huffman.code"/>
-                    (see examples for requests in <xref target="request.examples.with.huffman.coding"/> and for
-                    responses in <xref target="response.examples.with.huffman.coding"/>). The
+                    (see examples for requests in <xref
+                        target="request.examples.with.huffman.coding"/> and for
+                    responses in <xref
+                        target="response.examples.with.huffman.coding"/>). The
                     encoded data is the bitwise concatenation of the codes
                     corresponding to each octet of the string literal.
                 </t>
@@ -740,24 +804,29 @@ else
             </section>
         </section>
 
-        <section anchor="detailed.format" title="Binary Format">
+        <section title="Binary Format" anchor="detailed.format">
             <t>
                 This section describes the detailed format of each of the
-                different header field representations and the dynamic table size update instruction.
+                different header field representations and the dynamic table
+                size update instruction.
             </t>
 
-            <section anchor="indexed.header.representation" title="Indexed Header Field Representation">
+            <section title="Indexed Header Field Representation"
+                anchor="indexed.header.representation">
                 <t>
                     An indexed header field representation identifies an entry
-                    in either the static table or the dynamic table (see <xref target="indexing.tables"/>).
+                    in either the static table or the dynamic table (see <xref
+                        target="indexing.tables"/>).
                 </t>
                 <t>
                     An indexed header field representation causes a
                     header field to be added to the decoded header list, as
-                    described in <xref target="header.representation.processing"/>.
+                    described in <xref
+                        target="header.representation.processing"/>.
                 </t>
 
-                <figure anchor="Indexed.Header.Field" title="Indexed Header Field">
+                <figure anchor="Indexed.Header.Field"
+                        title="Indexed Header Field">
                     <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -768,7 +837,8 @@ else
                 <t>
                     An indexed header field starts with the '1' 1-bit pattern,
                     followed by the index of the matching header field,
-                    represented as an integer with a 7-bit prefix (see <xref target="integer.representation"/>).
+                    represented as an integer with a 7-bit prefix (see <xref
+                        target="integer.representation"/>).
                 </t>
                 <t>
                     The index value of 0 is not used. It MUST be treated as a
@@ -777,12 +847,14 @@ else
                 </t>
             </section>
 
-            <section anchor="literal.header.representation" title="Literal Header Field Representation">
+            <section title="Literal Header Field Representation"
+                anchor="literal.header.representation">
                 <t>
                     A literal header field representation contains a literal
                     header field value.  Header field names are provided either
                     as a literal or by reference to an existing table entry,
-                    either from the static table or the dynamic table (see <xref target="indexing.tables"/>).
+                    either from the static table or the dynamic table (see <xref
+                        target="indexing.tables"/>).
                 </t>
 
                 <t>
@@ -791,14 +863,17 @@ else
                   and never indexed.
                 </t>
 
-                <section anchor="literal.header.with.incremental.indexing" title="Literal Header Field with Incremental Indexing">
+                <section title="Literal Header Field with Incremental Indexing"
+                    anchor="literal.header.with.incremental.indexing">
                     <t>
                         A literal header field with incremental indexing
                         representation results in appending a header field to
                         the decoded header list and inserting it as a new entry
                         into the dynamic table.
                     </t>
-                    <figure anchor="Literal.Header.Field.with.Incremental.Indexing.Indexed.Name" title="Literal Header Field with Incremental Indexing -- Indexed Name">
+                    <figure
+                        anchor="Literal.Header.Field.with.Incremental.Indexing.Indexed.Name"
+                        title="Literal Header Field with Incremental Indexing &mdash; Indexed Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -810,7 +885,9 @@ else
 +-------------------------------+
 ]]></artwork>
                     </figure>
-                    <figure anchor="Literal.Header.Field.with.Incremental.Indexing.New.Name" title="Literal Header Field with Incremental Indexing -- New Name">
+                    <figure
+                        anchor="Literal.Header.Field.with.Incremental.Indexing.New.Name"
+                        title="Literal Header Field with Incremental Indexing &mdash; New Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -841,24 +918,29 @@ else
                     </t>
                     <t>
                         Otherwise, the header field name is represented as a
-                        string literal (see <xref target="string.literal.representation"/>). A value
+                        string literal (see <xref
+                            target="string.literal.representation" />). A value
                         0 is used in place of the 6-bit index, followed by the
                         header field name.
                     </t>
                     <t>
                         Either form of header field name representation is
                         followed by the header field value represented as a
-                        string literal (see <xref target="string.literal.representation"/>).
+                        string literal (see <xref
+                            target="string.literal.representation" />).
                     </t>
                 </section>
 
-                <section anchor="literal.header.without.indexing" title="Literal Header Field without Indexing">
+                <section title="Literal Header Field without Indexing"
+                    anchor="literal.header.without.indexing">
                     <t>
                         A literal header field without indexing representation
                         results in appending a header field to the decoded
                         header list without altering the dynamic table.
                     </t>
-                    <figure anchor="Literal.Header.Field.without.Indexing.Indexed.Name" title="Literal Header Field without Indexing -- Indexed Name">
+                    <figure
+                        anchor="Literal.Header.Field.without.Indexing.Indexed.Name"
+                        title="Literal Header Field without Indexing &mdash; Indexed Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -870,7 +952,9 @@ else
 +-------------------------------+
 ]]></artwork>
                     </figure>
-                    <figure anchor="Literal.Header.Field.without.Indexing.New.Name" title="Literal Header Field without Indexing -- New Name">
+                    <figure
+                        anchor="Literal.Header.Field.without.Indexing.New.Name"
+                        title="Literal Header Field without Indexing &mdash; New Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -901,18 +985,21 @@ else
                     </t>
                     <t>
                         Otherwise, the header field name is represented as a
-                        string literal (see <xref target="string.literal.representation"/>). A value
+                        string literal (see <xref
+                            target="string.literal.representation" />). A value
                         0 is used in place of the 4-bit index, followed by the
                         header field name.
                     </t>
                     <t>
                         Either form of header field name representation is
                         followed by the header field value represented as a
-                        string literal (see <xref target="string.literal.representation"/>).
+                        string literal (see <xref
+                            target="string.literal.representation" />).
                     </t>
                 </section>
 
-                <section anchor="literal.header.never.indexed" title="Literal Header Field Never Indexed">
+                <section title="Literal Header Field Never Indexed"
+                    anchor="literal.header.never.indexed">
                     <t>
                         A literal header field never-indexed representation
                         results in appending a header field to the decoded
@@ -920,7 +1007,9 @@ else
                         Intermediaries MUST use the same representation for
                         encoding this header field.
                     </t>
-                    <figure anchor="Literal.Header.Field.never.Indexed.Indexed.Name" title="Literal Header Field Never Indexed -- Indexed Name">
+                    <figure
+                        anchor="Literal.Header.Field.never.Indexed.Indexed.Name"
+                        title="Literal Header Field Never Indexed &mdash; Indexed Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -932,7 +1021,9 @@ else
 +-------------------------------+
 ]]></artwork>
                     </figure>
-                    <figure anchor="Literal.Header.Field.never.Indexed.New.Name" title="Literal Header Field Never Indexed -- New Name">
+                    <figure
+                        anchor="Literal.Header.Field.never.Indexed.New.Name"
+                        title="Literal Header Field Never Indexed &mdash; New Name">
                         <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -964,7 +1055,8 @@ else
                     <t>
                         This representation is intended for protecting header
                         field values that are not to be put at risk by
-                        compressing them (see <xref target="compression.based.attacks"/> for more details).
+                        compressing them (see <xref
+                        target="compression.based.attacks"/> for more details).
                     </t>
                     <t>
                         The encoding of the representation is identical to the
@@ -974,12 +1066,14 @@ else
                 </section>
             </section>
 
-            <section anchor="encoding.context.update" title="Dynamic Table Size Update">
+            <section title="Dynamic Table Size Update"
+                anchor="encoding.context.update">
                 <t>
                     A dynamic table size update signals a change to the size of
                     the dynamic table.
                 </t>
-                <figure anchor="Maximum.Dynamic.Table.Size.Change" title="Maximum Dynamic Table Size Change">
+                <figure anchor="Maximum.Dynamic.Table.Size.Change"
+                        title="Maximum Dynamic Table Size Change">
                     <artwork type="inline"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
@@ -990,18 +1084,19 @@ else
                 <t>
                     A dynamic table size update starts with the '001' 3-bit
                     pattern, followed by the new maximum size, represented as an
-                    integer with a 5-bit prefix (see <xref target="integer.representation"/>).
+                    integer with a 5-bit prefix (see <xref
+                        target="integer.representation"/>).
                 </t>
-
                 <t>
-                    The new maximum size MUST be lower than or equal to the 
-                    limit determined by the protocol using HPACK.
-                    A value that
+                    The new maximum size MUST be lower than or equal to the
+                    limit determined by the protocol using HPACK. A value that
                     exceeds this limit MUST be treated as a decoding error. In
                     HTTP/2, this limit is the last value of the
-                    SETTINGS_HEADER_TABLE_SIZE parameter (see Section 6.5.2 of <xref target="HTTP2"/>)
+                    SETTINGS_HEADER_TABLE_SIZE parameter (see <xref
+                        target="HTTP2" x:fmt="of" x:rel="#SettingValues"/>)
                     received from the decoder and acknowledged by the encoder
-                    (see Section 6.5.3 of <xref target="HTTP2"/>).
+                    (see <xref target="HTTP2" x:fmt="of"
+                        x:rel="#SettingsSync"/>).
                 </t>
                 <t>
                     Reducing the maximum size of the dynamic table can cause
@@ -1028,7 +1123,8 @@ else
                 </list>
             </t>
 
-            <section anchor="compression.based.attacks" title="Probing Dynamic Table State">
+            <section title="Probing Dynamic Table State"
+                anchor="compression.based.attacks">
 
                 <t>
                     HPACK reduces the length of header field encodings by
@@ -1047,27 +1143,29 @@ else
                     the encoded length and infer that the guess was correct.
                 </t>
                 <t>
-                    This is possible even over the Transport Layer Security (TLS)
-                    protocol (see <xref target="TLS12"/>), because while
+                    This is possible even over the Transport Layer Security
+                    (TLS) protocol (see <xref target="TLS12"/>), because while
                     TLS provides confidentiality protection for content, it only
                     provides a limited amount of protection for the length of
                     that content.
-                    <list>
-                        <t>
-                            Note: Padding schemes only provide limited protection
-                            against an attacker with these capabilities,
-                            potentially only forcing an increased number of
-                            guesses to learn the length associated with a given
-                            guess.  Padding schemes also work directly against
-                            compression by increasing the number of bits that
-                            are transmitted.
-                        </t>
-                    </list>
                 </t>
+                <x:note>
+                  <t>
+                    <x:h>Note:</x:h>
+                    Padding schemes only provide limited protection
+                    against an attacker with these capabilities,
+                    potentially only forcing an increased number of
+                    guesses to learn the length associated with a given
+                    guess.  Padding schemes also work directly against
+                    compression by increasing the number of bits that
+                    are transmitted.
+                  </t>
+                </x:note>
                 <t>
                     Attacks like <xref target="CRIME">CRIME</xref> demonstrated
                     the existence of these general attacker capabilities.  The
-                    specific attack exploited the fact that <xref target="DEFLATE">DEFLATE</xref> removes redundancy based
+                    specific attack exploited the fact that <xref
+                        target="DEFLATE">DEFLATE</xref> removes redundancy based
                     on prefix matching.  This permitted the attacker to confirm
                     guesses a character at a time, reducing an exponential-time
                     attack into a linear-time attack.
@@ -1079,7 +1177,7 @@ else
                         modeled on <xref target="CRIME">CRIME</xref> by forcing
                         a guess to match an entire header field value rather
                         than individual characters.  Attackers can only learn
-                        whether a guess is correct or not, so they are reduced to 
+                        whether a guess is correct or not, so they are reduced to
                         brute-force guesses for the header field values.
                     </t>
                     <t>
@@ -1113,7 +1211,8 @@ else
                             </t>
                         </list>
                         Web browsers also need to assume that requests made on
-                        the same connection by different <xref target="ORIGIN">web origins</xref> are made by mutually
+                        the same connection by different <xref
+                        target="ORIGIN">web origins</xref> are made by mutually
                         distrustful entities.
                     </t>
                 </section>
@@ -1154,21 +1253,22 @@ else
                         value results in the header field no longer being compared
                         to the dynamic table entries in future messages,
                         effectively preventing further guesses.
-                        <list>
-                            <t>
-                                Note: Simply removing entries corresponding to the
-                                header field from the dynamic table
-                                can be ineffectual if the attacker has a
-                                reliable way of causing values to be
-                                reinstalled.  For example, a request to load an
-                                image in a web browser typically includes the
-                                Cookie header field (a potentially highly valued
-                                target for this sort of attack), and web sites
-                                can easily force an image to be loaded, thereby
-                                refreshing the entry in the dynamic table.
-                            </t>
-                        </list>
                     </t>
+                    <x:note>
+                      <t>
+                        <x:h>Note:</x:h>
+                        Simply removing entries corresponding to the
+                        header field from the dynamic table
+                        can be ineffectual if the attacker has a
+                        reliable way of causing values to be
+                        reinstalled.  For example, a request to load an
+                        image in a web browser typically includes the
+                        Cookie header field (a potentially highly valued
+                        target for this sort of attack), and web sites
+                        can easily force an image to be loaded, thereby
+                        refreshing the entry in the dynamic table.
+                      </t>
+                    </x:note>
                     <t>
                         This response might be made inversely proportional to
                         the length of the header field value.  Marking a header
@@ -1178,7 +1278,8 @@ else
                     </t>
                 </section>
 
-                <section anchor="never.indexed.literals" title="Never-Indexed Literals">
+                <section title="Never-Indexed Literals"
+                    anchor="never.indexed.literals">
                     <t>
                         Implementations can also choose to protect sensitive
                         header fields by not compressing them and instead
@@ -1187,7 +1288,8 @@ else
                     <t>
                         Refusing to generate an indexed representation for a
                         header field is only effective if compression is avoided
-                        on all hops.  The never-indexed literal (see <xref target="literal.header.never.indexed"/>) can be used
+                        on all hops.  The never-indexed literal (see <xref
+                            target="literal.header.never.indexed"/>) can be used
                         to signal to intermediaries that a particular value was
                         intentionally sent as a literal.
                     </t>
@@ -1221,7 +1323,8 @@ else
                         User-Agent value has been used provides little value.
                     </t>
                     <t>
-                        Note that these criteria for deciding to use a never-indexed literal representation will evolve over time as
+                        Note that these criteria for deciding to use a never-indexed
+                        literal representation will evolve over time as
                         new attacks are discovered.
                     </t>
                 </section>
@@ -1234,7 +1337,8 @@ else
                     encoding table created an information leakage; however, this
                     same study concluded that an attacker could not take
                     advantage of this information leakage to recover any
-                    meaningful amount of information (see <xref target="PETAL"/>).
+                    meaningful amount of information (see <xref
+                    target="PETAL"/>).
                 </t>
             </section>
 
@@ -1249,7 +1353,8 @@ else
                     the protocol using HPACK through the definition of the
                     maximum size of the dynamic table.
                     In HTTP/2, this value is controlled by the decoder through
-                    the setting parameter SETTINGS_HEADER_TABLE_SIZE (see Section 6.5.2 of <xref target="HTTP2"/>).
+                    the setting parameter SETTINGS_HEADER_TABLE_SIZE (see <xref
+                        target="HTTP2" x:fmt="of" x:rel="#SettingValues"/>).
                     This limit takes into account both the size of the data
                     stored in the dynamic table, plus a small allowance for
                     overhead.
@@ -1261,7 +1366,8 @@ else
                     appropriate value for the SETTINGS_HEADER_TABLE_SIZE
                     parameter.  An encoder can limit the amount of state memory
                     it uses by signaling a lower dynamic table size than the
-                    decoder allows (see <xref target="encoding.context.update"/>).
+                    decoder allows (see <xref
+                        target="encoding.context.update"/>).
                 </t>
                 <t>
                     The amount of temporary memory consumed by an encoder or
@@ -1286,22 +1392,18 @@ else
                     accepts for integers, as well as for the encoded length (see
                     <xref target="integer.representation"/>).  In the same way,
                     it has to set a limit to the length it accepts for string
-                    literals (see <xref target="string.literal.representation"/>).
+                    literals (see <xref
+                        target="string.literal.representation"/>).
                 </t>
             </section>
 
         </section>
 
-
     </middle>
 
     <back>
-
-
         <references title="Normative References">
-
-<!-- draft-ietf-httpbis-http2-17 Part of Cluster 243 -->
-            <reference anchor="HTTP2" target='http://www.rfc-editor.org/info/rfc7540'>
+            <reference anchor="HTTP2">
                 <front>
                     <title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
                     <author initials="M." surname="Belshe" fullname="Mike Belshe">
@@ -1316,41 +1418,48 @@ else
                     <date month="May" year="2015"/>
                 </front>
                 <seriesInfo name="RFC" value="7540"/>
-                
+                <x:source href="rfc7540.xml"/>
             </reference>
 
+            <reference anchor="RFC7230">
+              <front>
+                <title>
+                    Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and
+                    Routing
+                </title>
+                <author fullname="Roy T. Fielding" initials="R." role="editor" surname="Fielding">
+                  <organization abbrev="Adobe">Adobe Systems Incorporated</organization>
+                  <address><email>fielding@gbiv.com</email></address>
+                </author>
+                <author fullname="Julian F. Reschke" initials="J. F." role="editor" surname="Reschke">
+                  <organization abbrev="greenbytes">greenbytes GmbH</organization>
+                  <address><email>julian.reschke@greenbytes.de</email></address>
+                </author>
+                <date month="June" year="2014" />
+              </front>
+              <seriesInfo name="RFC" value="7230" />
+              <x:source href="rfc7230.xml"
+                basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230"/>
+            </reference>
 
-    <reference  anchor='RFC7230' target='http://www.rfc-editor.org/info/rfc7230'>
-    <front>
-    <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
-    <author initials='R.' surname='Fielding' fullname='R. Fielding' role='editor'><organization /></author>
-    <author initials='J.' surname='Reschke' fullname='J. Reschke' role='editor'><organization /></author>
-    <date year='2014' month='June' />
-    </front>
-    <seriesInfo name='RFC' value='7230'/>
-    <seriesInfo name='DOI' value='10.17487/RFC7230'/>
-    <format type='ASCII' octets='205947'/>
-    </reference>
-
-
-    <reference  anchor='RFC2119' target='http://www.rfc-editor.org/info/rfc2119'>
-    <front>
-    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
-    <author initials='S.' surname='Bradner' fullname='S. Bradner'><organization /></author>
-    <date year='1997' month='March' />
-    </front>
-    <seriesInfo name='BCP' value='14'/>
-    <seriesInfo name='RFC' value='2119'/>
-    <seriesInfo name='DOI' value='10.17487/RFC2119'/>
-    <format type='ASCII' octets='4723'/>
-    </reference>
+            <reference anchor="RFC2119">
+              <front>
+                <title>
+                  Key words for use in RFCs to Indicate Requirement Levels
+                </title>
+                <author initials="S." surname="Bradner" fullname="Scott Bradner">
+                  <organization>Harvard University</organization>
+                  <address><email>sob@harvard.edu</email></address>
+                </author>
+                <date month="March" year="1997"/>
+              </front>
+              <seriesInfo name="BCP" value="14"/>
+              <seriesInfo name="RFC" value="2119"/>
+            </reference>
 
         </references>
 
         <references title="Informative References">
-
-<!-- draft-mbelshe-httpbis-spdy-00 EXPIRED replaced by
-     draft-ietf-httpbis-http2 (which is RFC 7540 in this cluster) -->
             <reference anchor="SPDY">
                 <front>
                     <title>SPDY Protocol</title>
@@ -1362,55 +1471,45 @@ else
                     </author>
                     <date month="February" year="2012"/>
                 </front>
-              <seriesInfo name='Work in Progress,' value='draft-mbelshe-httpbis-spdy-00' />
+                <seriesInfo name="Internet-Draft" value="draft-mbelshe-httpbis-spdy-00"/>
             </reference>
 
+            <reference anchor="TLS12">
+                <front>
+                    <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+                    <author initials="T." surname="Dierks" fullname="Tim Dierks"/>
+                    <author initials="E." surname="Rescorla" fullname="Eric Rescorla"/>
+                    <date year="2008" month="August" />
+                </front>
+                <seriesInfo name="RFC" value="5246" />
+            </reference>
 
-    <reference  anchor='TLS12' target='http://www.rfc-editor.org/info/rfc5246'>
-    <front>
-    <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
-    <author initials='T.' surname='Dierks' fullname='T. Dierks'><organization /></author>
-    <author initials='E.' surname='Rescorla' fullname='E. Rescorla'><organization /></author>
-    <date year='2008' month='August' />
-    </front>
-    <seriesInfo name='RFC' value='5246'/>
-    <seriesInfo name='DOI' value='10.17487/RFC5246'/>
-    <format type='ASCII' octets='222395'/>
-    </reference>
+            <reference anchor="ORIGIN">
+                <front>
+                    <title>The Web Origin Concept</title>
+                    <author initials="A." surname="Barth" fullname="Adam Barth"/>
+                    <date month="December" year="2011"/>
+                </front>
+                <seriesInfo name="RFC" value="6454"/>
+            </reference>
 
+            <reference anchor="DEFLATE">
+                <front>
+                    <title>DEFLATE Compressed Data Format Specification version 1.3</title>
+                    <author initials="P." surname="Deutsch" fullname="L. Peter Deutsch">
+                        <organization>Aladdin Enterprises</organization>
+                    </author>
+                    <date month="May" year="1996"/>
+                </front>
+                <seriesInfo name="RFC" value="1951"/>
+            </reference>
 
-    <reference  anchor='ORIGIN' target='http://www.rfc-editor.org/info/rfc6454'>
-    <front>
-    <title>The Web Origin Concept</title>
-    <author initials='A.' surname='Barth' fullname='A. Barth'><organization /></author>
-    <date year='2011' month='December' />
-    </front>
-    <seriesInfo name='RFC' value='6454'/>
-    <seriesInfo name='DOI' value='10.17487/RFC6454'/>
-    <format type='ASCII' octets='41363'/>
-    </reference>
-
-
-    <reference  anchor='DEFLATE' target='http://www.rfc-editor.org/info/rfc1951'>
-    <front>
-    <title>DEFLATE Compressed Data Format Specification version 1.3</title>
-    <author initials='P.' surname='Deutsch' fullname='P. Deutsch'><organization /></author>
-    <date year='1996' month='May' />
-    </front>
-    <seriesInfo name='RFC' value='1951'/>
-    <seriesInfo name='DOI' value='10.17487/RFC1951'/>
-    <format type='ASCII, PS, PDF' octets='36944, 57408, 56620'/>
-    </reference>
-
-
-
-            <reference anchor="CRIME"
-		       target="http://en.wikipedia.org/w/index.php?title=CRIME&amp;oldid=660948120">
+            <reference anchor="CRIME" target="http://en.wikipedia.org/w/index.php?title=CRIME&amp;oldid=660948120">
                 <front>
                     <title>CRIME</title>
                     <author>
-<organization>Wikipedia</organization>
-		    </author>
+                      <organization>Wikipedia</organization>
+                    </author>
                     <date month="May" year="2015"/>
                 </front>
             </reference>
@@ -1440,13 +1539,14 @@ else
                     <title>PETAL: Preset Encoding Table Information
                     Leakage</title>
                     <author surname="Tan" initials="J." fullname="Jiaqi Tan"/>
-                    <author surname="Nahata" initials="J." fullname="Jayvardhan Nahata"/>
+                    <author surname="Nahata" initials="J."
+                        fullname="Jayvardhan Nahata"/>
                     <date month="April" year="2013"/>
                 </front>
             </reference>
         </references>
 
-        <section anchor="static.table.definition" title="Static Table Definition">
+        <section title="Static Table Definition" anchor="static.table.definition">
             <t>
                 The static table (see <xref target="static.table"/>) consists in
                 a predefined and unchangeable list of header fields.
@@ -1454,24 +1554,28 @@ else
             <t>
                 The static table was created from the most frequent header
                 fields used by popular web sites, with the addition of
-                HTTP/2-specific pseudo-header fields (see Section 8.1.2.1 of <xref target="HTTP2"/>).
+                HTTP/2-specific pseudo-header fields (see <xref target="HTTP2"
+                    x:fmt="of" x:rel="#PseudoHeaderFields"/>).
                 For header fields with a few frequent
                 values, an entry was added for each of these frequent values.
                 For other header fields, an entry was added with an empty
                 value.
             </t>
-
-
             <t>
-   <xref target="static.table.entries"/> lists the predefined header fields that make up
-   the static table and gives the index of each entry.
+                <xref target="static.table.entries"/> lists the predefined header fields that
+                make up the static table and gives the index of each entry.
             </t>
-            <texttable title="Static Table Entries" anchor="static.table.entries">
+            <texttable title="Static Table Entries"
+                anchor="static.table.entries">
+                <!-- An easy way to renumber these in vim, with mark a and b
+                     delimiting the table entries:
+                      :let @a=1 | 'a,'bs/>[0-9 ][0-9 ]*</\='>'.(@a+setreg('a',@a+1)).'<'/
+                -->
                 <ttcol>Index</ttcol>
                 <ttcol>Header Name</ttcol>
                 <ttcol>Header Value</ttcol>
 
-                <c>1</c><c>:authority</c><c/>
+                <c>1</c><c>:authority</c><c></c>
                 <c>2</c><c>:method</c><c>GET</c>
                 <c>3</c><c>:method</c><c>POST</c>
                 <c>4</c><c>:path</c><c>/</c>
@@ -1485,61 +1589,62 @@ else
                 <c>12</c><c>:status</c><c>400</c>
                 <c>13</c><c>:status</c><c>404</c>
                 <c>14</c><c>:status</c><c>500</c>
-                <c>15</c><c>accept-charset</c><c/>
+                <c>15</c><c>accept-charset</c><c></c>
                 <c>16</c><c>accept-encoding</c><c>gzip, deflate</c>
-                <c>17</c><c>accept-language</c><c/>
-                <c>18</c><c>accept-ranges</c><c/>
-                <c>19</c><c>accept</c><c/>
-                <c>20</c><c>access-control-allow-origin</c><c/>
-                <c>21</c><c>age</c><c/>
-                <c>22</c><c>allow</c><c/>
-                <c>23</c><c>authorization</c><c/>
-                <c>24</c><c>cache-control</c><c/>
-                <c>25</c><c>content-disposition</c><c/>
-                <c>26</c><c>content-encoding</c><c/>
-                <c>27</c><c>content-language</c><c/>
-                <c>28</c><c>content-length</c><c/>
-                <c>29</c><c>content-location</c><c/>
-                <c>30</c><c>content-range</c><c/>
-                <c>31</c><c>content-type</c><c/>
-                <c>32</c><c>cookie</c><c/>
-                <c>33</c><c>date</c><c/>
-                <c>34</c><c>etag</c><c/>
-                <c>35</c><c>expect</c><c/>
-                <c>36</c><c>expires</c><c/>
-                <c>37</c><c>from</c><c/>
-                <c>38</c><c>host</c><c/>
-                <c>39</c><c>if-match</c><c/>
-                <c>40</c><c>if-modified-since</c><c/>
-                <c>41</c><c>if-none-match</c><c/>
-                <c>42</c><c>if-range</c><c/>
-                <c>43</c><c>if-unmodified-since</c><c/>
-                <c>44</c><c>last-modified</c><c/>
-                <c>45</c><c>link</c><c/>
-                <c>46</c><c>location</c><c/>
-                <c>47</c><c>max-forwards</c><c/>
-                <c>48</c><c>proxy-authenticate</c><c/>
-                <c>49</c><c>proxy-authorization</c><c/>
-                <c>50</c><c>range</c><c/>
-                <c>51</c><c>referer</c><c/>
-                <c>52</c><c>refresh</c><c/>
-                <c>53</c><c>retry-after</c><c/>
-                <c>54</c><c>server</c><c/>
-                <c>55</c><c>set-cookie</c><c/>
-                <c>56</c><c>strict-transport-security</c><c/>
-                <c>57</c><c>transfer-encoding</c><c/>
-                <c>58</c><c>user-agent</c><c/>
-                <c>59</c><c>vary</c><c/>
-                <c>60</c><c>via</c><c/>
-                <c>61</c><c>www-authenticate</c><c/>
+                <c>17</c><c>accept-language</c><c></c>
+                <c>18</c><c>accept-ranges</c><c></c>
+                <c>19</c><c>accept</c><c></c>
+                <c>20</c><c>access-control-allow-origin</c><c></c>
+                <c>21</c><c>age</c><c></c>
+                <c>22</c><c>allow</c><c></c>
+                <c>23</c><c>authorization</c><c></c>
+                <c>24</c><c>cache-control</c><c></c>
+                <c>25</c><c>content-disposition</c><c></c>
+                <c>26</c><c>content-encoding</c><c></c>
+                <c>27</c><c>content-language</c><c></c>
+                <c>28</c><c>content-length</c><c></c>
+                <c>29</c><c>content-location</c><c></c>
+                <c>30</c><c>content-range</c><c></c>
+                <c>31</c><c>content-type</c><c></c>
+                <c>32</c><c>cookie</c><c></c>
+                <c>33</c><c>date</c><c></c>
+                <c>34</c><c>etag</c><c></c>
+                <c>35</c><c>expect</c><c></c>
+                <c>36</c><c>expires</c><c></c>
+                <c>37</c><c>from</c><c></c>
+                <c>38</c><c>host</c><c></c>
+                <c>39</c><c>if-match</c><c></c>
+                <c>40</c><c>if-modified-since</c><c></c>
+                <c>41</c><c>if-none-match</c><c></c>
+                <c>42</c><c>if-range</c><c></c>
+                <c>43</c><c>if-unmodified-since</c><c></c>
+                <c>44</c><c>last-modified</c><c></c>
+                <c>45</c><c>link</c><c></c>
+                <c>46</c><c>location</c><c></c>
+                <c>47</c><c>max-forwards</c><c></c>
+                <c>48</c><c>proxy-authenticate</c><c></c>
+                <c>49</c><c>proxy-authorization</c><c></c>
+                <c>50</c><c>range</c><c></c>
+                <c>51</c><c>referer</c><c></c>
+                <c>52</c><c>refresh</c><c></c>
+                <c>53</c><c>retry-after</c><c></c>
+                <c>54</c><c>server</c><c></c>
+                <c>55</c><c>set-cookie</c><c></c>
+                <c>56</c><c>strict-transport-security</c><c></c>
+                <c>57</c><c>transfer-encoding</c><c></c>
+                <c>58</c><c>user-agent</c><c></c>
+                <c>59</c><c>vary</c><c></c>
+                <c>60</c><c>via</c><c></c>
+                <c>61</c><c>www-authenticate</c><c></c>
             </texttable>
-   
+
         </section>
 
-        <section anchor="huffman.code" title="Huffman Code">
+        <section title="Huffman Code" anchor="huffman.code">
             <t>
                 The following Huffman code is used when encoding string literals
-                with a Huffman coding (see <xref target="string.literal.representation"/>).
+                with a Huffman coding (see <xref
+                    target="string.literal.representation"/>).
             </t>
             <t>
                 This Huffman code was generated from statistics obtained on a
@@ -1578,7 +1683,7 @@ else
                 encoded in 6 bits.
             </t>
             <figure>
-                <artwork><![CDATA[
+                <artwork  type="inline"><![CDATA[
                                                      code
                        code as bits                 as hex   len
      sym              aligned to MSB                aligned   in
@@ -1845,33 +1950,33 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
         </section>
 
 
-        <section anchor="examples" title="Examples">
-
-
+        <section title="Examples" anchor="examples">
             <t>
-   This appendix contains examples covering integer                                                     
-   encoding, header field representation, and the encoding of whole                                     
-   lists of header fields for both requests and responses, with and                                     
-   without Huffman coding. 
+                This appendix contains examples covering integer
+                encoding, header field representation, and the encoding of whole
+                lists of header fields for both requests and responses,
+                with and without Huffman coding.
             </t>
 
-            <section anchor="integer.representation.examples" title="Integer Representation Examples">
+            <section title="Integer Representation Examples"
+                anchor="integer.representation.examples">
                 <t>
                     This section shows the representation of integer values in
                     detail (see <xref target="integer.representation"/>).
                 </t>
-                <section anchor="integer.representation.example1" title="Example 1: Encoding 10 Using a 5-Bit Prefix">
+                <section title="Example 1: Encoding 10 Using a 5-Bit Prefix"
+                    anchor="integer.representation.example1">
                     <t>
                         The value 10 is to be encoded with a 5-bit prefix.
                         <list style="symbols">
                             <t>
-                                10 is less than 31 (2^5 - 1) and
+                                10 is less than 31 (2<x:sup>5</x:sup> - 1) and
                                 is represented using the 5-bit prefix.
                             </t>
                         </list>
                     </t>
                     <figure>
-                        <artwork><![CDATA[
+                        <artwork type="example"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
 | X | X | X | 0 | 1 | 0 | 1 | 0 |   10 stored on 5 bits
@@ -1880,43 +1985,41 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
                     </figure>
                 </section>
 
-                <section anchor="integer.representation.example2" title="Example 2: Encoding 1337 Using a 5-Bit Prefix">
-
-                    <t>                                                                                                                                         
-                        The value I=1337 is to be encoded with a 5-bit
-			prefix.                                                                                  
+                <section title="Example 2: Encoding 1337 Using a 5-Bit Prefix"
+                    anchor="integer.representation.example2">
+                    <t>
+                        The value I=1337 is to be encoded with a 5-bit prefix.
                         <list>
-                            <t>                                                                                                                                 
-                                1337 is greater than 31 (2^5 - 1).                                                                                              
-                       
+                            <t>
+                                1337 is greater than 31 (2<x:sup>5</x:sup> - 1).
+                            </t>
+                            <t>
                                 <list>
-                                    <t>The 5-bit prefix is filled with its max                                                                                  
+                                    <t>The 5-bit prefix is filled with its max
                                     value (31).</t>
                                 </list>
                             </t>
-                            <t>I = 1337 - (2^5 - 1) = 1306.                                                                                                     
-                                                                                                                                                                
-
+                            <t>I = 1337 - (2<x:sup>5</x:sup> - 1) = 1306.</t>
+                            <t>
                                 <list>
-                                    <t>I (1306) is greater than or equal to
-				    128,                                                                                
-                                    so the while loop body executes:                                                                                               
-
+                                    <t>I (1306) is greater than or equal to 128,
+                                    so the while loop body executes:</t>
+                                    <t>
                                         <list>
                                             <t>I % 128 == 26</t>
                                             <t>26 + 128 == 154</t>
-                                            <t>154 is encoded in 8 bits as:                                                                                     
+                                            <t>154 is encoded in 8 bits as:
                                             10011010</t>
-                                            <t>I is set to 10 (1306 / 128 ==                                                                                    
+                                            <t>I is set to 10 (1306 / 128 ==
                                             10)</t>
-                                            <t>I is no longer greater than or                                                                                   
-                                            equal to 128, so the while loop                                                                                        
+                                            <t>I is no longer greater than or
+                                            equal to 128, so the while loop
                                             terminates.</t>
                                         </list>
                                     </t>
-                                    <t>                                                                                                                         
-                                        I, now 10, is encoded in 8 bits as:                                                                                     
-                                        00001010.                                                                                                               
+                                    <t>
+                                        I, now 10, is encoded in 8 bits as:
+                                        00001010.
                                     </t>
                                 </list>
                             </t>
@@ -1925,9 +2028,8 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
                         </list>
 
                     </t>
-
                     <figure>
-                        <artwork><![CDATA[
+                        <artwork type="example"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
 | X | X | X | 1 | 1 | 1 | 1 | 1 |  Prefix = 31, I = 1306
@@ -1938,20 +2040,21 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
                     </figure>
                 </section>
 
-                <section anchor="integer.representation.example3" title="Example 3: Encoding 42 Starting at an Octet Boundary">
+                <section title="Example 3: Encoding 42 Starting at an Octet Boundary"
+                    anchor="integer.representation.example3">
                     <t>
                         The value 42 is to be encoded starting at an
                         octet boundary. This implies that a 8-bit prefix is
                         used.
                         <list style="symbols">
                             <t>
-                                42 is less than 255 (2^8 - 1) and
+                                42 is less than 255 (2<x:sup>8</x:sup> - 1) and
                                 is represented using the 8-bit prefix.
                             </t>
                         </list>
                     </t>
                     <figure>
-                        <artwork><![CDATA[
+                        <artwork type="example"><![CDATA[
   0   1   2   3   4   5   6   7
 +---+---+---+---+---+---+---+---+
 | 0 | 0 | 1 | 0 | 1 | 0 | 1 | 0 |   42 stored on 8 bits
@@ -1962,7 +2065,8 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
             </section>
 
 <!-- example-start -->
-<section anchor="header.field.representation.examples" title="Header Field Representation Examples">
+<section title="Header Field Representation Examples"
+    anchor="header.field.representation.examples">
     <t>
         This section shows several independent representation examples.
     </t>
@@ -1974,16 +2078,14 @@ EOS (256)  |11111111|11111111|11111111|111111      3fffffff  [30]
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 custom-key: custom-header]]></artwork>
             </figure>
         </t>
         <t>
-
-
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 400a 6375 7374 6f6d 2d6b 6579 0d63 7573 | @.custom-key.cus
 746f 6d2d 6865 6164 6572                | tom-header]]></artwork>
             </figure>
@@ -1991,7 +2093,7 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 40                                      | == Literal indexed ==
 0a                                      |   Literal name (len = 10)
 6375 7374 6f6d 2d6b 6579                | custom-key
@@ -2004,7 +2106,7 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  55) custom-key: custom-header
       Table size:  55]]></artwork>
             </figure>
@@ -2012,7 +2114,7 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 custom-key: custom-header]]></artwork>
             </figure>
         </t>
@@ -2026,21 +2128,21 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :path: /sample/path]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 040c 2f73 616d 706c 652f 7061 7468      | ../sample/path]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 04                                      | == Literal not indexed ==
                                         |   Indexed name (idx = 4)
                                         |     :path
@@ -2055,7 +2157,7 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :path: /sample/path]]></artwork>
             </figure>
         </t>
@@ -2070,14 +2172,14 @@ custom-key: custom-header]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 password: secret]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 1008 7061 7373 776f 7264 0673 6563 7265 | ..password.secre
 74                                      | t]]></artwork>
             </figure>
@@ -2085,7 +2187,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 10                                      | == Literal never indexed ==
 08                                      |   Literal name (len = 8)
 7061 7373 776f 7264                     | password
@@ -2100,7 +2202,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 password: secret]]></artwork>
             </figure>
         </t>
@@ -2114,21 +2216,21 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | .]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET]]></artwork>
@@ -2140,14 +2242,15 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET]]></artwork>
             </figure>
         </t>
     </section>
 
 </section>
-<section anchor="request.examples.without.huffman.coding" title="Request Examples without Huffman Coding">
+<section title="Request Examples without Huffman Coding"
+    anchor="request.examples.without.huffman.coding">
     <t>
         This section shows several consecutive header lists, corresponding to
         HTTP requests, on the same connection.
@@ -2156,7 +2259,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2166,7 +2269,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8286 8441 0f77 7777 2e65 7861 6d70 6c65 | ...A.www.example
 2e63 6f6d                               | .com]]></artwork>
             </figure>
@@ -2174,7 +2277,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2196,7 +2299,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  57) :authority: www.example.com
       Table size:  57]]></artwork>
             </figure>
@@ -2204,7 +2307,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2217,7 +2320,7 @@ password: secret]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2228,14 +2331,14 @@ cache-control: no-cache]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8286 84be 5808 6e6f 2d63 6163 6865      | ....X.no-cache]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2260,7 +2363,7 @@ be                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  53) cache-control: no-cache
 [  2] (s =  57) :authority: www.example.com
       Table size: 110]]></artwork>
@@ -2269,7 +2372,7 @@ be                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2283,7 +2386,7 @@ cache-control: no-cache]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: https
 :path: /index.html
@@ -2294,7 +2397,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8287 85bf 400a 6375 7374 6f6d 2d6b 6579 | ....@.custom-key
 0c63 7573 746f 6d2d 7661 6c75 65        | .custom-value]]></artwork>
             </figure>
@@ -2302,7 +2405,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2328,7 +2431,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  54) custom-key: custom-value
 [  2] (s =  53) cache-control: no-cache
 [  3] (s =  57) :authority: www.example.com
@@ -2338,7 +2441,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: https
 :path: /index.html
@@ -2349,7 +2452,8 @@ custom-key: custom-value]]></artwork>
     </section>
 
 </section>
-<section anchor="request.examples.with.huffman.coding" title="Request Examples with Huffman Coding">
+<section title="Request Examples with Huffman Coding"
+    anchor="request.examples.with.huffman.coding">
     <t>
         This section shows the same examples as the previous section but uses
         Huffman encoding for the literal values.
@@ -2358,7 +2462,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2368,7 +2472,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8286 8441 8cf1 e3c2 e5f2 3a6b a0ab 90f4 | ...A......:k....
 ff                                      | .]]></artwork>
             </figure>
@@ -2376,7 +2480,7 @@ ff                                      | .]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2401,7 +2505,7 @@ f1e3 c2e5 f23a 6ba0 ab90 f4ff           | .....:k.....
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  57) :authority: www.example.com
       Table size:  57]]></artwork>
             </figure>
@@ -2409,7 +2513,7 @@ f1e3 c2e5 f23a 6ba0 ab90 f4ff           | .....:k.....
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2422,7 +2526,7 @@ f1e3 c2e5 f23a 6ba0 ab90 f4ff           | .....:k.....
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2433,14 +2537,14 @@ cache-control: no-cache]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8286 84be 5886 a8eb 1064 9cbf           | ....X....d..]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2468,7 +2572,7 @@ a8eb 1064 9cbf                          | ...d..
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  53) cache-control: no-cache
 [  2] (s =  57) :authority: www.example.com
       Table size: 110]]></artwork>
@@ -2477,7 +2581,7 @@ a8eb 1064 9cbf                          | ...d..
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: http
 :path: /
@@ -2491,7 +2595,7 @@ cache-control: no-cache]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: https
 :path: /index.html
@@ -2502,7 +2606,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 8287 85bf 4088 25a8 49e9 5ba9 7d7f 8925 | ....@.%.I.[.}..%
 a849 e95b b8e8 b4bf                     | .I.[....]]></artwork>
             </figure>
@@ -2510,7 +2614,7 @@ a849 e95b b8e8 b4bf                     | .I.[....]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 82                                      | == Indexed - Add ==
                                         |   idx = 2
                                         | -> :method: GET
@@ -2542,7 +2646,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  54) custom-key: custom-value
 [  2] (s =  53) cache-control: no-cache
 [  3] (s =  57) :authority: www.example.com
@@ -2552,7 +2656,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :method: GET
 :scheme: https
 :path: /index.html
@@ -2563,7 +2667,8 @@ custom-key: custom-value]]></artwork>
     </section>
 
 </section>
-<section anchor="response.examples.without.huffman.coding" title="Response Examples without Huffman Coding">
+<section title="Response Examples without Huffman Coding"
+    anchor="response.examples.without.huffman.coding">
     <t>
         This section shows several consecutive header lists, corresponding to
         HTTP responses, on the same connection. The HTTP/2 setting parameter
@@ -2574,7 +2679,7 @@ custom-key: custom-value]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 302
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2584,7 +2689,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 4803 3330 3258 0770 7269 7661 7465 611d | H.302X.privatea.
 4d6f 6e2c 2032 3120 4f63 7420 3230 3133 | Mon, 21 Oct 2013
 2032 303a 3133 3a32 3120 474d 546e 1768 |  20:13:21 GMTn.h
@@ -2595,7 +2700,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 48                                      | == Literal indexed ==
                                         |   Indexed name (idx = 8)
                                         |     :status
@@ -2629,7 +2734,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  63) location: https://www.example.com
 [  2] (s =  65) date: Mon, 21 Oct 2013 20:13:21 GMT
 [  3] (s =  52) cache-control: private
@@ -2640,7 +2745,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 302
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2657,7 +2762,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 307
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2667,14 +2772,14 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 4803 3330 37c1 c0bf                     | H.307...]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 48                                      | == Literal indexed ==
                                         |   Indexed name (idx = 8)
                                         |     :status
@@ -2698,7 +2803,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  42) :status: 307
 [  2] (s =  63) location: https://www.example.com
 [  3] (s =  65) date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2709,7 +2814,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 307
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2726,7 +2831,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 200
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:22 GMT
@@ -2738,7 +2843,7 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 88c1 611d 4d6f 6e2c 2032 3120 4f63 7420 | ..a.Mon, 21 Oct
 3230 3133 2032 303a 3133 3a32 3220 474d | 2013 20:13:22 GM
 54c0 5a04 677a 6970 7738 666f 6f3d 4153 | T.Z.gzipw8foo=AS
@@ -2751,7 +2856,7 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 88                                      | == Indexed - Add ==
                                         |   idx = 8
                                         | -> :status: 200
@@ -2799,7 +2904,7 @@ c0                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  98) set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU;
                  max-age=3600; version=1
 [  2] (s =  52) content-encoding: gzip
@@ -2810,7 +2915,7 @@ c0                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 200
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:22 GMT
@@ -2822,7 +2927,8 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
     </section>
 
 </section>
-<section anchor="response.examples.with.huffman.coding" title="Response Examples with Huffman Coding">
+<section title="Response Examples with Huffman Coding"
+    anchor="response.examples.with.huffman.coding">
     <t>
         This section shows the same examples as the previous section but uses
         Huffman encoding for the literal values. The HTTP/2 setting parameter
@@ -2835,7 +2941,7 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 302
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2845,7 +2951,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 4882 6402 5885 aec3 771a 4b61 96d0 7abe | H.d.X...w.Ka..z.
 9410 54d4 44a8 2005 9504 0b81 66e0 82a6 | ..T.D. .....f...
 2d1b ff6e 919d 29ad 1718 63c7 8f0b 97c8 | -..n..)...c.....
@@ -2855,7 +2961,7 @@ e9ae 82ae 43d3                          | ....C.]]></artwork>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 48                                      | == Literal indexed ==
                                         |   Indexed name (idx = 8)
                                         |     :status
@@ -2902,7 +3008,7 @@ d3                                      | .
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  63) location: https://www.example.com
 [  2] (s =  65) date: Mon, 21 Oct 2013 20:13:21 GMT
 [  3] (s =  52) cache-control: private
@@ -2913,7 +3019,7 @@ d3                                      | .
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 302
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2930,7 +3036,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 307
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2940,14 +3046,14 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 4883 640e ffc1 c0bf                     | H.d.....]]></artwork>
             </figure>
         </t>
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 48                                      | == Literal indexed ==
                                         |   Indexed name (idx = 8)
                                         |     :status
@@ -2974,7 +3080,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  42) :status: 307
 [  2] (s =  63) location: https://www.example.com
 [  3] (s =  65) date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -2985,7 +3091,7 @@ bf                                      | == Indexed - Add ==
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 307
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:21 GMT
@@ -3002,7 +3108,7 @@ location: https://www.example.com]]></artwork>
         <t>
             <figure>
                 <preamble>Header list to encode:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 200
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:22 GMT
@@ -3014,7 +3120,7 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
         <t>
             <figure>
                 <preamble>Hex dump of encoded data:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 88c1 6196 d07a be94 1054 d444 a820 0595 | ..a..z...T.D. ..
 040b 8166 e084 a62d 1bff c05a 839b d9ab | ...f...-...Z....
 77ad 94e7 821d d7f2 e6c7 b335 dfdf cd5b | w..........5...[
@@ -3025,7 +3131,7 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
         <t>
             <figure>
                 <preamble>Decoding process:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 88                                      | == Indexed - Add ==
                                         |   idx = 8
                                         | -> :status: 200
@@ -3084,7 +3190,7 @@ d5af 2708 7f36 72c1 ab27 0fb5 291f 9587 | ..'..6r..'..)...
         <t>
             <figure>
                 <preamble>Dynamic Table (after decoding):</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 [  1] (s =  98) set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU;
                  max-age=3600; version=1
 [  2] (s =  52) content-encoding: gzip
@@ -3095,7 +3201,7 @@ d5af 2708 7f36 72c1 ab27 0fb5 291f 9587 | ..'..6r..'..)...
         <t>
             <figure>
                 <preamble>Decoded header list:</preamble>
-                <artwork><![CDATA[
+                <artwork type="example"><![CDATA[
 :status: 200
 cache-control: private
 date: Mon, 21 Oct 2013 20:13:22 GMT
@@ -3110,7 +3216,8 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
 <!-- example-end -->
 
         </section>
-        <section title="Acknowledgments" numbered="no">
+
+        <section title="Acknowledgments" numbered="false">
             <t>
                 This specification includes substantial input from the following
                 individuals:
@@ -3129,4 +3236,6 @@ set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1]]></artwork
 
     </back>
 </rfc>
-
+<!--
+  vim:et:tw=80:sw=4:
+ -->
