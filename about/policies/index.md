@@ -5,7 +5,7 @@ title: HTTP WG Policies
 
 *This page documents policies for participating in and contributing to the HTTP Working Group. IETF policies and procedures take precedence in the case of inconsistency.*
 
-# Contributing to HTTP
+## Contributing to HTTP
 
 Before submitting feedback, please familiarize yourself with our current work
 and review the [working group home page](https://httpwg.github.io/). If you're
@@ -41,9 +41,11 @@ providing a link to the issue in the message body.
   appropriate place to discuss design issues is on the mailing list itself.
 
 
+## Code of Conduct
 
+The [IETF Code of Conduct](http://tools.ietf.org/html/rfc7154) applies to all Working Group communications and meetings.
 
-# NOTE WELL
+## NOTE WELL
 
 Any submission to the [IETF](http://www.ietf.org/) intended by the Contributor
 for publication as all or part of an IETF Internet-Draft or RFC and any
