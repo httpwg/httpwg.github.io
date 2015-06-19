@@ -43,7 +43,7 @@ providing a link to the issue in the message body.
 
 ## Code of Conduct
 
-The [IETF Code of Conduct](http://tools.ietf.org/html/rfc7154) applies to all Working Group communications and meetings.
+The [IETF Guidelines for Conduct](http://tools.ietf.org/html/rfc7154) applies to all Working Group communications and meetings.
 
 ## NOTE WELL
 
