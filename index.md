@@ -7,7 +7,7 @@ title: HTTP
 
 <div class="row">
 
-<div class="jumbotron">
+<div class="jumbotron clearfix">
 	
 <div class="pull-left hidden-xs">
 	<img src="/asset/http.svg" class="img-responsive">
