@@ -262,6 +262,7 @@
 <xsl:variable name="css-tright"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tright'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-tt"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tt'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-header"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'header'"/></xsl:call-template></xsl:variable>
+<xsl:variable name="css-meta"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'meta'"/></xsl:call-template></xsl:variable>
 
 <!-- RFC-Editor site linking -->
 
@@ -2808,7 +2809,7 @@
   </xsl:variable>
 
   <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and $rfcno!='' and @anchor='rfc.status'">
-    <div id="{$anchor-prefix}.meta" class="meta"></div>
+    <div id="{$anchor-prefix}.meta" class="{$css-meta}"></div>
   </xsl:if>
   <div>
     <xsl:if test="@anchor">
