@@ -6,7 +6,7 @@
   <map from="tcenter" css="text-center"/>
   <map from="tt" css="table table-condensed table-striped"/>
   <map from="header" css="table table-condensed header"/>
-  <map from="meta" css="alert alert-info text-right"/>
+  <map from="meta" css="alert alert-info"/>
   <map from="update" css="alert alert-warning"/>
   <map from="feedback" css="btn btn-primary feedback"/>
   <map from="fbbutton" css="btn btn-primary fbbutton"/>
