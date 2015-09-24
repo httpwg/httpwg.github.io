@@ -7,5 +7,6 @@
   <map from="tt" css="table table-condensed table-striped"/>
   <map from="header" css="table table-condensed header"/>
   <map from="meta" css="alert alert-info text-right"/>
-  <map from="update" css="alert alert-warning text-right"/>
+  <map from="update" css="alert alert-warning"/>
+  <map from="fbbutton" css="btn btn-primary"/>
 </css>
