@@ -4445,7 +4445,6 @@ function initFeedback() {
 }
 
 function feedback() {
-  toggleButtonsToElementsByName("h1");
   toggleButtonsToElementsByName("h2");
   toggleButtonsToElementsByName("h3");
   toggleButtonsToElementsByName("h4");
@@ -4512,7 +4511,7 @@ function toggleButton(node) {
     var buttons = node.getElementsByTagName("a");
     for (var i = 0; i &lt; buttons.length; i++) {
       var b = buttons.item(i);
-      if (b.className == "<xsl:value-of select="$css-fbbutton"/> <xsl:value-of select="$css-noprint"/>") {
+      if (b.className == "<xsl:value-of select="$css-fbbutton"/><xsl:text> </xsl:text><xsl:value-of select="$css-noprint"/>") {
         node.removeChild(b);
       }
     }

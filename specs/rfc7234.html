@@ -13,7 +13,6 @@ function initFeedback() {
 }
 
 function feedback() {
-  toggleButtonsToElementsByName("h1");
   toggleButtonsToElementsByName("h2");
   toggleButtonsToElementsByName("h3");
   toggleButtonsToElementsByName("h4");
@@ -76,7 +75,7 @@ function toggleButton(node) {
     var buttons = node.getElementsByTagName("a");
     for (var i = 0; i < buttons.length; i++) {
       var b = buttons.item(i);
-      if (b.className == "btn btn-primary fbbuttonhidden-print") {
+      if (b.className == "btn btn-primary fbbutton hidden-print") {
         node.removeChild(b);
       }
     }
