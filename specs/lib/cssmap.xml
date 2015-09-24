@@ -5,11 +5,11 @@
   <map from="header" css="table table-condensed header"/>
   <map from="meta" css="alert alert-info"/>
   <map from="noprint" css="hidden-print"/>
-  <map from="note" css="panel panel-info"/>
+  <map from="note" css="alert alert-warning"/>
   <map from="tcenter" css="text-center"/>
   <map from="tleft" css="text-left"/>
   <map from="tright" css="text-right"/>
   <map from="tt" css="table table-condensed table-striped"/>
-  <map from="update" css="alert alert-warning"/>
+  <map from="update" css="alert alert-danger"/>
 
 </css>
