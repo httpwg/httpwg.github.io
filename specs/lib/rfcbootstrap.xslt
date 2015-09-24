@@ -175,6 +175,9 @@
         width: 40%;
         float: right
       }
+      #rfc\.toc > ul li {
+        list-style: none;
+      }
       .container .nav-sublist {
         padding-left: 20px;
         padding-right: 10px;
