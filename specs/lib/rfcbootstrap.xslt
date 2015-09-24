@@ -104,12 +104,8 @@
 
   <xsl:variable name="toc-ul-class" select="'nav-sublist list-unstyled'" />
 
-  <xsl:variable name="toc-indent" select="' '"/>
-
-  <xsl:variable name="default-table-style" select="'table-condensed table-striped'" />
-
   <xsl:template name="body">
-      <body data-spy="scroll" data-target="#rfc.toc">
+      <body>
         <xsl:variable name="onload">
           <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and /rfc/@number">getMeta(<xsl:value-of select="/rfc/@number"/>,"rfc.meta");</xsl:if>
           <xsl:if test="/rfc/x:feedback">initFeedback();</xsl:if>
@@ -158,15 +154,12 @@
         </div>
         <script src="{$jqueryJsUrl}"></script>
         <script src="{$bootstrapJsUrl}"></script>
-        <script type="text/javascript">
-          /* This is a workaround for https://github.com/twbs/bootstrap/issues/14285 */
-          $('.nav a').on('click', function(a) {$(a.target.dataset.target.replace( /(:|\.|\[|\])/g, "\\$1" )).collapse('toggle')})
-        </script>
       </body>
   </xsl:template>
 
 
   <xsl:template name="insertCss">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" type="text/css" href="{$bootstrapCssUrl}" />
     <style type="text/css">
       body {
@@ -178,12 +171,12 @@
         border-top: none;
         padding: 0;
       }
-      .nav-sublist {
+      .container .nav-sublist {
         padding-left: 20px;
         padding-right: 10px;
         font-size: 90%;
       }
-      .navbar-brand {
+      .container .navbar-brand {
         padding-top: 0;
       }
       .container .nav > li > a {
@@ -194,7 +187,7 @@
         padding: 10px 15px 5px 7px;
         display: inline-block;
       }
-      .nav > li > a {
+      .container .nav > li > a {
         padding: 5px 10px;
       }
       .filename {

@@ -2808,7 +2808,7 @@
   </xsl:variable>
 
   <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and $rfcno!='' and @anchor='rfc.status'">
-    <div id="{$anchor-prefix}.meta" style="float: right; border: 1px solid black; margin: 2em; padding: 1em; display: none;"></div>
+    <div id="{$anchor-prefix}.meta" class="meta"></div>
   </xsl:if>
   <div>
     <xsl:if test="@anchor">
@@ -4986,6 +4986,13 @@ blockquote > * .bcp14 {
 }
 .left {
   text-align: left;
+}
+.meta {
+  float: right; 
+  border: 1px solid black; 
+  margin: 2em; 
+  padding: 1em; 
+  display: none;
 }
 .right {
   text-align: right;
