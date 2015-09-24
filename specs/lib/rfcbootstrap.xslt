@@ -171,9 +171,6 @@
         border-top: none;
         padding: 0;
       }
-      #rfc.meta {
-        width: 40%;
-      }
       .container .nav-sublist {
         padding-left: 20px;
         padding-right: 10px;

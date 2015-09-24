@@ -6,5 +6,6 @@
   <map from="tcenter" css="text-center"/>
   <map from="tt" css="table table-condensed table-striped"/>
   <map from="header" css="table table-condensed header"/>
-  <map from="meta" css="alert alert-info"/>
+  <map from="meta" css="alert alert-info text-right"/>
+  <map from="update" css="alert alert-warning text-right"/>
 </css>

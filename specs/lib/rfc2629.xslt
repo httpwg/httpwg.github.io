@@ -263,6 +263,7 @@
 <xsl:variable name="css-tt"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tt'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-header"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'header'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-meta"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'meta'"/></xsl:call-template></xsl:variable>
+<xsl:variable name="css-update"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'update'"/></xsl:call-template></xsl:variable>
 
 <!-- RFC-Editor site linking -->
 
@@ -1361,7 +1362,7 @@
   <!-- insert notice about update -->
   <xsl:variable name="published-as" select="/*/x:link[@rel='Alternate' and starts-with(@title,'RFC')]"/>
   <xsl:if test="$published-as">
-    <p style="color: green; text-align: center; font-size: 14pt; background-color: yellow;">
+    <p class="{$css-update}">
       <b>Note:</b> a later version of this document has been published as <a href="{$published-as/@href}"><xsl:value-of select="$published-as/@title"/></a>.
     </p>
   </xsl:if>
@@ -4997,6 +4998,12 @@ blockquote > * .bcp14 {
 }
 .right {
   text-align: right;
+}
+.update {
+  color: green; 
+  text-align: center; 
+  font-size: 14pt; 
+  background-color: yellow;
 }
 .warning {
   font-size: 130%;
