@@ -227,16 +227,6 @@
         padding-right: 1em;
         vertical-align: top;
       }
-      .feedback {
-        position: fixed;
-        bottom: 1%;
-        right: 1%;
-        padding: 3px 5px;
-        color: white;
-        -webkit-user-select: none;<!-- not std CSS yet--> 
-        -moz-user-select: none;
-        -ms-user-select: none;      
-      }
     </style>
     <xsl:if test="$siteCssUrl!=''">
       <link rel="stylesheet" type="text/css" href="{$siteCssUrl}" />
