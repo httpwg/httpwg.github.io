@@ -51,7 +51,7 @@ title: HTTP
 		<h2><a href="/about/">Participate</a></h2>
 		<p>Learn about the Working Group and the IETF, and how to participate. Related materials include:</p>
 		<ul>
-			<li><a href="/about/policies/">WG Policies</a></li>
+			<li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contributing</a></li>
 			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Our Charter</a></li>
 			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing List</a></li>
 			<li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a> - <em>e.g., agendas and minutes</em></li>

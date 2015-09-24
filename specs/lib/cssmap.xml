@@ -1,0 +1,9 @@
+<css>
+  <map from="error" css="bg-danger"/>
+  <map from="noprint" css="hidden-print"/>
+  <map from="tleft" css="text-left"/>
+  <map from="tright" css="text-right"/>
+  <map from="tcenter" css="text-center"/>
+  <map from="tt" css="table"/>
+  <map from="header" css="table table-condensed header"/>
+</css>
