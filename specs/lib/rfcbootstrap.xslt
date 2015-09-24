@@ -233,7 +233,7 @@
         right: 5px;
       }
       .fbbutton {
-        padding-left: 5px;
+        margin-left: 5px;
       }
     </style>
     <xsl:if test="$siteCssUrl!=''">
