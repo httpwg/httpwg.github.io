@@ -4437,7 +4437,7 @@ var buttonsAdded = false;
 
 function initFeedback() {
   var fb = document.createElement("div");
-  fb.className = "<xsl:value-of select="$css-feedback"/> <xsl:value-of select="$css-noprint"/>";
+  fb.className = "<xsl:value-of select="$css-feedback"/><xsl:text> </xsl:text><xsl:value-of select="$css-noprint"/>";
   fb.setAttribute("onclick", "feedback();");
   fb.appendChild(document.createTextNode("feedback"));
 
@@ -4503,7 +4503,7 @@ function toggleButton(node) {
     uri = uri.replace("{ref}", encodeURIComponent(ref));
 
     var button = document.createElement("a");
-    button.className = "<xsl:value-of select="$css-fbbutton"/> <xsl:value-of select="$css-noprint"/>";
+    button.className = "<xsl:value-of select="$css-fbbutton"/><xsl:text> </xsl:text><xsl:value-of select="$css-noprint"/>";
     button.setAttribute("href", uri);
     button.appendChild(document.createTextNode("send feedback"));
     node.appendChild(button);

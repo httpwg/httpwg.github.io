@@ -5,7 +5,7 @@ var buttonsAdded = false;
 
 function initFeedback() {
   var fb = document.createElement("div");
-  fb.className = "btn btn-primaryhidden-print";
+  fb.className = "btn btn-primary hidden-print";
   fb.setAttribute("onclick", "feedback();");
   fb.appendChild(document.createTextNode("feedback"));
 
@@ -67,7 +67,7 @@ function toggleButton(node) {
     uri = uri.replace("{ref}", encodeURIComponent(ref));
 
     var button = document.createElement("a");
-    button.className = "btn btn-primaryhidden-print";
+    button.className = "btn btn-primary hidden-print";
     button.setAttribute("href", uri);
     button.appendChild(document.createTextNode("send feedback"));
     node.appendChild(button);
