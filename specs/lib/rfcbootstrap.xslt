@@ -198,7 +198,11 @@
         padding: 5px 10px;
       }
       .filename {
-        text-align: center;
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
       }
       dl {
         margin-left: 1em;
@@ -234,6 +238,9 @@
       }
       .fbbutton {
         margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
       }
     </style>
     <xsl:if test="$siteCssUrl!=''">
