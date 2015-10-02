@@ -53,5 +53,5 @@ list of HTTP extensions, see the relevant registry listed above.
 * **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies*
 * **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
 * **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
-* **RFC7615** - [HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields](specs/rfc7615.html)
-* **RFC7639** - [The ALPN HTTP Header Field](specs/rfc7639.html)
+* **RFC7615** - [HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields](/specs/rfc7615.html)
+* **RFC7639** - [The ALPN HTTP Header Field](/specs/rfc7639.html)
