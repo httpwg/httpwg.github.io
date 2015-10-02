@@ -6,7 +6,7 @@
 <?rfc compact="yes"?>
 <?rfc subcompact="no"?>
 
-<!DOCTYPE rfc PUBLIC "" "lib/rfc2629.dtd" [
+<!DOCTYPE rfc [
   <!ENTITY MAY "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MAY</bcp14>">
   <!ENTITY MUST "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MUST</bcp14>">
   <!ENTITY MUST-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MUST NOT</bcp14>">
@@ -18,6 +18,8 @@
   <!ENTITY SHALL-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHALL NOT</bcp14>">
   <!ENTITY SHOULD "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD</bcp14>">
   <!ENTITY SHOULD-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD NOT</bcp14>">
+  <!ENTITY nbsp    "&#160;"><!-- U+00A0 NO-BREAK SPACE                             (special " ")        -->
+  <!ENTITY nbhy   "&#8209;"><!-- U+2011 NON-BREAKING HYPHEN               (special "-") -->
 ]>
 
 <rfc xmlns:x="http://purl.org/net/xml2rfc/ext" number="7616" ipr="pre5378Trust200902" category="std" consensus="yes"

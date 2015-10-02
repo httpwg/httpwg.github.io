@@ -1,86 +1,6 @@
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD HTML 4.01//EN" "about:legacy-compat">
 <html lang="en"><head profile="http://dublincore.org/documents/2008/08/04/dc-html/"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Hypertext Transfer Protocol (HTTP/1.1): Caching</title><script type="application/javascript">
-var buttonsAdded = false;
-
-function initFeedback() {
-  var fb = document.createElement("div");
-  fb.className = "btn btn-primary feedback hidden-print";
-  fb.setAttribute("onclick", "feedback();");
-  fb.appendChild(document.createTextNode("feedback"));
-
-  document.body.appendChild(fb);
-}
-
-function feedback() {
-  toggleButtonsToElementsByName("h2");
-  toggleButtonsToElementsByName("h3");
-  toggleButtonsToElementsByName("h4");
-
-  buttonsAdded = !buttonsAdded;
-}
-
-function toggleButtonsToElementsByName(name) {
-  var list = document.getElementsByTagName(name);
-  for (var i = 0; i < list.length; i++) {
-    toggleButton(list.item(i));
-  }
-}
-
-function toggleButton(node) {
-  if (! buttonsAdded) {
-
-    // docname
-    var template = "mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&body=<{ref}>:";
-
-    var id = node.getAttribute("id");
-    // better id available?
-    var titlelinks = node.getElementsByTagName("a");
-    for (var i = 0; i < titlelinks.length; i++) {
-      var tl = titlelinks.item(i);
-      if (tl.getAttribute("id")) {
-        id = tl.getAttribute("id");
-      }
-    }
-
-    // ref
-    var ref = window.location.toString();
-    var hash = ref.indexOf("#");
-    if (hash != -1) {
-      ref = ref.substring(0, hash);
-    }
-    if (id != "") {
-      ref += "#" + id;
-    }
-
-    // docname
-    var docname = "";
-
-    // section
-    var section = node.textContent;
-    section = section.replace("\u00a0", " ");
-
-    // build URI from template
-    var uri = template.replace("{docname}", encodeURIComponent(docname));
-    uri = uri.replace("{section}", encodeURIComponent(section));
-    uri = uri.replace("{ref}", encodeURIComponent(ref));
-
-    var button = document.createElement("a");
-    button.className = "btn btn-primary fbbutton hidden-print";
-    button.setAttribute("href", uri);
-    button.appendChild(document.createTextNode("send feedback"));
-    node.appendChild(button);
-  }
-  else {
-    var buttons = node.getElementsByTagName("a");
-    for (var i = 0; i < buttons.length; i++) {
-      var b = buttons.item(i);
-      if (b.className == "btn btn-primary fbbutton hidden-print") {
-        node.removeChild(b);
-      }
-    }
-  }
-}</script><script type="application/javascript">
 function getMeta(rfcno, container) {
 
   var xhr = new XMLHttpRequest();
@@ -265,7 +185,7 @@ function appendRfcLinks(parent, text) {
       h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
         color: rgb(51, 51, 51);
       }
-    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Index" href="#rfc.index"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Overview of Cache Operation" href="#rfc.section.2"><link rel="Chapter" title="3 Storing Responses in Caches" href="#rfc.section.3"><link rel="Chapter" title="4 Constructing Responses from Caches" href="#rfc.section.4"><link rel="Chapter" title="5 Header Field Definitions" href="#rfc.section.5"><link rel="Chapter" title="6 History Lists" href="#rfc.section.6"><link rel="Chapter" title="7 IANA Considerations" href="#rfc.section.7"><link rel="Chapter" title="8 Security Considerations" href="#rfc.section.8"><link rel="Chapter" title="9 Acknowledgments" href="#rfc.section.9"><link rel="Chapter" href="#rfc.section.10" title="10 References"><link rel="Appendix" title="A Changes from RFC 2616" href="#rfc.section.A"><link rel="Appendix" title="B Imported ABNF" href="#rfc.section.B"><link rel="Appendix" title="C Collected ABNF" href="#rfc.section.C"><link href="rfc7233.html" rel="prev"><link href="rfc7235.html" rel="next"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc7234.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7234"><link rel="Help" title="Additional Information on tools.ietf.org" href="http://tools.ietf.org/html/rfc7234"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="Hypertext Transfer Protocol, HTTP, HTTP Caching"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Fielding, R."><meta name="dct.creator" content="Nottingham, M."><meta name="dct.creator" content="Reschke, J. F."><meta name="dct.identifier" content="urn:ietf:rfc:7234"><meta name="dct.issued" scheme="ISO8601" content="2014-06"><meta name="dct.replaces" content="urn:ietf:rfc:2616"><meta name="dct.abstract" content="The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages."><meta name="dct.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages."></head><body onload="getMeta(7234,&#34;rfc.meta&#34;);initFeedback();"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Index" href="#rfc.index"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Overview of Cache Operation" href="#rfc.section.2"><link rel="Chapter" title="3 Storing Responses in Caches" href="#rfc.section.3"><link rel="Chapter" title="4 Constructing Responses from Caches" href="#rfc.section.4"><link rel="Chapter" title="5 Header Field Definitions" href="#rfc.section.5"><link rel="Chapter" title="6 History Lists" href="#rfc.section.6"><link rel="Chapter" title="7 IANA Considerations" href="#rfc.section.7"><link rel="Chapter" title="8 Security Considerations" href="#rfc.section.8"><link rel="Chapter" title="9 Acknowledgments" href="#rfc.section.9"><link rel="Chapter" href="#rfc.section.10" title="10 References"><link rel="Appendix" title="A Changes from RFC 2616" href="#rfc.section.A"><link rel="Appendix" title="B Imported ABNF" href="#rfc.section.B"><link rel="Appendix" title="C Collected ABNF" href="#rfc.section.C"><link href="rfc7233.html" rel="prev"><link href="rfc7235.html" rel="next"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc7234.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7234"><link rel="Help" title="Additional Information on tools.ietf.org" href="http://tools.ietf.org/html/rfc7234"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="Hypertext Transfer Protocol, HTTP, HTTP Caching"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Fielding, R."><meta name="dct.creator" content="Nottingham, M."><meta name="dct.creator" content="Reschke, J. F."><meta name="dct.identifier" content="urn:ietf:rfc:7234"><meta name="dct.issued" scheme="ISO8601" content="2014-06"><meta name="dct.replaces" content="urn:ietf:rfc:2616"><meta name="dct.abstract" content="The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages."><meta name="dct.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages."></head><body onload="getMeta(7234,&#34;rfc.meta&#34;);"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

@@ -16,9 +16,6 @@
 <?rfc comments="yes" ?>
 <?rfc inline="yes"?>
 
-<!DOCTYPE rfc
-  PUBLIC "" "lib/rfc2629.dtd">
-
 <rfc number="7639" category="std" submissionType="IETF" consensus="yes" ipr="trust200902">
   
   <front>

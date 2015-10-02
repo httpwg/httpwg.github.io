@@ -69,7 +69,7 @@
   obsoletes="2616" x:maturity-level="proposed" xmlns:x="http://purl.org/net/xml2rfc/ext">
 <x:link rel="prev" basename="rfc7233"/>
 <x:link rel="next" basename="rfc7235"/>
-<x:feedback template="mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&amp;body=&lt;{ref}&gt;:"/>
+<!--<x:feedback template="mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&amp;body=&lt;{ref}&gt;:"/>-->
 <front>
 
   <title abbrev="HTTP/1.1 Caching">Hypertext Transfer Protocol (HTTP/1.1): Caching</title>

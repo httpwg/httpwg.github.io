@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-
-<!DOCTYPE rfc SYSTEM "lib/rfc2629.dtd" [
-   <!ENTITY rfc2119 SYSTEM 'http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'>
-   <!ENTITY rfc2616 SYSTEM 'http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.2616.xml'>
-   <!ENTITY rfc4791 SYSTEM 'http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4791.xml'>
-   <!ENTITY rfc4918 SYSTEM 'http://xml2rfc.ietf.org/public/rfc/bibxml/reference.RFC.4918.xml'>
-]>
-
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <?rfc toc="yes" ?>
 <?rfc tocdepth="1" ?>
@@ -348,12 +340,227 @@ Content-Type: text/html
 
         <back>
                 <references title="Normative References">
-                        &rfc2119;
-                        &rfc2616;
+                        
+
+<reference anchor="RFC2119">
+
+<front>
+<title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials="S." surname="Bradner" fullname="Scott Bradner">
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Mass. Ave.</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year="1997" month="March"/>
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front>
+
+<seriesInfo name="BCP" value="14"/>
+<seriesInfo name="RFC" value="2119"/>
+<format type="TXT" octets="4723" target="ftp://ftp.isi.edu/in-notes/rfc2119.txt"/>
+<format type="HTML" octets="14486" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/>
+<format type="XML" octets="5661" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/>
+</reference>
+
+                        
+
+<reference anchor="RFC2616">
+
+<front>
+<title abbrev="HTTP/1.1">Hypertext Transfer Protocol -- HTTP/1.1</title>
+<author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+<organization abbrev="UC Irvine">Department of Information and Computer Science</organization>
+<address>
+<postal>
+<street>University of California, Irvine</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92697-3425</code></postal>
+<facsimile>+1(949)824-1715</facsimile>
+<email>fielding@ics.uci.edu</email></address></author>
+<author initials="J." surname="Gettys" fullname="James Gettys">
+<organization abbrev="Compaq/W3C">World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>jg@w3.org</email></address></author>
+<author initials="J." surname="Mogul" fullname="Jeffrey C. Mogul">
+<organization abbrev="Compaq">Compaq Computer Corporation</organization>
+<address>
+<postal>
+<street>Western Research Laboratory</street>
+<street>250 University Avenue</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94305</code></postal>
+<email>mogul@wrl.dec.com</email></address></author>
+<author initials="H." surname="Frystyk" fullname="Henrik Frystyk Nielsen">
+<organization abbrev="W3C/MIT">World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>frystyk@w3.org</email></address></author>
+<author initials="L." surname="Masinter" fullname="Larry Masinter">
+<organization abbrev="Xerox">Xerox Corporation</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>3333 Coyote Hill Road</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94034</code></postal>
+<email>masinter@parc.xerox.com</email></address></author>
+<author initials="P." surname="Leach" fullname="Paul J. Leach">
+<organization abbrev="Microsoft">Microsoft Corporation</organization>
+<address>
+<postal>
+<street>1 Microsoft Way</street>
+<city>Redmond</city>
+<region>WA</region>
+<code>98052</code></postal>
+<email>paulle@microsoft.com</email></address></author>
+<author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
+<organization abbrev="W3C/MIT">World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>MIT Laboratory for Computer Science, NE43-356</street>
+<street>545 Technology Square</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code></postal>
+<facsimile>+1(617)258-8682</facsimile>
+<email>timbl@w3.org</email></address></author>
+<date year="1999" month="June"/>
+<abstract>
+<t>
+   The Hypertext Transfer Protocol (HTTP) is an application-level
+   protocol for distributed, collaborative, hypermedia information
+   systems. It is a generic, stateless, protocol which can be used for
+   many tasks beyond its use for hypertext, such as name servers and
+   distributed object management systems, through extension of its
+   request methods, error codes and headers . A feature of HTTP is
+   the typing and negotiation of data representation, allowing systems
+   to be built independently of the data being transferred.
+</t>
+<t>
+   HTTP has been in use by the World-Wide Web global information
+   initiative since 1990. This specification defines the protocol
+   referred to as "HTTP/1.1", and is an update to RFC 2068 .
+</t></abstract></front>
+
+<seriesInfo name="RFC" value="2616"/>
+<format type="TXT" octets="422317" target="http://www.rfc-editor.org/rfc/rfc2616.txt"/>
+<format type="PS" octets="5529857" target="http://www.rfc-editor.org/rfc/rfc2616.ps"/>
+<format type="PDF" octets="550558" target="http://www.rfc-editor.org/rfc/rfc2616.pdf"/>
+<format type="HTML" octets="637302" target="http://xml.resource.org/public/rfc/html/rfc2616.html"/>
+<format type="XML" octets="493420" target="http://xml.resource.org/public/rfc/xml/rfc2616.xml"/>
+</reference>
+
                 </references>
 
                 <references title="Informative References">
-                        &rfc4791;
+                        
+
+<reference anchor="RFC4791">
+
+<front>
+<title abbrev="CalDAV">Calendaring Extensions to WebDAV (CalDAV)</title>
+<author initials="C." surname="Daboo" fullname="Cyrus Daboo">
+<organization abbrev="Apple">Apple Inc.</organization>
+<address>
+<postal>
+<street>1 Infinite Loop</street>
+<city>Cupertino</city>
+<region>CA</region>
+<code>95014</code>
+<country>USA</country></postal>
+<email>cyrus@daboo.name</email>
+<uri>http://www.apple.com/</uri></address></author>
+<author initials="B." surname="Desruisseaux" fullname="Bernard Desruisseaux">
+<organization abbrev="Oracle">Oracle Corporation</organization>
+<address>
+<postal>
+<street>600 Blvd. de Maisonneuve West</street>
+<street>Suite 1900</street>
+<city>Montreal</city>
+<region>QC</region>
+<code>H3A 3J2</code>
+<country>CANADA</country></postal>
+<email>bernard.desruisseaux@oracle.com</email>
+<uri>http://www.oracle.com/</uri></address></author>
+<author initials="L.M." surname="Dusseault" fullname="Lisa Dusseault">
+<organization abbrev="CommerceNet">CommerceNet</organization>
+<address>
+<postal>
+<street>169 University Ave.</street>
+<city>Palo Alto</city>
+<region>CA</region>
+<code>94301</code>
+<country>USA</country></postal>
+<email>ldusseault@commerce.net</email>
+<uri>http://commerce.net/</uri></address></author>
+<date year="2007" month="March"/>
+<area>Applications</area>
+<keyword>calsched</keyword>
+<keyword>calsch</keyword>
+<keyword>caldav</keyword>
+<keyword>calendar</keyword>
+<keyword>calendaring</keyword>
+<keyword>scheduling</keyword>
+<keyword>webdav</keyword>
+<keyword>iCal</keyword>
+<keyword>iCalendar</keyword>
+<keyword>iTIP</keyword>
+<keyword>text/calendar</keyword>
+<keyword>HTTP</keyword>
+<abstract>
+<t>
+      This document defines extensions to the Web Distributed Authoring
+      and Versioning (WebDAV) protocol to specify a standard way of
+      accessing, managing, and sharing calendaring and scheduling
+      information based on the iCalendar format. This document
+	  defines the "calendar-access" feature of CalDAV.
+    </t></abstract></front>
+
+<seriesInfo name="RFC" value="4791"/>
+<format type="TXT" octets="206801" target="ftp://ftp.isi.edu/in-notes/rfc4791.txt"/>
+<format type="HTML" octets="300292" target="http://xml.resource.org/public/rfc/html/rfc4791.html"/>
+<format type="XML" octets="265793" target="http://xml.resource.org/public/rfc/xml/rfc4791.xml"/>
+</reference>
+
 
 <reference anchor="Favicon" target="http://en.wikipedia.org/w/index.php?title=Favicon&amp;oldid=484627550">
 <front>
