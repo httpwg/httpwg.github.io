@@ -25,6 +25,7 @@ title: HTTP
 	
 	<div class="col-sm-4">
 		<h2><a href="/specs/">Documentation</a></h2>
+
 		<p>Read the documents that define the protocol, such as:</p>
 		<ul>
             <li><a href="/specs/rfc7230.html">RFC7230: HTTP/1.1 Message Syntax and Routing</a></li>
@@ -35,7 +36,7 @@ title: HTTP
             <li><a href="/specs/rfc7235.html">RFC7235: HTTP/1.1 Authentication</a></li>
             <li><a href="/specs/rfc7540.html">RFC7540: HTTP/2</a> (<em>see also <a href="https://http2.github.io/">HTTP/2's Home</a></em>)</li>
 		</ul>
-		<p>See the <a href="/specs/">complete listing</a> for other specifications and related extension registries.</p>
+		<p>See the <a href="/specs/">complete listing of HTTP-related specifications</a> and related resources.</p>
 	</div>
 
 	<div class="col-sm-4">
