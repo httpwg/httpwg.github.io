@@ -24,7 +24,7 @@ title: HTTP
 <div class="row">
 	
 	<div class="col-sm-4">
-		<h2><a href="/specs/">Documentation</a></h2>
+		<h2>Documentation</h2>
 
 		<p>Read the documents that define the protocol, such as:</p>
 		<ul>
@@ -49,7 +49,7 @@ title: HTTP
 	</div>
 
 	<div class="col-sm-4">
-		<h2><a href="/about/">Participate</a></h2>
+		<h2>Participate</h2>
 		<p>Want to get involved? Join us!</p>
 		<ul>
 			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Working Group Charter</a></li>
