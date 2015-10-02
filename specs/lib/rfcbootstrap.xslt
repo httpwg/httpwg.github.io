@@ -227,6 +227,12 @@
         margin-top: 0.5em;
         margin-bottom: 0em;
       }
+      ul.empty {<!-- spacing between two entries in definition lists -->
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
       td.reference {
         padding-right: 1em;
         vertical-align: top;

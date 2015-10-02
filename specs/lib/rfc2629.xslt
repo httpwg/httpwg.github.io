@@ -259,14 +259,14 @@
 <xsl:variable name="css-fbbutton"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'fbbutton'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-feedback"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'feedback'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-header"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'header'"/></xsl:call-template></xsl:variable>
-<xsl:variable name="css-meta"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'meta'"/></xsl:call-template></xsl:variable>
+<xsl:variable name="css-docstatus"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'docstatus'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-noprint"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'noprint'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-note"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'note'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-tcenter"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tcenter'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-tleft"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tleft'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-tright"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tright'"/></xsl:call-template></xsl:variable>
 <xsl:variable name="css-tt"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'tt'"/></xsl:call-template></xsl:variable>
-<xsl:variable name="css-update"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'update'"/></xsl:call-template></xsl:variable>
+<xsl:variable name="css-publishedasrfc"><xsl:call-template name="generate-css-class"><xsl:with-param name="name" select="'publishedasrfc'"/></xsl:call-template></xsl:variable>
 
 
 <!-- RFC-Editor site linking -->
@@ -734,6 +734,10 @@
 
 <!-- does the document contain edits? -->
 <xsl:variable name="has-edits" select="//ed:ins | //ed:del | //ed:replace" />
+
+<!-- does the document have a published-as-rfc link? -->
+<xsl:variable name="published-as-rfc" select="/*/x:link[@rel='Alternate' and starts-with(@title,'RFC')]"/>
+
 
 <xsl:template match="text()[not(ancestor::artwork)]">
   <xsl:variable name="ws" select="'&#9;&#10;&#13;&#32;'"/>
@@ -1364,10 +1368,9 @@
   </div>
 
   <!-- insert notice about update -->
-  <xsl:variable name="published-as" select="/*/x:link[@rel='Alternate' and starts-with(@title,'RFC')]"/>
-  <xsl:if test="$published-as">
-    <p class="{$css-update}">
-      <b>Note:</b> a later version of this document has been published as <a href="{$published-as/@href}"><xsl:value-of select="$published-as/@title"/></a>.
+  <xsl:if test="$published-as-rfc">
+    <p class="{$css-publishedasrfc}">
+      <b>Note:</b> a later version of this document has been published as <a href="{$published-as-rfc/@href}"><xsl:value-of select="$published-as-rfc/@title"/></a>.
     </p>
   </xsl:if>
 
@@ -2817,7 +2820,7 @@
   </xsl:variable>
 
   <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and $rfcno!='' and @anchor='rfc.status'">
-    <div id="{$anchor-prefix}.meta" class="{$css-meta}"></div>
+    <div id="{$anchor-prefix}.meta" class="{$css-docstatus}"></div>
   </xsl:if>
   <div>
     <xsl:if test="@anchor">
@@ -5006,21 +5009,8 @@ blockquote > * .bcp14 {
 .left {
   text-align: left;
 }
-.meta {
-  float: right; 
-  border: 1px solid black; 
-  margin: 2em; 
-  padding: 1em; 
-  display: none;
-}
 .right {
   text-align: right;
-}
-.update {
-  color: green; 
-  text-align: center; 
-  font-size: 14pt; 
-  background-color: yellow;
 }
 .warning {
   font-size: 130%;
@@ -5140,6 +5130,19 @@ thead th {
 }</xsl:if><xsl:if test="$xml2rfc-ext-justification='always'">
 dd, li, p {
   text-align: justify;
+}</xsl:if><xsl:if test="$xml2rfc-ext-insert-metadata='yes' and $rfcno!=''">
+.docstatus {
+  border: 1px solid black;
+  display: none;
+  float: right;
+  margin: 2em;
+  padding: 1em;
+}</xsl:if><xsl:if test="$published-as-rfc">
+.publishedasrfc {
+  background-color: yellow;
+  color: green;
+  font-size: 14pt;
+  text-align: center;
 }</xsl:if>
 
 @media screen {
@@ -8077,11 +8080,11 @@ dd, li, p {
   <xsl:variable name="gen">
     <xsl:text>http://greenbytes.de/tech/webdav/rfc2629.xslt, </xsl:text>
     <!-- when RCS keyword substitution in place, add version info -->
-    <xsl:if test="contains('$Revision: 1.739 $',':')">
-      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.739 $', 'Revision: '),'$','')),', ')" />
+    <xsl:if test="contains('$Revision: 1.742 $',':')">
+      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.742 $', 'Revision: '),'$','')),', ')" />
     </xsl:if>
-    <xsl:if test="contains('$Date: 2015/09/06 15:45:25 $',':')">
-      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2015/09/06 15:45:25 $', 'Date: '),'$','')),', ')" />
+    <xsl:if test="contains('$Date: 2015/09/24 15:44:12 $',':')">
+      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2015/09/24 15:44:12 $', 'Date: '),'$','')),', ')" />
     </xsl:if>
     <xsl:value-of select="concat('XSLT vendor: ',system-property('xsl:vendor'),' ',system-property('xsl:vendor-url'))" />
   </xsl:variable>
@@ -8854,6 +8857,7 @@ prev: <xsl:value-of select="$prev"/>
 <xsl:template match="@*" mode="validate"/>
 
 <xsl:template name="warninvalid">
+  <xsl:param name="additionalDiagnostics"/>
   <xsl:variable name="pname">
     <xsl:if test="namespace-uri(..)!=''">
       <xsl:value-of select="concat('{',namespace-uri(..),'}')"/>
@@ -8867,7 +8871,7 @@ prev: <xsl:value-of select="$prev"/>
     <xsl:value-of select="local-name(.)"/>
   </xsl:variable>
   <xsl:call-template name="warning">
-    <xsl:with-param name="msg" select="concat($cname,' not allowed inside ',$pname)"/>
+    <xsl:with-param name="msg" select="concat($cname,' not allowed inside ',$pname,$additionalDiagnostics)"/>
   </xsl:call-template>
 </xsl:template>
 
@@ -8912,6 +8916,14 @@ prev: <xsl:value-of select="$prev"/>
 </xsl:template>
 <xsl:template match="t" mode="validate">
   <xsl:call-template name="warninvalid"/>
+  <xsl:apply-templates select="@*|*" mode="validate"/>
+</xsl:template>
+
+<!-- xref element -->
+<xsl:template match="abstract//xref" mode="validate">
+  <xsl:call-template name="warninvalid">
+    <xsl:with-param name="additionalDiagnostics"> (inside &lt;artwork>)</xsl:with-param>
+  </xsl:call-template>
   <xsl:apply-templates select="@*|*" mode="validate"/>
 </xsl:template>
 
