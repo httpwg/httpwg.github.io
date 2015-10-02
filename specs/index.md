@@ -21,8 +21,10 @@ Additionally, the following specifications are optional to implement, but widely
  * **RFC7233** - [HTTP/1.1: Range Requests](/specs/rfc7233.html) - *getting partial content* 
  * **RFC7234** - [HTTP/1.1: Caching](/specs/rfc7234.html) - *browser and intermediary caches* 
  * **RFC7235** - [HTTP/1.1: Authentication](/specs/rfc7235.html) - *HTTP authentication framework* 
+ * **RFC7616** - [HTTP Digest Access Authentication](/specs/rfc7616.html)
+ * **RFC7617** - [HTTP Basic Authentication](/specs/rfc7616.html)
  
-These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068** and **RFC2616**.
+These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068**, **RFC2616** and **RFC2617**.
 
 *If you find problems with the HTTP/1.1 specifications, you can report them as [errata](http://www.rfc-editor.org/errata.php) on the appropriate specification, or log an issue in [this repo](https://github.com/httpwg/http11bis/issues).*
 
@@ -51,3 +53,5 @@ list of HTTP extensions, see the relevant registry listed above.
 * **RFC6265** - [HTTP State Management Mechanism](/specs/rfc6265.html) - *cookies*
 * **RFC6585** - [Additional HTTP Status Codes](/specs/rfc6585.html) - *428 / 429 / 431 / 511* 
 * **RFC7538** - [HTTP Status Code 308 (Permanent Redirect)](/specs/rfc7538.html)
+* **RFC7615** - [HTTP Authentication-Info and Proxy-Authentication-Info Response Header Fields](specs/rfc7615.html)
+* **RFC7639** - [The ALPN HTTP Header Field](specs/rfc7639.html)

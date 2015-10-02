@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--
+    This XML document is the output of clean-for-DTD.xslt; a tool that strips
+    extensions to RFC2629(bis) from documents for processing with xml2rfc.
+--><!-- This template is for creating an Internet Draft using xml2rfc,
+     which is available here: http://xml.resource.org. -->
+
+<?xml-stylesheet type='text/xsl' href='lib/rfc2629.xslt' ?>
+<?rfc strict="yes" ?>
+<?rfc toc="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes" ?>
+<?rfc compact="yes" ?>
+<?rfc subcompact="no" ?>
+<?rfc comments="yes" ?>
+<?rfc inline="yes"?>
+
+<!DOCTYPE rfc
+  PUBLIC "" "lib/rfc2629.dtd">
+
+<rfc number="7639" category="std" submissionType="IETF" consensus="yes" ipr="trust200902">
+  
+  <front>
+    <title abbrev="The ALPN Header">The ALPN HTTP Header Field</title>
+
+    <author fullname="Andrew Hutton" initials="A." surname="Hutton">
+      <organization>Unify</organization>
+      <address>
+        <postal>
+          <street>Technology Drive</street>
+          <city>Nottingham</city>
+          <code>NG9 1LA</code>
+          <country>United Kingdom</country>
+        </postal>
+        <email>andrew.hutton@unify.com</email>
+      </address>
+    </author>
+
+   <author fullname="Justin Uberti" initials="J." surname="Uberti">
+      <organization>Google</organization>
+      <address>
+        <postal>
+          <street>747 6th Street South</street>
+          <city>Kirkland</city>
+          <region>WA</region>
+          <code>98033</code>
+          <country>United States</country>
+        </postal>
+        <email>justin@uberti.name</email>
+      </address>
+    </author>
+
+    <author fullname="Martin Thomson" initials="M." surname="Thomson">
+      <organization>Mozilla</organization>
+      <address>
+        <postal>
+          <street>331 East Evelyn Avenue</street>
+          <city>Mountain View</city>
+          <region>CA</region>
+          <code>94041</code>
+          <country>United States</country>
+        </postal>
+        <email>martin.thomson@gmail.com</email>
+      </address>
+    </author>
+
+    <date  month="August" year="2015"/>
+    <area>Applications</area>
+    <workgroup>HTTP Working Group</workgroup>
+    <keyword>HTTP CONNECT</keyword>
+    <keyword>Firewall</keyword>
+    <keyword>HTTP proxy</keyword>
+
+    <abstract>
+      <t>
+        This specification allows HTTP CONNECT requests to indicate what
+        protocol is intended to be used within the tunnel once established,
+        using the ALPN header field.
+       </t>
+    </abstract>
+  </front>
+
+ <middle>
+    <section title="Introduction">
+      <t>
+        The HTTP CONNECT method (Section 4.3.6 of <xref target="RFC7231"/>)
+        requests that the recipient establish a tunnel to the identified origin
+        server and thereafter forward packets, in both directions, until the
+        tunnel is closed. Such tunnels are commonly used to create end-to-end
+        virtual connections through one or more proxies.
+      </t>
+      <t>
+        The ALPN HTTP header field identifies the protocol or protocols that the
+        client intends to use within a tunnel that is established using CONNECT.
+        This uses the Application-Layer Protocol Negotiation (ALPN) identifier <xref target="RFC7301"/>.
+      </t>
+      <t>
+        For a tunnel that is then secured using <xref target="RFC5246">
+	Transport Layer Security (TLS)</xref>, the header field carries the same
+        application protocol label as will be carried within the TLS handshake
+        <xref target="RFC7301"/>.  If there are multiple possible application
+        protocols, all of those application protocols are indicated.
+      </t>
+      <t>
+        The ALPN header field carries an indication of client intent only.  An
+        ALPN identifier is used here only to identify the application protocol
+        or suite of protocols that the client intends to use in the tunnel.  No
+        negotiation takes place using this header field.  In TLS, the final
+        choice of application protocol is made by the server from the set of
+        choices presented by the client.  Other substrates could negotiate the
+        application protocol differently.
+      </t>
+      <t>
+        Proxies do not implement the tunneled protocol, though they might choose
+        to make policy decisions based on the value of the header field.  For
+        example, a proxy could use the application protocol to select
+        appropriate traffic prioritization.
+      </t>
+
+      <section title="Requirements Language">
+        <t>
+          The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+          "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+          document are to be interpreted as described in <xref target="RFC2119">RFC 2119</xref>.
+        </t>
+      </section>
+    </section>
+
+   <section anchor="tp" title="The ALPN HTTP Header Field">
+      <t>
+        Clients include the ALPN header field in an HTTP CONNECT request to
+        indicate the application-layer protocol that a client intends to use
+        within the tunnel, or a set of protocols that might be used within the
+        tunnel.
+      </t>
+
+      <section title="Header Field Values">
+        <t>
+          Valid values for the protocol field are taken from the
+          "Application-Layer Protocol Negotiation (ALPN) Protocol ID" registry
+          <xref target="ALPN-IDS"/>
+          established by <xref target="RFC7301"/>.
+        </t>
+      </section>
+
+      <section title="Syntax">
+        <t>
+          The ABNF (Augmented Backus-Naur Form) syntax for the ALPN
+          header field value is given below. It uses the syntax defined
+          in Section 1.2 of <xref target="RFC7230"/>.
+        </t>
+        <figure>
+          <artwork type="abnf2616"><![CDATA[
+ALPN            = 1#protocol-id
+protocol-id     = token ; percent-encoded ALPN protocol identifier
+]]></artwork>
+        </figure>
+        <t>
+          ALPN protocol names are octet sequences with no additional constraints
+          on format. Octets not allowed in tokens (<xref target="RFC7230"/>, Section 3.2.6) MUST be percent-encoded as per Section 2.1 of <xref target="RFC3986"/>.  Consequently, the octet
+          representing the percent character "%" (hex 25) MUST be
+          percent-encoded as well.
+        </t>
+        <t>
+          In order to have precisely one way to represent any ALPN protocol
+          name, the following additional constraints apply:
+          <list style="symbols">
+            <t>
+              Octets in the ALPN protocol MUST NOT be percent-encoded if they
+              are valid token characters except "%".
+            </t>
+            <t>
+              When using percent-encoding, uppercase hex digits MUST be used.
+            </t>
+          </list>
+        </t>
+        <t>
+          With these constraints, recipients can apply simple string comparison
+          to match protocol identifiers.
+        </t>
+        <figure>
+          <preamble>
+            For example:
+          </preamble>
+          <artwork type="message/http; msgtype=&#34;request&#34;"><![CDATA[
+  
+  CONNECT www.example.com HTTP/1.1
+  Host: www.example.com
+  ALPN: h2, http%2F1.1
+  ]]></artwork>
+        </figure>
+      </section>
+
+      <section title="Usage">
+        <t>
+          When used in the ALPN header field, an ALPN identifier is used to
+          identify an entire application protocol stack, not a single protocol
+          layer or component.
+        </t>
+        <t>
+          For a CONNECT tunnel that conveys a protocol secured with TLS, the
+          value of the ALPN header field contains the same list of ALPN
+          identifiers that will be sent in the TLS ClientHello message <xref target="RFC7301"/>.
+        </t>
+        <t>
+          Where no protocol negotiation is expected to occur, such as in
+          protocols that do not use TLS, the ALPN header field contains a single
+          ALPN protocol identifier corresponding to the application protocol
+          that is intended to be used.  If an alternative form of protocol
+          negotiation is possible, the ALPN header field contains the set of
+          protocols that might be negotiated.
+        </t>
+        <t>
+          A proxy can use the value of the ALPN header field to more cleanly and
+          efficiently reject requests for a CONNECT tunnel.  Exposing protocol
+          information at the HTTP layer allows a proxy to deny requests earlier,
+          with better error reporting (such as a 403 status code).  The ALPN
+          header field can be falsified and therefore is not a sufficient basis
+          for authorizing a request.
+        </t>
+        <t>
+          A proxy could attempt to inspect packets to determine the protocol in
+          use.  This requires that the proxy understand each ALPN identifier.
+          Protocols like TLS could hide negotiated protocols, or protocol
+          negotiation details could change over time.  Proxies SHOULD NOT break
+          a CONNECT tunnel solely on the basis of a failure to recognize the
+          protocol.
+        </t>
+        <t>
+          A proxy can use the ALPN header field value to change how it
+          manages or prioritizes connections.
+        </t>
+      </section>
+    </section>
+
+    <section anchor="IANA" title="IANA Considerations">
+      <t>
+        HTTP header fields are registered within the "Permanent Message Header
+        Field Names" registry maintained by IANA <xref target="MSG-HDRS"/>.  This
+        document defines and registers the ALPN header field, according to <xref target="RFC3864"/> as follows:
+        <list style="hanging">
+          <t hangText="Header Field Name:">
+            ALPN
+          </t>
+          <t hangText="Protocol:">
+            http
+          </t>
+          <t hangText="Status:">
+            Standard
+          </t>
+          <t hangText="Reference:">
+            <xref target="tp"/> of this document (RFC 7639)
+          </t>
+          <t hangText="Change Controller:">
+            IETF (iesg@ietf.org) - Internet Engineering Task Force
+          </t>
+        </list>
+      </t>
+    </section>
+
+    <section anchor="Security" title="Security Considerations">
+      <t>
+        In case of using HTTP CONNECT to a TURN (Traversal Using Relays
+	around NAT, <xref target="RFC5766"/>) server, the security considerations of
+        Section 4.3.6 of <xref target="RFC7231"/> apply. It states that
+        there "are significant risks in establishing a tunnel to arbitrary
+        servers, particularly when the destination is a well-known or reserved
+        TCP port that is not intended for Web traffic. ... Proxies that support
+        CONNECT SHOULD restrict its use to a limited set of known ports or a
+        configurable whitelist of safe request targets."
+      </t>
+      <t>
+        The ALPN header field described in this document is OPTIONAL. Clients
+        and HTTP proxies could choose not to support it and therefore either
+        fail to provide it or ignore it when present. If the header field is
+        not available or is ignored, a proxy cannot identify the purpose of the
+        tunnel and use this as input to any authorization decision regarding the
+        tunnel. This is indistinguishable from the case where either client or
+        proxy does not support the ALPN header field.
+      </t>
+      <t>
+        There is no confidentiality protection for the ALPN header field.  ALPN
+        identifiers that might expose confidential or sensitive information
+        SHOULD NOT be sent, as described in Section 5 of <xref target="RFC7301"/>.
+      </t>
+      <t>
+        The value of the ALPN header field could be falsified by a
+        client.  If the data being sent through the tunnel is encrypted (for
+        example, with <xref target="RFC5246">TLS</xref>), then the proxy might
+        not be able to directly inspect the data to verify that the claimed
+        protocol is the one which is actually being used, though a proxy might
+        be able to perform traffic analysis <xref target="TRAFFIC"/>.
+	Therefore, a proxy cannot rely on the value of the ALPN header field
+        as a policy input in all cases.
+      </t>
+    </section>
+  </middle>
+
+  <back>
+    <references title="Normative References">
+      
+
+<reference anchor="RFC2119" target="http://www.rfc-editor.org/info/rfc2119"><front>
+<title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
+<author initials="S." surname="Bradner" fullname="Scott Bradner">
+<organization>Harvard University</organization>
+<address>
+<postal>
+<street>1350 Massachusetts Avenue</street>
+<street>Cambridge</street>
+<street>MA 02138</street></postal>
+<phone>- +1 617 495 3864</phone>
+<email>sob@harvard.edu</email></address></author>
+<date year="1997" month="March"/>
+<area>General</area>
+<keyword>keyword</keyword>
+<abstract>
+<t>
+   In many standards track documents several words are used to signify
+   the requirements in the specification.  These words are often
+   capitalized.  This document defines these words as they should be
+   interpreted in IETF documents.  Authors who follow these guidelines
+   should incorporate this phrase near the beginning of their document:
+
+<list>
+<t>
+      The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+      NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and
+      "OPTIONAL" in this document are to be interpreted as described in
+      RFC 2119.
+</t></list></t>
+<t>
+   Note that the force of these words is modified by the requirement
+   level of the document in which they are used.
+</t></abstract></front><seriesInfo name="BCP" value="14"/><seriesInfo name="RFC" value="2119"/><seriesInfo name="DOI" value="10.17487/RFC2119"/><format type="TXT" octets="4723" target="http://www.rfc-editor.org/rfc/rfc2119.txt"/><format type="HTML" octets="17970" target="http://xml.resource.org/public/rfc/html/rfc2119.html"/><format type="XML" octets="5777" target="http://xml.resource.org/public/rfc/xml/rfc2119.xml"/></reference>
+
+      
+
+<reference anchor="RFC3864" target="http://www.rfc-editor.org/info/rfc3864"><front>
+<title>Registration Procedures for Message Header Fields</title>
+<author initials="G." surname="Klyne" fullname="G. Klyne">
+<organization/></author>
+<author initials="M." surname="Nottingham" fullname="M. Nottingham">
+<organization/></author>
+<author initials="J." surname="Mogul" fullname="J. Mogul">
+<organization/></author>
+<date year="2004" month="September"/>
+<abstract>
+<t>This specification defines registration procedures for the message header fields used by Internet mail, HTTP, Netnews and other applications.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t></abstract></front><seriesInfo name="BCP" value="90"/><seriesInfo name="RFC" value="3864"/><seriesInfo name="DOI" value="10.17487/RFC3864"/><format type="TXT" octets="36231" target="http://www.rfc-editor.org/rfc/rfc3864.txt"/></reference>
+
+      
+
+<reference anchor="RFC3986" target="http://www.rfc-editor.org/info/rfc3986"><front>
+<title abbrev="URI Generic Syntax">Uniform Resource Identifier (URI): Generic Syntax</title>
+<author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
+<organization abbrev="W3C/MIT">World Wide Web Consortium</organization>
+<address>
+<postal>
+<street>Massachusetts Institute of Technology</street>
+<street>77 Massachusetts Avenue</street>
+<city>Cambridge</city>
+<region>MA</region>
+<code>02139</code>
+<country>USA</country></postal>
+<phone>+1-617-253-5702</phone>
+<facsimile>+1-617-258-5999</facsimile>
+<email>timbl@w3.org</email>
+<uri>http://www.w3.org/People/Berners-Lee/</uri></address></author>
+<author initials="R." surname="Fielding" fullname="Roy T. Fielding">
+<organization abbrev="Day Software">Day Software</organization>
+<address>
+<postal>
+<street>5251 California Avenue, Suite 110</street>
+<city>Irvine</city>
+<region>CA</region>
+<code>92617</code>
+<country>USA</country></postal>
+<phone>+1-949-679-2960</phone>
+<facsimile>+1-949-679-2972</facsimile>
+<email>fielding@gbiv.com</email>
+<uri>http://roy.gbiv.com/</uri></address></author>
+<author initials="L." surname="Masinter" fullname="Larry Masinter">
+<organization abbrev="Adobe Systems">Adobe Systems Incorporated</organization>
+<address>
+<postal>
+<street>345 Park Avenue</street>
+<city>San Jose</city>
+<region>CA</region>
+<code>95110</code>
+<country>USA</country></postal>
+<phone>+1-408-536-3024</phone>
+<email>LMM@acm.org</email>
+<uri>http://larry.masinter.net/</uri></address></author>
+<date year="2005" month="January"/>
+<area>Applications</area>
+<keyword>uniform resource identifier</keyword>
+<keyword>URI</keyword>
+<keyword>URL</keyword>
+<keyword>URN</keyword>
+<keyword>WWW</keyword>
+<keyword>resource</keyword>
+<abstract>
+<t>
+A Uniform Resource Identifier (URI) is a compact sequence of characters
+that identifies an abstract or physical resource.  This specification
+defines the generic URI syntax and a process for resolving URI references
+that might be in relative form, along with guidelines and security
+considerations for the use of URIs on the Internet.
+The URI syntax defines a grammar that is a superset of all valid URIs,
+allowing an implementation to parse the common components of a URI
+reference without knowing the scheme-specific requirements of every
+possible identifier.  This specification does not define a generative
+grammar for URIs; that task is performed by the individual
+specifications of each URI scheme.
+</t></abstract></front><seriesInfo name="STD" value="66"/><seriesInfo name="RFC" value="3986"/><seriesInfo name="DOI" value="10.17487/RFC3986"/><format type="TXT" octets="141811" target="http://www.rfc-editor.org/rfc/rfc3986.txt"/><format type="HTML" octets="214067" target="http://xml.resource.org/public/rfc/html/rfc3986.html"/><format type="XML" octets="163534" target="http://xml.resource.org/public/rfc/xml/rfc3986.xml"/></reference>
+
+      
+
+<reference anchor="RFC7230" target="http://www.rfc-editor.org/info/rfc7230"><front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+<author initials="R." surname="Fielding" fullname="R. Fielding">
+<organization/></author>
+<author initials="J." surname="Reschke" fullname="J. Reschke">
+<organization/></author>
+<date year="2014" month="June"/>
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems.  This document provides an overview of HTTP architecture and its associated terminology, defines the "http" and "https" Uniform Resource Identifier (URI) schemes, defines the HTTP/1.1 message syntax and parsing requirements, and describes related security concerns for implementations.</t></abstract></front><seriesInfo name="RFC" value="7230"/><seriesInfo name="DOI" value="10.17487/RFC7230"/><format type="TXT" octets="205947" target="http://www.rfc-editor.org/rfc/rfc7230.txt"/></reference>
+
+      
+
+<reference anchor="RFC7231" target="http://www.rfc-editor.org/info/rfc7231"><front>
+<title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+<author initials="R." surname="Fielding" fullname="R. Fielding">
+<organization/></author>
+<author initials="J." surname="Reschke" fullname="J. Reschke">
+<organization/></author>
+<date year="2014" month="June"/>
+<abstract>
+<t>The Hypertext Transfer Protocol (HTTP) is a stateless \%application- level protocol for distributed, collaborative, hypertext information systems.  This document defines the semantics of HTTP/1.1 messages, as expressed by request methods, request header fields, response status codes, and response header fields, along with the payload of messages (metadata and body content) and mechanisms for content negotiation.</t></abstract></front><seriesInfo name="RFC" value="7231"/><seriesInfo name="DOI" value="10.17487/RFC7231"/><format type="TXT" octets="235053" target="http://www.rfc-editor.org/rfc/rfc7231.txt"/></reference>
+
+      
+
+<reference anchor="RFC7301" target="http://www.rfc-editor.org/info/rfc7301"><front>
+<title>Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</title>
+<author initials="S." surname="Friedl" fullname="S. Friedl">
+<organization/></author>
+<author initials="A." surname="Popov" fullname="A. Popov">
+<organization/></author>
+<author initials="A." surname="Langley" fullname="A. Langley">
+<organization/></author>
+<author initials="E." surname="Stephan" fullname="E. Stephan">
+<organization/></author>
+<date year="2014" month="July"/>
+<abstract>
+<t>This document describes a Transport Layer Security (TLS) extension for application-layer protocol negotiation within the TLS handshake.  For instances in which multiple application protocols are supported on the same TCP or UDP port, this extension allows the application layer to negotiate which protocol will be used within the TLS connection.</t></abstract></front><seriesInfo name="RFC" value="7301"/><seriesInfo name="DOI" value="10.17487/RFC7301"/><format type="TXT" octets="17439" target="http://www.rfc-editor.org/rfc/rfc7301.txt"/></reference>
+
+    </references>
+
+   <references title="Informative References">
+
+<reference anchor="ALPN-IDS" target="http://www.iana.org/assignments/tls-extensiontype-values"><front>
+<title>Application-Layer Protocol Negotiation (ALPN) Protocol ID</title>
+<author><organization>IANA</organization></author>
+<date/></front></reference>
+
+<reference anchor="MSG-HDRS"
+	   target="https://www.iana.org/assignments/message-headers"><front>
+<title>Permanent Message Header Field Names></title>
+<author><organization>IANA</organization></author>
+<date/></front></reference>
+
+<reference anchor="RFC5246" target="http://www.rfc-editor.org/info/rfc5246"><front>
+<title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+<author initials="T." surname="Dierks" fullname="T. Dierks">
+<organization/></author>
+<author initials="E." surname="Rescorla" fullname="E. Rescorla">
+<organization/></author>
+<date year="2008" month="August"/>
+<abstract>
+<t>This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol.  The TLS protocol provides communications security over the Internet.  The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t></abstract></front><seriesInfo name="RFC" value="5246"/><seriesInfo name="DOI" value="10.17487/RFC5246"/><format type="TXT" octets="222395" target="http://www.rfc-editor.org/rfc/rfc5246.txt"/></reference>
+
+      
+
+<reference anchor="RFC5766" target="http://www.rfc-editor.org/info/rfc5766"><front>
+<title>Traversal Using Relays around NAT (TURN): Relay Extensions to Session Traversal Utilities for NAT (STUN)</title>
+<author initials="R." surname="Mahy" fullname="R. Mahy">
+<organization/></author>
+<author initials="P." surname="Matthews" fullname="P. Matthews">
+<organization/></author>
+<author initials="J." surname="Rosenberg" fullname="J. Rosenberg">
+<organization/></author>
+<date year="2010" month="April"/>
+<abstract>
+<t>If a host is located behind a NAT, then in certain situations it can be impossible for that host to communicate directly with other hosts (peers).  In these situations, it is necessary for the host to use the services of an intermediate node that acts as a communication relay.  This specification defines a protocol, called TURN (Traversal Using Relays around NAT), that allows the host to control the operation of the relay and to exchange packets with its peers using the relay.  TURN differs from some other relay control protocols in that it allows a client to communicate with multiple peers using a single relay address. [STANDARDS-TRACK]</t></abstract></front><seriesInfo name="RFC" value="5766"/><seriesInfo name="DOI" value="10.17487/RFC5766"/><format type="TXT" octets="172112" target="http://www.rfc-editor.org/rfc/rfc5766.txt"/></reference>
+
+
+      <reference anchor="TRAFFIC" target="https://alfredo.pironti.eu/research/publications/full/identifying-website-users-tls-traffic-analysis-new-attacks-and-effective-counterme"><front>
+          <title>
+            Identifying Website Users by TLS Traffic Analysis: New Attacks and Effective
+            Countermeasures, Revision 1
+          </title>
+          <author initials="A." surname="Pironti"/>
+          <author initials="P-Y." surname="Strub"/>
+          <author initials="K." surname="Bhargavan"/>
+          <date year="2012"/>
+          </front></reference>
+
+ </references>
+  </back>
+</rfc>
