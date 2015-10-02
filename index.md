@@ -43,17 +43,17 @@ title: HTTP
 		<h2>Work In Progress</h2>
 		<p>What's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
+			<li>HTTP Extensions <a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">repository</a> and <a href="https://github.com/httpwg/http-extensions/issues">issues list</a></li>
 			<li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a> under consideration</li>
 		</ul>
 	</div>
 
 	<div class="col-sm-4">
 		<h2><a href="/about/">Participate</a></h2>
-		<p>Learn about the Working Group and the IETF, and how to participate. Related materials include:</p>
+		<p>Want to get involved? Join us!</p>
 		<ul>
-			<li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contributing</a></li>
-			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Our Charter</a></li>
+			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Working Group Charter</a></li>
+			<li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution policy</a></li>
 			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing List</a></li>
 			<li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a> - <em>e.g., agendas and minutes</em></li>
 	</div>
