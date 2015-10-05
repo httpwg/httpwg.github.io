@@ -4501,7 +4501,7 @@ HTTP2-Settings    = token68
         </front>
         <seriesInfo name="RFC" value="7230" />
         <x:source href="rfc7230.xml"
-                  basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230"/>
+                  basename="rfc7230"/>
       </reference>
       <reference anchor="RFC7231">
         <front>
@@ -4519,7 +4519,7 @@ HTTP2-Settings    = token68
         </front>
         <seriesInfo name="RFC" value="7231" />
         <x:source href="rfc7231.xml"
-                  basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7231"/>
+                  basename="rfc7231"/>
       </reference>
       <reference anchor="RFC7232">
         <front>
@@ -4574,7 +4574,7 @@ HTTP2-Settings    = token68
         </front>
         <seriesInfo name="RFC" value="7234"/>
         <x:source href="rfc7234.xml"
-                  basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7234"/>
+                  basename="rfc7234"/>
       </reference>
       <reference anchor="RFC7235">
         <front>
@@ -4591,7 +4591,7 @@ HTTP2-Settings    = token68
         </front>
         <seriesInfo name="RFC" value="7235"/>
         <x:source href="rfc7235.xml"
-                  basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7235"/>
+                  basename="rfc7235"/>
       </reference>
 
       <reference anchor="COOKIE">

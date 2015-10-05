@@ -1439,7 +1439,7 @@ else
               </front>
               <seriesInfo name="RFC" value="7230" />
               <x:source href="rfc7230.xml"
-                basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230"/>
+                basename="rfc7230"/>
             </reference>
 
             <reference anchor="RFC2119">

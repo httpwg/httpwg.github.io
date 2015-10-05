@@ -286,7 +286,7 @@ Content-Length: <x:length-of target="body"/>
     <date month="June" year="2014"/>
   </front>
   <seriesInfo name="RFC" value="7230"/>
-  <x:source href="rfc7230.xml" basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7230"/>
+  <x:source href="rfc7230.xml" basename="rfc7230"/>
 </reference>
 
 <reference anchor="RFC7231">
@@ -303,7 +303,7 @@ Content-Length: <x:length-of target="body"/>
     <date month="June" year="2014"/>
   </front>
   <seriesInfo name="RFC" value="7231"/>
-  <x:source href="rfc7231.xml" basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7231"/>
+  <x:source href="rfc7231.xml" basename="rfc7231"/>
 </reference>
 
 <reference anchor="RFC7234">
@@ -324,7 +324,7 @@ Content-Length: <x:length-of target="body"/>
     <date month="June" year="2014"/>
   </front>
   <seriesInfo name="RFC" value="7234"/>
-  <x:source href="rfc7234.xml" basename="https://svn.tools.ietf.org/svn/wg/httpbis/specs/rfc7234"/>
+  <x:source href="rfc7234.xml" basename="rfc7234"/>
 </reference>
 
 </references>
