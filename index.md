@@ -52,7 +52,7 @@ title: HTTP
 		<h2>Participate</h2>
 		<p>Want to get involved? Join us!</p>
 		<ul>
-			<li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">How to Contribute</a> <span class="label label-success">start here</span></li>
+			<li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">How to Contribute</a> <span class="label label-info">start here</span></li>
 			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Working Group Charter</a></li>
 			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing List</a></li>
 			<li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a> - <em>e.g., agendas and minutes</em></li>
