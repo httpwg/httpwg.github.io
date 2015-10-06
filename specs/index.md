@@ -7,4 +7,4 @@ col3: _reg.md
 jumbotron-bg: /asset/dial.jpg
 ---
 
-This page lists current HTTP-related documentation.
+HTTP is defined by these [IETF](https://ietf.org/) **RFCs** and [IANA](https://www.iana.org/) **registries**.
