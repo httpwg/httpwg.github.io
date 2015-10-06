@@ -16,7 +16,7 @@
 <?rfc comments="yes" ?>
 <?rfc inline="yes"?>
 
-<rfc number="7639" category="std" submissionType="IETF" consensus="yes" ipr="trust200902">
+<rfc xmlns:x="http://purl.org/net/xml2rfc/ext" number="7639" category="std" submissionType="IETF" consensus="yes" ipr="trust200902">
   
   <front>
     <title abbrev="The ALPN Header">The ALPN HTTP Header Field</title>
@@ -81,7 +81,7 @@
  <middle>
     <section title="Introduction">
       <t>
-        The HTTP CONNECT method (Section 4.3.6 of <xref target="RFC7231"/>)
+        The HTTP CONNECT method (<xref target="RFC7231" x:sec="4.3.6"/>)
         requests that the recipient establish a tunnel to the identified origin
         server and thereafter forward packets, in both directions, until the
         tunnel is closed. Such tunnels are commonly used to create end-to-end
@@ -145,7 +145,7 @@
         <t>
           The ABNF (Augmented Backus-Naur Form) syntax for the ALPN
           header field value is given below. It uses the syntax defined
-          in Section 1.2 of <xref target="RFC7230"/>.
+          in <xref target="RFC7230" x:sec="1.2"/>.
         </t>
         <figure>
           <artwork type="abnf2616"><![CDATA[
@@ -155,7 +155,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
         </figure>
         <t>
           ALPN protocol names are octet sequences with no additional constraints
-          on format. Octets not allowed in tokens (<xref target="RFC7230"/>, Section 3.2.6) MUST be percent-encoded as per Section 2.1 of <xref target="RFC3986"/>.  Consequently, the octet
+          on format. Octets not allowed in tokens (<xref target="RFC7230" x:sec="3.2.6" x:fmt=","/>) MUST be percent-encoded as per <xref target="RFC3986" x:sec="2.1"/>.  Consequently, the octet
           representing the percent character "%" (hex 25) MUST be
           percent-encoded as well.
         </t>
@@ -260,7 +260,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
       <t>
         In case of using HTTP CONNECT to a TURN (Traversal Using Relays
 	around NAT, <xref target="RFC5766"/>) server, the security considerations of
-        Section 4.3.6 of <xref target="RFC7231"/> apply. It states that
+        <xref target="RFC7231" x:sec="4.3.6"/> apply. It states that
         there "are significant risks in establishing a tunnel to arbitrary
         servers, particularly when the destination is a well-known or reserved
         TCP port that is not intended for Web traffic. ... Proxies that support
@@ -279,7 +279,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
       <t>
         There is no confidentiality protection for the ALPN header field.  ALPN
         identifiers that might expose confidential or sensitive information
-        SHOULD NOT be sent, as described in Section 5 of <xref target="RFC7301"/>.
+        SHOULD NOT be sent, as described in <xref target="RFC7301" x:sec="5"/>.
       </t>
       <t>
         The value of the ALPN header field could be falsified by a
@@ -298,7 +298,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
     <references title="Normative References">
       
 
-<reference anchor="RFC2119" target="http://www.rfc-editor.org/info/rfc2119"><front>
+<reference anchor="RFC2119"><front>
 <title abbrev="RFC Key Words">Key words for use in RFCs to Indicate Requirement Levels</title>
 <author initials="S." surname="Bradner" fullname="Scott Bradner">
 <organization>Harvard University</organization>
@@ -334,7 +334,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
 
       
 
-<reference anchor="RFC3864" target="http://www.rfc-editor.org/info/rfc3864"><front>
+<reference anchor="RFC3864"><front>
 <title>Registration Procedures for Message Header Fields</title>
 <author initials="G." surname="Klyne" fullname="G. Klyne">
 <organization/></author>
@@ -348,7 +348,7 @@ protocol-id     = token ; percent-encoded ALPN protocol identifier
 
       
 
-<reference anchor="RFC3986" target="http://www.rfc-editor.org/info/rfc3986"><front>
+<reference anchor="RFC3986"><front>
 <title abbrev="URI Generic Syntax">Uniform Resource Identifier (URI): Generic Syntax</title>
 <author initials="T." surname="Berners-Lee" fullname="Tim Berners-Lee">
 <organization abbrev="W3C/MIT">World Wide Web Consortium</organization>
@@ -414,7 +414,7 @@ specifications of each URI scheme.
 
       
 
-<reference anchor="RFC7230" target="http://www.rfc-editor.org/info/rfc7230"><front>
+<reference anchor="RFC7230"><front>
 <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
 <author initials="R." surname="Fielding" fullname="R. Fielding">
 <organization/></author>
@@ -426,7 +426,7 @@ specifications of each URI scheme.
 
       
 
-<reference anchor="RFC7231" target="http://www.rfc-editor.org/info/rfc7231"><front>
+<reference anchor="RFC7231"><front>
 <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
 <author initials="R." surname="Fielding" fullname="R. Fielding">
 <organization/></author>
@@ -438,7 +438,7 @@ specifications of each URI scheme.
 
       
 
-<reference anchor="RFC7301" target="http://www.rfc-editor.org/info/rfc7301"><front>
+<reference anchor="RFC7301"><front>
 <title>Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</title>
 <author initials="S." surname="Friedl" fullname="S. Friedl">
 <organization/></author>
@@ -467,7 +467,7 @@ specifications of each URI scheme.
 <author><organization>IANA</organization></author>
 <date/></front></reference>
 
-<reference anchor="RFC5246" target="http://www.rfc-editor.org/info/rfc5246"><front>
+<reference anchor="RFC5246"><front>
 <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
 <author initials="T." surname="Dierks" fullname="T. Dierks">
 <organization/></author>
@@ -479,7 +479,7 @@ specifications of each URI scheme.
 
       
 
-<reference anchor="RFC5766" target="http://www.rfc-editor.org/info/rfc5766"><front>
+<reference anchor="RFC5766"><front>
 <title>Traversal Using Relays around NAT (TURN): Relay Extensions to Session Traversal Utilities for NAT (STUN)</title>
 <author initials="R." surname="Mahy" fullname="R. Mahy">
 <organization/></author>
