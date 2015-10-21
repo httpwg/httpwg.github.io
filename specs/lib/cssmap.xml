@@ -7,8 +7,8 @@
   <map from="noprint" css="hidden-print"/>
   <map from="note" css="alert alert-warning"/>
   <map from="tcenter" css="text-center"/>
-  <map from="tleft" css="text-left"/>
-  <map from="tright" css="text-right"/>
+  <map from="left" css="text-left"/>
+  <map from="right" css="text-right"/>
   <map from="tt" css="table table-condensed table-striped"/>
   <map from="publishedasrfc" css="alert alert-danger"/>
 
