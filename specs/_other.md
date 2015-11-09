@@ -5,6 +5,7 @@ This is a **partial** list of HTTP-relevant specifications, here for convenience
 list of HTTP extensions, see the relevant registry listed above.
 
 * RFC5789: [PATCH Method](/specs/rfc5789.html)
+* RFC5861: [Cache-Control Extensions for Stale Content](/specs/rfc5861.html) - *stale-while-revalidate & stale-if-error*
 * RFC5988: [Web Linking](/specs/rfc5988.html) - *link relations*
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC6585: [Additional Status Codes](/specs/rfc6585.html) - *428, 429, 431 & 511* 
