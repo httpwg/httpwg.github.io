@@ -24,4 +24,4 @@ You can track our [current efforts](/wip/) on this site, as well as in our [gith
 
 ALL contributors and participants in the Working Group (i.e., on the mailing list and in physical meetings) MUST read and understand the ​[NOTE WELL](http://www.ietf.org/about/note-well.html) statement.
 
-See [our contribution policy](/about/policies/) for details of how to contribute to HTTP.
+See [our contribution policy](https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md) for details of how to contribute to HTTP.
