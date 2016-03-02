@@ -2,7 +2,7 @@
 ## Related Specifications
 
 This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
-list of HTTP extensions, see the relevant registry listed above.
+list of HTTP extensions, see the relevant registry.
 
 
 ### Methods 
