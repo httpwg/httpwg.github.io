@@ -5,7 +5,7 @@ This is a **partial** list of HTTP-relevant specifications, here for convenience
 list of HTTP extensions, see the relevant registry listed above.
 
 
-###Methods 
+### Methods 
 
 * RFC5789: [PATCH Method](/specs/rfc5789.html)
 
