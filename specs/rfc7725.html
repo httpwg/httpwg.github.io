@@ -1,0 +1,285 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "about:legacy-compat">
+<html lang="en"><head profile="http://dublincore.org/documents/2008/08/04/dc-html/"><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>An HTTP Status Code to Report Legal Obstacles</title><script type="application/javascript">
+function getMeta(rfcno, container) {
+
+  var xhr = new XMLHttpRequest();
+  var protocol = document.baseURI.toLowerCase().startsWith("https:") ? "https:" : "http:";
+  xhr.open("GET", protocol + "//tools.ietf.org/draft/rfc" + rfcno + "/state.xml", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var doc = xhr.responseXML;
+        var info = getChildByName(doc.documentElement, "info");
+  
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }      
+  
+        var c = getChildByName(info, "stdstatus");
+        if (c !== null) {
+          var bld = newElementWithText("b", c.textContent);
+          cont.appendChild(bld);
+        }
+  
+        c = getChildByName(info, "updatedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+  
+        c = getChildByName(info, "obsoletedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+        
+        c = getChildByName(info, "errata");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", "http://www.rfc-editor.org/errata_search.php?rfc=" + rfcno);
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+
+function getChildByName(parent, name) {
+  if (parent === null) {
+    return null;
+  }
+  else {
+    for (var c = parent.firstChild; c !== null; c = c.nextSibling) {
+      if (name == c.nodeName) {
+        return c;
+      }
+    }
+    return null;
+  }
+}
+
+function appendRfcLinks(parent, text) {
+  var updates = text.split(",");
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim();
+    if (rfc.substring(0, 3) == "rfc") {
+      var link = newElement("a");
+      link.setAttribute("href", "http://tools.ietf.org/html/" + rfc);
+      link.appendChild(newText(rfc.substring(3)));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul li {
+        list-style: none;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Requirements" href="#rfc.section.2"><link rel="Chapter" title="3 451 Unavailable For Legal Reasons" href="#rfc.section.3"><link rel="Chapter" title="4 Identifying Blocking Entities" href="#rfc.section.4"><link rel="Chapter" title="5 Security Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 IANA Considerations" href="#rfc.section.6"><link rel="Chapter" href="#rfc.section.7" title="7 References"><link rel="Appendix" title="A Acknowledgements" href="#rfc.section.A"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc7725.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7725"><link rel="Help" title="Additional Information on tools.ietf.org" href="http://tools.ietf.org/html/rfc7725"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="HTTP"><link rel="schema.dct" href="http://purl.org/dc/terms/"><meta name="dct.creator" content="Bray, T."><meta name="dct.identifier" content="urn:ietf:rfc:7725"><meta name="dct.issued" scheme="ISO8601" content="2016-02"><meta name="dct.abstract" content="This document specifies a Hypertext Transfer Protocol (HTTP) status code for use when resource access is denied as a consequence of legal demands."><meta name="dct.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This document specifies a Hypertext Transfer Protocol (HTTP) status code for use when resource access is denied as a consequence of legal demands."></head><body onload="getMeta(7725,&#34;rfc.meta&#34;);"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      
+      
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Documentation<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/specs/"><strong>Full HTTP Documentation listing</strong></a></li>
+            <li class="divider"></li>
+            <li class="dropdown-header">HTTP Core Specs</li>
+            <li><a href="/specs/rfc7230.html">HTTP/1.1: Message Syntax and Routing</a></li>
+            <li><a href="/specs/rfc7231.html">HTTP/1.1: Semantics and Content</a></li>
+            <li><a href="/specs/rfc7232.html">HTTP/1.1: Conditional Requests </a></li>
+            <li><a href="/specs/rfc7233.html">HTTP/1.1: Range Requests</a></li>
+            <li><a href="/specs/rfc7234.html">HTTP/1.1: Caching</a></li>
+            <li><a href="/specs/rfc7235.html">HTTP/1.1: Authentication</a></li>
+            <li><a href="/specs/rfc7540.html">HTTP/2</a></li>
+            <li><a href="/specs/rfc7541.html">HPACK</a></li>
+            <li><a href="/specs/rfc6265.html">HTTP Cookies</a></li>
+            <li class="divider"></li>
+            <li class="dropdown-header">Extension Registries</li>
+            <li><a href="http://www.iana.org/assignments/http-methods/">HTTP Method Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-status-codes/">HTTP Status Code Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/message-headers/">Message Header Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-authschemes/">HTTP Authentication Scheme Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-cache-directives/">HTTP Cache Directive Registry</a></li>
+            <li><a href="http://www.iana.org/assignments/http-parameters/">HTTP Parameters Registry</a></li>
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">FAQs<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/faq/spec/">FAQs for Spec Writers</a></li>
+            <li><a href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Work in Progress<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">HTTP Extensions</li>
+            <li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions Repository</a></li>
+            <li><a href="https://github.com/httpwg/http-extensions/issues">HTTP Extensions Issues</a></li>
+            <li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>          
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Participate<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/about/">About the HTTP Working Group</a></li>
+            <li class="divider"></li>
+            <li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
+            <li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
+            <li><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List <span class="glyphicon glyphicon-envelope"></span></a></li>
+            <li><a href="https://github.com/httpwg/wg-materials">Meeting Materials Repository</a></li>
+          </ul>
+      </li>
+            
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="https://twitter.com/http_wg"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="22" height="16"></a></li>
+    </ul>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>7725</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.1">Introduction</a></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.2">Requirements</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.3">451 Unavailable For Legal Reasons</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.4">Identifying Blocking Entities</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.5">Security Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.6">IANA Considerations</a></li><li><a href="#rfc.section.7">7.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.7.1">7.1</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.7.2">7.2</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.section.A">A.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.A">Acknowledgements</a></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 col-md-pull-4 main" role="main"><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">T. Bray</td></tr><tr><td class="text-left">Request for Comments: 7725</td><td class="text-right">Textuality</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">February 2016</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>An HTTP Status Code to Report Legal Obstacles</h1></div><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><p>This document specifies a Hypertext Transfer Protocol (HTTP) status code for use when resource access is denied as a consequence of legal demands.</p></div><div id="rfc.meta" class="alert alert-info"></div><div id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><p>This is an Internet Standards Track document.</p><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in Section 2 of RFC 5741.</p><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="http://www.rfc-editor.org/info/rfc7725">http://www.rfc-editor.org/info/rfc7725</a>.</p></div><div id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><p>Copyright © 2016 IETF Trust and the persons identified as the document authors. All rights reserved.</p><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div><div><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;Introduction</h2><div id="rfc.section.1.p.1"><p>This document specifies a Hypertext Transfer Protocol (HTTP) status code for use when a server operator has received a legal demand to deny access to a resource or to a set of resources that includes the requested resource.</p></div><div id="rfc.section.1.p.2"><p>This status code can be used to provide transparency in circumstances where issues of law or public policy affect server operations. This transparency may be beneficial both to these operators and to end users.</p></div><div id="rfc.section.1.p.3"><p><a href="#RFC4924"><cite title="Reflections on Internet Transparency">[RFC4924]</cite></a> discusses the forces working against transparent operation of the Internet; these clearly include legal interventions to restrict access to content. As that document notes, and as <a href="https://tools.ietf.org/html/rfc4084#section-4">Section 4</a> of <a href="#RFC4084"><cite title="Terminology for Describing Internet Connectivity">[RFC4084]</cite></a> states, such restrictions should be made explicit.</p></div></div><div><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;Requirements</h2><div id="rfc.section.2.p.1"><p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a>.</p></div></div><div><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;451 Unavailable For Legal Reasons</h2><div id="rfc.section.3.p.1"><p>This status code indicates that the server is denying access to the resource as a consequence of a legal demand.</p></div><div id="rfc.section.3.p.2"><p>The server in question might not be an origin server. This type of legal demand typically most directly affects the operations of ISPs and search engines.</p></div><div id="rfc.section.3.p.3" class="avoidbreakafter"><p>Responses using this status code <em class="bcp14">SHOULD</em> include an explanation, in the response body, of the details of the legal demand: the party making it, the applicable legislation or regulation, and what classes of person and resource it applies to. For example:</p></div><div id="rfc.figure.u.1"><pre class="text">HTTP/1.1 451 Unavailable For Legal Reasons
+Link: &lt;https://spqr.example.org/legislatione&gt;; rel="blocked-by"
+Content-Type: text/html
+
+<span>&lt;html&gt;
+ &lt;head&gt;&lt;title&gt;Unavailable For Legal Reasons&lt;/title&gt;&lt;/head&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Unavailable For Legal Reasons&lt;/h1&gt;
+  &lt;p&gt;This request may not be serviced in the Roman Province 
+  of Judea due to the Lex Julia Majestatis, which disallows 
+  access to resources hosted on servers deemed to be 
+  operated by the People's Front of Judea.&lt;/p&gt;
+ &lt;/body&gt;
+&lt;/html&gt;</span></pre></div><div id="rfc.section.3.p.4"><p>The use of the 451 status code implies neither the existence nor nonexistence of the resource named in the request. That is to say, it is possible that if the legal demands were removed, a request for the resource still might not succeed.</p></div><div id="rfc.section.3.p.5"><p>Note that in many cases clients can still access the denied resource by using technical countermeasures such as a VPN or the Tor network.</p></div><div id="rfc.section.3.p.6"><p>A 451 response is cacheable by default, i.e., unless otherwise indicated by the method definition or explicit cache controls; see <a href="#RFC7234"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Caching">[RFC7234]</cite></a>.</p></div></div><div><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;Identifying Blocking Entities</h2><div id="rfc.section.4.p.1"><p>As noted above, when an attempt to access a resource fails with status 451, the entity blocking access might or might not be the origin server. There are a variety of entities in the resource-access path that could choose to deny access — for example, ISPs, cache providers, and DNS servers.</p></div><div id="rfc.section.4.p.2"><p>It is useful, when legal blockages occur, to be able to identify the entities actually implementing the blocking.</p></div><div id="rfc.section.4.p.3"><p>When an entity blocks access to a resource and returns status 451, it <em class="bcp14">SHOULD</em> include a "Link" HTTP header field <a href="#RFC5988"><cite title="Web Linking">[RFC5988]</cite></a> whose value is a URI reference <a href="#RFC3986"><cite title="Uniform Resource Identifier (URI): Generic Syntax">[RFC3986]</cite></a> identifying itself. When used for this purpose, the "Link" header field <em class="bcp14">MUST</em> have a "rel" parameter whose value is "blocked-by".</p></div><div id="rfc.section.4.p.4"><p>The intent is that the header be used to identify the entity actually implementing blockage, not any other entity mandating it. A human-readable response body, as discussed above, is the appropriate location for discussion of administrative and policy issues.</p></div></div><div><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a>&nbsp;Security Considerations</h2><div id="rfc.section.5.p.1"><p>Clients cannot rely upon the use of the 451 status code. It is possible that certain legal authorities might wish to avoid transparency, and not only demand the restriction of access to certain resources, but also avoid disclosing that the demand was made.</p></div></div><div><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a>&nbsp;IANA Considerations</h2><div id="rfc.section.6.p.1" class="avoidbreakafter"><p>The HTTP Status Codes Registry has been updated with the following entry:</p></div><div id="rfc.section.6.p.2"><ul><li>Code: 451</li><li>Description: Unavailable For Legal Reasons</li><li>Specification: RFC 7725</li></ul></div><div id="rfc.section.6.p.3" class="avoidbreakafter"><p>The Link Relation Type Registry has been updated with the following entry:</p></div><div id="rfc.section.6.p.4"><ul><li>Relation Name: blocked-by</li><li>Description: Identifies the entity that blocks access to a resource following receipt of a legal demand.</li><li>Reference: RFC 7725</li></ul></div></div><h2 id="rfc.references"><a id="rfc.section.7" href="#rfc.section.7">7.</a> References</h2><h3 id="rfc.references.1"><a href="#rfc.section.7.1" id="rfc.section.7.1">7.1</a> Normative References</h3><dl class="reference"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="http://www.rfc-editor.org/info/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC3986">[RFC3986]</dt><dd>Berners-Lee, T., Fielding, R., and L. Masinter, “<a href="http://www.rfc-editor.org/info/rfc3986">Uniform Resource Identifier (URI): Generic Syntax</a>”, STD&nbsp;66, RFC&nbsp;3986, <a href="http://dx.doi.org/10.17487/RFC3986">DOI&nbsp;10.17487/RFC3986</a>, January&nbsp;2005, &lt;<a href="http://www.rfc-editor.org/info/rfc3986">http://www.rfc-editor.org/info/rfc3986</a>&gt;.</dd><dt id="RFC5988">[RFC5988]</dt><dd>Nottingham, M., “<a href="http://www.rfc-editor.org/info/rfc5988">Web Linking</a>”, RFC&nbsp;5988, <a href="http://dx.doi.org/10.17487/RFC5988">DOI&nbsp;10.17487/RFC5988</a>, October&nbsp;2010, &lt;<a href="http://www.rfc-editor.org/info/rfc5988">http://www.rfc-editor.org/info/rfc5988</a>&gt;.</dd><dt id="RFC7234">[RFC7234]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="http://www.rfc-editor.org/info/rfc7234">Hypertext Transfer Protocol (HTTP/1.1): Caching</a>”, RFC&nbsp;7234, <a href="http://dx.doi.org/10.17487/RFC7234">DOI&nbsp;10.17487/RFC7234</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7234">http://www.rfc-editor.org/info/rfc7234</a>&gt;.</dd></dl><h3 id="rfc.references.2"><a href="#rfc.section.7.2" id="rfc.section.7.2">7.2</a> Informative References</h3><dl class="reference"><dt id="RFC4084">[RFC4084]</dt><dd>Klensin, J., “<a href="http://www.rfc-editor.org/info/rfc4084">Terminology for Describing Internet Connectivity</a>”, BCP&nbsp;104, RFC&nbsp;4084, <a href="http://dx.doi.org/10.17487/RFC4084">DOI&nbsp;10.17487/RFC4084</a>, May&nbsp;2005, &lt;<a href="http://www.rfc-editor.org/info/rfc4084">http://www.rfc-editor.org/info/rfc4084</a>&gt;.</dd><dt id="RFC4924">[RFC4924]</dt><dd>Aboba, B., Ed. and E. Davies, “<a href="http://www.rfc-editor.org/info/rfc4924">Reflections on Internet Transparency</a>”, RFC&nbsp;4924, <a href="http://dx.doi.org/10.17487/RFC4924">DOI&nbsp;10.17487/RFC4924</a>, July&nbsp;2007, &lt;<a href="http://www.rfc-editor.org/info/rfc4924">http://www.rfc-editor.org/info/rfc4924</a>&gt;.</dd></dl><div><h2 id="rfc.section.A" class="np"><a href="#rfc.section.A">A.</a>&nbsp;Acknowledgements</h2><div id="rfc.section.A.p.1"><p>Thanks to Terence Eden, who observed that the existing status code 403 was not really suitable for this situation, and suggested the creation of a new status code.</p></div><div id="rfc.section.A.p.2"><p>Thanks also to Ray Bradbury.</p></div></div><div class="avoidbreakinside"><h2 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h2><p><b>Tim Bray</b><br>Textuality<br>EMail: <a href="mailto:tbray@textuality.com">tbray@textuality.com</a><br>URI: <a href="http://www.tbray.org/ongoing/">http://www.tbray.org/ongoing/</a></p></div></div></div></div><script src="/bower_components/jquery/dist/jquery.min.js"></script><script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
