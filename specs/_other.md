@@ -15,10 +15,11 @@ list of HTTP extensions, see the relevant registry.
 * RFC7538: [Status Code 308 (Permanent Redirect)](/specs/rfc7538.html) - *308*
 * RFC7725: [Status Code to Report Legal Obstacles](/specs/rfc7725.html) - *451*
 
-### Header Fields
+### Other Extensions
 
 * RFC5861: [Cache-Control Extensions for Stale Content](/specs/rfc5861.html) - *stale-while-revalidate & stale-if-error*
 * RFC5988: [Web Linking](/specs/rfc5988.html) - *link relations*
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info Header Fields](/specs/rfc7615.html)
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
+* RFC7838: [Alternative Services](/specs/rfc7838.html)
