@@ -22,4 +22,5 @@ list of HTTP extensions, see the relevant registry.
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info Header Fields](/specs/rfc7615.html)
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
+* RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html) - *Accept-Encoding in responses*
 * RFC7838: [Alternative Services](/specs/rfc7838.html)

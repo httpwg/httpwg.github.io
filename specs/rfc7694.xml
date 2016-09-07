@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc subcompact="no"?>
+<?rfc rfcedstyle="yes"?>
+<?rfc-ext allow-markup-in-artwork="yes" ?>
+
+<!DOCTYPE rfc [
+  <!ENTITY mdash "&#8212;">
+  <!ENTITY Note "<x:h xmlns:x='http://purl.org/net/xml2rfc/ext'>Note:</x:h>">
+  <!ENTITY MAY "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MAY</bcp14>">
+  <!ENTITY MUST "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MUST</bcp14>">
+  <!ENTITY MUST-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>MUST NOT</bcp14>">
+  <!ENTITY OPTIONAL "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>OPTIONAL</bcp14>">
+  <!ENTITY RECOMMENDED "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>RECOMMENDED</bcp14>">
+  <!ENTITY REQUIRED "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>REQUIRED</bcp14>">
+  <!ENTITY SHALL "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHALL</bcp14>">
+  <!ENTITY SHALL-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHALL NOT</bcp14>">
+  <!ENTITY SHOULD "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD</bcp14>">
+  <!ENTITY SHOULD-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD NOT</bcp14>">
+]>
+<rfc xmlns:x="http://purl.org/net/xml2rfc/ext" xmlns:ed="http://greenbytes.de/2002/rfcedit" number="7725" ipr="trust200902" category="std" xml:lang="en" x:maturity-level="proposed">
+
+  <x:feedback template="mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&amp;body=&lt;{ref}&gt;:"/>
+
+	<front>
+  <title abbrev="HTTP CICE">Hypertext Transfer Protocol (HTTP) Client-Initiated Content-Encoding</title>
+  <author initials="J. F." surname="Reschke" fullname="Julian F. Reschke">
+    <organization abbrev="greenbytes">greenbytes GmbH</organization>
+    <address>
+      <postal>
+        <street>Hafenweg 16</street>
+        <city>Muenster</city><region>NW</region><code>48155</code>
+        <country>Germany</country>
+      </postal>
+      <email>julian.reschke@greenbytes.de</email>	
+      <uri>http://greenbytes.de/tech/webdav/</uri>	
+    </address>
+  </author>
+
+  <date year="2015" month="November" />
+  
+  <area>Applications and Real-Time</area>
+  <workgroup>HTTP</workgroup>
+  <keyword>HTTP</keyword>
+  <keyword>content-encoding</keyword>
+
+  <abstract>
+    <t>
+      In HTTP, content codings allow for payload encodings such as for
+      compression or integrity checks. In particular, the "gzip" content
+      coding is widely used for payload data sent in response messages.
+    </t>
+    <t>
+      Content codings can be used in request messages as well; however,
+      discoverability is not on par with response messages. This document
+      extends the HTTP "Accept-Encoding" header field for use in responses,
+      to indicate the content codings that are supported in requests.
+    </t>
+  </abstract>
+
+  </front>
+
+  <middle>
+
+<section title="Introduction" anchor="introduction">
+    <t>
+      In HTTP, content codings allow for payload encodings such as for
+      compression or integrity checks (<xref target="RFC7231" x:fmt="," x:rel="#data.encoding"/>).
+      In particular, the "gzip" content coding (<xref target="RFC7230" x:fmt="," x:rel="#compression.codings"/>)
+      is widely used for payload data sent in response messages.
+    </t>
+    <t>
+      Content codings can be used in request messages as well; however,
+      discoverability is not on par with response messages. This document
+      extends the HTTP "Accept-Encoding" header field (<xref target="RFC7231" x:fmt="," x:rel="#header.accept-encoding"/>) for use in responses,
+      to indicate the content codings that are supported in requests. It
+      furthermore updates the definition of status code 415
+      (Unsupported Media Type) (<xref target="RFC7231" x:fmt="," x:rel="#status.415"/>),
+      recommending that the "Accept-Encoding" header field be included when
+      appropriate.
+    </t>
+</section>  
+
+<section title="Notational Conventions" anchor="notational.conventions">
+<t>
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in <xref target="RFC2119"/>.
+</t>
+<t>
+   This document reuses terminology defined in the base HTTP specifications,
+   namely <xref target="RFC7230" x:fmt="of" x:rel="#architecture"/> and
+   <xref target="RFC7231" x:fmt="of" x:rel="#data.encoding"/>.
+</t>
+</section>
+
+<section title="Using the 'Accept-Encoding' Header Field in Responses" anchor="accept-encoding">
+<t>
+  <xref target="RFC7231" x:fmt="of" x:rel="#header.accept-encoding"/> defines
+  "Accept-Encoding" as a request header field only.
+</t>
+<t>
+  This specification expands that definition to allow "Accept-Encoding"
+  as a response header field as well.  When present in a response, it indicates what
+  content codings the resource was willing to accept in the associated request.
+  A field value that only contains "identity" implies that no 
+  content codings were supported.
+</t>
+<t>
+  Note that this information is specific to the associated request; the
+  set of supported encodings might be different for other resources on the 
+  same server and could change over time or depend on other aspects of the 
+  request (such as the request method).
+</t>
+<t>
+  <xref target="RFC7231" x:fmt="of" x:rel="#status.415"/> defines status code
+  415 (Unsupported Media Type) to apply to problems related to both media types
+  and content codings.
+</t>
+<t>
+  Servers that fail a request due to an unsupported content coding ought to
+  respond with a 415 status and ought to include an "Accept-Encoding" header field in
+  that response, allowing clients to distinguish between issues related
+  to content codings and media types. In order
+  to avoid confusion with issues related to media types, servers that fail a request
+  with a 415 status for reasons unrelated to content codings &MUST-NOT;
+  include the "Accept-Encoding" header field.
+</t>
+<t>
+  It is expected that the most common use of "Accept-Encoding" in responses will have the 415
+  (Unsupported Media Type) status code, in response to optimistic use of a content coding by
+  clients. However, the header field can also be used to indicate to clients that content codings
+  are supported, to optimize future interactions. For example, a resource might include it in a 2xx
+  response when the request payload was big enough to justify use of a compression coding but the
+  client failed do so.
+</t>
+</section>
+
+<section title="Example" anchor="example">
+<t>
+  A client submits a POST request using the "compress" content coding
+  (<xref target="RFC7231" x:fmt="," x:rel="#content.codings"/>):
+</t>
+<figure><artwork type="message/http; msgtype=&#34;request&#34;" x:indent-with="  ">
+POST /edit/ HTTP/1.1
+Host: example.org
+Content-Type: application/atom+xml;type=entry
+Content-Encoding: compress
+
+...compressed payload...
+</artwork></figure>
+<t>
+  The server rejects the request because it only allows the "gzip" content coding:
+</t>
+<figure><artwork type="message/http; msgtype=&#34;response&#34;" x:indent-with="  ">
+HTTP/1.1 415 Unsupported Media Type
+Date: Fri, 09 May 2014 11:43:53 GMT
+Accept-Encoding: gzip
+Content-Length: <x:length-of target="exbody"/>
+Content-Type: text/plain
+
+<x:span anchor="exbody">This resource only supports the "gzip" content coding in requests.
+</x:span></artwork></figure>
+<t>
+  At this point, the client can retry the request with the supported
+  "gzip" content coding.
+</t>
+<t>
+  Alternatively, a server that does not support any content codings in
+  requests could answer with:
+</t>
+<figure><artwork type="message/http; msgtype=&#34;response&#34;" x:indent-with="  ">
+HTTP/1.1 415 Unsupported Media Type
+Date: Fri, 09 May 2014 11:43:53 GMT
+Accept-Encoding: identity
+Content-Length: <x:length-of target="exbody2"/>
+Content-Type: text/plain
+
+<x:span anchor="exbody2">This resource does not support content codings in requests.
+</x:span></artwork></figure>
+</section>
+
+<section title="Deployment Considerations" anchor="deployment.considerations">
+<t>
+  Servers that do not support content codings in requests already are required
+  to fail a request that uses a content coding. <xref target="RFC7231" x:fmt="of" x:rel="#status.415"/>
+  defines the status code 415 (Unsupported Media Type) for this purpose, so the only
+  change needed is to include the "Accept-Encoding" header field with the value
+  "identity" in that response.
+</t>
+<t>
+  Servers that do support some content codings are required to fail requests
+  with unsupported content codings as well. To be compliant with this specification,
+  servers will need to use the status code 415 (Unsupported Media Type) to
+  signal the problem and will have to include an "Accept-Encoding" header field
+  that enumerates the content codings that are supported. As the set of
+  supported content codings is usually
+  static and small, adding the header field ought to be trivial.
+</t>
+</section>
+
+<section title="Security Considerations" anchor="security.considerations">
+<!--<t>
+  This specification does not introduce any new security considerations
+  beyond those discussed in <xref target="RFC7231" x:fmt="of"
+  x:rel="#security.considerations"/>.
+</t>-->
+<t>
+  This specification only adds discovery of supported content codings and
+  diagnostics for requests failing due to unsupported content codings. As such,
+  it doesn't introduce any new security considerations over those already
+  present in HTTP/1.1 (<xref target="RFC7231" x:fmt="of"
+  x:rel="#security.considerations"/>) and HTTP/2 (<xref target="RFC7540" x:fmt="of"
+  x:rel="#security"/>).
+</t>
+<t>
+  However, the point of better discoverability and diagnostics is to make it
+  easier to use content codings in requests. This might lead to increased
+  usage of compression codings such as gzip (<xref target="RFC7230" x:fmt="of"
+  x:rel="#compression.codings"/>), which, when used over a secure channel, can
+  enable side-channel attacks such as BREACH (see <xref target="RFC7540" x:fmt="of"
+  x:sec="10.6"/> and <xref target="BREACH"/>). At the time of publication,
+  it was unclear how BREACH-like attacks can be applied to compression in HTTP requests.
+</t>
+</section>
+
+<section title="IANA Considerations" anchor="iana.considerations">
+<section title="Header Field Registry">
+<t>
+   HTTP header fields are registered within the "Message Headers" registry
+   located at <eref target="http://www.iana.org/assignments/message-headers"/>,
+   as defined by <xref target="BCP90"/>.
+</t>
+<t>
+   This document updates the definition of the "Accept-Encoding" header field.
+   The "Permanent Message Header Field Names" registry has been updated
+   as follows:
+</t>
+<texttable align="left" suppress-title="true" anchor="iana.header.registration.table">
+   <ttcol>Header Field Name</ttcol>
+   <ttcol>Protocol</ttcol>
+   <ttcol>Status</ttcol>
+   <ttcol>Reference</ttcol>
+
+   <c>Accept-Encoding</c>
+   <c>http</c>
+   <c>standard</c>
+   <c>
+      <xref target="RFC7231" x:fmt="of" x:rel="#header.accept-encoding"/>
+      and <xref target="accept-encoding"/> of this document
+   </c>
+</texttable>
+</section>
+<section title="Status Code Registry">
+<t>
+   HTTP status codes are registered within the "HTTP Status Codes" registry
+   located at <eref target="http://www.iana.org/assignments/http-status-codes"/>.
+</t>
+<t>
+   This document updates the definition of the status code 415 (Unsupported Media Type).
+   The "HTTP Status Codes" registry has been updated as follows:
+</t>
+<texttable align="left" suppress-title="true" anchor="iana.status.code.registration.table">
+   <ttcol>Value</ttcol>
+   <ttcol>Description</ttcol>
+   <ttcol>Reference</ttcol>
+
+   <c>415</c>
+   <c>Unsupported Media Type</c>
+   <c>
+      <xref target="RFC7231" x:fmt="of" x:rel="#status.415"/>
+      and <xref target="accept-encoding"/> of this document
+   </c>
+</texttable>
+</section>
+</section>
+
+  </middle>
+  <back>
+  
+<references title="Normative References">
+
+<reference anchor="RFC2119">
+  <front>
+    <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+    <author initials="S." surname="Bradner" fullname="Scott Bradner">
+      <organization>Harvard University</organization>
+      <address><email>sob@harvard.edu</email></address>
+    </author>
+    <date month="March" year="1997"/>
+  </front>
+  <seriesInfo name="BCP" value="14"/>
+  <seriesInfo name="RFC" value="2119"/>
+</reference>
+
+<reference anchor="RFC7230">
+  <front>
+    <title>Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</title>
+    <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor">
+      <organization abbrev="Adobe">Adobe Systems Incorporated</organization>
+      <address><email>fielding@gbiv.com</email></address>
+    </author>
+    <author initials="J. F." surname="Reschke" fullname="Julian F. Reschke" role="editor">
+      <organization abbrev="greenbytes">greenbytes GmbH</organization>
+      <address><email>julian.reschke@greenbytes.de</email></address>
+    </author>
+    <date month="June" year="2014"/>
+  </front>
+  <seriesInfo name="RFC" value="7230"/>
+  <x:source href="rfc7230.xml" basename="rfc7230"/>
+</reference>
+
+<reference anchor="RFC7231">
+  <front>
+    <title>Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</title>
+    <author initials="R." surname="Fielding" fullname="Roy T. Fielding" role="editor">
+      <organization abbrev="Adobe">Adobe Systems Incorporated</organization>
+      <address><email>fielding@gbiv.com</email></address>
+    </author>
+    <author initials="J. F." surname="Reschke" fullname="Julian F. Reschke" role="editor">
+      <organization abbrev="greenbytes">greenbytes GmbH</organization>
+      <address><email>julian.reschke@greenbytes.de</email></address>
+    </author>
+    <date month="June" year="2014"/>
+  </front>
+  <seriesInfo name="RFC" value="7231"/>
+  <x:source href="rfc7231.xml" basename="rfc7231"/>
+</reference>
+
+</references>
+
+<references title="Informative References">
+<reference anchor='BCP90'>
+  <front>
+    <title>Registration Procedures for Message Header Fields</title>
+    <author initials='G.' surname='Klyne' fullname='G. Klyne'>
+      <organization>Nine by Nine</organization>
+      <address><email>GK-IETF@ninebynine.org</email></address>
+    </author>
+    <author initials='M.' surname='Nottingham' fullname='M. Nottingham'>
+      <organization>BEA Systems</organization>
+      <address><email>mnot@pobox.com</email></address>
+    </author>
+    <author initials='J.' surname='Mogul' fullname='J. Mogul'>
+      <organization>HP Labs</organization>
+      <address><email>JeffMogul@acm.org</email></address>
+    </author>
+    <date year='2004' month='September' />
+  </front>
+  <seriesInfo name='BCP' value='90' />
+  <seriesInfo name='RFC' value='3864' />
+</reference>
+<reference anchor="RFC7540">
+  <front>
+    <title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
+    <author initials="M." surname="Belshe" fullname="Mike Belshe"/>
+    <author initials="R." surname="Peon" fullname="Roberto Peon"/>
+    <author initials="M." surname="Thomson" fullname="Martin Thomson" role="editor"/>
+    <date month="May" year="2015"/>
+  </front>
+  <seriesInfo name="RFC" value="7540"/>
+  <x:source href="rfc7540.xml"/>
+</reference>
+<reference anchor="BREACH"
+           target="http://breachattack.com/resources/BREACH%20-%20SSL,%20gone%20in%2030%20seconds.pdf">
+  <front>
+    <title>
+      BREACH: Reviving the CRIME Attack
+    </title>
+    <author initials="Y." surname="Gluck"/>
+    <author initials="N." surname="Harris"/>
+    <author initials="A." surname="Prado"/>
+    <date year="2013" month="July" day="12"/>
+  </front>
+</reference>
+</references>
+
+<section title="Acknowledgements" numbered="false">
+<t>
+  Thanks go to the Hypertext Transfer Protocol Working Group participants,
+  namely Amos Jeffries, Ben Campbell, Mark Nottingham, Pete Resnick,
+  Stephen Farrell, and Ted Hardie. 
+</t>
+</section>
+
+  </back>
+
+</rfc>
