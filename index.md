@@ -56,6 +56,7 @@ title: HTTP
 			<li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">Working Group Charter</a></li>
 			<li><a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">Mailing List</a></li>
 			<li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a> - <em>e.g., agendas and minutes</em></li>
+    </ul>
 	</div>
 </div>
 
