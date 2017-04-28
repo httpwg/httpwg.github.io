@@ -7,18 +7,21 @@ title: HTTP
 
 <div class="row">
 
-<div class="jumbotron clearfix">
+	<div class="col-sm-2"></div>
+	<div class="col-sm-8">
+
+    <div class="clearfix">
 	
-<div class="pull-left hidden-xs">
-	<img src="/asset/http.svg" class="img-responsive">
-</div>
+    <div class="pull-left hidden-xs">
+    	<img src="/asset/http.svg" class="img-responsive">
+    </div>
 
-<p>This is the home page of the <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong>.</p>
-<br clear="all" class="hidden-xs hidden-md hidden-lg">
-<br clear="all" class="hidden-xs hidden-md hidden-lg">
-<p>We maintain and develop the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
+    <p class="lead"><br>The <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong> maintains and develops the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
 
-</div>
+    </div>
+  </div>
+	<div class="col-sm-2"></div>
+
 </div>
 
 <div class="row">
