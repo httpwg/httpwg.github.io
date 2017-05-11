@@ -24,3 +24,4 @@ list of HTTP extensions, see the relevant registry.
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
 * RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html) - *Accept-Encoding in responses*
 * RFC7838: [Alternative Services](/specs/rfc7838.html)
+* RFC8164: [Opportunistic Security for HTTP/2](/specs/rfc8164.html)
