@@ -3,7 +3,7 @@ body {
   padding-bottom: 100px;
   height: 100%;
 }
-*:not(*[href])[id]:before  { 
+*:not([href])[id]:before  { 
   display: block; 
   content: " "; 
   margin-top: -65px; 
