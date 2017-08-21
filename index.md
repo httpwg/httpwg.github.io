@@ -13,7 +13,7 @@ title: HTTP
     <div class="clearfix">
 	
     <div class="pull-left hidden-xs">
-    	<img src="/asset/http.svg" class="img-responsive">
+    	<img src="/asset/https.svg" class="img-responsive">
     </div>
 
     <p class="lead"><br>The <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong> maintains and develops the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
