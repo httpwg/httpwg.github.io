@@ -36,3 +36,4 @@ list of HTTP extensions, see the relevant registry.
 * RFC7616: [HTTP Digest Access Authentication](/specs/rfc7616.html)
 * RFC7617: [HTTP Basic Authentication](/specs/rfc7617.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info](/specs/rfc7615.html)
+* RFC8188: [Encrypted Content-Encoding](/specs/rfc8188.html)
