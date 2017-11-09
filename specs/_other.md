@@ -23,7 +23,8 @@ list of HTTP extensions, see the relevant registry.
 
 ### Caching Extensions
 
-* RFC5861: [Stale-while-revalidate and stale-if-error](/specs/rfc5861.html)
+* RFC5861: [Cache-Control: stale-while-revalidate and stale-if-error](/specs/rfc5861.html)
+* RFC8246: [Cache-Control: immutable](/specs/rfc8246.html)
 
 ### Content-Related Extensions
 
