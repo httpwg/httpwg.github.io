@@ -17,8 +17,6 @@ Additionally, the following are optional to implement, but widely used:
  * RFC7233: [HTTP/1.1 Range Requests](/specs/rfc7233.html) 
  * RFC7234: [HTTP/1.1 Caching](/specs/rfc7234.html) 
  * RFC7235: [HTTP/1.1 Authentication](/specs/rfc7235.html) 
- * RFC7616: [HTTP Digest Access Authentication](/specs/rfc7616.html)
- * RFC7617: [HTTP Basic Authentication](/specs/rfc7617.html)
  
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068**, **RFC2616** and **RFC2617**.
 
