@@ -11,17 +11,26 @@ list of HTTP extensions, see the relevant registry.
 
 ### Status Codes
 
-* RFC6585: [Additional Status Codes](/specs/rfc6585.html) - *428, 429, 431 & 511* 
-* RFC7538: [Status Code 308 (Permanent Redirect)](/specs/rfc7538.html) - *308*
-* RFC7725: [Status Code to Report Legal Obstacles](/specs/rfc7725.html) - *451*
+* RFC6585: [Status Codes 428, 429, 431 and 511](/specs/rfc6585.html) (Precondition Required, Too Many Requests, Request Header Fields Too Large, Network Authentication Required)
+* RFC7538: [Status Code 308](/specs/rfc7538.html) (Permanent Redirect)
+* RFC7725: [Status Code 451](/specs/rfc7725.html) (Unavailable For Legal Reasons)
 
-### Other Extensions
+### Connection Handling Extensions
 
-* RFC5861: [Cache-Control Extensions for Stale Content](/specs/rfc5861.html) - *stale-while-revalidate & stale-if-error*
-* RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
-* RFC6265: [Cookies](/specs/rfc6265.html)
-* RFC7615: [Authentication-Info and Proxy-Authentication-Info Header Fields](/specs/rfc7615.html)
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
-* RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html) - *Accept-Encoding in responses*
 * RFC7838: [Alternative Services](/specs/rfc7838.html)
 * RFC8164: [Opportunistic Security for HTTP/2](/specs/rfc8164.html)
+
+### Caching Extensions
+
+* RFC5861: [Stale-while-revalidate and stale-if-error](/specs/rfc5861.html)
+
+### Content-Related Extensions
+
+* RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
+* RFC6265: [Cookies](/specs/rfc6265.html)
+* RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
+
+### Security-Related Extensions
+
+* RFC7615: [Authentication-Info and Proxy-Authentication-Info](/specs/rfc7615.html)
