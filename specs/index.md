@@ -1,9 +1,9 @@
 ---
-layout: 3col
+layout: 2col
 title: HTTP Documentation
 col1: _core.md
-col2: _other.md
-col3: _reg.md
+col2: _reg.md
+col3: _other.md
 jumbotron-bg: /asset/dial.jpg
 ---
 
