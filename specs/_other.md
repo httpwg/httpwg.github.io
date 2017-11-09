@@ -18,7 +18,7 @@ list of HTTP extensions, see the relevant registry.
 ### Other Extensions
 
 * RFC5861: [Cache-Control Extensions for Stale Content](/specs/rfc5861.html) - *stale-while-revalidate & stale-if-error*
-* RFC5988: [Web Linking](/specs/rfc5988.html) - *link relations*
+* RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info Header Fields](/specs/rfc7615.html)
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
