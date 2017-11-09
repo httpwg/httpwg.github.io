@@ -1,7 +1,7 @@
 
 ## Core Specifications
 
-The "core" semantics of the HTTP protocol are defined by this specifications:
+The "core" semantics of the HTTP protocol are defined by this specification:
 
  * RFC7231: [HTTP Semantics and Content](/specs/rfc7231.html)
 
