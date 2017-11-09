@@ -15,7 +15,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC7538: [Status Code 308](/specs/rfc7538.html) (Permanent Redirect)
 * RFC7725: [Status Code 451](/specs/rfc7725.html) (Unavailable For Legal Reasons)
 
-### Connection Handling Extensions
+### Connection Extensions
 
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
 * RFC7838: [Alternative Services](/specs/rfc7838.html)
