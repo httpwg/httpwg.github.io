@@ -34,6 +34,7 @@ list of HTTP extensions, see the relevant registry.
 
 ### Security-Related Extensions
 
+* RFC2818: [HTTP Over TLS](/specs/rfc2818.html)
 * RFC7616: [HTTP Digest Access Authentication](/specs/rfc7616.html)
 * RFC7617: [HTTP Basic Authentication](/specs/rfc7617.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info](/specs/rfc7615.html)
