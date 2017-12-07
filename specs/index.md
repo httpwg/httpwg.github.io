@@ -1,6 +1,6 @@
 ---
 layout: 2col
-title: HTTP Documentation
+title: 📄 HTTP Documentation
 col1: _core.md
 col2: _reg.md
 col3: _other.md
