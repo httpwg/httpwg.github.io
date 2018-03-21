@@ -14,6 +14,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC6585: [Status Codes 428, 429, 431 and 511](/specs/rfc6585.html) (Precondition Required, Too Many Requests, Request Header Fields Too Large, Network Authentication Required)
 * RFC7538: [Status Code 308](/specs/rfc7538.html) (Permanent Redirect)
 * RFC7725: [Status Code 451](/specs/rfc7725.html) (Unavailable For Legal Reasons)
+* RFC8297: [Status Code 103](/specs/rfc8297.html) (Early Hints)
 
 ### Connection Extensions
 
