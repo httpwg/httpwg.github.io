@@ -1,0 +1,333 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>An HTTP Status Code for Indicating Hints</title><script type="application/javascript">
+function getMeta(rfcno, container) {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://tools.ietf.org/draft/rfc" + rfcno + "/state.xml", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var doc = xhr.responseXML;
+        var info = getChildByName(doc.documentElement, "info");
+  
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }      
+  
+        var c = getChildByName(info, "stdstatus");
+        if (c !== null) {
+          var bld = newElementWithText("b", c.textContent);
+          cont.appendChild(bld);
+        }
+  
+        c = getChildByName(info, "updatedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+  
+        c = getChildByName(info, "obsoletedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+        
+        c = getChildByName(info, "errata");
+        if (c !== null) {
+          var template = "https://www.rfc-editor.org/errata_search.php?rfc={rfc}";
+
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", template.replace("{rfc}", rfcno));
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+
+function getChildByName(parent, name) {
+  if (parent === null) {
+    return null;
+  }
+  else {
+    for (var c = parent.firstChild; c !== null; c = c.nextSibling) {
+      if (name == c.nodeName) {
+        return c;
+      }
+    }
+    return null;
+  }
+}
+
+function appendRfcLinks(parent, text) {
+  var template = "https://tools.ietf.org/html/rfc{rfc}";
+  var updates = text.split(",");
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = rfc.substring(3);
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+</script><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5);
+          } else {
+            window.location.hash = prefix + "section." + postfix;
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul ul {
+        list-style: none;
+      }
+      #sidebar {
+        position: fixed;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 HTTP Status Code 103: Early Hints" href="#rfc.section.2"><link rel="Chapter" title="3 Security Considerations" href="#rfc.section.3"><link rel="Chapter" title="4 IANA Considerations" href="#rfc.section.4"><link rel="Chapter" href="#rfc.section.5" title="5 References"><link rel="Appendix" title="A Acknowledgements" href="#rfc.section.A"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc8297.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc8297"><link rel="Help" title="Additional Information on tools.ietf.org" href="https://tools.ietf.org/html/rfc8297"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: SAXON 9.1.0.8 from Saxonica http://www.saxonica.com/"><meta name="keywords" content="push, preload"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Oku, K."><meta name="dcterms.identifier" content="urn:ietf:rfc:8297"><meta name="dcterms.issued" content="2017-12"><meta name="dcterms.abstract" content="This memo introduces an informational HTTP status code that can be used to convey hints that help a client make preparations for processing the final response."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This memo introduces an informational HTTP status code that can be used to convey hints that help a client make preparations for processing the final response."></head><body onload="getMeta(8297,&#34;rfc.meta&#34;);"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      
+      
+      <li><a href="/specs/">📄 Documentation</a></li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">FAQs<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/faq/spec/">FAQs for Spec Writers</a></li>
+            <li><a href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Work in Progress<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">HTTP Extensions</li>
+            <li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
+            <li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>          
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Participate<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/about/">About the HTTP Working Group</a></li>
+            <li class="divider"></li>
+            <li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
+            <li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
+            <li><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li>
+            <li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a></li>
+          </ul>
+      </li>
+            
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="https://twitter.com/http_wg"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="22" height="16"></a></li>
+    </ul>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>8297</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#early-hints">HTTP Status Code 103: Early Hints</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.5.1">5.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.5.2">5.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.section.A">A.</a>&nbsp;&nbsp;&nbsp;<a href="#acknowledgements">Acknowledgements</a></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-md-8 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">K. Oku</td></tr><tr><td class="text-left">Request for Comments: 8297</td><td class="text-right">Fastly</td></tr><tr><td class="text-left">Category: Experimental</td><td class="text-right">December 2017</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>An HTTP Status Code for Indicating Hints</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>This memo introduces an informational HTTP status code that can be used to convey hints that help a client make preparations for processing the final response.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This document is not an Internet Standards Track specification; it is published for examination, experimental implementation, and evaluation.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document defines an Experimental Protocol for the Internet community. This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Not all documents approved by the IESG are a candidate for any level of Internet Standard; see Section 2 of RFC 7841.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="http://www.rfc-editor.org/info/rfc8297">http://www.rfc-editor.org/info/rfc8297</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright © 2017 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div></section><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>It is common for HTTP responses to contain links to external resources that need to be fetched prior to their use, for example, rendering HTML by a web browser. Having such links available to the client as early as possible helps to minimize perceived latency.</p></div><div id="rfc.section.1.p.2"><p>The "preload" <a href="#Preload"><cite title="Preload">[Preload]</cite></a> link relation can be used to convey such links in the Link header field of an HTTP response. However, it is not always possible for an origin server to generate the header block of a final response immediately after receiving a request. For example, the origin server might delegate a request to an upstream HTTP server running at a distant location, or the status code might depend on the result of a database query.</p></div><div id="rfc.section.1.p.3"><p>The dilemma here is that even though it is preferable for an origin server to send some header fields as soon as it receives a request, it cannot do so until the status code and the full header fields of the final HTTP response are determined.</p></div><div id="rfc.section.1.p.4"><p>HTTP/2 <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> server push can accelerate the delivery of resources, but only resources for which the server is authoritative. The other limitation of server push is that the response will be transmitted regardless of whether the client has the response cached. At the cost of spending one extra round trip compared to server push in the worst case, delivering Link header fields in a timely fashion is more flexible and might consume less bandwidth.</p></div><div id="rfc.section.1.p.5"><p>This memo defines a status code for sending an informational response (<a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a>, <a href="https://tools.ietf.org/html/rfc7231#section-6.2">Section 6.2</a>) that contains header fields that are likely to be included in the final response. A server can send the informational response containing some of the header fields to help the client start making preparations for processing the final response, and then run time-consuming operations to generate the final response. The informational response can also be used by an origin server to trigger HTTP/2 server push at a caching intermediary.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP&nbsp;14 <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div></section></section><section id="early-hints"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#early-hints">HTTP Status Code 103: Early Hints</a></h2><div id="rfc.section.2.p.1"><p>The 103 (Early Hints) informational status code indicates to the client that the server is likely to send a final response with the header fields included in the informational response.</p></div><div id="rfc.section.2.p.2"><p>Typically, a server will include the header fields sent in a 103 (Early Hints) response in the final response as well. However, there might be cases when this is not desirable, such as when the server learns that the header fields in the 103 (Early Hints) response are not correct before the final response is sent.</p></div><div id="rfc.section.2.p.3"><p>A client can speculatively evaluate the header fields included in a 103 (Early Hints) response while waiting for the final response. For example, a client might recognize a Link header field value containing the relation type "preload" and start fetching the target resource. However, these header fields only provide hints to the client; they do not replace the header fields on the final response.</p></div><div id="rfc.section.2.p.4"><p>Aside from performance optimizations, such evaluation of the 103 (Early Hints) response's header fields MUST NOT affect how the final response is processed. A client MUST NOT interpret the 103 (Early Hints) response header fields as if they applied to the informational response itself (e.g., as metadata about the 103 (Early Hints) response).</p></div><div id="rfc.section.2.p.5"><p>A server MAY use a 103 (Early Hints) response to indicate only some of the header fields that are expected to be found in the final response. A client SHOULD NOT interpret the nonexistence of a header field in a 103 (Early Hints) response as a speculation that the header field is unlikely to be part of the final response.</p></div><div id="rfc.section.2.p.6"><p>The following example illustrates a typical message exchange that involves a 103 (Early Hints) response.</p></div><div id="rfc.section.2.p.7" class="avoidbreakafter"><p>Client request:</p></div><div id="rfc.figure.u.1"><pre class="text">
+  GET / HTTP/1.1
+  Host: example.com
+
+</pre></div><div id="rfc.section.2.p.8" class="avoidbreakafter"><p>Server response:</p></div><div id="rfc.figure.u.2"><pre class="text">
+  HTTP/1.1 103 Early Hints
+  Link: &lt;/style.css&gt;; rel=preload; as=style
+  Link: &lt;/script.js&gt;; rel=preload; as=script
+
+  HTTP/1.1 200 OK
+  Date: Fri, 26 May 2017 10:02:11 GMT
+  Content-Length: 1234
+  Content-Type: text/html; charset=utf-8
+  Link: &lt;/style.css&gt;; rel=preload; as=style
+  Link: &lt;/script.js&gt;; rel=preload; as=script
+
+  &lt;!doctype html&gt;
+  [... rest of the response body is omitted from the example ...]
+</pre></div><div id="rfc.section.2.p.9"><p>As is the case with any informational response, a server might emit more than one 103 (Early Hints) response prior to sending a final response. This can happen, for example, when a caching intermediary generates a 103 (Early Hints) response based on the header fields of a stale-cached response, and then forwards a 103 (Early Hints) response and a final response that were sent from the origin server in response to a revalidation request.</p></div><div id="rfc.section.2.p.10"><p>A server MAY emit multiple 103 (Early Hints) responses with additional header fields as new information becomes available while the request is being processed. It does not need to repeat the fields that were already emitted, though it doesn't have to exclude them either. The client can consider any combination of header fields received in multiple 103 (Early Hints) responses when anticipating the list of header fields expected in the final response.</p></div><div id="rfc.section.2.p.11"><p>The following example illustrates a series of responses that a server might emit. In the example, the server uses two 103 (Early Hints) responses to notify the client that it is likely to send three Link header fields in the final response. Two of the three expected header fields are found in the final response. The other header field is replaced by another Link header field that contains a different value.</p></div><div id="rfc.figure.u.3"><pre class="text">
+  HTTP/1.1 103 Early Hints
+  Link: &lt;/main.css&gt;; rel=preload; as=style
+
+  HTTP/1.1 103 Early Hints
+  Link: &lt;/style.css&gt;; rel=preload; as=style
+  Link: &lt;/script.js&gt;; rel=preload; as=script
+
+  HTTP/1.1 200 OK
+  Date: Fri, 26 May 2017 10:02:11 GMT
+  Content-Length: 1234
+  Content-Type: text/html; charset=utf-8
+  Link: &lt;/main.css&gt;; rel=preload; as=style
+  Link: &lt;/newstyle.css&gt;; rel=preload; as=style
+  Link: &lt;/script.js&gt;; rel=preload; as=script
+
+  &lt;!doctype html&gt;
+  [... rest of the response body is omitted from the example ...]
+</pre></div></section><section id="security-considerations"><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.3.p.1"><p>Some clients might have issues handling a 103 (Early Hints) response, because informational responses are rarely used in reply to requests not including an Expect header field (<a href="#RFC7231"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content">[RFC7231]</cite></a>, <a href="https://tools.ietf.org/html/rfc7231#section-5.1.1">Section 5.1.1</a>).</p></div><div id="rfc.section.3.p.2"><p>In particular, an HTTP/1.1 client that mishandles an informational response as a final response is likely to consider all responses to the succeeding requests sent over the same connection to be part of the final response. Such behavior might constitute a cross-origin information disclosure vulnerability in case the client multiplexes requests to different origins onto a single persistent connection.</p></div><div id="rfc.section.3.p.3"><p>Therefore, a server might refrain from sending 103 (Early Hints) responses over HTTP/1.1 unless the client is known to handle informational responses correctly.</p></div><div id="rfc.section.3.p.4"><p>HTTP/2 clients are less likely to suffer from incorrect framing since handling of the response header fields does not affect how the end of the response body is determined.</p></div></section><section id="iana-considerations"><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.4.p.1" class="avoidbreakafter"><p>The following entry has been registered in the "HTTP Status Codes" registry:</p></div><div id="rfc.section.4.p.2"><ul><li>Code: 103</li><li>Description: Early Hints</li><li>Specification: RFC 8297 (this document)</li></ul></div></section><section id="rfc.references"><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a> References</h2><section id="rfc.references.1"><h3 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC7231">[RFC7231]</dt><dd>Fielding, R., Ed. and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7231">Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content</a>”, RFC&nbsp;7231, <a href="http://dx.doi.org/10.17487/RFC7231">DOI&nbsp;10.17487/RFC7231</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7231">http://www.rfc-editor.org/info/rfc7231</a>&gt;.</dd><dt id="RFC7540">[RFC7540]</dt><dd>Belshe, M., Peon, R., and M. Thomson, Ed., “<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>”, RFC&nbsp;7540, <a href="http://dx.doi.org/10.17487/RFC7540">DOI&nbsp;10.17487/RFC7540</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7540">http://www.rfc-editor.org/info/rfc7540</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP&nbsp;14, RFC&nbsp;8174, <a href="http://dx.doi.org/10.17487/RFC8174">DOI&nbsp;10.17487/RFC8174</a>, May&nbsp;2017, &lt;<a href="http://www.rfc-editor.org/info/rfc8174">http://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd></dl></section><section id="rfc.references.2"><h3 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="Preload">[Preload]</dt><dd>Grigorik, I., Ed. and Y. Weiss, Ed., “<a href="https://www.w3.org/TR/preload/">Preload</a>”, W3C&nbsp;Candidate Recommendation, October&nbsp;2017, &lt;<a href="https://www.w3.org/TR/preload/">https://www.w3.org/TR/preload/</a>&gt;.</dd></dl></section></section><section id="acknowledgements"><h2 id="rfc.section.A" class="np"><a href="#rfc.section.A">A.</a>&nbsp;<a href="#acknowledgements">Acknowledgements</a></h2><div id="rfc.section.A.p.1"><p>Thanks to Tatsuhiro Tsujikawa for coming up with the idea of sending the Link header fields using an informational response.</p></div><div id="rfc.section.A.p.2"><p>Mark Nottingham and Willy Tarreau provided substantial help in clarifying the semantics of the status code.</p></div><div id="rfc.section.A.p.3"><p>Early stages of the author's work on this document was supported by DeNA Co., Ltd. during his employment there.</p></div></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Author's Address</a></h2><address><b>Kazuho Oku</b><br>Fastly<br>EMail: <a href="mailto:kazuhooku@gmail.com">kazuhooku@gmail.com</a></address></section></div></div></div><script src="/bower_components/jquery/dist/jquery.min.js"></script><script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
