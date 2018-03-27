@@ -1,0 +1,305 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>The ORIGIN HTTP/2 Frame</title><script type="application/javascript">
+function getMeta(rfcno, container) {
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://tools.ietf.org/draft/rfc" + rfcno + "/state.xml", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var doc = xhr.responseXML;
+        var info = getChildByName(doc.documentElement, "info");
+  
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }      
+  
+        var c = getChildByName(info, "stdstatus");
+        if (c !== null) {
+          var bld = newElementWithText("b", c.textContent);
+          cont.appendChild(bld);
+        }
+  
+        c = getChildByName(info, "updatedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+  
+        c = getChildByName(info, "obsoletedby");
+        if (c !== null) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c.textContent);
+        }
+        
+        c = getChildByName(info, "errata");
+        if (c !== null) {
+          var template = "https://www.rfc-editor.org/errata_search.php?rfc={rfc}";
+
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", template.replace("{rfc}", rfcno));
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+
+function getChildByName(parent, name) {
+  if (parent === null) {
+    return null;
+  }
+  else {
+    for (var c = parent.firstChild; c !== null; c = c.nextSibling) {
+      if (name == c.nodeName) {
+        return c;
+      }
+    }
+    return null;
+  }
+}
+
+function appendRfcLinks(parent, text) {
+  var template = "https://tools.ietf.org/html/rfc{rfc}";
+  var updates = text.split(",");
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = rfc.substring(3);
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+</script><script type="application/javascript">
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8);
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9);
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5);
+          } else {
+            window.location.hash = prefix + "section." + postfix;
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      #rfc\.toc > ul ul {
+        list-style: none;
+      }
+      #sidebar {
+        position: fixed;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      .container .nav-sublist {
+        padding-left: 20px;
+        padding-right: 10px;
+        font-size: 90%;
+      }
+      .container .navbar-brand {
+        padding-top: 0;
+      }
+      .container .nav > li > a {
+        padding: 10px 7px 5px 15px;
+        display: inline-block;
+      }
+      .container .nav > li > a + a {
+        padding: 10px 15px 5px 7px;
+        display: inline-block;
+      }
+      .container .nav > li > a {
+        padding: 5px 10px;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 The ORIGIN HTTP/2 Frame" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" href="#rfc.section.5" title="5 References"><link rel="Appendix" title="A Non-Normative Processing Algorithm" href="#rfc.section.A"><link rel="Appendix" title="B Operational Considerations for Servers" href="#rfc.section.B"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc8336.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc8336"><link rel="Help" title="Additional Information on tools.ietf.org" href="https://tools.ietf.org/html/rfc8336"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.creator" content="Nygren, E."><meta name="dcterms.identifier" content="urn:ietf:rfc:8336"><meta name="dcterms.issued" content="2018-03"><meta name="dcterms.abstract" content="This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection."></head><body onload="getMeta(8336,&#34;rfc.meta&#34;);"><nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      
+      
+      <li><a href="/specs/">📄 Documentation</a></li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">FAQs<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/faq/spec/">FAQs for Spec Writers</a></li>
+            <li><a href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Work in Progress<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">HTTP Extensions</li>
+            <li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
+            <li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>          
+          </ul>
+      </li>
+
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Participate<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="/about/">About the HTTP Working Group</a></li>
+            <li class="divider"></li>
+            <li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
+            <li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
+            <li><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li>
+            <li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a></li>
+          </ul>
+      </li>
+            
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="https://twitter.com/http_wg"><img src="https://g.twimg.com/Twitter_logo_blue.png" width="22" height="16"></a></li>
+    </ul>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>8336</a></div><br clear="all"><div class=""><div id="rfc.toc"><ul class="nav"><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#the-origin-http2-frame">The ORIGIN HTTP/2 Frame</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#syntax">Syntax</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#process">Processing ORIGIN Frames</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#set">The Origin Set</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#authority">Authority, Push, and Coalescing with ORIGIN</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#sc">Security Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.5.1">5.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.1">Normative References</a></li><li><a href="#rfc.section.5.2">5.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Informative References</a></li></ul></li><li><a href="#rfc.section.A">A.</a>&nbsp;&nbsp;&nbsp;<a href="#algo">Non-Normative Processing Algorithm</a></li><li><a href="#rfc.section.B">B.</a>&nbsp;&nbsp;&nbsp;<a href="#server-ops">Operational Considerations for Servers</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div></div></div></div><div class="col-md-8 main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Request for Comments: 8336</td><td class="text-right">E. Nygren</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">Akamai</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right">March 2018</td></tr></tbody></table><div id="rfc.title"><h1>The ORIGIN HTTP/2 Frame</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>This document specifies the ORIGIN frame for HTTP/2, to indicate what origins are available on a given connection.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of this Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This is an Internet Standards Track document.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in Section 2 of RFC 7841.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="http://www.rfc-editor.org/info/rfc8336">http://www.rfc-editor.org/info/rfc8336</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright © 2018 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p></div></section><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>HTTP/2 <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> allows clients to coalesce different origins <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a> onto the same connection when certain conditions are met. However, in some cases, a connection is not usable for a coalesced origin, so the 421 (Misdirected Request) status code (<a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 9.1.2) was defined.</p></div><div id="rfc.section.1.p.2"><p>Using a status code in this manner allows clients to recover from misdirected requests, but at the penalty of adding latency. To address that, this specification defines a new HTTP/2 frame type, "ORIGIN", to allow servers to indicate for which origins a connection is usable.</p></div><div id="rfc.section.1.p.3"><p>Additionally, experience has shown that HTTP/2's requirement to establish server authority using both DNS and the server's certificate is onerous. This specification relaxes the requirement to check DNS when the ORIGIN frame is in use. Doing so has additional benefits, such as removing the latency associated with some DNS lookups.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP&nbsp;14 <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div></section></section><section id="the-origin-http2-frame"><h2 id="rfc.section.2"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#the-origin-http2-frame">The ORIGIN HTTP/2 Frame</a></h2><div id="rfc.section.2.p.1"><p>This document defines a new HTTP/2 frame type (<a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 4) called ORIGIN, that allows a server to indicate what origin(s) <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a> the server would like the client to consider as members of the Origin Set (<a href="#set" title="The Origin Set">Section&nbsp;2.3</a>) for the connection within which it occurs.</p></div><section id="syntax"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a>&nbsp;<a href="#syntax">Syntax</a></h3><div id="rfc.section.2.1.p.1"><p>The ORIGIN frame type is 0xc (decimal 12) and contains zero or more instances of the Origin-Entry field.</p></div><div id="rfc.figure.u.1"><pre class="drawing">
++-------------------------------+-------------------------------+
+|         Origin-Entry (*)                                    ...
++-------------------------------+-------------------------------+
+</pre></div><div id="rfc.section.2.1.p.2" class="avoidbreakafter"><p>An Origin-Entry is a length-delimited string:</p></div><div id="rfc.figure.u.2"><pre class="drawing">
++-------------------------------+-------------------------------+
+|         Origin-Len (16)       | ASCII-Origin?               ...
++-------------------------------+-------------------------------+
+</pre></div><div id="rfc.section.2.1.p.3" class="avoidbreakafter"><p>Specifically:</p></div><div id="rfc.section.2.1.p.4"><dl><dt>Origin-Len:</dt><dd>An unsigned, 16-bit integer indicating the length, in octets, of the ASCII-Origin field.</dd><dt>Origin:</dt><dd>An OPTIONAL sequence of characters containing the ASCII serialization of an origin (<a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, Section 6.2) that the sender asserts this connection is or could be authoritative for.</dd></dl></div><div id="rfc.section.2.1.p.5"><p>The ORIGIN frame does not define any flags. However, future updates to this specification MAY define flags. See <a href="#process" title="Processing ORIGIN Frames">Section&nbsp;2.2</a>.</p></div></section><section id="process"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a>&nbsp;<a href="#process">Processing ORIGIN Frames</a></h3><div id="rfc.section.2.2.p.1"><p>The ORIGIN frame is a non-critical extension to HTTP/2. Endpoints that do not support this frame can safely ignore it upon receipt.</p></div><div id="rfc.section.2.2.p.2"><p>When received by an implementing client, it is used to initialize and manipulate the Origin Set (see <a href="#set" title="The Origin Set">Section&nbsp;2.3</a>), thereby changing how the client establishes authority for origin servers (see <a href="#authority" title="Authority, Push, and Coalescing with ORIGIN">Section&nbsp;2.4</a>).</p></div><div id="rfc.section.2.2.p.3"><p>The ORIGIN frame MUST be sent on stream 0; an ORIGIN frame on any other stream is invalid and MUST be ignored.</p></div><div id="rfc.section.2.2.p.4"><p>Likewise, the ORIGIN frame is only valid on connections with the "h2" protocol identifier or when specifically nominated by the protocol's definition; it MUST be ignored when received on a connection with the "h2c" protocol identifier.</p></div><div id="rfc.section.2.2.p.5"><p>This specification does not define any flags for the ORIGIN frame, but future updates to this specification (through IETF consensus) might use them to change its semantics. The first four flags (0x1, 0x2, 0x4, and 0x8) are reserved for backwards-incompatible changes; therefore, when any of them are set, the ORIGIN frame containing them MUST be ignored by clients conforming to this specification, unless the flag's semantics are understood. The remaining flags are reserved for backwards-compatible changes and do not affect processing by clients conformant to this specification.</p></div><div id="rfc.section.2.2.p.6"><p>The ORIGIN frame describes a property of the connection and therefore is processed hop by hop. An intermediary MUST NOT forward ORIGIN frames. Clients configured to use a proxy MUST ignore any ORIGIN frames received from it.</p></div><div id="rfc.section.2.2.p.7"><p>Each ASCII-Origin field in the frame's payload MUST be parsed as an ASCII serialization of an origin (<a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, Section 6.2). If parsing fails, the field MUST be ignored.</p></div><div id="rfc.section.2.2.p.8"><p>Note that the ORIGIN frame does not support wildcard names (e.g., "*.example.com") in Origin-Entry. As a result, sending ORIGIN when a wildcard certificate is in use effectively disables any origins that are not explicitly listed in the ORIGIN frame(s) (when the client understands ORIGIN).</p></div><div id="rfc.section.2.2.p.9"><p>See <a href="#algo" title="Non-Normative Processing Algorithm">Appendix&nbsp;A</a> for an illustrative algorithm for processing ORIGIN frames.</p></div></section><section id="set"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3.</a>&nbsp;<a href="#set">The Origin Set</a></h3><div id="rfc.section.2.3.p.1"><p>The set of origins (as per <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>) that a given connection might be used for is known in this specification as the Origin Set.</p></div><div id="rfc.section.2.3.p.2"><p>By default, the Origin Set for a connection is uninitialized. An uninitialized Origin Set means that clients apply the coalescing rules from Section 9.1.1 of <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>.</p></div><div id="rfc.section.2.3.p.3" class="avoidbreakafter"><p>When an ORIGIN frame is first received and successfully processed by a client, the connection's Origin Set is defined to contain an initial origin. The initial origin is composed from:</p></div><div id="rfc.section.2.3.p.4"><ul><li>Scheme: "https"</li><li>Host: the value sent in Server Name Indication (SNI) (<a href="#RFC6066"><cite title="Transport Layer Security (TLS) Extensions: Extension Definitions">[RFC6066]</cite></a>, Section 3) converted to lower case; if SNI is not present, the remote address of the connection (i.e., the server's IP address)</li><li>Port: the remote port of the connection (i.e., the server's port)</li></ul></div><div id="rfc.section.2.3.p.5"><p>The contents of that ORIGIN frame (and subsequent ones) allow the server to incrementally add new origins to the Origin Set, as described in <a href="#process" title="Processing ORIGIN Frames">Section&nbsp;2.2</a>.</p></div><div id="rfc.section.2.3.p.6"><p>The Origin Set is also affected by the 421 (Misdirected Request) response status code, as defined in <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 9.1.2. Upon receipt of a response with this status code, implementing clients MUST create the ASCII serialization of the corresponding request's origin (as per <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, Section 6.2) and remove it from the connection's Origin Set, if present.</p></div><div id="rfc.section.2.3.p.7"><dl><dt>Note:</dt><dd>When sending an ORIGIN frame to a connection that is initialized as an alternative service <a href="#RFC7838"><cite title="HTTP Alternative Services">[RFC7838]</cite></a>, the initial Origin Set (<a href="#set" title="The Origin Set">Section&nbsp;2.3</a>) will contain an origin with the appropriate scheme and hostname (since RFC 7838 specifies that the origin's hostname be sent in SNI). However, it is possible that the port will be different than that of the intended origin, since the initial Origin Set is calculated using the actual port in use, which can be different for the alternative service. In this case, the intended origin needs to be sent in the ORIGIN frame explicitly.</dd><dd>For example, a client making requests for "https://example.com" is directed to an alternative service at ("h2", "x.example.net", "8443"). If this alternative service sends an ORIGIN frame, the initial origin will be "https://example.com:8443". The client will not be able to use the alternative service to make requests for "https://example.com" unless that origin is explicitly included in the ORIGIN frame.</dd></dl></div></section><section id="authority"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a>&nbsp;<a href="#authority">Authority, Push, and Coalescing with ORIGIN</a></h3><div id="rfc.section.2.4.p.1"><p>Section 10.1 of <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> uses both DNS and the presented Transport Layer Security (TLS) certificate to establish the origin server(s) that a connection is authoritative for, just as HTTP/1.1 does in <a href="#RFC7230"><cite title="Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing">[RFC7230]</cite></a>.</p></div><div id="rfc.section.2.4.p.2"><p>Furthermore, Section 9.1.1 of <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> explicitly allows a connection to be used for more than one origin server, if it is authoritative. This affects what responses can be considered authoritative, both for direct responses to requests and for server push (see <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a>, Section 8.2.2). Indirectly, it also affects what requests will be sent on a connection, since clients will generally only send requests on connections that they believe to be authoritative for the origin in question.</p></div><div id="rfc.section.2.4.p.3"><p>Once an Origin Set has been initialized for a connection, clients that implement this specification use it to help determine what the connection is authoritative for. Specifically, such clients MUST NOT consider a connection to be authoritative for an origin not present in the Origin Set, and they SHOULD use the connection for all requests to origins in the Origin Set for which the connection is authoritative, unless there are operational reasons for opening a new connection.</p></div><div id="rfc.section.2.4.p.4"><p>Note that for a connection to be considered authoritative for a given origin, the server is still required to authenticate with a certificate that passes suitable checks; see Section 9.1.1 of <a href="#RFC7540"><cite title="Hypertext Transfer Protocol Version 2 (HTTP/2)">[RFC7540]</cite></a> for more information. This includes verifying that the host matches a <span class="tt">dNSName</span> value from the certificate <span class="tt">subjectAltName</span> field (using the rules defined in <a href="#RFC2818"><cite title="HTTP Over TLS">[RFC2818]</cite></a>; see also <a href="#RFC5280"><cite title="Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile">[RFC5280]</cite></a>, Section 4.2.1.6).</p></div><div id="rfc.section.2.4.p.5"><p>Additionally, clients MAY avoid consulting DNS to establish the connection's authority for new requests to origins in the Origin Set; however, those that do so face new risks, as explained in <a href="#sc" title="Security Considerations">Section&nbsp;4</a>.</p></div><div id="rfc.section.2.4.p.6"><p>Because ORIGIN can change the set of origins a connection is used for over time, it is possible that a client might have more than one viable connection to an origin open at any time. When this occurs, clients SHOULD NOT emit new requests on any connection whose Origin Set is a proper subset of another connection's Origin Set, and they SHOULD close it once all outstanding requests are satisfied.</p></div><div id="rfc.section.2.4.p.7"><p>The Origin Set is unaffected by any alternative services <a href="#RFC7838"><cite title="HTTP Alternative Services">[RFC7838]</cite></a> advertisements made by the server. Advertising an alternative service does not affect whether a server is authoritative.</p></div></section></section><section id="iana-considerations"><h2 id="rfc.section.3"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.3.p.1"><p>This specification adds an entry to the "HTTP/2 Frame Type" registry.</p></div><div id="rfc.section.3.p.2"><ul><li>Frame Type: ORIGIN</li><li>Code: 0xc</li><li>Specification: RFC 8336</li></ul></div></section><section id="sc"><h2 id="rfc.section.4"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#sc">Security Considerations</a></h2><div id="rfc.section.4.p.1"><p>Clients that blindly trust the ORIGIN frame's contents will be vulnerable to a large number of attacks. See <a href="#authority" title="Authority, Push, and Coalescing with ORIGIN">Section&nbsp;2.4</a> for mitigations.</p></div><div id="rfc.section.4.p.2"><p>Relaxing the requirement to consult DNS when determining authority for an origin means that an attacker who possesses a valid certificate no longer needs to be on path to redirect traffic to them; instead of modifying DNS, they need only convince the user to visit another website in order to coalesce connections to the target onto their existing connection.</p></div><div id="rfc.section.4.p.3"><p>As a result, clients opting not to consult DNS ought to employ some alternative means to establish a high degree of confidence that the certificate is legitimate. For example, clients might skip consulting DNS only if they receive proof of inclusion in a Certificate Transparency log <a href="#RFC6962"><cite title="Certificate Transparency">[RFC6962]</cite></a> or if they have a recent Online Certificate Status Protocol (OCSP) response <a href="#RFC6960"><cite title="X.509 Internet Public Key Infrastructure Online Certificate Status Protocol - OCSP">[RFC6960]</cite></a> (possibly using the "status_request" TLS extension <a href="#RFC6066"><cite title="Transport Layer Security (TLS) Extensions: Extension Definitions">[RFC6066]</cite></a>) showing that the certificate was not revoked.</p></div><div id="rfc.section.4.p.4"><p>The Origin Set's size is unbounded by this specification and thus could be used by attackers to exhaust client resources. To mitigate this risk, clients can monitor their state commitment and close the connection if it is too high.</p></div></section><section id="rfc.references"><h2 id="rfc.section.5"><a href="#rfc.section.5">5.</a> References</h2><section id="rfc.references.1"><h3 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP&nbsp;14, RFC&nbsp;2119, <a href="http://dx.doi.org/10.17487/RFC2119">DOI&nbsp;10.17487/RFC2119</a>, March&nbsp;1997, &lt;<a href="http://www.rfc-editor.org/info/rfc2119">http://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC2818">[RFC2818]</dt><dd>Rescorla, E., “<a href="https://tools.ietf.org/html/rfc2818">HTTP Over TLS</a>”, RFC&nbsp;2818, <a href="http://dx.doi.org/10.17487/RFC2818">DOI&nbsp;10.17487/RFC2818</a>, May&nbsp;2000, &lt;<a href="http://www.rfc-editor.org/info/rfc2818">http://www.rfc-editor.org/info/rfc2818</a>&gt;.</dd><dt id="RFC5280">[RFC5280]</dt><dd>Cooper, D., Santesson, S., Farrell, S., Boeyen, S., Housley, R., and W. Polk, “<a href="https://tools.ietf.org/html/rfc5280">Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</a>”, RFC&nbsp;5280, <a href="http://dx.doi.org/10.17487/RFC5280">DOI&nbsp;10.17487/RFC5280</a>, May&nbsp;2008, &lt;<a href="https://www.rfc-editor.org/info/rfc5280">https://www.rfc-editor.org/info/rfc5280</a>&gt;.</dd><dt id="RFC6066">[RFC6066]</dt><dd>Eastlake 3rd, D., “<a href="https://tools.ietf.org/html/rfc6066">Transport Layer Security (TLS) Extensions: Extension Definitions</a>”, RFC&nbsp;6066, <a href="http://dx.doi.org/10.17487/RFC6066">DOI&nbsp;10.17487/RFC6066</a>, January&nbsp;2011, &lt;<a href="https://www.rfc-editor.org/info/rfc6066">https://www.rfc-editor.org/info/rfc6066</a>&gt;.</dd><dt id="RFC6454">[RFC6454]</dt><dd>Barth, A., “<a href="https://tools.ietf.org/html/rfc6454">The Web Origin Concept</a>”, RFC&nbsp;6454, <a href="http://dx.doi.org/10.17487/RFC6454">DOI&nbsp;10.17487/RFC6454</a>, December&nbsp;2011, &lt;<a href="http://www.rfc-editor.org/info/rfc6454">http://www.rfc-editor.org/info/rfc6454</a>&gt;.</dd><dt id="RFC7540">[RFC7540]</dt><dd>Belshe, M., Peon, R., and M. Thomson, Ed., “<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>”, RFC&nbsp;7540, <a href="http://dx.doi.org/10.17487/RFC7540">DOI&nbsp;10.17487/RFC7540</a>, May&nbsp;2015, &lt;<a href="http://www.rfc-editor.org/info/rfc7540">http://www.rfc-editor.org/info/rfc7540</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP&nbsp;14, RFC&nbsp;8174, <a href="http://dx.doi.org/10.17487/RFC8174">DOI&nbsp;10.17487/RFC8174</a>, May&nbsp;2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd></dl></section><section id="rfc.references.2"><h3 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="RFC6960">[RFC6960]</dt><dd>Santesson, S., Myers, M., Ankney, R., Malpani, A., Galperin, S., and C. Adams, “<a href="https://tools.ietf.org/html/rfc6960">X.509 Internet Public Key Infrastructure Online Certificate Status Protocol - OCSP</a>”, RFC&nbsp;6960, <a href="http://dx.doi.org/10.17487/RFC6960">DOI&nbsp;10.17487/RFC6960</a>, June&nbsp;2013, &lt;<a href="https://www.rfc-editor.org/info/rfc6960">https://www.rfc-editor.org/info/rfc6960</a>&gt;.</dd><dt id="RFC6962">[RFC6962]</dt><dd>Laurie, B., Langley, A., and E. Kasper, “<a href="https://tools.ietf.org/html/rfc6962">Certificate Transparency</a>”, RFC&nbsp;6962, <a href="http://dx.doi.org/10.17487/RFC6962">DOI&nbsp;10.17487/RFC6962</a>, June&nbsp;2013, &lt;<a href="https://www.rfc-editor.org/info/rfc6962">https://www.rfc-editor.org/info/rfc6962</a>&gt;.</dd><dt id="RFC7230">[RFC7230]</dt><dd>Fielding, R., Ed. and J. Reschke, Ed., “<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>”, RFC&nbsp;7230, <a href="http://dx.doi.org/10.17487/RFC7230">DOI&nbsp;10.17487/RFC7230</a>, June&nbsp;2014, &lt;<a href="http://www.rfc-editor.org/info/rfc7230">http://www.rfc-editor.org/info/rfc7230</a>&gt;.</dd><dt id="RFC7838">[RFC7838]</dt><dd>Nottingham, M., McManus, P., and J. Reschke, “<a href="https://tools.ietf.org/html/rfc7838">HTTP Alternative Services</a>”, RFC&nbsp;7838, <a href="http://dx.doi.org/10.17487/RFC7838">DOI&nbsp;10.17487/RFC7838</a>, April&nbsp;2016, &lt;<a href="http://www.rfc-editor.org/info/rfc7838">http://www.rfc-editor.org/info/rfc7838</a>&gt;.</dd><dt id="RFC8288">[RFC8288]</dt><dd>Nottingham, M., “<a href="https://tools.ietf.org/html/rfc8288">Web Linking</a>”, RFC&nbsp;8288, <a href="http://dx.doi.org/10.17487/RFC8288">DOI&nbsp;10.17487/RFC8288</a>, October&nbsp;2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8288">https://www.rfc-editor.org/info/rfc8288</a>&gt;.</dd></dl></section></section><section id="algo"><h2 id="rfc.section.A" class="np"><a href="#rfc.section.A">A.</a>&nbsp;<a href="#algo">Non-Normative Processing Algorithm</a></h2><div id="rfc.section.A.p.1" class="avoidbreakafter"><p>The following algorithm illustrates how a client could handle received ORIGIN frames:</p></div><div id="rfc.section.A.p.2"><ol><li>If the client is configured to use a proxy for the connection, ignore the frame and stop processing.</li><li>If the connection is not identified with the "h2" protocol identifier or another protocol that has explicitly opted into this specification, ignore the frame and stop processing.</li><li>If the frame occurs upon any stream except stream 0, ignore the frame and stop processing.</li><li>If any of the flags 0x1, 0x2, 0x4, or 0x8 are set, ignore the frame and stop processing.</li><li>If no previous ORIGIN frame on the connection has reached this step, initialize the Origin Set as per <a href="#set" title="The Origin Set">Section&nbsp;2.3</a>.</li><li>For each <span class="tt">Origin-Entry</span> in the frame payload: <ol><li>Parse <span class="tt">ASCII-Origin</span> as an ASCII serialization of an origin (<a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, Section 6.2), and let the result be <span class="tt">parsed_origin</span>. If parsing fails, skip to the next <span class="tt">Origin‑Entry</span>.</li><li>Add <span class="tt">parsed_origin</span> to the Origin Set.</li></ol></li></ol></div></section><section id="server-ops"><h2 id="rfc.section.B"><a href="#rfc.section.B">B.</a>&nbsp;<a href="#server-ops">Operational Considerations for Servers</a></h2><div id="rfc.section.B.p.1"><p>The ORIGIN frame allows a server to indicate for which origins a given connection ought be used. The set of origins advertised using this mechanism is under control of the server; servers are not obligated to use it or to advertise all origins that they might be able to answer a request for.</p></div><div id="rfc.section.B.p.2"><p>For example, it can be used to inform the client that the connection is to only be used for the SNI-based origin, by sending an empty ORIGIN frame. Or, a larger number of origins can be indicated by including a payload.</p></div><div id="rfc.section.B.p.3"><p>Generally, this information is most useful to send before sending any part of a response that might initiate a new connection; for example, "Link" response header fields <a href="#RFC8288"><cite title="Web Linking">[RFC8288]</cite></a>, or links in the response body.</p></div><div id="rfc.section.B.p.4"><p>Therefore, the ORIGIN frame ought be sent as soon as possible on a connection, ideally before any HEADERS or PUSH_PROMISE frames.</p></div><div id="rfc.section.B.p.5"><p>However, if it's desirable to associate a large number of origins with a connection, doing so might introduce end-user-perceived latency, due to their size. As a result, it might be necessary to select a "core" set of origins to send initially, and expand the set of origins the connection is used for with subsequent ORIGIN frames later (e.g., when the connection is idle).</p></div><div id="rfc.section.B.p.6"><p>That said, senders are encouraged to include as many origins as practical within a single ORIGIN frame; clients need to make decisions about creating connections on the fly, and if the Origin Set is split across many frames, their behavior might be suboptimal.</p></div><div id="rfc.section.B.p.7"><p>Senders take note that, as per Section 4, Step 5, of <a href="#RFC6454"><cite title="The Web Origin Concept">[RFC6454]</cite></a>, the values in an ORIGIN header need to be case-normalized before serialization.</p></div><div id="rfc.section.B.p.8"><p>Finally, servers that host alternative services <a href="#RFC7838"><cite title="HTTP Alternative Services">[RFC7838]</cite></a> will need to explicitly advertise their origins when sending ORIGIN, because the default contents of the Origin Set (as per <a href="#set" title="The Origin Set">Section&nbsp;2.3</a>) do not contain any alternative services' origins, even if they have been used previously on the connection.</p></div></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Mark Nottingham</b><br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address><address><b>Erik Nygren</b><br>Akamai<br>EMail: <a href="mailto:nygren@akamai.com">nygren@akamai.com</a></address></section></div></div></div><script src="/bower_components/jquery/dist/jquery.min.js"></script><script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
