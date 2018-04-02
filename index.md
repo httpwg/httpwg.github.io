@@ -36,7 +36,8 @@ title: HTTP
 		<h2>👷‍♀️ Work In Progress</h2>
 		<p>What's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a> <span class="label label-success">our current work</span></li>
+			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Core Specifications</a></li>
+			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extension Specifications</a></li>
 			<li>Possible <a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>
 		</ul>
 	</div>
