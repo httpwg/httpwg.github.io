@@ -23,4 +23,4 @@ These HTTP functions are optional to implement, but widely used:
  
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068**, **RFC2616** and **RFC2617**.
 
-*If you find problems with the HTTP/1.1 specifications, you can log an issue in [this repo](https://github.com/httpwg/http11bis/issues).*
+*The core specifications are currently [under revision](https://github.com/httpwg/http-core). If you find issues, please bring them up there!*
