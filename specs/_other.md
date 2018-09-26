@@ -42,3 +42,4 @@ list of HTTP extensions, see the relevant registry.
 * RFC7617: [HTTP Basic Authentication](/specs/rfc7617.html)
 * RFC7615: [Authentication-Info and Proxy-Authentication-Info](/specs/rfc7615.html)
 * RFC8188: [Encrypted Content-Encoding](/specs/rfc8188.html)
+* RFC8470: [Using Early Data in HTTP](/specs/rfc8470.html)
