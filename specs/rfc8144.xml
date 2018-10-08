@@ -1,0 +1,1474 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!DOCTYPE rfc SYSTEM "lib/rfc2629.dtd" [
+
+<!ENTITY rfc2119 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'> 
+<!ENTITY rfc4918 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4918.xml'> 
+<!ENTITY rfc4791 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4791.xml'> 
+<!ENTITY rfc3253 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3253.xml'> 
+<!ENTITY rfc3744 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3744.xml'> 
+<!ENTITY rfc5689 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5689.xml'> 
+<!ENTITY rfc5789 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5789.xml'>
+<!ENTITY rfc5995 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5995.xml'>
+<!ENTITY rfc6352 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6352.xml'>
+<!ENTITY rfc6578 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6578.xml'>
+<!ENTITY rfc6638 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6638.xml'>
+<!ENTITY rfc7231 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml'>
+<!ENTITY rfc7232 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7232.xml'>
+<!ENTITY rfc7240 PUBLIC ''
+	 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7240.xml'>
+]>
+
+<?rfc toc="yes"?> 
+<?rfc symrefs="yes" ?> 
+<?rfc sortrefs="yes"?> 
+<?rfc compact="yes"?> 
+<?rfc subcompact="no"?>
+<?rfc-ext parse-xml-in-artwork="yes"?>
+<?rfc-ext allow-markup-in-artwork="yes"?>
+<?rfc-ext html-pretty-print="prettyprint https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"?>
+
+<rfc category="std" ipr="trust200902"
+     updates="7240"
+     number="8144" submissionType="IETF" consensus="yes"
+     xmlns:x='http://purl.org/net/xml2rfc/ext'> 
+  <front> 
+
+    <title abbrev="Prefer Header Field in WebDAV">
+      Use of the Prefer Header Field in Web&#160;Distributed&#160;Authoring&#160;and&#160;Versioning (WebDAV)
+    </title> 
+ 
+    <author initials="K." surname="Murchison"
+	    fullname="Kenneth Murchison">
+      <organization abbrev="CMU">
+	Carnegie Mellon University
+      </organization>
+      <address> 
+	<postal>
+	  <street>5000 Forbes Avenue</street>
+	  <city>Pittsburgh</city> <region>PA</region>
+	  <code>15213</code> <country>United States of America</country>
+	</postal>
+	<phone>+1-412-268-1982</phone>
+        <email>murch@andrew.cmu.edu</email> 
+      </address> 
+  </author>
+    
+ <date month="April" year="2017" /> 
+
+    <area>Applications and Real-Time</area> 
+
+    <keyword>http</keyword> 
+    <keyword>prefer</keyword> 
+    <keyword>webdav</keyword> 
+    <keyword>caldav</keyword> 
+ 
+    <abstract>
+      <t>This document defines how the Prefer header
+      field (RFC 7240) can be used by
+      a Web Distributed Authoring and Versioning (WebDAV) client to request that certain behaviors be employed by
+      a server while constructing a response to a request.  Furthermore,
+      it defines the new "depth-noroot" preference.</t>
+
+      <t>This document updates RFC 7240.</t>
+    </abstract>
+
+  </front>
+  
+  <middle> 
+    <section title="Introduction" anchor="intro">
+ 
+      <t><xref target="RFC7240"/> defines the
+	Prefer header field and the "return=minimal"
+	preference, which indicate that a client wishes for the server
+	to return a minimal response to a successful request but
+	states that what constitutes an appropriate minimal response
+	is left solely to the discretion of the server.
+	<xref target="minimal"/> of this specification defines
+	precisely what is expected of a server when constructing
+	minimal responses to successful <xref
+	target="RFC4918">WebDAV</xref> requests.</t>
+
+      <t><xref target="RFC7240"/> also defines
+	the "return=representation"
+	preference, which indicates that a client wishes for the server
+	to include an entity representing the current state of the
+	resource in the response to a successful request.
+
+	<xref target="representation"/> of this specification makes
+	recommendations on when this preference should be used by
+	clients and extends its applicability to <xref
+	target="RFC7232">412 (Precondition
+	Failed)</xref> responses.</t>
+
+      <t>Finally, <xref target="noroot"/> of this specification defines
+	the "depth-noroot" preference that can be used with HTTP
+	methods that support the Depth header field.</t>
+
+      <section title="Notational Conventions">
+	<t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+	  NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
+	  "OPTIONAL" in this document are to be interpreted as described
+	  in <xref target="RFC2119" />.</t>
+
+	<t>This document references XML element types in the
+	  <xref target="RFC4918">"DAV:"</xref>, <xref
+          target="RFC4791">"urn:ietf:params:xml:ns:caldav"</xref>, and
+          <xref
+              target="RFC6352">"urn:ietf:params:xml:ns:carddav"</xref>
+          namespaces outside of
+	  the context of an XML fragment.  When doing so, the strings
+	  "DAV:", "CALDAV:", and "CARDDAV:" will be
+          prepended to the XML element types, respectively.</t> 
+
+      </section> 
+
+    </section>
+
+    <section title="Reducing WebDAV Response Verbosity with &quot;return=minimal&quot;" anchor="minimal">
+
+      <t>Some payload bodies in responses
+	to WebDAV requests, such
+	as <xref target="RFC4918">207 (Multi-Status)</xref> responses, can
+	be quite verbose or even unnecessary at times.  This
+	specification defines how
+        the Prefer header field, in conjunction with its "return=minimal"
+	preference, can be used by clients to reduce the verbosity of
+	such responses by requesting that the server omit those
+	portions of the response that can be inferred by their
+	absence.</t>
+      
+      <section title="Minimal PROPFIND and REPORT Responses" anchor="propfind">
+
+	<t>When a <xref target="RFC4918">PROPFIND</xref>
+	  request, or a  <xref target="RFC3253">REPORT</xref> request
+	  whose report type results in a 207 (Multi-Status) response,
+          contains a Prefer header field with a preference of
+	  "return=minimal", the server SHOULD omit all DAV:propstat
+	  XML elements containing a DAV:status XML element of value
+	  <xref target="RFC7231">404 (Not
+	  Found)</xref> from the 207 (Multi-Status) response.
+
+	  If the omission of such a DAV:propstat element would result
+	  in a DAV:response XML element containing zero DAV:propstat
+	  elements, the server MUST substitute one of the
+	  following in its place:
+	  <list style="symbols">
+	    <t>a DAV:propstat element consisting of an empty DAV:prop
+	    element and a DAV:status element of value <xref
+	    target="RFC7231"> 200
+	    (OK)</xref></t>
+
+	    <t>a DAV:status element of value 200 (OK)</t>
+	  </list>
+	</t>
+
+        <t>The following report types are candidates that could
+        benefit from use of the "return=minimal" preference.  NOTE:
+        This list is not intended to be normative or exhaustive.
+
+        <list style="symbols">
+          <t><xref target="RFC3253">DAV:expand-property</xref></t>
+
+          <t><xref target="RFC3744">DAV:acl-principal-prop-set</xref></t>
+
+          <t><xref target="RFC3744">DAV:principal-property-search</xref></t>
+
+          <t><xref target="RFC6578">DAV:sync-collection</xref></t>
+
+          <t><xref target="RFC4791">CALDAV:calendar-query</xref></t>
+
+          <t><xref target="RFC4791">CALDAV:calendar-multiget</xref></t>
+
+          <t><xref target="RFC6352">CARDDAV:addressbook-query</xref></t>
+
+          <t><xref target="RFC6352">CARDDAV:addressbook-multiget</xref></t>
+        </list>
+        </t>
+
+
+        <t>See Appendices <xref target="propfind-examples" format="counter"/> and
+        <xref target="report-examples" format="counter"/> for examples.</t>
+
+      </section> 
+
+      
+      <section title="Minimal PROPPATCH Response" anchor="proppatch">
+
+	<t>When a <xref target="RFC4918">PROPPATCH</xref> request
+	  contains a Prefer header field with a preference of
+	  "return=minimal", and all instructions are processed
+	  successfully, the server SHOULD return
+	  one of the following responses rather than a 207
+	  (Multi-Status) response:
+	  <list style="symbols">
+	    <t><xref target="RFC7231">204 (No
+	    Content)</xref></t>
+
+	    <t><xref target="RFC7231">200
+	    (OK)</xref> (preferably with a zero-length message body)</t>
+	  </list>
+	</t>
+
+        <t>See <xref target="proppatch-examples"/> for examples.</t>
+
+      </section> 
+  
+
+      <section title="Minimal MKCALENDAR and MKCOL Responses"
+	       anchor="mkcol">
+
+	<t>Both the <xref target="RFC4791">MKCALENDAR</xref> and
+	  <xref target="RFC5689">Extended MKCOL</xref> specifications
+	  indicate that a server MAY return a message body in response
+	  to a successful request.  This specification explicitly
+	  defines the intended behavior in the presence of
+	  the Prefer header field.</t>
+
+	<t>When a MKCALENDAR or an extended MKCOL request contains a
+	  Prefer header field with a preference of "return=minimal", and
+	  the collection is created with all requested properties being
+	  set successfully, the server SHOULD return
+	  a <xref target="RFC7231">201
+	  (Created)</xref> response with an empty (zero-length)
+	  message body.</t>
+
+	  <t>Note that the rationale for requiring that a minimal
+	  success response have an empty body is twofold:
+
+	  <list style="symbols">
+	    <t><xref target="RFC4791" x:fmt="," x:sec="5.3.1"/> states: "If a
+	    response body for a successful request is included, it
+	    MUST be a CALDAV:mkcalendar-response XML element."</t>
+
+	    <t><xref target="RFC5689" x:fmt="," x:sec="3"/> states: "When an
+	    empty response body is returned with a success request
+	    status code, the client can assume that all properties
+	    were set."</t>
+	  </list>
+	  </t>
+
+        <t>See <xref target="mkcol-examples"/> for examples.</t>
+
+      </section> 
+  
+    </section> 
+
+    <section title="Reducing WebDAV Roundtrips with &quot;return=representation&quot;" anchor="representation">
+
+      <t><xref target="RFC7240"/> describes the "return=representation"
+      preference as being intended to provide a means of optimizing
+      communication between the client and server by eliminating the
+      need for a subsequent GET request to retrieve the current
+      representation of the resource following a modification.  This
+      preference is equally applicable to situations where the server
+      itself modifies a resource, and where a resource has been
+      modified by another client.</t>
+
+      <section title='Successful State-Changing Requests'
+               anchor='state-success'>        
+        <t>The state-changing methods <xref target="RFC7231">PUT</xref>,
+        <xref target="RFC4918">COPY/MOVE</xref>, 
+        <xref target="RFC5789">PATCH</xref>,
+        and <xref target="RFC5995">POST</xref> can be used to 
+        create or update a resource.  In some instances, such as
+        with <xref target="RFC6638">Calendaring Extensions to WebDAV (CalDAV)
+        Scheduling</xref>, the created or updated resource representation
+        may differ from the representation sent in the body of the
+        request or from that referenced by the effective request URI.  In cases
+        where the client, upon receiving a
+        <xref target="RFC7231">2xx (Successful)</xref> response
+        to its state-changing request, would normally issue a
+        subsequent GET request to retrieve the current representation
+        of the resource, the client can instead include a Prefer
+        header field with the "return=representation" preference in
+        the state-changing request.</t>
+
+        <t>When a state-changing request contains a Prefer header field
+        with a preference of "return=representation", and the resource
+        is created or updated successfully, the server SHOULD include
+        an entity representing the current state of the resource in the
+        resulting <xref target="RFC7231">201 (Created) or 200
+        (OK)</xref> response. In addition to coalescing the
+        create/update and retrieve operations into a single 
+        roundtrip, by returning the current representation of the
+        resource in the response, the client will know that any changes
+        to the resource were produced by the server rather than a
+        concurrent client, thus providing a level of atomicity to the
+        operation.</t>
+
+        <t>See <xref target="post-examples"/> for examples.</t>
+
+      </section>
+
+      <section title='Unsuccessful Conditional State-Changing
+                      Requests' anchor='state-fail'>
+
+        <t>Frequently, clients using a state-changing method such as
+        those listed above will make them conditional by including
+        either an <xref target="RFC7232">If&nbhy;Match or
+        an If-None-Match</xref> header field in the request. This is done
+        to prevent the client from accidentally overwriting a
+        resource whose current state has been modified by another
+        client acting in parallel.  In cases
+        where the client, upon receiving a <xref target="RFC7232">412
+        (Precondition Failed)</xref> response to its conditional
+        state-changing request, would normally issue a subsequent GET request
+        to retrieve the current representation of the resource, the
+        client can instead include a Prefer header field with the
+        "return=representation" preference in the conditional
+        state-changing request.</t>
+
+        <t>When a conditional state-changing request contains a Prefer
+        header field with a preference of "return=representation", and
+        the specified condition evaluates to false, the server SHOULD
+        include an entity representing the current state of the
+        resource in the resulting <xref target="RFC7232">412 
+        (Precondition Failed)</xref> response.</t>
+
+        <t>See <xref target="put-examples"/> for examples.</t>
+
+      </section>
+
+    </section>
+
+
+    <section title='The "depth-noroot" Processing Preference'
+	     anchor="noroot">
+
+      <t>The "depth-noroot" preference indicates that the client
+      wishes for the server to exclude the target (root) resource from
+      processing by the HTTP method and only apply the HTTP method
+      to the target resource's subordinate resources.</t>
+
+      <t>This preference is only intended to be used with HTTP
+      methods whose definitions explicitly provide support for the
+      <xref target="RFC4918">Depth</xref> header field.
+      Furthermore, this preference only applies when the Depth
+      header field has a value of "1" or "infinity" (either
+      implicitly or explicitly).</t>
+
+      <t>The "depth-noroot" preference MAY be used in conjunction with
+	the "return=minimal" preference in a single request.</t>
+
+        <t>See <xref target="propfind-examples"/> for examples.</t>
+
+    </section>
+
+    <section title="Security Considerations"> 
+
+      <t>No new security considerations are introduced by use of the
+	Prefer header field with WebDAV requests, beyond those
+	discussed in <xref target="RFC7240"/> and those
+	already inherent in those requests.</t>
+
+    </section>
+
+
+    <section title="IANA Considerations">
+
+      <section title="Preference Registration">
+
+        <t>The following preference has been added to the HTTP Preferences
+        Registry defined in <xref target="RFC7240" x:fmt="of" x:sec="5.1"/>.</t>
+
+        <t><list style="hanging">
+	  <t hangText="Preference:">depth-noroot</t>
+
+	  <t hangText="Description:">The "depth-noroot" preference indicates that
+	  the client wishes for the server to exclude the target
+	  (root) resource from processing by the HTTP method and
+	  only apply the HTTP method to the target resource's
+	  subordinate resources.</t>
+
+	  <t hangText="Reference:">RFC 8144, <xref target="noroot"/></t>
+
+	  <t hangText="Notes:">This preference is only intended to be used with HTTP
+	  methods whose definitions explicitly provide support for the
+	  <xref target="RFC4918">Depth</xref> header field.
+	  Furthermore, this preference only applies when the Depth
+	  header field has a value of "1" or "infinity" (either
+	  implicitly or explicitly).</t>
+        </list></t>
+
+      </section>
+
+      <section title="Method References">
+
+        <t>The following methods have had their references updated
+        in the "HTTP Method Registry" (http://www.iana.org/assignments/http-methods).</t>
+
+        <texttable>
+          <ttcol>Method Name</ttcol>
+          <ttcol>Safe</ttcol>
+          <ttcol>Idempotent</ttcol>
+          <ttcol>References</ttcol>
+          <c>MKCALENDAR</c>
+          <c>no</c>
+          <c>yes</c>
+          <c>RFC 4791, <xref target="RFC4791" x:fmt="sec" x:sec="5.3.1"/>; RFC 8144, <xref target="mkcol" /></c>
+          <c>MKCOL</c>
+          <c>no</c>
+          <c>yes</c>
+          <c>RFC 4918, <xref target="RFC4918" x:fmt="sec" x:sec="9.3"/>; RFC 5689, Section 3;
+          RFC 8144, <xref target="mkcol" /></c> 
+          <c>PROPFIND</c>
+          <c>yes</c>
+          <c>yes</c>
+          <c>RFC 4918, <xref target="RFC4918" x:fmt="sec" x:sec="9.1"/>; RFC 8144, <xref target="propfind" /></c>
+          <c>PROPPATCH</c>
+          <c>no</c>
+          <c>yes</c>
+          <c>RFC 4918, <xref target="RFC4918" x:fmt="sec" x:sec="9.2"/>; RFC 8144, <xref target="proppatch" /></c>
+          <c>REPORT</c>
+          <c>yes</c>
+          <c>yes</c>
+          <c>RFC 3253, <xref target="RFC3253" x:fmt="sec" x:sec="3.6"/>; RFC 8144, <xref target="propfind" /></c>
+        </texttable>
+
+      </section>
+
+      <section title="Status Code References">
+
+        <t>The following status code has had its references updated
+        in the "HTTP Status Codes" registry (http://www.iana.org/assignments/http-status-codes).</t>
+
+        <texttable>
+          <ttcol>Value</ttcol>
+          <ttcol>Description</ttcol>
+          <ttcol>References</ttcol>
+          <c>412</c>
+          <c>Precondition Failed</c>
+          <c>RFC 7232, <xref target="RFC7232" x:fmt="sec" x:sec="4.2"/>; RFC 8144, <xref target="state-fail" /></c>
+        </texttable>
+
+      </section>
+
+    </section>
+
+  </middle> 
+
+
+  <back>
+    <references title="Normative References">
+      &rfc2119;
+      &rfc3253;
+      &rfc4791;
+      &rfc4918;
+      &rfc5689;
+      &rfc5789;
+      &rfc5995;
+      &rfc7231;
+      &rfc7232;
+      &rfc7240;
+    </references>
+
+    <references title="Informative References">
+      &rfc3744;
+      &rfc6352;
+      &rfc6578;
+      &rfc6638;
+
+      <reference anchor="MSDN.aa563501"
+		 target="http://msdn.microsoft.com/en-us/library/aa563501.aspx">
+	<front>
+	  <title>Brief Header</title>
+	  <author>
+	    <organization>Microsoft Developer Network</organization>
+	  </author>
+	  <date month="June" year="2006"/>
+	</front>
+      </reference>
+      <reference anchor="MSDN.aa580336"
+		 target="http://msdn.microsoft.com/en-us/library/aa580336.aspx">
+	<front>
+	  <title>PROPFIND Method</title>
+	  <author>
+	    <organization>Microsoft Developer Network</organization>
+	  </author>
+	  <date month="June" year="2006"/>
+	</front>
+      </reference>
+
+      <reference anchor="MSDN.aa493854"
+		 target="http://msdn.microsoft.com/en-us/library/aa493854.aspx">
+	<front>
+	  <title>PROPPATCH Method</title>
+	  <author>
+	    <organization>Microsoft Developer Network</organization>
+	  </author>
+	  <date month="June" year="2006"/>
+	</front>
+      </reference>
+
+      <reference anchor="MSDN.aa563950"
+		 target="http://msdn.microsoft.com/en-us/library/aa563950.aspx">
+	<front>
+	  <title>Depth Header</title>
+	  <author>
+	    <organization>Microsoft Developer Network</organization>
+	  </author>
+	  <date month="June" year="2006"/>
+	</front>
+      </reference>
+
+    </references>
+
+
+    <section title="The Brief and Extended Depth Header Fields">
+      <t>This document is based heavily on
+	the <xref target="MSDN.aa563501">Brief</xref>
+	and <xref target="MSDN.aa563950">extended Depth</xref> header
+	fields.  The behaviors described in Sections <xref target="propfind" format="counter"/>
+	and <xref target="proppatch" format="counter"/> are identical to those provided
+	by the Brief header field when used with
+	the <xref target="MSDN.aa580336">PROPFIND</xref>
+	and <xref target="MSDN.aa493854">PROPPATCH</xref> methods,
+	respectively.  The behavior described in
+	<xref target="noroot"/> is identical to that provided by
+	the <xref target="MSDN.aa563950">"1,noroot"</xref>
+	and <xref target="MSDN.aa563950">"infinity,noroot"</xref> Depth
+	header field values.</t>
+
+      <t>Client and server implementations that already support the
+      Brief header field can add support for the "return=minimal"
+      preference with nominal effort.</t>
+
+      <t>If a server supporting the Prefer header field receives both
+      the Brief and Prefer header fields in a request, clients can
+      expect the server to ignore the Brief header field and only use
+      the Prefer header field preferences.</t>
+    </section> 
+
+    
+    <section title="Examples" anchor="examples">
+
+      <section title="PROPFIND" anchor="propfind-examples">
+
+        <section title="Typical PROPFIND Request/Response with
+                        Depth:1" toc="exclude">
+
+	  <t>This example tries to fetch one known and one unknown
+          property from child resources.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+        <artwork type='message/http;  msgtype="request"'>
+PROPFIND /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 189
+Depth: 1
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<D:propfind xmlns:D="DAV:" xmlns:X="http://ns.example.com/foobar/">
+  <D:prop>
+    <D:resourcetype/>
+    <X:foobar/>
+  </D:prop>
+</D:propfind>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 1722
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:"
+               xmlns:X="http://ns.example.com/foobar/">
+  <D:response>
+    <D:href>/container/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype>
+          <D:collection/>
+        </D:resourcetype>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+    <D:propstat>
+      <D:prop>
+        <X:foobar/>
+      </D:prop>
+      <D:status>HTTP/1.1 404 Not Found</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response>
+    <D:href>/container/work/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype>
+          <D:collection/>
+        </D:resourcetype>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+    <D:propstat>
+      <D:prop>
+        <X:foobar/>
+      </D:prop>
+      <D:status>HTTP/1.1 404 Not Found</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response>
+    <D:href>/container/home/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype>
+          <D:collection/>
+        </D:resourcetype>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+    <D:propstat>
+      <D:prop>
+        <X:foobar/>
+      </D:prop>
+      <D:status>HTTP/1.1 404 Not Found</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response>
+    <D:href>/container/foo.txt</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype/>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+    <D:propstat>
+      <D:prop>
+        <X:foobar/>
+      </D:prop>
+      <D:status>HTTP/1.1 404 Not Found</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+        </section> 
+
+        <section title="Minimal PROPFIND Request/Response with
+                        Depth:1" toc="exclude"> 
+
+	  <t>This example tries to fetch one known and one unknown
+          property from child resources only.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PROPFIND /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 189
+Depth: 1
+Prefer: return=minimal, depth-noroot
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<D:propfind xmlns:D="DAV:" xmlns:X="http://ns.example.com/foobar/">
+  <D:prop>
+    <D:resourcetype/>
+    <X:foobar/>
+  </D:prop>
+</D:propfind>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 837
+Preference-Applied: return=minimal, depth-noroot
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response>
+    <D:href>/container/work/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype>
+          <D:collection/>
+        </D:resourcetype>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response>
+    <D:href>/container/home/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype>
+          <D:collection/>
+        </D:resourcetype>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+  <D:response>
+    <D:href>/container/foo.txt</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:resourcetype/>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+        </section> 
+
+        <section title="Minimal PROPFIND Request/Response
+		        with an Empty DAV:propstat Element"
+	         toc="exclude">
+
+	  <t>This example tries to fetch an unknown property from
+	  a collection.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PROPFIND /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 166
+Prefer: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<D:propfind xmlns:D="DAV:" xmlns:X="http://ns.example.com/foobar/">
+  <D:prop>
+    <X:foobar/>
+  </D:prop>
+</D:propfind>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 255
+Preference-Applied: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response>
+    <D:href>/container/</D:href>
+    <D:propstat>
+      <D:prop/>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+        </section> 
+
+      </section> 
+
+      
+      <section title="REPORT" anchor="report-examples">
+	<section title="Typical REPORT Request/Response"
+		 toc="exclude">
+
+	  <t>This example tries to fetch an unknown property from
+	  several resources via the <xref
+          target="RFC3253">DAV:expand-property</xref> REPORT type.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+REPORT /dav/principals/ HTTP/1.1
+Host: webdav.example.com
+Content-type: text/xml; charset=utf-8
+Content-length: 847
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:expand-property xmlns:D="DAV:">
+  <D:property name="current-user-principal">
+    <D:property name="resourcetype"/>
+    <D:property name="displayname"/>
+    <D:property name="foobar"
+                namespace="http://ns.example.com/foobar"/>
+    <D:property name="calendar-home-set"
+                namespace="urn:ietf:params:xml:ns:caldav">
+      <D:property name="resourcetype"/>
+      <D:property name="foobar"
+                  namespace="http://ns.example.com/foobar"/>
+    </D:property>
+    <D:property name="addressbook-home-set"
+                namespace="urn:ietf:params:xml:ns:carddav">
+      <D:property name="resourcetype"/>
+      <D:property name="foobar"
+                  namespace="http://ns.example.com/foobar"/>
+    </D:property>
+  </D:property>
+</D:expand-property>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 2664
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:"
+               xmlns:C="urn:ietf:params:xml:ns:caldav"
+               xmlns:R="urn:ietf:params:xml:ns:carddav"
+               xmlns:X="http://ns.example.com/foobar">
+  <D:response>
+    <D:href>/dav/principals/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:current-user-principal>
+          <D:response>
+            <D:href>/dav/principals/user/ken/</D:href>
+            <D:propstat>
+              <D:prop>
+                <D:resourcetype>
+                  <D:principal/>
+                </D:resourcetype>
+                <D:displayname>ken</D:displayname>
+                <C:calendar-home-set>
+                  <D:response>
+                    <D:href>/dav/calendars/user/ken/</D:href>
+                    <D:propstat>
+                      <D:prop>
+                        <D:resourcetype>
+                          <D:collection/>
+                        </D:resourcetype>
+                      </D:prop>
+                      <D:status>HTTP/1.1 200 OK</D:status>
+                    </D:propstat>
+                    <D:propstat>
+                      <D:prop>
+                        <X:foobar/>
+                      </D:prop>
+                      <D:status>HTTP/1.1 404 Not Found</D:status>
+                    </D:propstat>
+                  </D:response>
+                </C:calendar-home-set>
+                <R:addressbook-home-set>
+                  <D:response>
+                    <D:href>/dav/addressbooks/user/ken/</D:href>
+                    <D:propstat>
+                      <D:prop>
+                        <D:resourcetype>
+                          <D:collection/>
+                        </D:resourcetype>
+                      </D:prop>
+                      <D:status>HTTP/1.1 200 OK</D:status>
+                    </D:propstat>
+                    <D:propstat>
+                      <D:prop>
+                        <X:foobar/>
+                      </D:prop>
+                      <D:status>HTTP/1.1 404 Not Found</D:status>
+                    </D:propstat>
+                  </D:response>
+                </R:addressbook-home-set>
+              </D:prop>
+              <D:status>HTTP/1.1 200 OK</D:status>
+            </D:propstat>
+            <D:propstat>
+              <D:prop>
+                <X:foobar/>
+              </D:prop>
+              <D:status>HTTP/1.1 404 Not Found</D:status>
+            </D:propstat>
+          </D:response>
+        </D:current-user-principal>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+	</section> 
+
+	<section title="Minimal REPORT Request/Response"
+		 toc="exclude">
+
+	  <t>This example tries to fetch an unknown property from
+	  several resources via the <xref
+          target="RFC3253">DAV:expand-property</xref> REPORT type.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+REPORT /dav/principals/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 847
+Prefer: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:expand-property xmlns:D="DAV:">
+  <D:property name="current-user-principal">
+    <D:property name="resourcetype"/>
+    <D:property name="displayname"/>
+    <D:property name="foobar"
+                namespace="http://ns.example.com/foobar"/>
+    <D:property name="calendar-home-set"
+                namespace="urn:ietf:params:xml:ns:caldav">
+      <D:property name="resourcetype"/>
+      <D:property name="foobar"
+                  namespace="http://ns.example.com/foobar"/>
+    </D:property>
+    <D:property name="addressbook-home-set"
+                namespace="urn:ietf:params:xml:ns:carddav">
+      <D:property name="resourcetype"/>
+      <D:property name="foobar"
+                  namespace="http://ns.example.com/foobar"/>
+    </D:property>
+  </D:property>
+</D:expand-property>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 1998
+Preference-Applied: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:"
+               xmlns:C="urn:ietf:params:xml:ns:caldav"
+               xmlns:R="urn:ietf:params:xml:ns:carddav"
+               xmlns:X="http://ns.example.com/foobar">
+  <D:response>
+    <D:href>/dav/principals/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:current-user-principal>
+          <D:response>
+            <D:href>/dav/principals/user/ken/</D:href>
+            <D:propstat>
+              <D:prop>
+                <D:resourcetype>
+                  <D:principal/>
+                </D:resourcetype>
+                <D:displayname>ken</D:displayname>
+                <C:calendar-home-set>
+                  <D:response>
+                    <D:href>/dav/calendars/user/ken/</D:href>
+                    <D:propstat>
+                      <D:prop>
+                        <D:resourcetype>
+                          <D:collection/>
+                        </D:resourcetype>
+                      </D:prop>
+                      <D:status>HTTP/1.1 200 OK</D:status>
+                    </D:propstat>
+                  </D:response>
+                </C:calendar-home-set>
+                <R:addressbook-home-set>
+                  <D:response>
+                    <D:href>/dav/addressbooks/user/ken/</D:href>
+                    <D:propstat>
+                      <D:prop>
+                        <D:resourcetype>
+                          <D:collection/>
+                        </D:resourcetype>
+                      </D:prop>
+                      <D:status>HTTP/1.1 200 OK</D:status>
+                    </D:propstat>
+                  </D:response>
+                </R:addressbook-home-set>
+              </D:prop>
+              <D:status>HTTP/1.1 200 OK</D:status>
+            </D:propstat>
+          </D:response>
+        </D:current-user-principal>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+	</section> 
+
+      </section> 
+
+      
+      <section title="PROPPATCH" anchor="proppatch-examples">
+	<section title="Typical PROPPATCH Request/Response"
+		 toc="exclude">
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PROPPATCH /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 199
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:propertyupdate xmlns:D="DAV:">
+  <D:set>
+    <D:prop>
+      <D:displayname>My Container</D:displayname>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 207 Multi-Status
+Content-Type: application/xml; charset=utf-8
+Content-Length: 297
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:multistatus xmlns:D="DAV:">
+  <D:response>
+    <D:href>/container/</D:href>
+    <D:propstat>
+      <D:prop>
+        <D:displayname/>
+      </D:prop>
+      <D:status>HTTP/1.1 200 OK</D:status>
+    </D:propstat>
+  </D:response>
+</D:multistatus>
+]]></x:span></artwork>
+	  </figure>
+
+	</section> 
+
+	<section title="Minimal PROPPATCH Request/Response"
+		 toc="exclude">
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PROPPATCH /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 199
+Prefer: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:propertyupdate xmlns:D="DAV:">
+  <D:set>
+    <D:prop>
+      <D:displayname>My Container</D:displayname>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 200 OK
+Content-Length: 0
+Preference-Applied: return=minimal
+
+</artwork>
+	  </figure>
+
+	</section> 
+
+      </section> 
+
+      
+      <section title="MKCOL" anchor="mkcol-examples">
+	<section title="Verbose MKCOL Request/Response"
+		 toc="exclude">
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+MKCOL /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 181
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:mkcol xmlns:D="DAV:">
+  <D:set>
+    <D:prop>
+      <D:displayname>My Container</D:displayname>
+    </D:prop>
+  </D:set>
+</D:mkcol>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 201 Created
+Cache-Control: no-cache
+Content-Type: application/xml; charset=utf-8
+Content-Length: 224
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:mkcol-response xmlns:D="DAV:">
+  <D:propstat>
+    <D:prop>
+      <D:displayname/>
+    </D:prop>
+    <D:status>HTTP/1.1 200 OK</D:status>
+  </D:propstat>
+</D:mkcol-response>
+]]></x:span></artwork>
+	  </figure>
+
+	</section> 
+
+	<section title="Minimal MKCOL Request/Response"
+		 toc="exclude">
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+MKCOL /container/ HTTP/1.1
+Host: webdav.example.com
+Content-Type: application/xml; charset=utf-8
+Content-Length: 181
+Prefer: return=minimal
+
+<x:span x:lang=""><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<D:mkcol xmlns:D="DAV:">
+  <D:set>
+    <D:prop>
+      <D:displayname>My Container</D:displayname>
+    </D:prop>
+  </D:set>
+</D:mkcol>
+]]></x:span></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 201 Created
+Cache-Control: no-cache
+Content-Length: 0
+Preference-Applied: return=minimal
+
+</artwork>
+	  </figure>
+	</section> 
+
+      </section> 
+
+      
+      <section title="POST" anchor="post-examples">
+        <section title="Typical Resource Creation and Retrieval
+		        via POST + GET"
+	         toc="exclude">
+
+	  <t>Note that this request is not conditional because by using
+	  the <xref target="RFC5995">POST</xref> method, the client lets
+	  the server choose the resource URI, thereby guaranteeing that it will
+	  not modify an existing resource.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+POST /container/work;add-member/ HTTP/1.1
+Host: caldav.example.com
+Content-Type: text/calendar; charset=utf-8
+Content-Length: 521
+
+<![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Corp.//CalDAV Client//EN
+BEGIN:VEVENT
+UID:CD87465FA
+SEQUENCE:0
+DTSTAMP:20120602T185254Z
+DTSTART:20120602T160000Z
+DTEND:20120602T170000Z
+TRANSP:OPAQUE
+SUMMARY:Lunch
+ORGANIZER;CN="Ken Murchison":mailto:murch@example.com
+ATTENDEE;CN="Ken Murchison";CUTYPE=INDIVIDUAL;PARTSTAT=ACCEPTED:
+ mailto:murch@example.com
+ATTENDEE;CN="John Doe";CUTYPE=INDIVIDUAL;PARTSTAT
+ =NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:jdoe@
+ example.com
+END:VEVENT
+END:VCALENDAR
+]]></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 201 Created
+Location: /container/work/abc.ics
+Content-Length: 0
+
+</artwork>
+	    <postamble>Note that the server did not include any
+	    validator header fields (e.g., ETag) in the response,
+	    signaling that the created representation differs from
+	    the representation sent in the body of the request.  The
+	    client has to send a separate GET request to retrieve the
+	    current representation:</postamble>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+GET /container/work/abc.ics HTTP/1.1
+Host: caldav.example.com
+
+</artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 200 OK
+Content-Type: text/calendar; charset=utf-8
+Content-Length: 541
+ETag: "nahduyejc"
+Schedule-Tag: "jfd84hgbcn"
+
+<![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Corp.//CalDAV Server//EN
+BEGIN:VEVENT
+UID:CD87465FA
+SEQUENCE:0
+DTSTAMP:20120602T185300Z
+DTSTART:20120602T160000Z
+DTEND:20120602T170000Z
+TRANSP:OPAQUE
+SUMMARY:Lunch
+ORGANIZER;CN="Ken Murchison":mailto:murch@example.com
+ATTENDEE;CN="Ken Murchison";CUTYPE=INDIVIDUAL;PARTSTAT=ACCEPTED:
+ mailto:murch@example.com
+ATTENDEE;CN="John Doe";CUTYPE=INDIVIDUAL;PARTSTAT
+ =NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-STATUS=
+ 1.2:mailto:jdoe@example.com
+END:VEVENT
+END:VCALENDAR
+]]></artwork>
+	  </figure>
+
+	</section> 
+
+        <section title="Streamlined Resource Creation and
+		        Retrieval via POST"
+	         toc="exclude">
+
+	  <t>Note that this request is not conditional because by using
+	  the <xref target="RFC5995">POST</xref> method, the client lets
+	  the server choose the resource URI, thereby guaranteeing that it will
+	  not modify an existing resource.</t>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+POST /container/work;add-member/ HTTP/1.1
+Host: caldav.example.com
+Content-Type: text/calendar; charset=utf-8
+Content-Length: 521
+Prefer: return=representation
+
+<![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Corp.//CalDAV Client//EN
+BEGIN:VEVENT
+UID:CD87465FA
+SEQUENCE:0
+DTSTAMP:20120602T185254Z
+DTSTART:20120602T160000Z
+DTEND:20120602T170000Z
+TRANSP:OPAQUE
+SUMMARY:Lunch
+ORGANIZER;CN="Ken Murchison":mailto:murch@example.com
+ATTENDEE;CN="Ken Murchison";CUTYPE=INDIVIDUAL;PARTSTAT=ACCEPTED:
+ mailto:murch@example.com
+ATTENDEE;CN="John Doe";CUTYPE=INDIVIDUAL;PARTSTAT
+ =NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE:mailto:jdoe@
+ example.com
+END:VEVENT
+END:VCALENDAR
+]]></artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 201 Created
+Location: /container/work/abc.ics
+Content-Type: text/calendar; charset=utf-8
+Content-Length: 541
+Content-Location: /container/work/abc.ics
+ETag: "nahduyejc"
+Schedule-Tag: "jfd84hgbcn"
+Preference-Applied: return=representation
+
+<![CDATA[BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Example Corp.//CalDAV Server//EN
+BEGIN:VEVENT
+UID:CD87465FA
+SEQUENCE:0
+DTSTAMP:20120602T185300Z
+DTSTART:20120602T160000Z
+DTEND:20120602T170000Z
+TRANSP:OPAQUE
+SUMMARY:Lunch
+ORGANIZER;CN="Ken Murchison":mailto:murch@example.com
+ATTENDEE;CN="Ken Murchison";CUTYPE=INDIVIDUAL;PARTSTAT=ACCEPTED:
+ mailto:murch@example.com
+ATTENDEE;CN="John Doe";CUTYPE=INDIVIDUAL;PARTSTAT
+ =NEEDS-ACTION;ROLE=REQ-PARTICIPANT;RSVP=TRUE;SCHEDULE-STATUS=
+ 1.2:mailto:jdoe@example.com
+END:VEVENT
+END:VCALENDAR
+]]></artwork>
+	  </figure>
+
+	</section> 
+
+      </section>
+
+
+      <section title="PUT" anchor="put-examples">
+
+        <section title="Typical Conditional Resource Update
+		        Failure and Retrieval via PUT + GET"
+	         toc="exclude">
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PUT /container/motd.txt HTTP/1.1
+Host: dav.example.com
+Content-Type: text/plain
+Content-Length: 69
+If-Match: "asd973"
+
+Either write something worth reading or do something worth writing.
+</artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 412 Precondition Failed
+Content-Length: 0
+
+</artwork>
+	    <postamble>The resource has been modified by another user
+	    agent (ETag mismatch); therefore, the client has to send a
+	    separate GET request to retrieve the current
+	    representation:</postamble>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+GET /container/motd.txt HTTP/1.1
+Host: dav.example.com
+
+</artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 200 OK
+Content-Type: text/plain
+Content-Length: 52
+ETag: "789sdas"
+
+An investment in knowledge pays the best interest.
+</artwork>
+	  </figure>
+
+	</section> 
+
+        <section title="Streamlined Conditional Resource Update
+		        Failure and Retrieval via PUT"
+	         toc="exclude">
+
+	  <figure>
+	    <preamble>&gt;&gt; Request &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="request"'>
+PUT /container/motd.txt HTTP/1.1
+Host: dav.example.com
+Content-Type: text/plain
+Content-Length: 69
+If-Match: "asd973"
+Prefer: return=representation
+
+Either write something worth reading or do something worth writing.
+</artwork>
+	  </figure>
+
+	  <figure>
+	    <preamble>&gt;&gt; Response &lt;&lt;</preamble>
+      <artwork type='message/http;  msgtype="response"'>
+HTTP/1.1 412 Precondition Failed
+Content-Type: text/plain
+Content-Length: 52
+Content-Location: /container/motd.txt
+ETag: "789sdas"
+Preference-Applied: return=representation
+
+An investment in knowledge pays the best interest.
+</artwork>
+	  </figure>
+
+	</section>
+
+      </section> 
+
+    </section>
+
+   <section title="Acknowledgements" numbered="false">
+
+      <t>The author would like to thank the following individuals for
+      contributing their ideas and support for writing this
+      specification: Cyrus Daboo, Helge Hess, Andrew McMillan, Arnaud
+      Quillaud, and Julian Reschke.</t>
+
+      <t>The author would also like to thank the Calendaring and
+      Scheduling Consortium for advice with this specification and
+      for organizing interoperability testing events to help refine
+      it.</t>
+
+    </section>
+  </back>
+</rfc> 
