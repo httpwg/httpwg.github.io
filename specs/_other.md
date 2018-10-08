@@ -34,7 +34,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC6266: [Content-Disposition](/specs/rfc6266.html)
 * RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
-* RFC8144: [Prefer Header](/specs/rfc8144.html)
+* RFC8144: [Prefer Header](/specs/rfc7240.html)
 * RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
 
 ### Security-Related Extensions
