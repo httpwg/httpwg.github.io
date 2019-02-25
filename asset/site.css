@@ -13,3 +13,15 @@ body {
 .navbar-right {
   padding-right: 15px;
 }
+
+#col1 {
+  z-index: 10;
+}
+
+#col2 {
+  z-index: 9;
+}
+
+#col3 {
+  z-index: 8;
+}

@@ -22,13 +22,13 @@
         </div>
 
         <div class="row">	
-        	<div class="col-md-7">
+        	<div class="col-md-7" id="col1">
             {% capture mdcol1 %}{% include_relative {{ page.col1 }} %}{% endcapture %}
             {{ mdcol1 | markdownify }}
             {% capture mdcol2 %}{% include_relative {{ page.col2 }} %}{% endcapture %}
             {{ mdcol2 | markdownify }}
           </div>
-        	<div class="col-md-5">
+        	<div class="col-md-5" id="col2">
             {% capture mdcol3 %}{% include_relative {{ page.col3 }} %}{% endcapture %}
             {{ mdcol3 | markdownify }}
           </div>
