@@ -30,7 +30,7 @@ title: HTTP
 		<h2>📄 Specs and Tests</h2>
     <p>Resources to help HTTP implementations, including:</p>
     <ul>
-		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span>.</li>
+		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span></li>
       <li>See our list of unofficial <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></li>
     </ul>
 	</div>
