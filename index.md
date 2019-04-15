@@ -28,9 +28,11 @@ title: HTTP
 	
 	<div class="col-sm-4">
 		<h2>📄 Specifications and Tests</h2>
-
-		<p>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span>.</p>
-    <p>See our list of unofficial <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></p>
+    <p>Resources to help HTTP implementations, including:</p>
+    <ul>
+		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span>.</li>
+      <li>See our list of unofficial <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></li>
+    </ul>
 	</div>
 
 	<div class="col-sm-4">
