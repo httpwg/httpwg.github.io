@@ -27,9 +27,10 @@ title: HTTP
 <div class="row">
 	
 	<div class="col-sm-4">
-		<h2>📄 Documentation</h2>
+		<h2>📄 Specifications and Tests</h2>
 
-		<p>We maintain a complete listing of <a href="/specs/">HTTP-related documentation</a> <span class="label label-info">the specs!</span>.</p>
+		<p>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span>.</p>
+    <p>Unofficial <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></p>
 	</div>
 
 	<div class="col-sm-4">
