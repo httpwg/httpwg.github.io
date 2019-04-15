@@ -27,7 +27,7 @@ title: HTTP
 <div class="row">
 	
 	<div class="col-sm-4">
-		<h2>📄 Specifications and Tests</h2>
+		<h2>📄 Specs and Tests</h2>
     <p>Resources to help HTTP implementations, including:</p>
     <ul>
 		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="label label-info">the specs!</span>.</li>
