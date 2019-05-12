@@ -185,7 +185,7 @@
       <meta property="og:site_name" content="{$siteName}" />
     </xsl:if>
     <xsl:if test="$pageImageUrl!=''">
-      <meta property="og:image" content="{pageImageUrl}" />
+      <meta property="og:image" content="{$pageImageUrl}" />
     </xsl:if>
     <link rel="stylesheet" type="text/css" href="{$bootstrapCssUrl}" />
     <style type="text/css">
