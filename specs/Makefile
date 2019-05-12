@@ -5,7 +5,7 @@ saxparam ?= bootstrapJsUrl='/bower_components/bootstrap/dist/js/bootstrap.min.js
 						jqueryJsUrl='/bower_components/jquery/dist/jquery.min.js' \
 						siteCssUrl='/asset/site.css' \
 						navbar='../../_includes/navbar.html' \
-						siteName='IETF HTTP Working Group' \
+						siteName='IETF HTTP Working Group Specifications' \
 						pageImageUrl='https://httpwg.org/asset/http-sq.png'
 stylesheet := lib/rfcbootstrap.xslt
 

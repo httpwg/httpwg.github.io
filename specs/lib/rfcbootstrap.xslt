@@ -168,16 +168,26 @@
   <xsl:template name="insertCss">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta property="og:type" content="article" />
-    <xsl:element name="meta">
-      <xsl:attribute name="property">og:title</xsl:attribute>
-      <xsl:attribute name="content">
-        <xsl:if test="$rfcno!=''">
-          <xsl:value-of select="concat('RFC ',$rfcno,' - ')"/>
-        </xsl:if>
-        <xsl:apply-templates select="front/title" mode="get-text-content" />
-      </xsl:attribute>
-    </xsl:element>
-    <meta property="og:desciption" content="{normalize-space(front/abstract)}" />
+    <xsl:choose>
+      <xsl:when test="$rfcno!=''">
+        <meta property="og:title" content="{$rfcno}" />
+        <xsl:element name="meta">
+          <xsl:attribute name="property">og:description</xsl:attribute>
+          <xsl:attribute name="content">
+            <xsl:apply-templates select="front/title" mode="get-text-content" />
+          </xsl:attribute>
+        </xsl:element>        
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:element name="meta">
+          <xsl:attribute name="property">og:title</xsl:attribute>
+          <xsl:attribute name="content">
+            <xsl:apply-templates select="front/title" mode="get-text-content" />
+          </xsl:attribute>
+        </xsl:element>
+        <meta property="og:description" content="{normalize-space(front/abstract)}" />
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:if test="$pageUrl!=''">
       <meta property="og:url" content="{$pageUrl}" />
     </xsl:if>
