@@ -99,6 +99,15 @@
   <!-- site URLs -->
   <xsl:param name="siteCssUrl" select="''" />
 
+  <!-- page URL -->
+  <xsl:param name="pageUrl" select="''" />
+
+  <!-- page image URL -->
+  <xsl:param name="pageImageUrl" select="''" />
+
+  <!-- site name -->
+  <xsl:param name="siteName" select="''" />
+
   <!-- disable built-in ToC -->
   <xsl:variable name="xml2rfc-toc">no</xsl:variable>
 
@@ -158,6 +167,26 @@
 
   <xsl:template name="insertCss">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta property="og:type" content="article" />
+    <xsl:element name="meta">
+      <xsl:attribute name="property">og:title</xsl:attribute>
+      <xsl:attribute name="content">
+        <xsl:if test="$rfcno!=''">
+          <xsl:value-of select="concat('RFC ',$rfcno,' - ')"/>
+        </xsl:if>
+        <xsl:apply-templates select="front/title" mode="get-text-content" />
+      </xsl:attribute>
+    </xsl:element>
+    <meta property="og:desciption" content="{normalize-space(front/abstract)}" />
+    <xsl:if test="$pageUrl!=''">
+      <meta property="og:url" content="{$pageUrl}" />
+    </xsl:if>
+    <xsl:if test="$siteName!=''">
+      <meta property="og:site_name" content="{$siteName}" />
+    </xsl:if>
+    <xsl:if test="$pageImageUrl!=''">
+      <meta property="og:image" content="{pageImageUrl}" />
+    </xsl:if>
     <link rel="stylesheet" type="text/css" href="{$bootstrapCssUrl}" />
     <style type="text/css">
       body {
