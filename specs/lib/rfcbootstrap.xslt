@@ -170,7 +170,7 @@
     <meta property="og:type" content="article" />
     <xsl:choose>
       <xsl:when test="$rfcno!=''">
-        <meta property="og:title" content="{$rfcno}" />
+        <meta property="og:title" content="{concat('RFC', $rfcno)}" />
         <xsl:element name="meta">
           <xsl:attribute name="property">og:description</xsl:attribute>
           <xsl:attribute name="content">
