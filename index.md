@@ -1,6 +1,7 @@
 ---
 layout: front
-title: HTTP
+title: IETF HTTP Working Group
+description: We maintain and develop the Hypertext Transfer Protocol - the core protocol of the World Wide Web
 ---
 
 <div class="container">

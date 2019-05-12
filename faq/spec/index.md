@@ -1,6 +1,7 @@
 ---
 layout: page
 title: HTTP FAQs for Specification Writers
+description: Frequently Asked Questions from people who are specifying HTTP extensions like new header fields
 ---
 
 *This page lists Frequently Asked Questions from people who are specifying HTTP extensions like new header fields.*

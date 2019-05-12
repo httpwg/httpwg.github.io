@@ -1,6 +1,7 @@
 ---
 layout: page
 title: About Us
+description: Find out more about the IETF HTTP Working Group
 banner_img: /asset/wg_japan.jpg
 ---
 

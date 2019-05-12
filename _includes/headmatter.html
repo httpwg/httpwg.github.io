@@ -1,0 +1,16 @@
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{{ page.title }}</title>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ page.title }}">
+    <meta property="og:description" content="{{ page.description }}">
+    <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    <meta property="og:site_name" content="IETF HTTP Working Group">
+    {% if page.banner_img %}
+    <meta property="og:image" content="{{ site.url}}{{ page.banner_img }}">
+    {% else %}
+    <meta property="og:image" content="https://httpwg.org/asset/http-sq.png">
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/asset/site.css" rel="stylesheet">
+    
