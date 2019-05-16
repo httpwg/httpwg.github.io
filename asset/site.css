@@ -25,3 +25,6 @@ body {
 #col3 {
   z-index: 8;
 }
+.twtr-icon {
+  fill: #00aced;
+}
