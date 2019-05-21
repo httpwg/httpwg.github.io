@@ -24,9 +24,7 @@
   <!ENTITY SHOULD "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD</bcp14>">
   <!ENTITY SHOULD-NOT "<bcp14 xmlns='http://purl.org/net/xml2rfc/ext'>SHOULD NOT</bcp14>">
 ]>
-<rfc xmlns:x="http://purl.org/net/xml2rfc/ext" xmlns:ed="http://greenbytes.de/2002/rfcedit" number="7725" ipr="trust200902" category="std" xml:lang="en" x:maturity-level="proposed">
-
-  <x:feedback template="mailto:ietf-http-wg@w3.org?subject={docname},%20%22{section}%22&amp;body=&lt;{ref}&gt;:"/>
+<rfc xmlns:x="http://purl.org/net/xml2rfc/ext" xmlns:ed="http://greenbytes.de/2002/rfcedit" ipr="trust200902" number="7694" category="std" xml:lang="en" x:maturity-level="proposed">
 
 	<front>
   <title abbrev="HTTP CICE">Hypertext Transfer Protocol (HTTP) Client-Initiated Content-Encoding</title>
@@ -43,7 +41,7 @@
     </address>
   </author>
 
-  <date year="2015" month="November" />
+  <date year="2015" month="November"/>
   
   <area>Applications and Real-Time</area>
   <workgroup>HTTP</workgroup>
@@ -63,7 +61,7 @@
       to indicate the content codings that are supported in requests.
     </t>
   </abstract>
-
+  
   </front>
 
   <middle>
