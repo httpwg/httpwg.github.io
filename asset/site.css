@@ -10,9 +10,6 @@ body {
   height: 65px; 
   visibility: hidden; 
 }
-.navbar-right {
-  padding-right: 15px;
-}
 
 #col1 {
   z-index: 10;

@@ -87,11 +87,11 @@
 
   <!-- Library URLs -->
   <xsl:param name="bootstrapCssUrl"
-           select="'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css'" />
+           select="'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'" />
   <xsl:param name="bootstrapJsUrl"
-           select="'https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js'" />
+           select="'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js'" />
   <xsl:param name="jqueryJsUrl"
-           select="'https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js'" />
+           select="'https://code.jquery.com/jquery-3.3.1.slim.min.js'" />
 
   <!-- navbar -->
   <xsl:param name="navbar" select="''" />
@@ -135,13 +135,12 @@
 
         <div class="container" id="top">
           <div class="row">
-            <div class="col-md-4 col-md-push-8 hidden-sm hidden-xs" id="sidebar" role="navigation">
+            <div class="col-lg-4 order-last d-none d-lg-block sticky-top" id="sidebar" role="navigation">
               <div class="navbar">
                 <div class="navbar-brand">
                   <a href="#top">
                     <xsl:choose>
                       <xsl:when test="/rfc/@number"><strong>RFC </strong><xsl:value-of select="/rfc/@number"/></xsl:when>
-                      <xsl:otherwise><xsl:value-of select="/rfc/@docName"/></xsl:otherwise>
                     </xsl:choose>
                   </a>
                 </div>
@@ -152,7 +151,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-8 main" role="main">
+            <div class="col-lg-8 order-first main" role="main">
               <xsl:apply-templates select="front" />
               <xsl:apply-templates select="middle" />
               <xsl:call-template name="back" />
@@ -216,7 +215,7 @@
         list-style: none;
       }
       #sidebar {
-        position: fixed;
+        margin-top: -10px;
         height: 90%;
         overflow-y: auto;
         font-size: 90%;

@@ -1,2 +1,5 @@
 ---
   markdown: kramdown
+  exclude:
+      - sass-cache/
+      - .jekyll-cache/

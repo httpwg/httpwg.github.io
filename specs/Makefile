@@ -1,8 +1,8 @@
 saxpath ?= "lib/saxon9.jar"
 saxon ?= java -classpath $(saxpath) net.sf.saxon.Transform -l
-saxparam ?= bootstrapJsUrl='/bower_components/bootstrap/dist/js/bootstrap.min.js' \
-					  bootstrapCssUrl='/bower_components/bootstrap/dist/css/bootstrap.min.css' \
-						jqueryJsUrl='/bower_components/jquery/dist/jquery.min.js' \
+saxparam ?= bootstrapJsUrl='/node_modules/bootstrap/dist/js/bootstrap.min.js' \
+					  bootstrapCssUrl='/node_modules/bootstrap/dist/css/bootstrap.min.css' \
+						jqueryJsUrl='/node_modules/jquery/dist/jquery.min.js' \
 						siteCssUrl='/asset/site.css' \
 						navbar='../../_includes/navbar.html' \
 						siteName='IETF HTTP Working Group Specifications' \

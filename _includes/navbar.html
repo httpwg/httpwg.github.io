@@ -1,58 +1,55 @@
-<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-      <span class="sr-only">Toggle navigation</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
+    
     <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23" /></a>
   </div>
   
-  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-    <ul class="nav navbar-nav">
+  <div class="collapse navbar-collapse" id="navbar-collapse">
       
-      
-      <li><a href="/specs/">📄 Documentation</a></li>
+    <div class="navbar-nav mr-auto">
 
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">FAQs<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="/faq/spec/">FAQs for Spec Writers</a></li>
-            <li><a href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
+      <a class="nav-link" href="/specs/">📄 Documentation</a>
+      <div class="dropdown">
+        <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown">FAQs<b class="caret"></b></button>
+          <ul class="dropdown-menu bg-dark">
+            <li class="nav-item"><a class="nav-link" href="/faq/spec/">FAQs for Spec Writers</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
           </ul>
-      </li>
+      </div>
 
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Work in Progress<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="https://github.com/httpwg/http-core">HTTP Core</a></li>
-            <li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
-            <li><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>          
+      <div class="dropdown">
+        <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown">Work in Progress<b class="caret"></b></button>
+          <ul class="dropdown-menu bg-dark">
+            <li class="nav-item"><a class="nav-link" href="https://github.com/httpwg/http-core">HTTP Core</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>
           </ul>
-      </li>
+      </div>
 
-      <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Participate<b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="/about/">About the HTTP Working Group</a></li>
+      <div class="dropdown">
+        <button class="btn btn-dark dropdown-toggle" type="button" data-toggle="dropdown">Participate<b class="caret"></b></button>
+          <ul class="dropdown-menu bg-dark">
+            <li class="nav-item"><a class="nav-link" href="/about/">About the HTTP Working Group</a></li>
             <li class="divider"></li>
-            <li><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
-            <li><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
-            <li><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li>
-            <li><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
+            <li class="nav-item"><a class="nav-link" href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
+            <li class="nav-item"><a class="nav-link" href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li>
+            <li class="nav-item"><a class="nav-link" href="https://github.com/httpwg/wg-materials">Meeting Materials</a></li>
           </ul>
-      </li>
+      </div>
+    </div>
             
-    </ul>
-    <ul class="nav navbar-nav navbar-right">
-      <li><a href="https://twitter.com/http_wg">
+    <div class="nav navbar-nav ml-auto">
+      <a class="navbar" href="https://twitter.com/http_wg">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="twtr-icon  twtr-color-fill--blue-dark  has-hover"> 
          <path opacity="0" d="M0 0h24v24H0z"></path> 
          <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"></path> 
         </svg>
-      </a></li>
-    </ul>
+      </a>
+    </div>
   </div>
 </nav>
