@@ -300,6 +300,8 @@
     </div>
   </xsl:template>
 
+  <xsl:template name="insertTocAppendix">
+  </xsl:template>
 
   <xsl:template name="get-generator">
     <xsl:variable name="gen">
