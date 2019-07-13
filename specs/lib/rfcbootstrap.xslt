@@ -109,7 +109,7 @@
   <xsl:param name="siteName" select="''" />
 
   <!-- disable built-in ToC -->
-  <xsl:variable name="xml2rfc-toc">no</xsl:variable>
+  <xsl:variable name="xml2rfc-toc">yes</xsl:variable>
 
   <xsl:variable name="toc-ul-class" select="'nav-sublist list-unstyled'" />
 
@@ -135,7 +135,7 @@
 
         <div class="container" id="top">
           <div class="row">
-            <div class="col-lg-4 order-last d-none d-lg-block sticky-top" id="sidebar" role="navigation">
+            <div class="col-lg-4 order-last d-none d-lg-block" id="sidebar" role="navigation">
               <div class="navbar">
                 <div class="navbar-brand">
                   <a href="#top">
@@ -146,8 +146,9 @@
                 </div>
                 <br clear="all"/>
                 <div class="">
-                    <xsl:apply-templates select="/" mode="toc" />
-                    <!-- xsl:call-template name="insertTocAppendix" / -->
+                    <xsl:apply-templates select="/" mode="toc">
+                      <xsl:with-param name="extra"></xsl:with-param>
+                    </xsl:apply-templates>
                 </div>
               </div>
             </div>
@@ -207,37 +208,18 @@
         border-top: none;
         padding: 0;
       }
-      #rfc\.meta {
-        width: 40%;
-        float: right
-      }
-      #rfc\.toc > ul ul {
-        list-style: none;
-      }
       #sidebar {
         margin-top: -10px;
         height: 90%;
         overflow-y: auto;
         font-size: 90%;
       }
-      .container .nav-sublist {
-        padding-left: 20px;
-        padding-right: 10px;
-        font-size: 90%;
+      #rfc\.meta {
+        width: 40%;
+        float: right
       }
-      .container .navbar-brand {
-        padding-top: 0;
-      }
-      .container .nav > li > a {
-        padding: 10px 7px 5px 15px;
-        display: inline-block;
-      }
-      .container .nav > li > a + a {
-        padding: 10px 15px 5px 7px;
-        display: inline-block;
-      }
-      .container .nav > li > a {
-        padding: 5px 10px;
+      .toc ul {
+        list-style: none;
       }
       .filename {
         color: rgb(119, 119, 119);
@@ -310,8 +292,9 @@
   </xsl:template>
 
   <xsl:template match="/" mode="toc">
-    <div id="{$anchor-pref}toc">
-      <ul class="nav">
+    <xsl:param name="extra">d-lg-none</xsl:param>
+    <div class="toc {$extra}">
+      <ul>
         <xsl:apply-templates mode="toc" />
       </ul>
     </div>
