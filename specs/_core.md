@@ -9,6 +9,7 @@ Those semantics are expressed "on the wire" in two different ways:
 
  * RFC7230: [HTTP/1.1](/specs/rfc7230.html)
  * RFC7540: [HTTP/2](/specs/rfc7540.html)
+ * RFC8740: [HTTP/2 with TLS 1.3](/specs/rfc8740.html)
 
 HTTP/2 also uses:
 
