@@ -40,7 +40,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<ul>
 			<li><a href="https://github.com/httpwg/http-core#draft-http-core-documents">HTTP Core Revision</a></li>
 			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extension Development</a></li>
-			<li>Possible <a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>
+			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
 		</ul>
 	</div>
 
