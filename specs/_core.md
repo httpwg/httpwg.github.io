@@ -24,4 +24,4 @@ These HTTP functions are optional to implement, but widely used:
  
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068**, **RFC2616** and **RFC2617**.
 
-*The core specifications are currently [under revision](https://github.com/httpwg/http-core). If you find issues, please bring them up there!*
+*The core specifications are currently [under revision](https://httpwg.org/http-core/). If you find issues, please bring them up there!*
