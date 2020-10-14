@@ -38,8 +38,8 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<h2>👷‍♀️ Work In Progress</h2>
 		<p>See what's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://github.com/httpwg/http-core#draft-http-core-documents">HTTP Core Revision</a></li>
-			<li><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extension Development</a></li>
+			<li><a href="https://httpwg.org/http-core/">HTTP Core Revision</a> (<a href="https://github.com/httpwg/http-core#draft-http-core-documents">repo</a>)</li>
+			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> (<a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">repo</a>)</li>
 			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
 		</ul>
 	</div>
@@ -51,7 +51,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 			<li>Learn <a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">how to contribute</a> <span class="badge badge-warning">start here</span></li>
 			<li>See our <a href="http://datatracker.ietf.org/wg/httpbis/charter/">charter</a></li>
 			<li>Catch up on our <a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">mailing list</a></li>
-			<li>Browse our <a href="https://github.com/httpwg/wg-materials">meeting materials</a></li>
+			<li>Browse our <a href="https://httpwg.org/wg-materials/">meeting materials</a> (<a href="https://github.com/httpwg/wg-materials">source</a>)</li>
     </ul>
 	</div>
 </div>
