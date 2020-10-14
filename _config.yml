@@ -3,3 +3,4 @@
   exclude:
       - sass-cache/
       - .jekyll-cache/
+  remote_theme: httpwg/theme
