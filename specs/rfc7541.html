@@ -145,7 +145,7 @@ function anchorRewrite() {
 }
 window.addEventListener('hashchange', anchorRewrite);
 window.addEventListener('DOMContentLoaded', anchorRewrite);
-</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC7541"><meta property="og:description" content="HPACK: Header Compression for HTTP/2"><meta property="og:url" content="https://httpwg.org/specs/rfc7541.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/asset/http-sq.png"><link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC7541"><meta property="og:description" content="HPACK: Header Compression for HTTP/2"><meta property="og:url" content="https://httpwg.org/specs/rfc7541.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/assets/favicon/apple-icon-180x180.png"><link rel="stylesheet" type="text/css" href="/assets/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
       body {
         padding-top: 80px;
         padding-bottom: 80px;
@@ -223,14 +223,14 @@ window.addEventListener('DOMContentLoaded', anchorRewrite);
         font: 11pt consolas, monospace;
         font-size-adjust: none;
       }
-    </style><link rel="stylesheet" type="text/css" href="/asset/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Compression Process Overview" href="#rfc.section.2"><link rel="Chapter" title="3 Header Block Decoding" href="#rfc.section.3"><link rel="Chapter" title="4 Dynamic Table Management" href="#rfc.section.4"><link rel="Chapter" title="5 Primitive Type Representations" href="#rfc.section.5"><link rel="Chapter" title="6 Binary Format" href="#rfc.section.6"><link rel="Chapter" title="7 Security Considerations" href="#rfc.section.7"><link rel="Chapter" href="#rfc.section.8" title="8 References"><link rel="Appendix" title="A Static Table Definition" href="#rfc.section.A"><link rel="Appendix" title="B Huffman Code" href="#rfc.section.B"><link rel="Appendix" title="C Examples" href="#rfc.section.C"><link rel="Appendix" title="Acknowledgments" href="#rfc.section.unnumbered-1"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc7541.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7541"><link rel="Help" title="Additional Information on tools.ietf.org" href="https://tools.ietf.org/html/rfc7541"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="HTTP, Header"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Peon, R."><meta name="dcterms.creator" content="Ruellan, H."><meta name="dcterms.identifier" content="urn:ietf:rfc:7541"><meta name="dcterms.issued" content="2015-05"><meta name="dcterms.abstract" content="This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2."></head><body onload="getMeta(7541,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top" role="navigation">
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="Copyright" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Compression Process Overview" href="#rfc.section.2"><link rel="Chapter" title="3 Header Block Decoding" href="#rfc.section.3"><link rel="Chapter" title="4 Dynamic Table Management" href="#rfc.section.4"><link rel="Chapter" title="5 Primitive Type Representations" href="#rfc.section.5"><link rel="Chapter" title="6 Binary Format" href="#rfc.section.6"><link rel="Chapter" title="7 Security Considerations" href="#rfc.section.7"><link rel="Chapter" href="#rfc.section.8" title="8 References"><link rel="Appendix" title="A Static Table Definition" href="#rfc.section.A"><link rel="Appendix" title="B Huffman Code" href="#rfc.section.B"><link rel="Appendix" title="C Examples" href="#rfc.section.C"><link rel="Appendix" title="Acknowledgments" href="#rfc.section.unnumbered-1"><link rel="Alternate" title="Authoritative ASCII Version" href="http://www.ietf.org/rfc/rfc7541.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7541"><link rel="Help" title="Additional Information on tools.ietf.org" href="https://tools.ietf.org/html/rfc7541"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="HTTP, Header"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Peon, R."><meta name="dcterms.creator" content="Ruellan, H."><meta name="dcterms.identifier" content="urn:ietf:rfc:7541"><meta name="dcterms.issued" content="2015-05"><meta name="dcterms.abstract" content="This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2."></head><body onload="getMeta(7541,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     
-    <a class="navbar-brand" href="/"><img src="/asset/http.svg" height="23"></a>
+    <a class="navbar-brand" href="/"><img src="https://httpwg.org/assets/http.svg" height="23"></a>
   </div>
   
   <div class="collapse navbar-collapse" id="navbar-collapse">
@@ -241,7 +241,7 @@ window.addEventListener('DOMContentLoaded', anchorRewrite);
       <div class="dropdown ml-4">
         <a href="#" class="nav-item dropdown-toggle text-white" data-toggle="dropdown">FAQs</a>
           <ul class="dropdown-menu">
-            <li class="dropdown-item"><a href="/faq/spec/">FAQs for Spec Writers</a></li>
+            <li class="dropdown-item"><a href="https://httpwg.org/faq/spec/">FAQs for Spec Writers</a></li>
             <li class="dropdown-item"><a href="https://http2.github.io/faq/">HTTP/2 FAQ</a></li>
           </ul>
       </div>
@@ -249,21 +249,21 @@ window.addEventListener('DOMContentLoaded', anchorRewrite);
       <div class="dropdown ml-4">
         <a href="#" class="nav-item dropdown-toggle text-white" data-toggle="dropdown">Work in Progress</a>
           <ul class="dropdown-menu">
-            <li class="dropdown-item"><a href="https://github.com/httpwg/http-core">HTTP Core</a></li>
-            <li class="dropdown-item"><a href="https://github.com/httpwg/http-extensions#draft-http-extension-specifications">HTTP Extensions</a></li>
-            <li class="dropdown-item"><a href="https://github.com/httpwg/wiki/wiki/WatchList">Future Work</a></li>
+            <li class="dropdown-item"><a href="https://httpwg.org/http-core">HTTP Core</a></li>
+            <li class="dropdown-item"><a href="https://httpwg.org/http-extensions">HTTP Extensions</a></li>
+            <li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
           </ul>
       </div>
 
       <div class="dropdown ml-4">
         <a href="#" class="nav-item dropdown-toggle text-white" data-toggle="dropdown">Participate</a>
           <ul class="dropdown-menu">
-            <li class="dropdown-item"><a href="/about/">About the HTTP Working Group</a></li>
+            <li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li>
             <li class="divider"></li>
             <li class="dropdown-item"><a href="https://github.com/httpwg/http-extensions/blob/master/CONTRIBUTING.md">Contribution Policy</a></li>
             <li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li>
             <li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li>
-            <li class="dropdown-item"><a href="https://github.com/httpwg/wg-materials">Meeting Materials</a></li>
+            <li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li>
           </ul>
       </div>
     </div>
@@ -1145,4 +1145,4 @@ cache-control: private
 date: Mon, 21 Oct 2013 20:13:22 GMT
 location: https://www.example.com
 content-encoding: gzip
-set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1</pre></span></div></section></section></section><section id="n-acknowledgments"><h2 id="rfc.section.unnumbered-1"><a href="#n-acknowledgments">Acknowledgments</a></h2><div id="rfc.section.unnumbered-1.p.1"><p>This specification includes substantial input from the following individuals: </p><ul><li>Mike Bishop, Jeff Pinner, Julian Reschke, and Martin Thomson (substantial editorial contributions).</li><li>Johnny Graettinger (Huffman code statistics).</li></ul></div></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Roberto Peon</b><br>Google, Inc<br>Email: fenix@google.com</address><address><b>Hervé Ruellan</b><br>Canon CRF<br>Email: herve.ruellan@crf.canon.fr</address></section></div></div></div><script src="/node_modules/jquery/dist/jquery.min.js"></script><script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
+set-cookie: foo=ASDJKHQKBZXOQWEOPIUAXQWEOIU; max-age=3600; version=1</pre></span></div></section></section></section><section id="n-acknowledgments"><h2 id="rfc.section.unnumbered-1"><a href="#n-acknowledgments">Acknowledgments</a></h2><div id="rfc.section.unnumbered-1.p.1"><p>This specification includes substantial input from the following individuals: </p><ul><li>Mike Bishop, Jeff Pinner, Julian Reschke, and Martin Thomson (substantial editorial contributions).</li><li>Johnny Graettinger (Huffman code statistics).</li></ul></div></section><section id="rfc.authors" class="avoidbreakinside"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Roberto Peon</b><br>Google, Inc<br>Email: fenix@google.com</address><address><b>Hervé Ruellan</b><br>Canon CRF<br>Email: herve.ruellan@crf.canon.fr</address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
