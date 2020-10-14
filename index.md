@@ -10,7 +10,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 
   <div class="col-lg-2"></div>
   <div class="col-lg-5">
-  	<img src="/asset/http.svg" class="img-fluid">
+  	<img src="/assets/http.svg" class="img-fluid">
   </div>
   <div class="col-lg-3">
     <p class="lead">The <a href="http://www.ietf.org/">IETF</a> <strong>HTTP Working Group</strong> maintains and develops the Hypertext Transfer Protocol - the core protocol of the <strong>World Wide Web</strong>.</p>
