@@ -38,8 +38,8 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<h2>👷‍♀️ Work In Progress</h2>
 		<p>See what's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://httpwg.org/http-core/">HTTP Core Revision</a> (<a href="https://github.com/httpwg/http-core">repo</a>)</li>
-			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> (<a href="https://github.com/httpwg/http-extensions">repo</a>)</li>
+			<li><a href="https://httpwg.org/http-core/">HTTP Core Revision</a> {%include github.html link="https://github.com/httpwg/http-core" %}</li>
+			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> {%include github.html link="https://github.com/httpwg/http-extensions" %}</li>
 			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
 		</ul>
 	</div>
