@@ -1,5 +1,5 @@
 ---
-  title: 
+  suppress_site: true
   markdown: kramdown
   exclude:
       - sass-cache/
