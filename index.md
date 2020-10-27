@@ -54,6 +54,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 			<li>Browse our <a href="https://httpwg.org/wg-materials/">meeting materials</a> {%include github.html link="https://github.com/httpwg/wg-materials" %}</li>
     </ul>
 	</div>
+
 </div>
 
 </div>
