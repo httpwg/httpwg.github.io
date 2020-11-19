@@ -35,7 +35,7 @@ The HTTP Working Group has a few venues for discussion:
 
 * We have a session at most [IETF meetings](https://www.ietf.org/meeting/), and sometimes in between (called an "interim" meeting). See our [meeting materials repository](https://httpwg.org/wg-materials), and the [official IETF proceedings](https://datatracker.ietf.org/wg/httpbis/meetings/) for details.
 
-* Our [mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/) is used for notifications of meetings, adoption of documents, consensus calls and other business, as well as issue discussion. Isn't not mandatory to subscribe, but if you don't you're likely to miss important things.
+* Our [mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/) is used for notifications of meetings, adoption of documents, consensus calls, issue discussion, and other business. It's not mandatory to subscribe, but you're likely to miss important things if you don't.
 
 * We discuss most document issues on GitHub. If you don't want to use Github to follow these discussions, you can subscribe to the [issue announce list](https://www.ietf.org/mailman/listinfo/http-issues).
 
@@ -48,9 +48,9 @@ We use GitHub to track items for discussion and their resolution.
 
 Before filing a new issue, please consider a few things:
 
-* Issues should be just that; issues with our deliverables, **not proposals, questions or support requests**.
+* Issues should be just that: issues with our deliverables, **not proposals, questions, or support requests**.
 
-* Please review the issues list to make sure that you aren't filing a duplicate.
+* There may be an existing duplicate issue, so please review the issues list first.
 
 * If you're not sure how to phrase your issue, please ask on the [mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/).
 
@@ -63,7 +63,7 @@ Off-topic and duplicate issues will be closed without discussion. Note that comm
 
 ### Resolving Issues
 
-As in all IETF Working Groups, final consensus of the Working Group is determined during Working Group Last Call; consensus established in discussion of issues provides a limited precedent, to prevent revisiting topics unnecessarily. Our issues list provides a mechanism for tracking those discussions and their outcome.
+As in all IETF Working Groups, final consensus of the Working Group is determined during Working Group Last Call; consensus established in discussion of issues provides a limited precedent, to prevent revisiting topics unnecessarily. Our issues list provides a mechanism for tracking those discussions and their outcomes.
 
 Some issues might be labeled as `editorial`; they can be dealt with by the editor(s) without consensus or notification. Typically, any discussion will take place on the issue itself. If you believe an `editorial` issue is not purely editorial, please say so on the issue; the Chair(s) will make a determination.
 
@@ -82,31 +82,31 @@ Some issues might require an explicit consensus call; if consensus is achieved i
 
 We welcome pull requests, both for editorial suggestions and to resolve open issues. In the latter case, please identify the relevant issue.
 
-Please do not use a pull request to open a new issue; file an issue and refer to it from the PR.
+Please do not use a pull request to open a new issue. Instead, file an issue and refer to it from the pull request.
 
 
 ## Proposing New Work
 
-If you'd like to propose a new HTTP extension (e.g., method, header, status code, HTTP/2 or HTTP/3 SETTINGS), it's best to write about your use to the mailing list first; often, there's an existing HTTP feature that can be used.
+If you'd like to propose a new HTTP extension (e.g., method, header, status code, HTTP/2 or HTTP/3 SETTINGS), it's best to first describe your use to the mailing list. Often, there's an existing HTTP feature that can be used.
 
 If a new extension is necessary, we usually discuss them in Internet-Draft form. However, if you're unfamiliar with that format, write down your proposal precisely but succinctly and send it to the mailing list.
 
-If there is interest in the proposal, the Chairs will make a _Call for Adoption_, where Working Group participants weigh in on whether they support adoption, and whether or not they might implement it.
+If there is interest in the proposal, the Chairs will make a _Call for Adoption_, where Working Group participants comment on whether or not they support adoption, and whether or not they might implement it.
 
 Upcoming proposals and calls for adoption are tracked in the [admin repository](https://github.com/httpwg/admin/labels/adoption).
 
 If the Chairs determine that there is consensus to adopt the document, the Working Group will start discussing it.
 
-Once a draft is adopted, the Chairs will assign one or more editors to the document. Although this will sometimes be the same person(s) that made the original proposal, it might not be, for various reasons; it could be that an experienced editor is needed for a tricky draft, or your contribution as a participant, rather than a neutral editor, is judged more valuable. In any case, the Chairs will discuss editor selection with you before announcing them.
+Once a draft is adopted, the Chairs will assign one or more editors to the document. Although this will sometimes be the same person(s) that made the original proposal, it might not be, for various reasons; it could be that an experienced editor is needed for a tricky draft, or your contribution as a participant, rather than a neutral editor, is judged more valuable. In any case, the Chairs will discuss editor selection with you before making an announcement.
 
-The Editor(s) first task will be to get a first draft into a Working Group repository. If you're selected as an editor, the Chairs will be in touch with more details.
+The Editor(s) first task will be to upload an initial draft into a Working Group repository. If you're selected as an editor, the Chairs will be in touch with more details.
 
 ### Other Venues for HTTP Work
 
 There are other places inside and outside the IETF that are doing HTTP-related work. Depending on the nature of your proposal, you might consider taking your work to one of the following venues:
 
 * The new [HTTP APIs Working Group](https://datatracker.ietf.org/wg/httpapi/about/) focuses on API-related HTTP extensions and similar specifications
-* The [DISPATCH Working Group](https://datatracker.ietf.org/wg/dispatch/about/) decides where it's most appropriate to take new work in the IETF's ART area. While you can come directly to the HTTP Working Group with a proposal, you can also take it there; sometimes, it's felt better to start a new Working Group (often for larger or more specialised work)
+* The [DISPATCH Working Group](https://datatracker.ietf.org/wg/dispatch/about/) decides where it's most appropriate to take new work in the IETF's ART area. While you can come directly to the HTTP Working Group with a proposal, you can also take it there. Sometimes that can lead to starting a new Working Group (often for larger or more specialised work)
 * The [WHATWG Fetch Specification](https://fetch.spec.whatwg.org/) defines the API that browsers expose for HTTP
 
 ### Bringing Work to the IETF
@@ -115,11 +115,11 @@ There are a few things that are important to know when you bring work to the IET
 
 First, when your draft is adopted by the Working Group, _change control_ -- that is, who determines what's in the specification -- passes from you to the IETF. That means that some things that you don't agree with might happen to it, and it might be published with things that you wouldn't have included (or without things that you would have kept).
 
-That's because the document's content is determined by consensus of the Working Group, and then the IETF overall; even though you started it, the document needs to reflect the community's input, and that takes primacy.
+That's because the document's content is determined by consensus of the Working Group, and then the IETF overall. Even though you started it, the document needs to reflect the community's input, and that takes primacy.
 
-As a result, whenever a document is adopted, it's considered a _starting point_ -- i.e., nothing is "locked down". Of course, you will have ample opportunity to discuss any issues you have with proposed changes, and if you make a convincing argument, consensus should follow. However, it's important that you be able to accept that the document will change; if you just want it rubber-stamped, it's not appropriate to bring it to the IETF.
+As a result, whenever a document is adopted, it's considered a _starting point_ -- i.e., nothing is "locked down". Of course, you will have ample opportunity to discuss any issues you have with proposed changes, and if you make a convincing argument, consensus should follow. However, it's important that you are able to accept that the document will change. If you just want it rubber-stamped, it's not appropriate to bring it to the IETF.
 
-Why would you bring your document here, if you have to give up control? Broad review from many HTTP implementers and practitioners is one reason. Another is that they're more likely to implement and use an extension that's gone through that review.
+Why should you bring your document here, if you have to give up control? Not only will your work benefit from the broad review from many HTTP implementers and practitioners, but that community will also be more likely to implement and use an extension once it has gone through that process.
 
 
 ## Code of Conduct
