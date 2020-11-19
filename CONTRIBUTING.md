@@ -5,7 +5,7 @@ description: How to particpate in the HTTP Working Group
 
 Anyone can contribute to HTTP; you don't have to join the Working Group, because there is no "membership" -- anyone who participates in the work, as outlined below, is part of the HTTP Working Group.
 
-Before doing so, it's a good idea to familiarize yourself with our [charter](https://datatracker.ietf.org/wg/httpbis/about/), and [home page](https://httpwg.org/). If you're new to this, you may also want to read the [Tao of the IETF](https://www.ietf.org/tao.html).
+Before doing so, it's a good idea to familiarize yourself with our [charter](https://datatracker.ietf.org/wg/httpbis/about/), and [home page](https://httpwg.org/). If you're new to this, you may also want to read [an informal guide to the IETF process](https://www.ietf.org/standards/process/informal/) and the [Tao of the IETF](https://www.ietf.org/tao.html).
 
 **Be aware that all contributions fall under the "NOTE WELL" terms outlined below.**
 
