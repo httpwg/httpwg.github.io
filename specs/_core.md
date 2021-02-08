@@ -25,3 +25,7 @@ These HTTP functions are optional to implement, but widely used:
 These RFCs collectively obsolete all preceding RFCs defining HTTP, including **RFC1945**, **RFC2068**, **RFC2616** and **RFC2617**.
 
 *The core specifications are currently [under revision](https://httpwg.org/http-core/). If you find issues, please bring them up there!*
+
+Also relevant is the Structured Field Values specification, which is used in a growing number of headers and trailers:
+
+ * RFC8941: [Structured Field Values for HTTP](/specs/rfc8941.html)

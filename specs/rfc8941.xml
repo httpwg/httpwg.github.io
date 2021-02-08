@@ -1,0 +1,1455 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!DOCTYPE rfc SYSTEM "lib/rfc2629-xhtml.ent">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" ipr="trust200902" docName="draft-ietf-httpbis-header-structure-19" number="8941" submissionType="IETF" category="std" consensus="true" obsoletes="" updates="" xml:lang="en" tocInclude="true" sortRefs="true" symRefs="true" tocDepth="3" version="3">
+  <!-- xml2rfc v2v3 conversion 2.46.0 -->
+  <front>
+    <title>Structured Field Values for HTTP</title>
+    <seriesInfo name="RFC" value="8941"/>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization>Fastly</organization>
+      <address>
+	<postal>
+	  <city>Prahran</city>
+	  <region>VIC</region>
+	  <country>Australia</country>
+	</postal>
+        <email>mnot@mnot.net</email>
+        <uri>https://www.mnot.net/</uri>
+      </address>
+    </author>
+    <author initials="P-H." surname="Kamp" fullname="Poul-Henning Kamp">
+      <organization>The Varnish Cache Project</organization>
+      <address>
+        <email>phk@varnish-cache.org</email>
+      </address>
+    </author>
+    <date month="February" year="2021"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <abstract>
+      <t>This document describes a set of data types and associated algorithms
+      that are intended to make it easier and safer to define and handle HTTP
+      header and trailer fields, known as "Structured Fields", "Structured
+      Headers", or "Structured Trailers". It is intended for use by
+      specifications of new HTTP fields that wish to use a common syntax that
+      is more restrictive than traditional HTTP field values.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>Specifying the syntax of new HTTP header (and trailer) fields is an
+      onerous task; even with the guidance in <xref target="RFC7231" section="8.3.1"/>, there are many decisions -- and 
+      pitfalls -- for a prospective HTTP field author.</t>
+      <t>Once a field is defined, bespoke parsers and serializers often need
+      to be written, because each field value has a slightly different handling
+      of what looks like common syntax.</t>
+      <t>This document introduces a set of common data structures for use in
+      definitions of new HTTP field values to address these problems. In
+      particular, it defines a generic, abstract model for them, along with a
+      concrete serialization for expressing that model in HTTP <xref target="RFC7230"/> header and trailer fields.</t>
+      <t>An HTTP field that is defined as a "Structured Header" or "Structured
+      Trailer" (if the field can be either, it is a "Structured Field") uses
+      the types defined in this specification to define its syntax and basic
+      handling rules, thereby simplifying both its definition by specification
+      writers and handling by implementations.</t>
+      <t>Additionally, future versions of HTTP can define alternative
+      serializations of the abstract model of these structures, allowing
+      fields that use that model to be transmitted more efficiently without
+      being redefined.</t>
+      <t>Note that it is not a goal of this document to redefine the syntax of
+      existing HTTP fields; the mechanisms described herein are only intended
+      to be used with fields that explicitly opt into them.</t>
+      <t><xref target="specify"/> describes how to specify a
+      Structured Field.</t>
+      <t><xref target="types"/> defines a number of abstract
+      data types that can be used in Structured Fields.</t>
+      <t>Those abstract types can be serialized into and parsed from HTTP
+      field values using the algorithms described in <xref target="text"/>.</t>
+      <section anchor="strict">
+        <name>Intentionally Strict Processing</name>
+        <t>This specification intentionally defines strict parsing and
+	serialization behaviors using step-by-step algorithms; the only error
+	handling defined is to fail the operation altogether.</t>
+        <t>It is designed to encourage faithful implementation and 
+	good interoperability. Therefore, an implementation that tried to be
+	helpful by being more tolerant of input would make interoperability
+	worse, since that would create pressure on other implementations to
+	implement similar (but likely subtly different) workarounds.</t>
+        <t>In other words, strict processing is an intentional feature of this
+	specification; it allows non-conformant input to be discovered and
+	corrected by the producer early and avoids both interoperability and
+	security issues that might otherwise result.</t>
+        <t>Note that as a result of this strictness, if a field is appended to
+	by multiple parties (e.g., intermediaries or different components in
+	the sender), an error in one party's value is likely to cause the
+	entire field value to fail parsing.</t>
+      </section>
+      <section anchor="notational-conventions">
+        <name>Notational Conventions</name>
+        <t>
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+    "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL 
+    NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>",
+    "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>", 
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are
+    to be interpreted as 
+    described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+        <t>This document uses algorithms to specify parsing and serialization
+	behaviors and the Augmented Backus-Naur Form (ABNF) notation of <xref target="RFC5234"/> to illustrate expected syntax in
+	HTTP header fields. In doing so, it uses the VCHAR, SP, DIGIT, ALPHA,
+	and DQUOTE rules from <xref target="RFC5234"/>. It
+	also includes the tchar and OWS rules from <xref target="RFC7230"/>.</t>
+        <t>When parsing from HTTP fields, implementations <bcp14>MUST</bcp14> have behavior
+	that is indistinguishable from following the algorithms. If there is
+	disagreement between the parsing algorithms and ABNF, the specified
+	algorithms take precedence.</t>
+        <t>For serialization to HTTP fields, the ABNF illustrates their
+	expected wire representations, and the algorithms define the
+	recommended way to produce them. Implementations <bcp14>MAY</bcp14> vary from the
+	specified behavior so long as the output is still correctly handled by
+	the parsing algorithm described in <xref target="text-parse"/>.</t>
+      </section>
+    </section>
+    <section anchor="specify">
+      <name>Defining New Structured Fields</name>
+      <t>To specify an HTTP field as a Structured Field, its authors need to:</t>
+      <ul>
+        <li>Normatively reference this specification. Recipients and
+	generators of the field need to know that the requirements of this
+	document are in effect.</li>
+        <li>Identify whether the field is a Structured Header (i.e., it can
+	only be used in the header section -- the common case), a Structured
+	Trailer (only in the trailer section), or a Structured Field
+	(both).</li>
+        <li>Specify the type of the field value; either List (<xref target="list"/>), Dictionary (<xref target="dictionary"/>), or Item (<xref target="item"/>).</li>
+        <li>Define the semantics of the field value.</li>
+        <li>Specify any additional constraints upon the field value, as well
+	as the consequences when those constraints are violated.</li>
+      </ul>
+      <t>Typically, this means that a field definition will specify the
+      top-level type -- List, Dictionary, or Item -- and then define its
+      allowable types and constraints upon them. For example, a header
+      defined as a List might have all Integer members, or a mix of types; a
+      header defined as an Item might allow only Strings, and additionally
+      only strings beginning with the letter "Q", or strings in
+      lowercase. Likewise, Inner Lists (<xref target="inner-list"/>) are only valid when a field definition explicitly
+      allows them.</t>
+      <t>When parsing fails, the entire field is ignored (see <xref target="text-parse"/>); in most situations, violating
+      field-specific constraints should have the same effect. Thus, if a
+      header is defined as an Item and required to be an Integer, but a String
+      is received, the field will by default be ignored. If the field requires
+      different error handling, this should be explicitly specified.</t>
+      <t>Both Items and Inner Lists allow parameters as an extensibility
+      mechanism; this means that values can later be extended to accommodate
+      more information, if need be. To preserve forward compatibility, field
+      specifications are discouraged from defining the presence of an
+      unrecognized parameter as an error condition.</t>
+      <t>To further assure that this extensibility is available in the future,
+      and to encourage consumers to use a complete parser implementation, a
+      field definition can specify that "grease" parameters be added by
+      senders. A specification could stipulate that all parameters that fit a
+      defined pattern are reserved for this use and then encourage them to be
+      sent on some portion of requests. This helps to discourage recipients
+      from writing a parser that does not account for Parameters.</t>
+      <t>Specifications that use Dictionaries can also allow for forward
+      compatibility by requiring that the presence of -- as well as value and
+      type associated with -- unknown members be ignored. Subsequent specifications
+      can then add additional members, specifying constraints on them as
+      appropriate.</t>
+      <t>An extension to a Structured Field can then require that an entire
+      field value be ignored by a recipient that understands the extension if
+      constraints on the value it defines are not met.</t>
+      <t>A field definition cannot relax the requirements of this
+      specification because doing so would preclude handling by generic
+      software; they can only add additional constraints (for example, on the
+      numeric range of Integers and Decimals, the format of Strings and
+      Tokens, the types allowed in a Dictionary's values, or the number of
+      Items in a List). Likewise, field definitions can only use this
+      specification for the entire field value, not a portion thereof.</t>
+      <t>This specification defines minimums for the length or number of
+      various structures supported by implementations. It does not specify
+      maximum sizes in most cases, but authors should be aware that HTTP
+      implementations do impose various limits on the size of individual
+      fields, the total number of fields, and/or the size of the entire header
+      or trailer section.</t>
+      <t>Specifications can refer to a field name as a "structured header
+      name", "structured trailer name", or "structured field name" as
+      appropriate. Likewise, they can refer its field value as a "structured
+      header value", "structured trailer value", or "structured field value" as
+      necessary. 
+Field definitions are encouraged to use the ABNF rules
+      beginning with "sf-" defined in this specification; other rules in this
+      specification are not intended to be used in field definitions.</t>
+      <t>For example, a fictitious Foo-Example header field might be specified
+      as:</t>
+
+<blockquote>
+<t>42. Foo-Example Header</t>
+
+<t>The Foo-Example HTTP header field conveys information about how
+much Foo the message has.</t>
+
+<t>Foo-Example is an Item Structured Header [RFC8941]. Its value MUST be
+an Integer (Section 3.3.1 of [RFC8941]). Its ABNF is:</t>
+
+<artwork>
+   Foo-Example = sf-integer
+</artwork>
+
+<t>Its value indicates the amount of Foo in the message, and it MUST
+be between 0 and 10, inclusive; other values MUST cause
+the entire header field to be ignored.</t>
+
+<t>The following parameter is defined:</t>
+
+<ul>
+<li>A parameter whose key is "foourl", and whose value is a String
+  (Section 3.3.3 of [RFC8941]), conveying the Foo URL
+  for the message. See below for processing requirements.</li>
+</ul>
+
+<t>"foourl" contains a URI-reference (Section 4.1 of [RFC3986]). If
+its value is not a valid URI-reference, the entire header field
+MUST be ignored. If its value is a relative reference (Section 4.2
+of [RFC3986]), it MUST be resolved (Section 5 of [RFC3986]) before
+being used.</t>
+
+<t>For example:</t>
+
+<artwork>
+   Foo-Example: 2; foourl="https://foo.example.com/"
+</artwork>
+</blockquote>
+
+    </section>
+    <section anchor="types">
+      <name>Structured Data Types</name>
+      <t>This section defines the abstract types for Structured Fields. The
+      ABNF provided represents the on-wire format in HTTP field values.</t>
+      <t>In summary:</t>
+      <ul>
+        <li>There are three top-level types that an HTTP field can be defined
+	as: Lists, Dictionaries, and Items.</li>
+        <li>Lists and Dictionaries are containers; their members can be Items
+	or Inner Lists (which are themselves arrays of Items).</li>
+        <li>Both Items and Inner Lists can be Parameterized with key/value pairs.</li>
+      </ul>
+      <section anchor="list">
+        <name>Lists</name>
+        <t>Lists are arrays of zero or more members, each of which can be an
+	Item (<xref target="item"/>) or an Inner List (<xref target="inner-list"/>), both of which can be
+	Parameterized (<xref target="param"/>).</t>
+        <t>The ABNF for Lists in HTTP fields is:</t>
+        <sourcecode type="abnf">
+sf-list       = list-member *( OWS "," OWS list-member )
+list-member   = sf-item / inner-list
+</sourcecode>
+        <t>Each member is separated by a comma and optional whitespace. For
+	example, a field whose value is defined as a List of Tokens could
+	look like:</t>
+        <sourcecode type="http-message">
+Example-List: sugar, tea, rum
+	</sourcecode>
+        <t>An empty List is denoted by not serializing the field at all. This
+	implies that fields defined as Lists have a default empty value.</t>
+        <t>Note that Lists can have their members split across multiple lines
+	of the same header or trailer section, as per <xref target="RFC7230" section="3.2.2"/>; for example, the following are 
+	equivalent:</t>
+        <sourcecode type="http-message">
+Example-List: sugar, tea, rum
+	</sourcecode>
+        <t>and</t>
+        <sourcecode type="http-message">
+Example-List: sugar, tea
+Example-List: rum
+	</sourcecode>
+        <t>However, individual members of a List cannot be safely split
+	between lines; see <xref target="text-parse"/>
+	for details.</t>
+        <t>Parsers <bcp14>MUST</bcp14> support Lists containing at least 1024 members. Field
+	specifications can constrain the types and cardinality of individual
+	List values as they require.</t>
+        <section anchor="inner-list">
+          <name>Inner Lists</name>
+          <t>An Inner List is an array of zero or more Items (<xref target="item"/>). Both the individual Items and the
+	  Inner List itself can be Parameterized (<xref target="param"/>).</t>
+          <t>The ABNF for Inner Lists is:</t>
+          <sourcecode type="abnf">
+inner-list    = "(" *SP [ sf-item *( 1*SP sf-item ) *SP ] ")"
+                parameters
+</sourcecode>
+          <t>Inner Lists are denoted by surrounding parenthesis, and
+	  their values are delimited by one or more spaces. A field whose value is
+	  defined as a List of Inner Lists of Strings could look like:</t>
+          <sourcecode type="http-message">
+Example-List: ("foo" "bar"), ("baz"), ("bat" "one"), ()
+</sourcecode>
+          <t>Note that the last member in this example is an empty Inner List.</t>
+          <t>A header field whose value is defined as a List of Inner Lists
+	  with Parameters at both levels could look like:</t>
+          <sourcecode type="http-message">
+Example-List: ("foo"; a=1;b=2);lvl=5, ("bar" "baz");lvl=1
+</sourcecode>
+          <t>Parsers <bcp14>MUST</bcp14> support Inner Lists containing at least 256
+	  members. Field specifications can constrain the types and
+	  cardinality of individual Inner List members as they require.</t>
+        </section>
+        <section anchor="param">
+          <name>Parameters</name>
+          <t>Parameters are an ordered map of key-value pairs that are
+	  associated with an Item (<xref target="item"/>) or
+	  Inner List (<xref target="inner-list"/>).
+          The keys
+	  are unique within the scope of the Parameters they occur within, and
+	  the values are bare items (i.e., they themselves cannot be
+	  parameterized; see <xref target="item"/>).</t>
+<t>Implementations <bcp14>MUST</bcp14> provide access to Parameters both by index and
+   by key.  Specifications <bcp14>MAY</bcp14> use either means of accessing them.</t>
+          <t>The ABNF for Parameters is:</t>
+          <sourcecode type="abnf">
+parameters    = *( ";" *SP parameter )
+parameter     = param-key [ "=" param-value ]
+param-key     = key
+key           = ( lcalpha / "*" )
+                *( lcalpha / DIGIT / "_" / "-" / "." / "*" )
+lcalpha       = %x61-7A ; a-z
+param-value   = bare-item
+</sourcecode>
+          <t>Note that parameters are ordered as serialized, and parameter
+	  keys cannot contain uppercase letters. A parameter is separated from
+	  its Item or Inner List and other parameters by a semicolon. For
+	  example:</t>
+          <sourcecode type="http-message">
+Example-List: abc;a=1;b=2; cde_456, (ghi;jk=4 l);q="9";r=w
+</sourcecode>
+          <t>Parameters whose value is Boolean (see <xref target="boolean"/>) true <bcp14>MUST</bcp14> omit that value when serialized. For
+	  example, the "a" parameter here is true, while the "b" parameter is
+	  false:</t>
+          <sourcecode type="http-message">
+Example-Integer: 1; a; b=?0
+</sourcecode>
+          <t>Note that this requirement is only on serialization; parsers are
+	  still required to correctly handle the true value when it appears in
+	  a parameter.</t>
+          <t>Parsers <bcp14>MUST</bcp14> support at least 256 parameters on an Item or Inner
+	  List, and support parameter keys with at least 64 characters. Field
+	  specifications can constrain the order of individual parameters, as
+	  well as their values' types as required.</t>
+        </section>
+      </section>
+      <section anchor="dictionary">
+        <name>Dictionaries</name>
+        <t>Dictionaries are ordered maps of key-value pairs, where the keys
+	are short textual strings and the values are Items (<xref target="item"/>) or arrays of Items, both of which
+	can be Parameterized (<xref target="param"/>). There
+	can be zero or more members, and their keys are unique in the scope
+	of the Dictionary they occur within.</t>
+        <t>Implementations <bcp14>MUST</bcp14> provide access to Dictionaries both by index
+	and by key. Specifications <bcp14>MAY</bcp14> use either means of accessing the
+	members.</t>
+        <t>The ABNF for Dictionaries is:</t>
+        <sourcecode type="abnf">
+sf-dictionary  = dict-member *( OWS "," OWS dict-member )
+dict-member    = member-key ( parameters / ( "=" member-value ))
+member-key     = key
+member-value   = sf-item / inner-list
+</sourcecode>
+        <t>Members are ordered as serialized and separated by a comma with
+	optional whitespace. Member keys cannot contain uppercase
+	characters. Keys and values are separated by "=" (without
+	whitespace). For example:</t>
+        <sourcecode type="http-message">
+Example-Dict: en="Applepie", da=:w4ZibGV0w6ZydGU=:
+</sourcecode>
+        <t>Note that in this example, the final "=" is due to the inclusion of
+	a Byte Sequence; see <xref target="binary"/>.</t>
+        <t>Members whose value is Boolean (see <xref target="boolean"/>) true <bcp14>MUST</bcp14> omit that value when serialized. For
+	example, here both "b" and "c" are true:</t>
+        <sourcecode type="http-message">
+Example-Dict: a=?0, b, c; foo=bar
+</sourcecode>
+        <t>Note that this requirement is only on serialization; parsers are
+	still required to correctly handle the true Boolean value when it
+	appears in Dictionary values.</t>
+        <t>A Dictionary with a member whose value is an Inner List of Tokens:</t>
+        <sourcecode type="http-message">
+Example-Dict: rating=1.5, feelings=(joy sadness)
+</sourcecode>
+        <t>A Dictionary with a mix of Items and Inner Lists, some with parameters:</t>
+        <sourcecode type="http-message">
+Example-Dict: a=(1 2), b=3, c=4;aa=bb, d=(5 6);valid
+</sourcecode>
+        <t>As with Lists, an empty Dictionary is represented by omitting the
+	entire field. This implies that fields defined as Dictionaries have a
+	default empty value.</t>
+        <t>Typically, a field specification will define the semantics of
+	Dictionaries by specifying the allowed type(s) for individual members
+	by their keys, as well as whether their presence is required or
+	optional. Recipients <bcp14>MUST</bcp14> ignore members whose keys that are undefined or unknown,
+	unless the field's specification specifically disallows them.</t>
+        <t>Note that Dictionaries can have their members split across multiple
+	lines of the same header or trailer section; for example, the following
+	are equivalent:</t>
+        <sourcecode type="http-message">
+Example-Dict: foo=1, bar=2
+</sourcecode>
+        <t>and</t>
+        <sourcecode type="http-message">
+Example-Dict: foo=1
+Example-Dict: bar=2
+</sourcecode>
+        <t>However, individual members of a Dictionary cannot be safely split
+	between lines; see <xref target="text-parse"/> for
+	details.</t>
+        <t>Parsers <bcp14>MUST</bcp14> support Dictionaries containing at least 1024
+	key/value pairs and keys with at least 64 characters. Field
+	specifications can constrain the order of individual Dictionary
+	members, as well as their values' types as required.</t>
+      </section>
+      <section anchor="item">
+        <name>Items</name>
+        <t>An Item can be an Integer (<xref target="integer"/>), a Decimal (<xref target="decimal"/>), a String (<xref target="string"/>), a Token (<xref target="token"/>),
+	a Byte Sequence (<xref target="binary"/>), or a Boolean
+	(<xref target="boolean"/>). It can have associated
+	parameters (<xref target="param"/>).</t>
+        <t>The ABNF for Items is:</t>
+        <sourcecode type="abnf">
+sf-item   = bare-item parameters
+bare-item = sf-integer / sf-decimal / sf-string / sf-token
+            / sf-binary / sf-boolean
+</sourcecode>
+        <t>For example, a header field that is defined to be an Item that is
+	an Integer might look like:</t>
+        <sourcecode type="http-message">
+Example-Integer: 5
+</sourcecode>
+        <t>or with parameters:</t>
+        <sourcecode type="http-message">
+Example-Integer: 5; foo=bar
+</sourcecode>
+        <section anchor="integer">
+          <name>Integers</name>
+          <t>Integers have a range of -999,999,999,999,999 to
+	  999,999,999,999,999 inclusive (i.e., up to fifteen digits, signed),
+	  for IEEE 754 compatibility <xref target="IEEE754"/>.</t>
+          <t>The ABNF for Integers is:</t>
+          <sourcecode type="abnf">
+sf-integer = ["-"] 1*15DIGIT
+</sourcecode>
+          <t>For example:</t>
+          <sourcecode type="http-message">
+Example-Integer: 42
+</sourcecode>
+          <t>Integers larger than 15 digits can be supported in a variety of
+	  ways; for example, by using a String (<xref target="string"/>), a Byte Sequence (<xref target="binary"/>), or a parameter on an Integer that acts as a
+	  scaling factor.</t>
+          <t>While it is possible to serialize Integers with leading zeros
+	  (e.g., "0002", "-01") and signed zero ("-0"), these distinctions may
+	  not be preserved by implementations.</t>
+          <t>Note that commas in Integers are used in this section's prose
+	  only for readability; they are not valid in the wire format.</t>
+        </section>
+        <section anchor="decimal">
+          <name>Decimals</name>
+          <t>Decimals are numbers with an integer and a fractional
+	  component. The integer component has at most 12 digits; the
+	  fractional component has at most three digits.</t>
+          <t>The ABNF for decimals is:</t>
+          <sourcecode type="abnf">
+sf-decimal  = ["-"] 1*12DIGIT "." 1*3DIGIT
+</sourcecode>
+          <t>For example, a header whose value is defined as a Decimal could
+	  look like:</t>
+          <sourcecode type="http-message">
+Example-Decimal: 4.5
+</sourcecode>
+          <t>While it is possible to serialize Decimals with leading zeros
+	  (e.g., "0002.5", "-01.334"), trailing zeros (e.g., "5.230",
+	  "-0.40"), and signed zero (e.g., "-0.0"), these distinctions may not
+	  be preserved by implementations.</t>
+          <t>Note that the serialization algorithm (<xref target="ser-decimal"/>) rounds input with more than three digits of
+	  precision in the fractional component. If an alternative rounding
+	  strategy is desired, this should be specified by the header
+	  definition to occur before serialization.</t>
+        </section>
+        <section anchor="string">
+          <name>Strings</name>
+          <t>Strings are zero or more printable ASCII <xref target="RFC0020"/> characters (i.e., the range %x20 to %x7E). Note
+	  that this excludes tabs, newlines, carriage returns, etc.</t>
+          <t>The ABNF for Strings is:</t>
+          <sourcecode type="abnf">
+sf-string = DQUOTE *chr DQUOTE
+chr       = unescaped / escaped
+unescaped = %x20-21 / %x23-5B / %x5D-7E
+escaped   = "\" ( DQUOTE / "\" )
+</sourcecode>
+          <t>Strings are delimited with double quotes, using a backslash ("\")
+	  to escape double quotes and backslashes. For example:</t>
+          <sourcecode type="http-message">
+Example-String: "hello world"
+</sourcecode>
+          <t>Note that Strings only use DQUOTE as a delimiter; single quotes
+	  do not delimit Strings. Furthermore, only DQUOTE and "\" can be
+	  escaped; other characters after "\" <bcp14>MUST</bcp14> cause parsing to fail.</t>
+          <t>Unicode is not directly supported in Strings, because it causes a
+	  number of interoperability issues, and -- with few exceptions -- field
+	  values do not require it.</t>
+          <t>When it is necessary for a field value to convey non-ASCII
+	  content, a Byte Sequence (<xref target="binary"/>)
+	  can be specified, along with a character encoding (preferably UTF-8 <xref target="STD63"/>).</t>
+          <t>Parsers <bcp14>MUST</bcp14> support Strings (after any decoding) with at least
+	  1024 characters.</t>
+        </section>
+        <section anchor="token">
+          <name>Tokens</name>
+          <t>Tokens are short textual words; their abstract model is identical
+	  to their expression in the HTTP field value serialization.</t>
+          <t>The ABNF for Tokens is:</t>
+          <sourcecode type="abnf">
+sf-token = ( ALPHA / "*" ) *( tchar / ":" / "/" )
+</sourcecode>
+          <t>For example:</t>
+          <sourcecode type="http-message">
+Example-Token: foo123/456
+</sourcecode>
+          <t>Parsers <bcp14>MUST</bcp14> support Tokens with at least 512 characters.</t>
+          <t>Note that Token allows the same characters as the "token" ABNF
+	  rule defined in <xref target="RFC7230"/>, with the
+	  exceptions that the first character is required to be either ALPHA
+	  or "*", and ":" and "/" are also allowed in subsequent
+	  characters.</t>
+        </section>
+        <section anchor="binary">
+          <name>Byte Sequences</name>
+          <t>Byte Sequences can be conveyed in Structured Fields.</t>
+          <t>The ABNF for a Byte Sequence is:</t>
+          <sourcecode type="abnf">
+sf-binary = ":" *(base64) ":"
+base64    = ALPHA / DIGIT / "+" / "/" / "="
+</sourcecode>
+          <t>A Byte Sequence is delimited with colons and encoded using base64
+	  (<xref target="RFC4648" sectionFormat="comma" section="4"/>). For
+	  example:</t>
+          <sourcecode type="http-message">
+Example-ByteSequence: :cHJldGVuZCB0aGlzIGlzIGJpbmFyeSBjb250ZW50Lg==:
+</sourcecode>
+          <t>Parsers <bcp14>MUST</bcp14> support Byte Sequences with at least 16384 octets
+	  after decoding.</t>
+        </section>
+        <section anchor="boolean">
+          <name>Booleans</name>
+          <t>Boolean values can be conveyed in Structured Fields.</t>
+          <t>The ABNF for a Boolean is:</t>
+          <sourcecode type="abnf">
+sf-boolean = "?" boolean
+boolean    = "0" / "1"
+</sourcecode>
+          <t>A Boolean is indicated with a leading "?" character followed by a
+	  "1" for a true value or "0" for false. For example:</t>
+          <sourcecode type="http-message">
+Example-Boolean: ?1
+</sourcecode>
+          <t>Note that in Dictionary (<xref target="dictionary"/>) and Parameter (<xref target="param"/>) values, Boolean true is indicated by omitting
+	  the value.</t>
+        </section>
+      </section>
+    </section>
+    <section anchor="text">
+      <name>Working with Structured Fields in HTTP</name>
+      <t>This section defines how to serialize and parse Structured Fields in
+      textual HTTP field values and other encodings compatible with them
+      (e.g., in HTTP/2 <xref target="RFC7540"/> before
+      compression with HPACK <xref target="RFC7541"/>).</t>
+      <section anchor="text-serialize">
+        <name>Serializing Structured Fields</name>
+        <t>Given a structure defined in this specification, return an ASCII
+	string suitable for use in an HTTP field value.</t>
+        <ol>
+          <li>If the structure is a Dictionary or List and its value is empty
+	  (i.e., it has no members), do not serialize the field at all (i.e.,
+	  omit both the field-name and field-value).</li>
+          <li>If the structure is a List, let output_string be the result of
+	  running Serializing a List (<xref target="ser-list"/>) with the structure.</li>
+          <li>Else, if the structure is a Dictionary, let output_string be the
+	  result of running Serializing a Dictionary (<xref target="ser-dictionary"/>) with the structure.</li>
+          <li>Else, if the structure is an Item, let output_string be the
+	  result of running Serializing an Item (<xref target="ser-item"/>) with the structure.</li>
+          <li>Else, fail serialization.</li>
+          <li>Return output_string converted into an array of bytes, using
+	  ASCII encoding <xref target="RFC0020"/>.</li>
+        </ol>
+        <section anchor="ser-list">
+          <name>Serializing a List</name>
+          <t>Given an array of (member_value, parameters) tuples as
+	  input_list, return an ASCII string suitable for use in an HTTP field
+	  value.</t>
+          <ol>
+            <li>Let output be an empty string.</li>
+            <li>
+              <t>For each (member_value, parameters) of input_list:
+              </t>
+              <ol>
+                <li>If member_value is an array, append the result of running
+		Serializing an Inner List (<xref target="ser-innerlist"/>) with (member_value, parameters) to
+		output.</li>
+                <li>Otherwise, append the result of running Serializing an
+		Item (<xref target="ser-item"/>) with
+		(member_value, parameters) to output.</li>
+                <li>
+                  <t>If more member_values remain in input_list:
+                  </t>
+                  <ol>
+                    <li>Append "," to output.</li>
+                    <li>Append a single SP to output.</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Return output.</li>
+          </ol>
+          <section anchor="ser-innerlist">
+            <name>Serializing an Inner List</name>
+            <t>Given an array of (member_value, parameters) tuples as
+	    inner_list, and parameters as list_parameters, return an ASCII
+	    string suitable for use in an HTTP field value.</t>
+            <ol>
+              <li>Let output be the string "(".</li>
+              <li>
+                <t>For each (member_value, parameters) of inner_list:
+                </t>
+                <ol>
+                  <li>Append the result of running Serializing an Item (<xref target="ser-item"/>) with (member_value,
+		  parameters) to output.</li>
+                  <li>If more values remain in inner_list, append a single SP to output.</li>
+                </ol>
+              </li>
+              <li>Append ")" to output.</li>
+              <li>Append the result of running Serializing Parameters (<xref target="ser-params"/>) with list_parameters to
+	      output.</li>
+              <li>Return output.</li>
+            </ol>
+          </section>
+          <section anchor="ser-params">
+            <name>Serializing Parameters</name>
+            <t>Given an ordered Dictionary as input_parameters (each member
+	    having a param_key and a param_value), return an ASCII string
+	    suitable for use in an HTTP field value.</t>
+            <ol>
+              <li>Let output be an empty string.</li>
+              <li>
+                <t>For each param_key with a value of param_value in input_parameters:
+                </t>
+                <ol>
+                  <li>Append ";" to output.</li>
+                  <li>Append the result of running Serializing a Key (<xref target="ser-key"/>) with param_key to
+		  output.</li>
+                  <li>
+                    <t>If param_value is not Boolean true:
+                    </t>
+                    <ol>
+                      <li>Append "=" to output.</li>
+                      <li>Append the result of running Serializing a bare Item
+		      (<xref target="ser-bare-item"/>) with
+		      param_value to output.</li>
+                    </ol>
+                  </li>
+                </ol>
+              </li>
+              <li>Return output.</li>
+            </ol>
+          </section>
+          <section anchor="ser-key">
+            <name>Serializing a Key</name>
+            <t>Given a key as input_key, return an ASCII string suitable for
+	    use in an HTTP field value.</t>
+            <ol>
+              <li>Convert input_key into a sequence of ASCII characters; if
+	      conversion fails, fail serialization.</li>
+              <li>If input_key contains characters not in lcalpha, DIGIT, "_",
+	      "-", ".", or "*", fail serialization.</li>
+              <li>If the first character of input_key is not lcalpha or "*",
+	      fail serialization.</li>
+              <li>Let output be an empty string.</li>
+              <li>Append input_key to output.</li>
+              <li>Return output.</li>
+            </ol>
+          </section>
+        </section>
+        <section anchor="ser-dictionary">
+          <name>Serializing a Dictionary</name>
+          <t>Given an ordered Dictionary as input_dictionary (each member
+	  having a member_key and a tuple value of (member_value,
+	  parameters)), return an ASCII string suitable for use in an HTTP
+	  field value.</t>
+          <ol>
+            <li>Let output be an empty string.</li>
+            <li>
+              <t>For each member_key with a value of (member_value, parameters) in input_dictionary:
+              </t>
+              <ol>
+                <li>Append the result of running Serializing a Key (<xref target="ser-key"/>) with member's member_key
+		to output.</li>
+                <li>
+                  <t>If member_value is Boolean true:
+                  </t>
+                  <ol>
+                    <li>Append the result of running Serializing Parameters
+		    (<xref target="ser-params"/>) with
+		    parameters to output.</li>
+                  </ol>
+                </li>
+                <li>
+                  <t>Otherwise:
+                  </t>
+                  <ol>
+                    <li>Append "=" to output.</li>
+                    <li>If member_value is an array, append the result of
+		    running Serializing an Inner List (<xref target="ser-innerlist"/>) with
+		    (member_value, parameters) to output.</li>
+                    <li>Otherwise, append the result of running Serializing an
+		    Item (<xref target="ser-item"/>) with
+		    (member_value, parameters) to output.</li>
+                  </ol>
+                </li>
+                <li>
+                  <t>If more members remain in input_dictionary:
+                  </t>
+                  <ol>
+                    <li>Append "," to output.</li>
+                    <li>Append a single SP to output.</li>
+                  </ol>
+                </li>
+              </ol>
+            </li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+        <section anchor="ser-item">
+          <name>Serializing an Item</name>
+          <t>Given an Item as bare_item and Parameters as item_parameters,
+	  return an ASCII string suitable for use in an HTTP field value.</t>
+          <ol>
+            <li>Let output be an empty string.</li>
+            <li>Append the result of running Serializing a Bare Item (<xref target="ser-bare-item"/>) with bare_item to
+	    output.</li>
+            <li>Append the result of running Serializing Parameters (<xref target="ser-params"/>) with item_parameters to
+	    output.</li>
+            <li>Return output.</li>
+          </ol>
+          <section anchor="ser-bare-item">
+            <name>Serializing a Bare Item</name>
+            <t>Given an Item as input_item, return an ASCII string suitable
+	    for use in an HTTP field value.</t>
+            <ol>
+              <li>If input_item is an Integer, return the result of running
+	      Serializing an Integer (<xref target="ser-integer"/>) with input_item.</li>
+              <li>If input_item is a Decimal, return the result of running
+	      Serializing a Decimal (<xref target="ser-decimal"/>) with input_item.</li>
+              <li>If input_item is a String, return the result of running
+	      Serializing a String (<xref target="ser-string"/>) with input_item.</li>
+              <li>If input_item is a Token, return the result of running
+	      Serializing a Token (<xref target="ser-token"/>) with input_item.</li>
+              <li>If input_item is a Byte Sequence, return the result of
+	      running Serializing a Byte Sequence (<xref target="ser-binary"/>) with input_item.</li>
+              <li>If input_item is a Boolean, return the result of running
+	      Serializing a Boolean (<xref target="ser-boolean"/>) with
+	      input_item.</li>
+              <li>Otherwise, fail serialization.</li>
+
+            </ol>
+          </section>
+        </section>
+        <section anchor="ser-integer">
+          <name>Serializing an Integer</name>
+          <t>Given an Integer as input_integer, return an ASCII string
+	  suitable for use in an HTTP field value.</t>
+          <ol>
+            <li>If input_integer is not an integer in the range of
+	    -999,999,999,999,999 to 999,999,999,999,999 inclusive, fail
+	    serialization.</li>
+            <li>Let output be an empty string.</li>
+            <li>If input_integer is less than (but not equal to) 0, append "-"
+	    to output.</li>
+            <li>Append input_integer's numeric value represented in base 10
+	    using only decimal digits to output.</li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+        <section anchor="ser-decimal">
+          <name>Serializing a Decimal</name>
+          <t>Given a decimal number as input_decimal, return an ASCII string
+	  suitable for use in an HTTP field value.</t>
+          <ol>
+            <li>If input_decimal is not a decimal number, fail serialization.</li>
+            <li>If input_decimal has more than three significant digits to the
+	    right of the decimal point, round it to three decimal places,
+	    rounding the final digit to the nearest value, or to the even
+	    value if it is equidistant.</li>
+            <li>If input_decimal has more than 12 significant digits to the
+	    left of the decimal point after rounding, fail serialization.</li>
+            <li>Let output be an empty string.</li>
+            <li>If input_decimal is less than (but not equal to) 0, append "-"
+	    to output.</li>
+            <li>Append input_decimal's integer component represented in base
+	    10 (using only decimal digits) to output; if it is zero, append
+	    "0".</li>
+            <li>Append "." to output.</li>
+            <li>If input_decimal's fractional component is zero, append "0" to
+	    output.</li>
+            <li>Otherwise, append the significant digits of input_decimal's
+	    fractional component represented in base 10 (using only decimal
+	    digits) to output.</li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+        <section anchor="ser-string">
+          <name>Serializing a String</name>
+          <t>Given a String as input_string, return an ASCII string suitable
+	  for use in an HTTP field value.</t>
+          <ol>
+            <li>Convert input_string into a sequence of ASCII characters; if
+	    conversion fails, fail serialization.</li>
+            <li>If input_string contains characters in the range %x00-1f or
+	    %x7f-ff (i.e., not in VCHAR or SP), fail serialization.</li>
+            <li>Let output be the string DQUOTE.</li>
+            <li>
+              <t>For each character char in input_string:
+              </t>
+              <ol>
+                <li>
+                  <t>If char is "\" or DQUOTE:
+                  </t>
+                  <ol>
+                    <li>Append "\" to output.</li>
+                  </ol>
+                </li>
+                <li>Append char to output.</li>
+              </ol>
+            </li>
+            <li>Append DQUOTE to output.</li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+        <section anchor="ser-token">
+          <name>Serializing a Token</name>
+          <t>Given a Token as input_token, return an ASCII string suitable for
+	  use in an HTTP field value.</t>
+          <ol>
+            <li>Convert input_token into a sequence of ASCII characters; if
+	    conversion fails, fail serialization.</li>
+            <li>If the first character of input_token is not ALPHA or "*", or
+	    the remaining portion contains a character not in tchar, ":", or
+	    "/", fail serialization.</li>
+            <li>Let output be an empty string.</li>
+            <li>Append input_token to output.</li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+        <section anchor="ser-binary">
+          <name>Serializing a Byte Sequence</name>
+          <t>Given a Byte Sequence as input_bytes, return an ASCII string
+	  suitable for use in an HTTP field value.</t>
+          <ol>
+            <li>If input_bytes is not a sequence of bytes, fail serialization.</li>
+            <li>Let output be an empty string.</li>
+            <li>Append ":" to output.</li>
+            <li>Append the result of base64-encoding input_bytes as per <xref target="RFC4648" sectionFormat="comma" section="4"/>, taking account of
+	    the requirements below.</li>
+            <li>Append ":" to output.</li>
+            <li>Return output.</li>
+          </ol>
+          <t>The encoded data is required to be padded with "=", as per <xref target="RFC4648" sectionFormat="comma" section="3.2"/>.</t>
+          <t>Likewise, encoded data <bcp14>SHOULD</bcp14> have pad bits set to zero, as per
+	  <xref target="RFC4648" sectionFormat="comma" section="3.5"/>, unless it is
+	  not possible to do so due to implementation constraints.</t>
+        </section>
+        <section anchor="ser-boolean">
+          <name>Serializing a Boolean</name>
+          <t>Given a Boolean as input_boolean, return an ASCII string suitable
+	  for use in an HTTP field value.</t>
+          <ol>
+            <li>If input_boolean is not a boolean, fail serialization.</li>
+            <li>Let output be an empty string.</li>
+            <li>Append "?" to output.</li>
+            <li>If input_boolean is true, append "1" to output.</li>
+            <li>If input_boolean is false, append "0" to output.</li>
+            <li>Return output.</li>
+          </ol>
+        </section>
+      </section>
+      <section anchor="text-parse">
+        <name>Parsing Structured Fields</name>
+        <t>When a receiving implementation parses HTTP fields that are known
+	to be Structured Fields, it is important that care be taken, as there
+	are a number of edge cases that can cause interoperability or even
+	security problems. This section specifies the algorithm for doing
+	so.</t>
+        <t>Given an array of bytes as input_bytes that represent the chosen
+	field's field-value (which is empty if that field is not present) and
+	field_type (one of "dictionary", "list", or "item"), return the parsed
+	header value.</t>
+        <ol>
+          <li>Convert input_bytes into an ASCII string input_string; if
+	  conversion fails, fail parsing.</li>
+          <li>Discard any leading SP characters from input_string.</li>
+          <li>If field_type is "list", let output be the result of running
+	  Parsing a List (<xref target="parse-list"/>) with
+	  input_string.</li>
+          <li>If field_type is "dictionary", let output be the result of
+	  running Parsing a Dictionary (<xref target="parse-dictionary"/>) with input_string.</li>
+          <li>If field_type is "item", let output be the result of running
+	  Parsing an Item (<xref target="parse-item"/>) with
+	  input_string.</li>
+          <li>Discard any leading SP characters from input_string.</li>
+          <li>If input_string is not empty, fail parsing.</li>
+          <li>Otherwise, return output.</li>
+        </ol>
+        <t>When generating input_bytes, parsers <bcp14>MUST</bcp14> combine all field lines
+	in the same section (header or trailer) that case-insensitively match
+	the field name into one comma-separated field-value, as per <xref target="RFC7230" sectionFormat="comma" section="3.2.2"/>; this assures that
+	the entire field value is processed correctly.</t>
+        <t>For Lists and Dictionaries, this has the effect of correctly
+	concatenating all of the field's lines, as long as individual members
+	of the top-level data structure are not split across multiple header
+	instances. The parsing algorithms for both types allow tab characters,
+	since these might be used to combine field lines by some
+	implementations.</t>
+        <t>Strings split across multiple field lines will have unpredictable
+	results, because one or more commas (with optional whitespace)
+	will become part of the string output by the parser. Since
+	concatenation might be done by an upstream intermediary, the results
+	are not under the control of the serializer or the parser, even when
+	they are both under the control of the same party.</t>
+        <t>Tokens, Integers, Decimals, and Byte Sequences cannot be split
+	across multiple field lines because the inserted commas will cause
+	parsing to fail.</t>
+        <t>Parsers <bcp14>MAY</bcp14> fail when processing a field value spread across
+	multiple field lines, when one of those lines does not parse as that
+	field. For example, a parsing handling an Example-String field that's
+	defined as an sf-string is allowed to fail when processing this field
+	section:</t>
+        <sourcecode type="http-message">
+Example-String: "foo
+Example-String: bar"
+</sourcecode>
+        <t>If parsing fails -- including when calling another algorithm -- the
+	entire field value <bcp14>MUST</bcp14> be ignored (i.e., treated as if the field were
+	not present in the section). This is intentionally strict, to improve
+	interoperability and safety, and specifications referencing this
+	document are not allowed to loosen this requirement.</t>
+        <t>Note that this requirement does not apply to an implementation that
+	is not parsing the field; for example, an intermediary is not required
+	to strip a failing field from a message before forwarding it.</t>
+        <section anchor="parse-list">
+          <name>Parsing a List</name>
+          <t>Given an ASCII string as input_string, return an array of
+	  (item_or_inner_list, parameters) tuples. input_string is modified to
+	  remove the parsed value.</t>
+          <ol>
+            <li>Let members be an empty array.</li>
+            <li>
+              <t>While input_string is not empty:
+              </t>
+              <ol>
+                <li>Append the result of running Parsing an Item or Inner List
+		(<xref target="parse-item-or-list"/>) with
+		input_string to members.</li>
+                <li>Discard any leading OWS characters from input_string.</li>
+                <li>If input_string is empty, return members.</li>
+                <li>Consume the first character of input_string; if it is not
+		",", fail parsing.</li>
+                <li>Discard any leading OWS characters from input_string.</li>
+                <li>If input_string is empty, there is a trailing comma; fail parsing.</li>
+              </ol>
+            </li>
+            <li>No structured data has been found; return members (which is empty).</li>
+          </ol>
+          <section anchor="parse-item-or-list">
+            <name>Parsing an Item or Inner List</name>
+            <t>Given an ASCII string as input_string, return the tuple
+	    (item_or_inner_list, parameters), where item_or_inner_list can be
+	    either a single bare item or an array of (bare_item, parameters)
+	    tuples. input_string is modified to remove the parsed value.</t>
+            <ol>
+              <li>If the first character of input_string is "(", return the
+	      result of running Parsing an Inner List (<xref target="parse-innerlist"/>) with
+	      input_string.</li>
+              <li>Return the result of running Parsing an Item (<xref target="parse-item"/>) with input_string.</li>
+            </ol>
+          </section>
+          <section anchor="parse-innerlist">
+            <name>Parsing an Inner List</name>
+            <t>Given an ASCII string as input_string, return the tuple
+	    (inner_list, parameters), where inner_list is an array of
+	    (bare_item, parameters) tuples. input_string is modified to remove
+	    the parsed value.</t>
+            <ol>
+              <li>Consume the first character of input_string; if it is not
+	      "(", fail parsing.</li>
+              <li>Let inner_list be an empty array.</li>
+              <li>
+                <t>While input_string is not empty:
+                </t>
+                <ol>
+                  <li>Discard any leading SP characters from input_string.</li>
+                  <li>
+                    <t>If the first character of input_string is ")":
+                    </t>
+                    <ol>
+                      <li>Consume the first character of input_string.</li>
+                      <li>Let parameters be the result of running Parsing
+		      Parameters (<xref target="parse-param"/>) with input_string.</li>
+                      <li>Return the tuple (inner_list, parameters).</li>
+                    </ol>
+                  </li>
+                  <li>Let item be the result of running Parsing an Item (<xref target="parse-item"/>) with
+		  input_string.</li>
+                  <li>Append item to inner_list.</li>
+                  <li>If the first character of input_string is not SP or ")",
+		  fail parsing.</li>
+                </ol>
+              </li>
+              <li>The end of the Inner List was not found; fail parsing.</li>
+            </ol>
+          </section>
+        </section>
+        <section anchor="parse-dictionary">
+          <name>Parsing a Dictionary</name>
+          <t>Given an ASCII string as input_string, return an ordered map
+	  whose values are (item_or_inner_list, parameters)
+	  tuples. input_string is modified to remove the parsed value.</t>
+          <ol>
+            <li>Let dictionary be an empty, ordered map.</li>
+            <li>
+              <t>While input_string is not empty:
+              </t>
+              <ol>
+                <li>Let this_key be the result of running Parsing a Key (<xref target="parse-key"/>) with input_string.</li>
+                <li>
+                  <t>If the first character of input_string is "=":
+                  </t>
+                  <ol>
+                    <li>Consume the first character of input_string.</li>
+                    <li>Let member be the result of running Parsing an Item or
+		    Inner List (<xref target="parse-item-or-list"/>) with input_string.</li>
+                  </ol>
+                </li>
+                <li>
+                  <t>Otherwise:
+                  </t>
+                  <ol>
+                    <li>Let value be Boolean true.</li>
+                    <li>Let parameters be the result of running Parsing
+		    Parameters (<xref target="parse-param"/>)
+		    with input_string.</li>
+                    <li>Let member be the tuple (value, parameters).</li>
+                  </ol>
+                </li>
+                <li>If dictionary already contains a key this_key (comparing character for character),  overwrite its value with member.</li>
+		<li>Otherwise, append key this_key with value member to dictionary.</li>
+                <li>Discard any leading OWS characters from input_string.</li>
+                <li>If input_string is empty, return dictionary.</li>
+                <li>Consume the first character of input_string; if it is not
+		",", fail parsing.</li>
+                <li>Discard any leading OWS characters from input_string.</li>
+                <li>If input_string is empty, there is a trailing comma; fail parsing.</li>
+              </ol>
+            </li>
+            <li>No structured data has been found; return dictionary (which is empty).</li>
+          </ol>
+          <t>Note that when duplicate Dictionary keys are encountered, all but 
+         the last instance are ignored.</t>
+        </section>
+        <section anchor="parse-item">
+          <name>Parsing an Item</name>
+          <t>Given an ASCII string as input_string, return a (bare_item,
+	  parameters) tuple. input_string is modified to remove the parsed
+	  value.</t>
+          <ol>
+            <li>Let bare_item be the result of running Parsing a Bare Item
+	    (<xref target="parse-bare-item"/>) with
+	    input_string.</li>
+            <li>Let parameters be the result of running Parsing Parameters
+	    (<xref target="parse-param"/>) with
+	    input_string.</li>
+            <li>Return the tuple (bare_item, parameters).</li>
+          </ol>
+          <section anchor="parse-bare-item">
+            <name>Parsing a Bare Item</name>
+            <t>Given an ASCII string as input_string, return a bare
+	    Item. input_string is modified to remove the parsed value.</t>
+            <ol>
+              <li>If the first character of input_string is a "-" or a DIGIT,
+	      return the result of running Parsing an Integer or Decimal
+	      (<xref target="parse-number"/>) with
+	      input_string.</li>
+              <li>If the first character of input_string is a DQUOTE, return
+	      the result of running Parsing a String (<xref target="parse-string"/>) with
+	      input_string.</li>
+              <li>If the first character of input_string is an ALPHA or "*",
+	      return the result of running Parsing a Token (<xref target="parse-token"/>) with input_string.</li>
+              <li>If the first character of input_string is ":", return the
+	      result of running Parsing a Byte Sequence (<xref target="parse-binary"/>) with
+	      input_string.</li>
+              <li>If the first character of input_string is "?", return the
+	      result of running Parsing a Boolean (<xref target="parse-boolean"/>) with
+	      input_string.</li>
+              <li>Otherwise, the item type is unrecognized; fail parsing.</li>
+            </ol>
+          </section>
+          <section anchor="parse-param">
+            <name>Parsing Parameters</name>
+            <t>Given an ASCII string as input_string, return an ordered map
+	    whose values are bare Items. input_string is modified to remove
+	    the parsed value.</t>
+            <ol>
+              <li>Let parameters be an empty, ordered map.</li>
+              <li>
+                <t>While input_string is not empty:
+                </t>
+                <ol>
+                  <li>If the first character of input_string is not ";", exit the loop.</li>
+                  <li>Consume the ";" character from the beginning of input_string.</li>
+                  <li>Discard any leading SP characters from input_string.</li>
+                  <li>Let param_key be the result of running Parsing a Key
+		  (<xref target="parse-key"/>) with
+		  input_string.</li>
+                  <li>Let param_value be Boolean true.</li>
+                  <li>
+                    <t>If the first character of input_string is "=":
+                    </t>
+                    <ol>
+                      <li>Consume the "=" character at the beginning of input_string.</li>
+                      <li>Let param_value be the result of running Parsing a
+		      Bare Item (<xref target="parse-bare-item"/>) with input_string.</li>
+                    </ol>
+                  </li>
+                  <li>If parameters already contains a key param_key (comparing character for character), overwrite its value with param_value.</li>
+		  <li>Otherwise, append key param_key with value param_value to parameters.</li>
+		</ol>
+              </li>
+              <li>Return parameters.</li>
+            </ol>
+            <t>Note that when duplicate parameter keys are encountered, 
+            all but the last instance are ignored.</t>
+          </section>
+          <section anchor="parse-key">
+            <name>Parsing a Key</name>
+            <t>Given an ASCII string as input_string, return a
+	    key. input_string is modified to remove the parsed value.</t>
+            <ol>
+              <li>If the first character of input_string is not lcalpha or
+	      "*", fail parsing.</li>
+              <li>Let output_string be an empty string.</li>
+              <li>
+                <t>While input_string is not empty:
+                </t>
+                <ol>
+                  <li>If the first character of input_string is not one of
+		  lcalpha, DIGIT, "_", "-", ".", or "*", return
+		  output_string.</li>
+                  <li>Let char be the result of consuming the first character of input_string.</li>
+                  <li>Append char to output_string.</li>
+                </ol>
+              </li>
+              <li>Return output_string.</li>
+            </ol>
+          </section>
+        </section>
+        <section anchor="parse-number">
+          <name>Parsing an Integer or Decimal</name>
+          <t>Given an ASCII string as input_string, return an Integer or
+	  Decimal. input_string is modified to remove the parsed value.</t>
+          <t>NOTE: This algorithm parses both Integers (<xref target="integer"/>) and Decimals (<xref target="decimal"/>), and returns the corresponding structure.</t>
+          <ol>
+            <li>Let type be "integer".</li>
+            <li>Let sign be 1.</li>
+            <li>Let input_number be an empty string.</li>
+            <li>If the first character of input_string is "-", consume it and
+	    set sign to -1.</li>
+            <li>If input_string is empty, there is an empty integer; fail
+	    parsing.</li>
+            <li>If the first character of input_string is not a DIGIT, fail
+	    parsing.</li>
+            <li>
+              <t>While input_string is not empty:
+              </t>
+              <ol>
+                <li>Let char be the result of consuming the first character of
+		input_string.</li>
+                <li>If char is a DIGIT, append it to input_number.</li>
+                <li>
+                  <t>Else, if type is "integer" and char is ".":
+                  </t>
+                  <ol>
+                    <li>If input_number contains more than 12 characters, fail parsing.</li>
+                    <li>Otherwise, append char to input_number and set type to "decimal".</li>
+                  </ol>
+                </li>
+                <li>Otherwise, prepend char to input_string, and exit the loop.</li>
+                <li>If type is "integer" and input_number contains more than
+		15 characters, fail parsing.</li>
+                <li>If type is "decimal" and input_number contains more than
+		16 characters, fail parsing.</li>
+              </ol>
+            </li>
+            <li>
+              <t>If type is "integer":
+              </t>
+              <ol>
+                <li>Parse input_number as an integer and let output_number be
+		the product of the result and sign.</li>
+              </ol>
+            </li>
+            <li>
+              <t>Otherwise:
+              </t>
+              <ol>
+                <li>If the final character of input_number is ".", fail parsing.</li>
+                <li>If the number of characters after "." in input_number is
+		greater than three, fail parsing.</li>
+                <li>Parse input_number as a decimal number and let
+		output_number be the product of the result and sign.</li>
+              </ol>
+            </li>
+            <li>Return output_number.</li>
+          </ol>
+        </section>
+        <section anchor="parse-string">
+          <name>Parsing a String</name>
+          <t>Given an ASCII string as input_string, return an unquoted
+	  String. input_string is modified to remove the parsed value.</t>
+          <ol>
+            <li>Let output_string be an empty string.</li>
+            <li>If the first character of input_string is not DQUOTE, fail parsing.</li>
+            <li>Discard the first character of input_string.</li>
+            <li>
+              <t>While input_string is not empty:
+              </t>
+              <ol>
+                <li>Let char be the result of consuming the first character of input_string.</li>
+                <li>
+                  <t>If char is a backslash ("\"):
+                  </t>
+                  <ol>
+                    <li>If input_string is now empty, fail parsing.</li>
+                    <li>Let next_char be the result of consuming the first
+		    character of input_string.</li>
+                    <li>If next_char is not DQUOTE or "\", fail parsing.</li>
+                    <li>Append next_char to output_string.</li>
+                  </ol>
+                </li>
+                <li>Else, if char is DQUOTE, return output_string.</li>
+                <li>Else, if char is in the range %x00-1f or %x7f-ff (i.e., it is
+		not in VCHAR or SP), fail parsing.</li>
+                <li>Else, append char to output_string.</li>
+              </ol>
+            </li>
+            <li>Reached the end of input_string without finding a closing
+	    DQUOTE; fail parsing.</li>
+          </ol>
+        </section>
+        <section anchor="parse-token">
+          <name>Parsing a Token</name>
+          <t>Given an ASCII string as input_string, return a
+	  Token. input_string is modified to remove the parsed value.</t>
+          <ol>
+            <li>If the first character of input_string is not ALPHA or "*",
+	    fail parsing.</li>
+            <li>Let output_string be an empty string.</li>
+            <li>
+              <t>While input_string is not empty:
+              </t>
+              <ol>
+                <li>If the first character of input_string is not in tchar,
+		":", or "/", return output_string.</li>
+                <li>Let char be the result of consuming the first character of
+		input_string.</li>
+                <li>Append char to output_string.</li>
+              </ol>
+            </li>
+            <li>Return output_string.</li>
+          </ol>
+        </section>
+        <section anchor="parse-binary">
+          <name>Parsing a Byte Sequence</name>
+          <t>Given an ASCII string as input_string, return a Byte
+	  Sequence. input_string is modified to remove the parsed value.</t>
+          <ol>
+            <li>If the first character of input_string is not ":", fail parsing.</li>
+            <li>Discard the first character of input_string.</li>
+            <li>If there is not a ":" character before the end of input_string, fail parsing.</li>
+            <li>Let b64_content be the result of consuming content of
+	    input_string up to but not including the first instance of the
+	    character ":".</li>
+            <li>Consume the ":" character at the beginning of input_string.</li>
+            <li>If b64_content contains a character not included in ALPHA,
+	    DIGIT, "+", "/", and "=", fail parsing.</li>
+            <li>Let binary_content be the result of base64-decoding <xref target="RFC4648"/> b64_content, synthesizing
+	    padding if necessary (note the requirements about recipient
+	    behavior below). If base64 decoding fails, parsing fails.</li>
+            <li>Return binary_content.</li>
+          </ol>
+          <t>Because some implementations of base64 do not allow rejection of
+	  encoded data that is not properly "=" padded (see <xref target="RFC4648" sectionFormat="comma" section="3.2"/>), parsers <bcp14>SHOULD
+	  NOT</bcp14> fail when "=" padding is not present, unless they cannot be
+	  configured to do so.</t>
+          <t>Because some implementations of base64 do not allow rejection of
+	  encoded data that has non-zero pad bits (see <xref target="RFC4648" sectionFormat="comma" section="3.5"/>), parsers <bcp14>SHOULD NOT</bcp14> fail when
+	  non-zero pad bits are present, unless they cannot be configured to
+	  do so.</t>
+          <t>This specification does not relax the requirements in <xref target="RFC4648"/>, Sections <xref target="RFC4648" sectionFormat="bare" section="3.1"/> and <xref target="RFC4648" sectionFormat="bare" section="3.3"/>; therefore,
+	  parsers <bcp14>MUST</bcp14> fail on characters outside the base64 alphabet and on line
+	  feeds in encoded data.</t>
+        </section>
+        <section anchor="parse-boolean">
+          <name>Parsing a Boolean</name>
+          <t>Given an ASCII string as input_string, return a
+	  Boolean. input_string is modified to remove the parsed value.</t>
+          <ol>
+            <li>If the first character of input_string is not "?", fail parsing.</li>
+            <li>Discard the first character of input_string.</li>
+            <li>If the first character of input_string matches "1", discard
+	    the first character, and return true.</li>
+            <li>If the first character of input_string matches "0", discard
+	    the first character, and return false.</li>
+            <li>No value has matched; fail parsing.</li>
+          </ol>
+        </section>
+      </section>
+    </section>
+    <section anchor="iana-considerations">
+      <name>IANA Considerations</name>
+      <t>This document has no IANA actions.</t>
+    </section>
+    <section anchor="security-considerations">
+      <name>Security Considerations</name>
+      <t>The size of most types defined by Structured Fields is not limited;
+      as a result, extremely large fields could be an attack vector (e.g., for
+      resource consumption). Most HTTP implementations limit the sizes of
+      individual fields as well as the overall header or trailer section size
+      to mitigate such attacks.</t>
+      <t>It is possible for parties with the ability to inject new HTTP fields
+      to change the meaning of a Structured Field. In some circumstances, this
+      will cause parsing to fail, but it is not possible to reliably fail in
+      all such circumstances.</t>
+    </section>
+  </middle>
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7230.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5234.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.0020.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4648.xml"/>
+      </references>
+      <references>
+        <name>Informative References</name>
+        <reference anchor="IEEE754" target="https://ieeexplore.ieee.org/document/8766229">
+          <front>
+            <title>IEEE Standard for Floating-Point Arithmetic</title>
+            <seriesInfo name="DOI" value="10.1109/IEEESTD.2019.8766229"/>
+            <seriesInfo name="IEEE" value="754-2019"/>
+            <author>
+              <organization>IEEE</organization>
+            </author>
+            <date year="2019" month="July"/>
+          </front>
+        </reference>
+
+<reference  anchor='STD63' target='https://www.rfc-editor.org/info/std63'>
+<front>
+<title>UTF-8, a transformation format of ISO 10646</title>
+<author initials='F.' surname='Yergeau' fullname='F. Yergeau'><organization /></author>
+<date year='2003' month='November' />
+</front>
+<seriesInfo name='STD' value='63'/>
+<seriesInfo name='RFC' value='3629'/>
+</reference>
+
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7231.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7540.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7541.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8259.xml"/>
+        <xi:include href="https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7493.xml"/>
+      </references>
+    </references>
+    <section anchor="faq">
+      <name>Frequently Asked Questions</name>
+      <section anchor="why-not-json">
+        <name>Why Not JSON?</name>
+        <t>Earlier proposals for Structured Fields were based upon JSON <xref target="RFC8259"/>. However, constraining its use to
+	make it suitable for HTTP header fields required senders and
+	recipients to implement specific additional handling.</t>
+        <t>For example, JSON has specification issues around large numbers and
+	objects with duplicate members. Although advice for avoiding these
+	issues is available (e.g., <xref target="RFC7493"/>),
+	it cannot be relied upon.</t>
+        <t>Likewise, JSON strings are by default Unicode strings, which have a
+	number of potential interoperability issues (e.g., in
+	comparison). Although implementers can be advised to avoid non-ASCII
+	content where unnecessary, this is difficult to enforce.</t>
+        <t>Another example is JSON's ability to nest content to arbitrary
+	depths. Since the resulting memory commitment might be unsuitable
+	(e.g., in embedded and other limited server deployments), it's
+	necessary to limit it in some fashion; however, existing JSON
+	implementations have no such limits, and even if a limit is specified,
+	it's likely that some field definition will find a need to violate
+	it.</t>
+        <t>Because of JSON's broad adoption and implementation, it is
+	difficult to impose such additional constraints across all
+	implementations; some deployments would fail to enforce them, thereby
+	harming interoperability. In short, if it looks like JSON, people will
+	be tempted to use a JSON parser/serializer on field values.</t>
+        <t>Since a major goal for Structured Fields is to improve
+	interoperability and simplify implementation, these concerns led to a
+	format that requires a dedicated parser and serializer.</t>
+        <t>Additionally, there were widely shared feelings that JSON doesn't
+	"look right" in HTTP fields.</t>
+      </section>
+    </section>
+    <section anchor="implementation-notes">
+      <name>Implementation Notes</name>
+      <t>A generic implementation of this specification should expose the
+      top-level serialize (<xref target="text-serialize"/>)
+      and parse (<xref target="text-parse"/>) functions. They
+      need not be functions; for example, it could be implemented as an
+      object, with methods for each of the different top-level types.</t>
+      <t>For interoperability, it's important that generic implementations be
+      complete and follow the algorithms closely; see <xref target="strict"/>. To aid this, a common test suite is being maintained
+      by the community at <eref brackets="angle" target="https://github.com/httpwg/structured-field-tests"/>.</t>
+      <t>Implementers should note that Dictionaries and Parameters are
+      order-preserving maps. Some fields may not convey meaning in the
+      ordering of these data types, but it should still be exposed so 
+      that it will be available to applications that need to use it.</t>
+      <t>Likewise, implementations should note that it's important to preserve
+      the distinction between Tokens and Strings. While most programming
+      languages have native types that map to the other types well, it may be
+      necessary to create a wrapper "token" object or use a parameter on
+      functions to assure that these types remain separate.</t>
+      <t>The serialization algorithm is defined in a way that it is not
+      strictly limited to the data types defined in <xref target="types"/> in every case. For example, Decimals are designed to
+      take broader input and round to allowed values.</t>
+      <t>Implementations are allowed to limit the size of different
+      structures, subject to the minimums defined for each type. When a
+      structure exceeds an implementation limit, that structure fails parsing
+      or serialization.</t>
+    </section>
+    <section numbered="false" anchor="acknowledgements">
+      <name>Acknowledgements</name>
+      <t>Many thanks to <contact fullname="Matthew Kerwin"/> for his detailed feedback and careful
+      consideration during the development of this specification.</t>
+      <t>Thanks also to <contact fullname="Ian Clelland"/>, <contact fullname="Roy Fielding"/>, <contact fullname="Anne van Kesteren"/>,
+      <contact fullname="Kazuho Oku"/>, <contact fullname="Evert Pot"/>,
+      <contact fullname="Julian Reschke"/>, <contact fullname="Martin       Thomson"/>, <contact fullname="Mike West"/>, and <contact fullname="Jeffrey Yasskin"/> for their contributions.</t>
+    </section>
+  </back>
+</rfc>
