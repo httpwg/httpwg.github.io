@@ -39,7 +39,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<p>See what's under development and what's coming, including:</p>
 		<ul>
 			<li><a href="https://httpwg.org/http-core/">HTTP Core Revision</a> {%include github.html link="https://github.com/httpwg/http-core" %}</li>
-      <li><a href="https://httpwg.org/http2-spec/">HTTP/2 Revision</a> {%include github.html link="https://github.com/httpwg/http2-spec" %}</li>
+      <li><a href="https://httpwg.org/http2-spec/draft-ietf-httpbis-http2bis.html">HTTP/2 Revision</a> {%include github.html link="https://github.com/httpwg/http2-spec" %}</li>
 			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> {%include github.html link="https://github.com/httpwg/http-extensions" %}</li>
 			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
 		</ul>
