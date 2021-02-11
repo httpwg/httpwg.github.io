@@ -4,4 +4,4 @@
   exclude:
       - sass-cache/
       - .jekyll-cache/
-  remote_theme: httpwg/theme
+  remote_theme: httpwg/theme@main
