@@ -30,7 +30,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
     <p>Resources to help HTTP implementations, including:</p>
     <ul>
 		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="badge badge-info">the specs!</span></li>
-      <li>See our list of unofficial <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></li>
+      <li>See our list of (unofficial) <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></li>
     </ul>
 	</div>
 
