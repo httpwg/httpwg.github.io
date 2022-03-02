@@ -253,7 +253,7 @@ list-member   = sf-item / inner-list
 	look like:</t>
         <sourcecode type="http-message">
 Example-List: sugar, tea, rum
-	</sourcecode>
+</sourcecode>
         <t>An empty List is denoted by not serializing the field at all. This
 	implies that fields defined as Lists have a default empty value.</t>
         <t>Note that Lists can have their members split across multiple lines
@@ -261,12 +261,12 @@ Example-List: sugar, tea, rum
 	equivalent:</t>
         <sourcecode type="http-message">
 Example-List: sugar, tea, rum
-	</sourcecode>
+</sourcecode>
         <t>and</t>
         <sourcecode type="http-message">
 Example-List: sugar, tea
 Example-List: rum
-	</sourcecode>
+</sourcecode>
         <t>However, individual members of a List cannot be safely split
 	between lines; see <xref target="text-parse"/>
 	for details.</t>
