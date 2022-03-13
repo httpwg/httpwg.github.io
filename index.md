@@ -53,6 +53,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 			<li>See our <a href="http://datatracker.ietf.org/wg/httpbis/charter/">charter</a></li>
 			<li>Catch up on our <a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">mailing list</a></li>
 			<li>Browse our <a href="https://httpwg.org/wg-materials/">meeting materials</a> {%include github.html link="https://github.com/httpwg/wg-materials" %}</li>
+      <li>See our <a href="https://httpwg.org/admin/editors/">resources for document editors</a></li>
     </ul>
 	</div>
 
