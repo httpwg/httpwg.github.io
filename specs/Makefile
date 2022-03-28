@@ -20,5 +20,5 @@ all: $(TARGETS)
 clean:
 	rm -f $(TARGETS)
 
-%.html: %.xml $(stylesheet)
+%.html: %.xml $(stylesheet) lib/rfc2629.xslt
 	$(saxon) $< $(stylesheet) $(saxparam) pageUrl='https://httpwg.org/specs/$@' > $@
