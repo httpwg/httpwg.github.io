@@ -29,7 +29,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<h2>📄 Specs and Tests</h2>
     <p>Resources to help HTTP implementations, including:</p>
     <ul>
-		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="badge badge-info">the specs!</span></li>
+		  <li>Read <a href="/specs/">HTTP-related specifications</a> <span class="badge bg-info">the specs!</span></li>
       <li>See our list of (unofficial) <a href="https://github.com/httpwg/wiki/wiki/HTTP-Testing-Resources">tests for HTTP implementations</a></li>
     </ul>
 	</div>
@@ -49,7 +49,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<h2>👋 Participate</h2>
 		<p>Want to get involved? Join us!</p>
 		<ul>
-			<li>Learn <a href="https://httpwg.org/CONTRIBUTING.html">how to contribute</a> <span class="badge badge-warning">start here</span></li>
+			<li>Learn <a href="https://httpwg.org/CONTRIBUTING.html">how to contribute</a> <span class="badge bg-warning">start here</span></li>
 			<li>See our <a href="http://datatracker.ietf.org/wg/httpbis/charter/">charter</a></li>
 			<li>Catch up on our <a href="https://lists.w3.org/Archives/Public/ietf-http-wg/">mailing list</a></li>
 			<li>Browse our <a href="https://httpwg.org/wg-materials/">meeting materials</a> {%include github.html link="https://github.com/httpwg/wg-materials" %}</li>
