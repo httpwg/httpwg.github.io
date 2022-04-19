@@ -1,7 +1,7 @@
 ---
 title: About Us
 description: Find out more about the IETF HTTP Working Group
-banner_img: /asset/wg_japan.jpg
+banner_img: /assets/wg_japan.jpg
 ---
 
 The **HTTP Working Group** (a.k.a. HTTPbis) is part of the [IETF](http://www.ietf.org/), an internet standards-setting organization.
