@@ -1,0 +1,62 @@
+body {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  height: 100%;
+}
+
+blockquote {
+  font-size: 95%;
+  border-style: solid;
+  border-color: #d2dcdf;
+  border-width: 0 0 0 0.5em;
+  padding-left: 1em;
+  margin: 7px 1em 14px 0;
+}
+
+a:not([class*="btn"]) {
+    text-decoration: none;
+}
+a:not([class*="btn"]):hover {
+    text-decoration: underline;
+}
+
+*:not([href])[id]:before  { 
+  display: block; 
+  content: " "; 
+  margin-top: -65px; 
+  height: 65px; 
+  visibility: hidden; 
+}
+
+#col1 {
+  z-index: 10;
+}
+
+#col2 {
+  z-index: 9;
+}
+
+#col3 {
+  z-index: 8;
+}
+
+table {
+  margin-bottom: 2em;
+}
+
+tr:nth-child(2n) {
+    background-color: #f3f3f3;
+}
+
+td {
+  padding-right: 2em;
+}
+
+.twtr-icon {
+  fill: #00aced;
+}
+
+.octicon {
+    fill: #aaa;
+}
+
