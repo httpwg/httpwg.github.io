@@ -13,9 +13,9 @@ blockquote {
   margin: 7px 1em 14px 0;
 }
 
-div.highlight {
+pre.highlight {
    background-color: #efefef;
-   padding: 2px;
+   padding: 3px;
 }
 
 a:not([class*="btn"]) {
