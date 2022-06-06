@@ -4,7 +4,6 @@
 This is a **partial** list of HTTP-relevant specifications, here for convenience. For the complete
 list of HTTP extensions, see the relevant registry.
 
-
 ### Methods 
 
 * RFC5789: [PATCH Method](/specs/rfc5789.html)
@@ -16,16 +15,9 @@ list of HTTP extensions, see the relevant registry.
 * RFC7725: [Status Code 451](/specs/rfc7725.html) (Unavailable For Legal Reasons)
 * RFC8297: [Status Code 103](/specs/rfc8297.html) (Early Hints)
 
-### Connection Extensions
+### Caching
 
-* RFC7639: [ALPN Header Field](/specs/rfc7639.html)
-* RFC7838: [Alternative Services](/specs/rfc7838.html)
-* RFC8164: [Opportunistic Security for HTTP/2](/specs/rfc8164.html)
-* RFC8336: [ORIGIN HTTP/2 Frame](/specs/rfc8336.html)
-* RFC8441: [Bootstrapping WebSockets with HTTP/2](/specs/rfc8441.html)
-
-### Caching Extensions
-
+* RFC9112: [HTTP Caching](/specs/rfc9112.html)
 * RFC5861: [Cache-Control: stale-while-revalidate and stale-if-error](/specs/rfc5861.html)
 * RFC8246: [Cache-Control: immutable](/specs/rfc8246.html)
 
@@ -36,6 +28,14 @@ list of HTTP extensions, see the relevant registry.
 * RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
 * RFC8144: [Prefer Header](/specs/rfc7240.html)
 * RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
+
+### Connection Extensions
+
+* RFC7639: [ALPN Header Field](/specs/rfc7639.html)
+* RFC7838: [Alternative Services](/specs/rfc7838.html)
+* RFC8164: [Opportunistic Security for HTTP/2](/specs/rfc8164.html)
+* RFC8336: [ORIGIN HTTP/2 Frame](/specs/rfc8336.html)
+* RFC8441: [Bootstrapping WebSockets with HTTP/2](/specs/rfc8441.html)
 
 ### Security-Related Extensions
 
