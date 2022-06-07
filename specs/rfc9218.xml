@@ -1,0 +1,1369 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" category="std" consensus="true" docName="draft-ietf-httpbis-priority-12" indexInclude="true" ipr="trust200902" number="9218" prepTime="2022-06-06T12:08:29" scripts="Common,Latin" sortRefs="true" submissionType="IETF" symRefs="true" tocDepth="3" tocInclude="true" xml:lang="en">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-priority-12" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9218" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="HTTP Priorities">Extensible Prioritization Scheme for HTTP</title>
+    <seriesInfo name="RFC" value="9218" stream="IETF"/>
+    <author asciiFullname="Kazuho Oku" fullname="奥 一穂">
+      <organization showOnFrontPage="true">Fastly</organization>
+      <address>
+        <email>kazuhooku@gmail.com</email>
+      </address>
+    </author>
+    <author initials="L." surname="Pardue" fullname="Lucas Pardue">
+      <organization showOnFrontPage="true">Cloudflare</organization>
+      <address>
+        <email>lucaspardue.24.7@gmail.com</email>
+      </address>
+    </author>
+    <date month="06" year="2022"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <keyword>Response priority</keyword>
+    <keyword>Stream multiplexing</keyword>
+    <keyword>Reprioritization</keyword>
+    <keyword>Server scheduling</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This document describes a scheme that allows an HTTP client to communicate its
+preferences for how the upstream server prioritizes responses to its requests,
+and also allows a server to hint to a downstream intermediary how its responses
+should be prioritized when they are forwarded.  This document defines the
+Priority header field for communicating the initial priority in an HTTP
+version-independent manner, as well as HTTP/2 and HTTP/3 frames for
+reprioritizing responses. These share a common format structure that is designed
+to provide future extensibility.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9218" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2022 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-motivation-for-replacing-rf">Motivation for Replacing RFC 7540 Stream Priorities</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-disabling-rfc-7540-stream-p">Disabling RFC 7540 Stream Priorities</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2.1.2">
+                  <li pn="section-toc.1-1.2.2.1.2.1">
+                    <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.2.1.2.1.1"><xref derivedContent="2.1.1" format="counter" sectionFormat="of" target="section-2.1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-advice-when-using-extensibl">Advice when Using Extensible Priorities as the Alternative</xref></t>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-applicability-of-the-extens">Applicability of the Extensible Priority Scheme</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-priority-parameters">Priority Parameters</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.4.2">
+              <li pn="section-toc.1-1.4.2.1">
+                <t indent="0" pn="section-toc.1-1.4.2.1.1"><xref derivedContent="4.1" format="counter" sectionFormat="of" target="section-4.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-urgency">Urgency</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.2">
+                <t indent="0" pn="section-toc.1-1.4.2.2.1"><xref derivedContent="4.2" format="counter" sectionFormat="of" target="section-4.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-incremental">Incremental</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.3">
+                <t indent="0" pn="section-toc.1-1.4.2.3.1"><xref derivedContent="4.3" format="counter" sectionFormat="of" target="section-4.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-defining-new-priority-param">Defining New Priority Parameters</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.4.2.3.2">
+                  <li pn="section-toc.1-1.4.2.3.2.1">
+                    <t indent="0" pn="section-toc.1-1.4.2.3.2.1.1"><xref derivedContent="4.3.1" format="counter" sectionFormat="of" target="section-4.3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-registration">Registration</xref></t>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-priority-http-header-fi">The Priority HTTP Header Field</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-reprioritization">Reprioritization</xref></t>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="7" format="counter" sectionFormat="of" target="section-7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-priority_update-frame">The PRIORITY_UPDATE Frame</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.7.2">
+              <li pn="section-toc.1-1.7.2.1">
+                <t indent="0" pn="section-toc.1-1.7.2.1.1"><xref derivedContent="7.1" format="counter" sectionFormat="of" target="section-7.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-2-priority_update-fram">HTTP/2 PRIORITY_UPDATE Frame</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.2">
+                <t indent="0" pn="section-toc.1-1.7.2.2.1"><xref derivedContent="7.2" format="counter" sectionFormat="of" target="section-7.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-3-priority_update-fram">HTTP/3 PRIORITY_UPDATE Frame</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="8" format="counter" sectionFormat="of" target="section-8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-merging-client-and-server-d">Merging Client- and Server-Driven Priority Parameters</xref></t>
+          </li>
+          <li pn="section-toc.1-1.9">
+            <t indent="0" pn="section-toc.1-1.9.1"><xref derivedContent="9" format="counter" sectionFormat="of" target="section-9"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-scheduling">Client Scheduling</xref></t>
+          </li>
+          <li pn="section-toc.1-1.10">
+            <t indent="0" pn="section-toc.1-1.10.1"><xref derivedContent="10" format="counter" sectionFormat="of" target="section-10"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-server-scheduling">Server Scheduling</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.10.2">
+              <li pn="section-toc.1-1.10.2.1">
+                <t indent="0" pn="section-toc.1-1.10.2.1.1"><xref derivedContent="10.1" format="counter" sectionFormat="of" target="section-10.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-intermediaries-with-multipl">Intermediaries with Multiple Backend Connections</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.11">
+            <t indent="0" pn="section-toc.1-1.11.1"><xref derivedContent="11" format="counter" sectionFormat="of" target="section-11"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-scheduling-and-the-connect-">Scheduling and the CONNECT Method</xref></t>
+          </li>
+          <li pn="section-toc.1-1.12">
+            <t indent="0" pn="section-toc.1-1.12.1"><xref derivedContent="12" format="counter" sectionFormat="of" target="section-12"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-retransmission-scheduling">Retransmission Scheduling</xref></t>
+          </li>
+          <li pn="section-toc.1-1.13">
+            <t indent="0" pn="section-toc.1-1.13.1"><xref derivedContent="13" format="counter" sectionFormat="of" target="section-13"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-fairness">Fairness</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.13.2">
+              <li pn="section-toc.1-1.13.2.1">
+                <t indent="0" pn="section-toc.1-1.13.2.1.1"><xref derivedContent="13.1" format="counter" sectionFormat="of" target="section-13.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-coalescing-intermediaries">Coalescing Intermediaries</xref></t>
+              </li>
+              <li pn="section-toc.1-1.13.2.2">
+                <t indent="0" pn="section-toc.1-1.13.2.2.1"><xref derivedContent="13.2" format="counter" sectionFormat="of" target="section-13.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-1x-back-ends">HTTP/1.x Back Ends</xref></t>
+              </li>
+              <li pn="section-toc.1-1.13.2.3">
+                <t indent="0" pn="section-toc.1-1.13.2.3.1"><xref derivedContent="13.3" format="counter" sectionFormat="of" target="section-13.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-intentional-introduction-of">Intentional Introduction of Unfairness</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.14">
+            <t indent="0" pn="section-toc.1-1.14.1"><xref derivedContent="14" format="counter" sectionFormat="of" target="section-14"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-why-use-an-end-to-end-heade">Why Use an End-to-End Header Field?</xref></t>
+          </li>
+          <li pn="section-toc.1-1.15">
+            <t indent="0" pn="section-toc.1-1.15.1"><xref derivedContent="15" format="counter" sectionFormat="of" target="section-15"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.16">
+            <t indent="0" pn="section-toc.1-1.16.1"><xref derivedContent="16" format="counter" sectionFormat="of" target="section-16"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.17">
+            <t indent="0" pn="section-toc.1-1.17.1"><xref derivedContent="17" format="counter" sectionFormat="of" target="section-17"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.17.2">
+              <li pn="section-toc.1-1.17.2.1">
+                <t indent="0" pn="section-toc.1-1.17.2.1.1"><xref derivedContent="17.1" format="counter" sectionFormat="of" target="section-17.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.17.2.2">
+                <t indent="0" pn="section-toc.1-1.17.2.2.1"><xref derivedContent="17.2" format="counter" sectionFormat="of" target="section-17.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.18">
+            <t indent="0" pn="section-toc.1-1.18.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgements">Acknowledgements</xref></t>
+          </li>
+          <li pn="section-toc.1-1.19">
+            <t indent="0" pn="section-toc.1-1.19.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.b"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" toc="include" removeInRFC="false" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">It is common for representations of an HTTP <xref target="HTTP" format="default" sectionFormat="of" derivedContent="HTTP"/>
+resource to have relationships to one or more other resources. Clients will
+often discover these relationships while processing a retrieved representation,
+which may lead to further retrieval requests.  Meanwhile, the nature of the
+relationships determines whether a client is blocked from continuing to process
+locally available resources.  An example of this is the visual rendering of an HTML
+document, which could be blocked by the retrieval of a Cascading Style Sheets (CSS) file that the
+document refers to. In contrast, inline images do not block rendering and get drawn
+incrementally as the chunks of the images arrive.</t>
+      <t indent="0" pn="section-1-2">HTTP/2 <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/> and HTTP/3
+<xref target="HTTP3" format="default" sectionFormat="of" derivedContent="HTTP/3"/> support multiplexing of requests and responses in
+a single connection. An important feature of any implementation of a protocol
+that provides multiplexing is the ability to prioritize the sending of
+information. For example, to provide meaningful presentation of an HTML document
+at the earliest moment, it is important for an HTTP server to prioritize the
+HTTP responses, or the chunks of those HTTP responses, that it sends to a
+client.</t>
+      <t indent="0" pn="section-1-3">HTTP/2 and HTTP/3 servers can schedule transmission of concurrent response data
+by any means they choose. Servers can ignore client priority signals and still
+successfully serve HTTP responses. However, servers that operate in ignorance
+of how clients issue requests and consume responses can cause suboptimal client
+application performance. Priority signals allow clients to communicate their
+view of request priority. Servers have their own needs that are independent of
+client needs, so they often combine priority signals with other available
+information in order to inform scheduling of response data.</t>
+      <t indent="0" pn="section-1-4">RFC 7540 <xref target="RFC7540" format="default" sectionFormat="of" derivedContent="RFC7540"/> stream priority allowed a client to send a series of
+priority signals that communicate to the server a "priority tree"; the structure
+of this tree represents the client's preferred relative ordering and weighted
+distribution of the bandwidth among HTTP responses. Servers could use these
+priority signals as input into prioritization decisions.</t>
+      <t indent="0" pn="section-1-5">The design and implementation of RFC 7540 stream priority were observed to have
+shortcomings, as explained in <xref target="motivation" format="default" sectionFormat="of" derivedContent="Section 2"/>. HTTP/2
+<xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/> has consequently deprecated the use of
+these stream priority signals. The prioritization scheme and priority signals
+defined herein can act as a substitute for RFC 7540 stream priority.</t>
+      <t indent="0" pn="section-1-6">This document describes an extensible scheme for prioritizing HTTP responses
+that uses absolute values. <xref target="parameters" format="default" sectionFormat="of" derivedContent="Section 4"/> defines priority parameters, which are
+a standardized and extensible format of priority information. <xref target="header-field" format="default" sectionFormat="of" derivedContent="Section 5"/>
+defines the Priority HTTP header field, which is an
+end-to-end priority signal that is independent of protocol version. Clients can send this header field to signal their
+view of how responses should be prioritized. Similarly, servers behind an
+intermediary can use it to signal priority to the intermediary. After sending a
+request, a client can change their view of response priority (see
+<xref target="reprioritization" format="default" sectionFormat="of" derivedContent="Section 6"/>) by sending HTTP-version-specific frames as defined in
+Sections <xref target="h2-update-frame" format="counter" sectionFormat="of" derivedContent="7.1"/> and <xref target="h3-update-frame" format="counter" sectionFormat="of" derivedContent="7.2"/>.</t>
+      <t indent="0" pn="section-1-7">Header field and frame priority signals are input to a server's response
+prioritization process. They are only a suggestion and do not guarantee any
+particular processing or transmission order for one response relative to any
+other response. Sections <xref target="server-scheduling" format="counter" sectionFormat="of" derivedContent="10"/> and <xref target="retransmission-scheduling" format="counter" sectionFormat="of" derivedContent="12"/> provide
+considerations and guidance about how servers might act upon signals.</t>
+      <section anchor="notational-conventions" numbered="true" toc="include" removeInRFC="false" pn="section-1.1">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.1-1">The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+        "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>",
+        "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>",
+        "<bcp14>SHOULD NOT</bcp14>",
+        "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+        "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document
+        are to be interpreted as described in BCP 14
+        <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> when, and only
+        when, they appear in all capitals, as shown here.</t>
+        <t indent="0" pn="section-1.1-2">This document uses the following terminology from <xref section="3" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3" derivedContent="STRUCTURED-FIELDS"/> to specify syntax and parsing: "Boolean", "Dictionary", and "Integer".</t>
+        <t indent="0" pn="section-1.1-3">Example HTTP requests and responses use the HTTP/2-style formatting from
+<xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>.</t>
+        <t indent="0" pn="section-1.1-4">This document uses the variable-length integer encoding from
+<xref target="QUIC" format="default" sectionFormat="of" derivedContent="QUIC"/>.</t>
+        <t indent="0" pn="section-1.1-5">The term "control stream" is used to describe both the HTTP/2 stream with
+identifier 0x0 and the HTTP/3 control stream; see <xref section="6.2.1" sectionFormat="of" target="HTTP3" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9114#section-6.2.1" derivedContent="HTTP/3"/>.</t>
+        <t indent="0" pn="section-1.1-6">The term "HTTP/2 priority signal" is used to describe the priority information
+sent from clients to servers in HTTP/2 frames; see <xref section="5.3.2" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.3.2" derivedContent="HTTP/2"/>.</t>
+      </section>
+    </section>
+    <section anchor="motivation" numbered="true" toc="include" removeInRFC="false" pn="section-2">
+      <name slugifiedName="name-motivation-for-replacing-rf">Motivation for Replacing RFC 7540 Stream Priorities</name>
+      <t indent="0" pn="section-2-1">RFC 7540 stream priority (see <xref section="5.3" sectionFormat="of" target="RFC7540" format="default" derivedLink="https://rfc-editor.org/rfc/rfc7540#section-5.3" derivedContent="RFC7540"/>) is a complex system
+where clients signal stream dependencies and weights to describe an unbalanced
+tree. It suffered from limited deployment and interoperability and has been deprecated
+in a revision of HTTP/2 <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>. HTTP/2 retains these protocol elements in
+order to maintain wire compatibility (see <xref section="5.3.2" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.3.2" derivedContent="HTTP/2"/>), which
+means that they might still be used even in the presence of alternative signaling,
+such as the scheme this document describes.</t>
+      <t indent="0" pn="section-2-2">Many RFC 7540 server implementations do not act on HTTP/2 priority
+signals.</t>
+      <t indent="0" pn="section-2-3">Prioritization can use information that servers have about resources or
+the order in which requests are generated. For example, a server, with knowledge
+of an HTML document structure, might want to prioritize the delivery of images
+that are critical to user experience above other images.  With RFC 7540, it is
+difficult for servers to interpret signals from clients for prioritization, as
+the same conditions could result in very different signaling from different
+clients. This document describes signaling that is simpler and more constrained,
+requiring less interpretation and allowing less variation.</t>
+      <t indent="0" pn="section-2-4">RFC 7540 does not define a method that can be used by a server to provide a
+priority signal for intermediaries.</t>
+      <t indent="0" pn="section-2-5">RFC 7540 stream priority is expressed relative to other requests sharing the same
+connection at the same time. It is difficult to incorporate such a design into
+applications that generate requests without knowledge of how other requests
+might share a connection, or into protocols that do not have strong ordering
+guarantees across streams, like HTTP/3 <xref target="HTTP3" format="default" sectionFormat="of" derivedContent="HTTP/3"/>.</t>
+      <t indent="0" pn="section-2-6">Experiments from independent research <xref target="MARX" format="default" sectionFormat="of" derivedContent="MARX"/> have shown
+that simpler schemes can reach at least equivalent performance characteristics
+compared to the more complex RFC 7540 setups seen in practice, at least for the
+Web use case.</t>
+      <section anchor="disabling" numbered="true" toc="include" removeInRFC="false" pn="section-2.1">
+        <name slugifiedName="name-disabling-rfc-7540-stream-p">Disabling RFC 7540 Stream Priorities</name>
+        <t indent="0" pn="section-2.1-1">The problems and insights set out above provided the motivation for an
+alternative to RFC 7540 stream priority (see <xref section="5.3" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.3" derivedContent="HTTP/2"/>).</t>
+        <t indent="0" pn="section-2.1-2">The SETTINGS_NO_RFC7540_PRIORITIES HTTP/2 setting is defined by this document in
+order to allow endpoints to omit or ignore HTTP/2 priority signals (see
+<xref section="5.3.2" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.3.2" derivedContent="HTTP/2"/>), as described below. The value of
+SETTINGS_NO_RFC7540_PRIORITIES <bcp14>MUST</bcp14> be 0 or 1. Any value other than 0 or 1 <bcp14>MUST</bcp14>
+be treated as a connection error (see <xref section="5.4.1" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.4.1" derivedContent="HTTP/2"/>) of type
+PROTOCOL_ERROR. The initial value is 0.</t>
+        <t indent="0" pn="section-2.1-3">If endpoints use SETTINGS_NO_RFC7540_PRIORITIES, they <bcp14>MUST</bcp14> send it in the first
+SETTINGS frame. Senders <bcp14>MUST NOT</bcp14> change the SETTINGS_NO_RFC7540_PRIORITIES value
+after the first SETTINGS frame. Receivers that detect a change <bcp14>MAY</bcp14> treat it as a
+connection error of type PROTOCOL_ERROR.</t>
+        <t indent="0" pn="section-2.1-4">Clients can send SETTINGS_NO_RFC7540_PRIORITIES with a value of 1 to indicate
+that they are not using HTTP/2 priority signals. The SETTINGS frame precedes any
+HTTP/2 priority signal sent from clients, so servers can determine whether they
+need to allocate any resources to signal handling before signals arrive. A
+server that receives SETTINGS_NO_RFC7540_PRIORITIES with a value of 1 <bcp14>MUST</bcp14>
+ignore HTTP/2 priority signals.</t>
+        <t indent="0" pn="section-2.1-5">Servers can send SETTINGS_NO_RFC7540_PRIORITIES with a value of 1 to indicate
+that they will ignore HTTP/2 priority signals sent by clients.</t>
+        <t indent="0" pn="section-2.1-6">Endpoints that send SETTINGS_NO_RFC7540_PRIORITIES are encouraged to use
+alternative priority signals (for example, see <xref target="header-field" format="default" sectionFormat="of" derivedContent="Section 5"/> or
+<xref target="h2-update-frame" format="default" sectionFormat="of" derivedContent="Section 7.1"/>), but there is no requirement to use a specific signal type.</t>
+        <section anchor="advice-when-using-extensible-priorities-as-the-alternative" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.1">
+          <name slugifiedName="name-advice-when-using-extensibl">Advice when Using Extensible Priorities as the Alternative</name>
+          <t indent="0" pn="section-2.1.1-1">Before receiving a SETTINGS frame from a server, a client does not know if the server
+is ignoring HTTP/2 priority signals. Therefore, until the client receives the
+SETTINGS frame from the server, the client <bcp14>SHOULD</bcp14> send both the HTTP/2
+priority signals and the signals of this prioritization scheme (see
+Sections <xref target="header-field" format="counter" sectionFormat="of" derivedContent="5"/> and <xref target="h2-update-frame" format="counter" sectionFormat="of" derivedContent="7.1"/>).</t>
+          <t indent="0" pn="section-2.1.1-2">Once the client receives the first SETTINGS frame that contains the
+SETTINGS_NO_RFC7540_PRIORITIES parameter with a value of 1, it <bcp14>SHOULD</bcp14> stop sending
+the HTTP/2 priority signals. This avoids sending redundant signals that are
+known to be ignored.</t>
+          <t indent="0" pn="section-2.1.1-3">Similarly, if the client receives SETTINGS_NO_RFC7540_PRIORITIES with a value of 0
+or if the settings parameter was absent, it <bcp14>SHOULD</bcp14> stop sending PRIORITY_UPDATE
+frames (<xref target="h2-update-frame" format="default" sectionFormat="of" derivedContent="Section 7.1"/>), since those frames are likely to be ignored.
+However, the client <bcp14>MAY</bcp14> continue sending the Priority header field
+(<xref target="header-field" format="default" sectionFormat="of" derivedContent="Section 5"/>), as it is an end-to-end signal that might be useful to nodes
+behind the server that the client is directly connected to.</t>
+        </section>
+      </section>
+    </section>
+    <section anchor="applicability-of-the-extensible-priority-scheme" numbered="true" toc="include" removeInRFC="false" pn="section-3">
+      <name slugifiedName="name-applicability-of-the-extens">Applicability of the Extensible Priority Scheme</name>
+      <t indent="0" pn="section-3-1">The priority scheme defined by this document is primarily focused on the
+prioritization of HTTP response messages (see <xref section="3.4" sectionFormat="of" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3.4" derivedContent="HTTP"/>). It
+defines new priority parameters (<xref target="parameters" format="default" sectionFormat="of" derivedContent="Section 4"/>) and a means of conveying those
+parameters (Sections <xref target="header-field" format="counter" sectionFormat="of" derivedContent="5"/> and <xref target="frame" format="counter" sectionFormat="of" derivedContent="7"/>), which is intended to communicate
+the priority of responses to a server that is responsible for prioritizing
+them. <xref target="server-scheduling" format="default" sectionFormat="of" derivedContent="Section 10"/> provides considerations for servers about acting on
+those signals in combination with other inputs and factors.</t>
+      <t indent="0" pn="section-3-2">The CONNECT method (see <xref section="9.3.6" sectionFormat="of" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.3.6" derivedContent="HTTP"/>) can be used to establish
+tunnels. Signaling applies similarly to tunnels; additional considerations for
+server prioritization are given in <xref target="connect-scheduling" format="default" sectionFormat="of" derivedContent="Section 11"/>.</t>
+      <t indent="0" pn="section-3-3"><xref target="client-scheduling" format="default" sectionFormat="of" derivedContent="Section 9"/> describes how clients can optionally apply elements of
+this scheme locally to the request messages that they generate.</t>
+      <t indent="0" pn="section-3-4">Some forms of HTTP extensions might change HTTP/2 or HTTP/3 stream behavior or
+define new data carriage mechanisms. Such extensions can themselves define
+how this priority scheme is to be applied.</t>
+    </section>
+    <section anchor="parameters" numbered="true" toc="include" removeInRFC="false" pn="section-4">
+      <name slugifiedName="name-priority-parameters">Priority Parameters</name>
+      <t indent="0" pn="section-4-1">The priority information is a sequence of key-value pairs, providing room for
+future extensions. Each key-value pair represents a priority parameter.</t>
+      <t indent="0" pn="section-4-2">The Priority HTTP header field (<xref target="header-field" format="default" sectionFormat="of" derivedContent="Section 5"/>) is an end-to-end way to
+transmit this set of priority parameters when a request or a response is issued.
+After sending a request, a client can change their view of response priority
+(<xref target="reprioritization" format="default" sectionFormat="of" derivedContent="Section 6"/>) by sending HTTP-version-specific PRIORITY_UPDATE frames as
+defined in Sections <xref target="h2-update-frame" format="counter" sectionFormat="of" derivedContent="7.1"/> and <xref target="h3-update-frame" format="counter" sectionFormat="of" derivedContent="7.2"/>. Frames transmit priority
+parameters on a single hop only.</t>
+      <t indent="0" pn="section-4-3">Intermediaries can consume and produce priority signals in a PRIORITY_UPDATE
+frame or Priority header field. An intermediary that passes only the Priority
+request header field to the next hop preserves the original end-to-end signal
+from the client; see <xref target="header-field-rationale" format="default" sectionFormat="of" derivedContent="Section 14"/>.
+An intermediary could pass the Priority header field and additionally send a PRIORITY_UPDATE frame. This would have the effect of preserving the original client end-to-end signal, while instructing the next hop to use a different priority, per the guidance in <xref target="frame" format="default" sectionFormat="of" derivedContent="Section 7"/>. An intermediary that replaces or adds a Priority request header field overrides the original client end-to-end signal, which can affect prioritization for all subsequent recipients of the request.</t>
+      <t indent="0" pn="section-4-4">For both the Priority header field and the PRIORITY_UPDATE frame, the set of
+priority parameters is encoded as a Dictionary (see
+<xref section="3.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.2" derivedContent="STRUCTURED-FIELDS"/>).</t>
+      <t indent="0" pn="section-4-5">This document defines the urgency (<tt>u</tt>) and incremental (<tt>i</tt>) priority parameters.
+When receiving an HTTP request that does not carry these priority parameters, a
+server <bcp14>SHOULD</bcp14> act as if their default values were specified.</t>
+      <t indent="0" pn="section-4-6">An intermediary can combine signals from requests and responses that it forwards.
+Note that omission of priority parameters in responses is handled differently from
+omission in requests; see <xref target="merging" format="default" sectionFormat="of" derivedContent="Section 8"/>.</t>
+      <t indent="0" pn="section-4-7">Receivers parse the Dictionary as described in <xref section="4.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-4.2" derivedContent="STRUCTURED-FIELDS"/>. Where the Dictionary is successfully parsed, this document
+places the additional requirement that unknown priority parameters, priority
+parameters with out-of-range values, or values of unexpected types <bcp14>MUST</bcp14> be
+ignored.</t>
+      <section anchor="urgency" numbered="true" toc="include" removeInRFC="false" pn="section-4.1">
+        <name slugifiedName="name-urgency">Urgency</name>
+        <t indent="0" pn="section-4.1-1">The urgency (<tt>u</tt>) parameter value is Integer (see <xref section="3.3.1" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.1" derivedContent="STRUCTURED-FIELDS"/>), between 0 and 7 inclusive, in descending order of priority. The default is 3.</t>
+        <t indent="0" pn="section-4.1-2">Endpoints use this parameter to communicate their view of the precedence of
+HTTP responses. The chosen value of urgency can be based on the expectation that
+servers might use this information to transmit HTTP responses in the order of
+their urgency. The smaller the value, the higher the precedence.</t>
+        <t indent="0" pn="section-4.1-3">The following example shows a request for a CSS file with the urgency set to
+<tt>0</tt>:</t>
+        <artwork type="" align="left" pn="section-4.1-4">
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /style.css
+priority = u=0
+</artwork>
+        <t indent="0" pn="section-4.1-5">A client that fetches a document that likely consists of multiple HTTP resources
+(e.g., HTML) <bcp14>SHOULD</bcp14> assign the default urgency level to the main resource.  This
+convention allows servers to refine the urgency using
+knowledge specific to the website (see <xref target="merging" format="default" sectionFormat="of" derivedContent="Section 8"/>).</t>
+        <t indent="0" pn="section-4.1-6">The lowest urgency level (7) is reserved for background tasks such as delivery
+of software updates. This urgency level <bcp14>SHOULD NOT</bcp14> be used for fetching
+responses that have any impact on user interaction.</t>
+      </section>
+      <section anchor="incremental" numbered="true" toc="include" removeInRFC="false" pn="section-4.2">
+        <name slugifiedName="name-incremental">Incremental</name>
+        <t indent="0" pn="section-4.2-1">The incremental (<tt>i</tt>) parameter value is Boolean (see <xref section="3.3.6" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.6" derivedContent="STRUCTURED-FIELDS"/>). It indicates
+if an HTTP response can be processed incrementally, i.e., provide some
+meaningful output as chunks of the response arrive.</t>
+        <t indent="0" pn="section-4.2-2">The default value of the incremental parameter is <tt>false</tt> (<tt>0</tt>).</t>
+        <t indent="0" pn="section-4.2-3">If a client makes concurrent requests with the incremental parameter set to
+<tt>false</tt>, there is no benefit in serving responses with the same urgency concurrently
+because the client is not going to process those responses incrementally.
+Serving non-incremental responses with the same urgency one by one, in the order in which those
+requests were generated, is considered to be the best strategy.</t>
+        <t indent="0" pn="section-4.2-4">If a client makes concurrent requests with the incremental parameter set to
+<tt>true</tt>, serving requests with the same urgency concurrently might be beneficial.
+Doing this distributes the connection bandwidth, meaning that responses take
+longer to complete. Incremental delivery is most useful where multiple
+partial responses might provide some value to clients ahead of a
+complete response being available.</t>
+        <t indent="0" pn="section-4.2-5">The following example shows a request for a JPEG file with the urgency parameter
+set to <tt>5</tt> and the incremental parameter set to <tt>true</tt>.</t>
+        <artwork type="" align="left" pn="section-4.2-6">
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /image.jpg
+priority = u=5, i
+</artwork>
+      </section>
+      <section anchor="new-parameters" numbered="true" toc="include" removeInRFC="false" pn="section-4.3">
+        <name slugifiedName="name-defining-new-priority-param">Defining New Priority Parameters</name>
+        <t indent="0" pn="section-4.3-1">When attempting to define new priority parameters, care must be taken so that
+they do not adversely interfere with prioritization performed by existing
+endpoints or intermediaries that do not understand the newly defined priority
+parameters. Since unknown priority parameters are ignored, new priority
+parameters should not change the interpretation of, or modify, the urgency (see
+<xref target="urgency" format="default" sectionFormat="of" derivedContent="Section 4.1"/>) or incremental (see <xref target="incremental" format="default" sectionFormat="of" derivedContent="Section 4.2"/>) priority parameters in a way
+that is not backwards compatible or fallback safe.</t>
+        <t indent="0" pn="section-4.3-2">For example, if there is a need to provide more granularity than eight urgency
+levels, it would be possible to subdivide the range using an additional priority
+parameter. Implementations that do not recognize the parameter can safely
+continue to use the less granular eight levels.</t>
+        <t indent="0" pn="section-4.3-3">Alternatively, the urgency can be augmented. For example, a graphical user agent
+could send a <tt>visible</tt> priority parameter to indicate if the resource being requested is
+within the viewport.</t>
+        <t indent="0" pn="section-4.3-4">Generic priority parameters are preferred over vendor-specific,
+application-specific, or deployment-specific values. If a generic value cannot be
+agreed upon in the community, the parameter's name should be correspondingly
+specific (e.g., with a prefix that identifies the vendor, application, or
+deployment).</t>
+        <section anchor="register" numbered="true" toc="include" removeInRFC="false" pn="section-4.3.1">
+          <name slugifiedName="name-registration">Registration</name>
+          <t indent="0" pn="section-4.3.1-1">New priority parameters can be defined by registering them in the "HTTP Priority"
+registry. This registry governs the keys (short textual strings) used
+in the Dictionary (see <xref section="3.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.2" derivedContent="STRUCTURED-FIELDS"/>).
+Since each HTTP request can have associated priority signals, there is value
+in having short key lengths, especially single-character strings. In order to
+encourage extensions while avoiding unintended conflict among attractive key
+values, the "HTTP Priority" registry operates two registration policies,
+depending on key length.</t>
+          <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-4.3.1-2">
+            <li pn="section-4.3.1-2.1">Registration requests for priority parameters with a key length of one use the
+Specification Required policy, per <xref section="4.6" sectionFormat="of" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.6" derivedContent="RFC8126"/>.</li>
+            <li pn="section-4.3.1-2.2">Registration requests for priority parameters with a key length greater than
+one use the Expert Review policy, per <xref section="4.5" sectionFormat="of" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.5" derivedContent="RFC8126"/>. A
+specification document is appreciated but not required.</li>
+          </ul>
+          <t indent="0" pn="section-4.3.1-3">When reviewing registration requests, the designated expert(s) can consider the
+additional guidance provided in <xref target="new-parameters" format="default" sectionFormat="of" derivedContent="Section 4.3"/> but cannot use it as a basis
+for rejection.</t>
+          <t indent="0" pn="section-4.3.1-4">Registration requests should use the following template:</t>
+          <dl indent="3" newline="false" spacing="normal" pn="section-4.3.1-5">
+            <dt pn="section-4.3.1-5.1">
+Name:  </dt>
+            <dd pn="section-4.3.1-5.2">
+              <t indent="0" pn="section-4.3.1-5.2.1">[a name for the priority parameter that matches the parameter key]</t>
+            </dd>
+            <dt pn="section-4.3.1-5.3">
+Description:  </dt>
+            <dd pn="section-4.3.1-5.4">
+              <t indent="0" pn="section-4.3.1-5.4.1">[a description of the priority parameter semantics and value]</t>
+            </dd>
+            <dt pn="section-4.3.1-5.5">
+Reference:  </dt>
+            <dd pn="section-4.3.1-5.6">
+              <t indent="0" pn="section-4.3.1-5.6.1">[to a specification defining this priority parameter]</t>
+            </dd>
+          </dl>
+          <t indent="0" pn="section-4.3.1-6">See the registry at <eref target="https://www.iana.org/assignments/http-priority" brackets="angle"/> for details on
+where to send registration requests.</t>
+        </section>
+      </section>
+    </section>
+    <section anchor="header-field" numbered="true" toc="include" removeInRFC="false" pn="section-5">
+      <name slugifiedName="name-the-priority-http-header-fi">The Priority HTTP Header Field</name>
+      <t indent="0" pn="section-5-1">The Priority HTTP header field is a Dictionary that carries priority parameters (see <xref target="parameters" format="default" sectionFormat="of" derivedContent="Section 4"/>).
+It can appear in requests and responses. It is an end-to-end signal that
+indicates the endpoint's view of how HTTP responses should be prioritized.
+<xref target="merging" format="default" sectionFormat="of" derivedContent="Section 8"/> describes how intermediaries can combine the priority information
+sent from clients and servers. Clients cannot interpret the appearance or
+omission of a Priority response header field as acknowledgement that any
+prioritization has occurred. Guidance for how endpoints can act on Priority
+header values is given in Sections <xref target="client-scheduling" format="counter" sectionFormat="of" derivedContent="9"/> and <xref target="server-scheduling" format="counter" sectionFormat="of" derivedContent="10"/>.</t>
+      <t indent="0" pn="section-5-2">An HTTP request with a Priority header field might be cached and reused for
+subsequent requests; see <xref target="CACHING" format="default" sectionFormat="of" derivedContent="CACHING"/>. When an origin
+server generates the Priority response header field based on properties of an
+HTTP request it receives, the server is expected to control the cacheability or
+the applicability of the cached response by using header fields that control
+the caching behavior (e.g., Cache-Control, Vary).</t>
+    </section>
+    <section anchor="reprioritization" numbered="true" toc="include" removeInRFC="false" pn="section-6">
+      <name slugifiedName="name-reprioritization">Reprioritization</name>
+      <t indent="0" pn="section-6-1">After a client sends a request, it may be beneficial to change the priority of
+the response. As an example, a web browser might issue a prefetch request for a
+JavaScript file with the urgency parameter of the Priority request header field
+set to <tt>u=7</tt> (background). Then, when the user navigates to a page that
+references the new JavaScript file, while the prefetch is in progress, the
+browser would send a reprioritization signal with the Priority Field Value set
+to <tt>u=0</tt>. The PRIORITY_UPDATE frame (<xref target="frame" format="default" sectionFormat="of" derivedContent="Section 7"/>) can be used for such
+reprioritization.</t>
+    </section>
+    <section anchor="frame" numbered="true" toc="include" removeInRFC="false" pn="section-7">
+      <name slugifiedName="name-the-priority_update-frame">The PRIORITY_UPDATE Frame</name>
+      <t indent="0" pn="section-7-1">This document specifies a new PRIORITY_UPDATE frame for HTTP/2 <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>
+and HTTP/3 <xref target="HTTP3" format="default" sectionFormat="of" derivedContent="HTTP/3"/>. It carries priority parameters and
+references the target of the prioritization based on a version-specific
+identifier. In HTTP/2, this identifier is the stream ID; in HTTP/3, the
+identifier is either the stream ID or push ID. Unlike the Priority header field,
+the PRIORITY_UPDATE frame is a hop-by-hop signal.</t>
+      <t indent="0" pn="section-7-2">PRIORITY_UPDATE frames are sent by clients on the control stream, allowing them
+to be sent independently of the stream that carries the response. This means
+they can be used to reprioritize a response or a push stream, or to signal the
+initial priority of a response instead of the Priority header field.</t>
+      <t indent="0" pn="section-7-3">A PRIORITY_UPDATE frame communicates a complete set of all priority parameters
+in the Priority Field Value field. Omitting a priority parameter is a signal to
+use its default value. Failure to parse the Priority Field Value <bcp14>MAY</bcp14> be treated
+as a connection error. In HTTP/2, the error is of type PROTOCOL_ERROR; in HTTP/3,
+the error is of type H3_GENERAL_PROTOCOL_ERROR.</t>
+      <t indent="0" pn="section-7-4">A client <bcp14>MAY</bcp14> send a PRIORITY_UPDATE frame before the stream that it references
+is open (except for HTTP/2 push streams; see <xref target="h2-update-frame" format="default" sectionFormat="of" derivedContent="Section 7.1"/>). Furthermore,
+HTTP/3 offers no guaranteed ordering across streams, which could cause the frame
+to be received earlier than intended. Either case leads to a race condition
+where a server receives a PRIORITY_UPDATE frame that references a request stream
+that is yet to be opened. To solve this condition, for the purposes of
+scheduling, the most recently received PRIORITY_UPDATE frame can be considered
+as the most up-to-date information that overrides any other signal. Servers
+<bcp14>SHOULD</bcp14> buffer the most recently received PRIORITY_UPDATE frame and apply it once
+the referenced stream is opened. Holding PRIORITY_UPDATE frames for each stream
+requires server resources, which can be bounded by local implementation policy.
+Although there is no limit to the number of PRIORITY_UPDATE frames that can be
+sent, storing only the most recently received frame limits resource commitment.</t>
+      <section anchor="h2-update-frame" numbered="true" toc="include" removeInRFC="false" pn="section-7.1">
+        <name slugifiedName="name-http-2-priority_update-fram">HTTP/2 PRIORITY_UPDATE Frame</name>
+        <t indent="0" pn="section-7.1-1">The HTTP/2 PRIORITY_UPDATE frame (type=0x10) is used by clients to signal the
+initial priority of a response, or to reprioritize a response or push stream. It
+carries the stream ID of the response and the priority in ASCII text, using the
+same representation as the Priority header field value.</t>
+        <t indent="0" pn="section-7.1-2">The Stream Identifier field (see <xref section="5.1.1" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.1.1" derivedContent="HTTP/2"/>) in the
+PRIORITY_UPDATE frame header <bcp14>MUST</bcp14> be zero (0x0). Receiving a PRIORITY_UPDATE
+frame with a field of any other value <bcp14>MUST</bcp14> be treated as a connection error of
+type PROTOCOL_ERROR.</t>
+        <figure anchor="fig-h2-reprioritization-frame" align="left" suppress-title="false" pn="figure-1">
+          <name slugifiedName="name-http-2-priority_update-frame">HTTP/2 PRIORITY_UPDATE Frame Format</name>
+          <artwork type="" align="left" pn="section-7.1-3.1">
+HTTP/2 PRIORITY_UPDATE Frame {
+  Length (24),
+  Type (8) = 0x10,
+
+  Unused Flags (8),
+
+  Reserved (1),
+  Stream Identifier (31),
+
+  Reserved (1),
+  Prioritized Stream ID (31),
+  Priority Field Value (..),
+}
+</artwork>
+        </figure>
+        <t indent="0" pn="section-7.1-4">The Length, Type, Unused Flag(s), Reserved, and Stream Identifier fields are
+described in <xref section="4" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-4" derivedContent="HTTP/2"/>. The PRIORITY_UPDATE frame payload
+contains the following additional fields:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-7.1-5">
+          <dt pn="section-7.1-5.1">
+Prioritized Stream ID:  </dt>
+          <dd pn="section-7.1-5.2">
+            <t indent="0" pn="section-7.1-5.2.1">A 31-bit stream identifier for the stream that is the target of the priority
+update.</t>
+          </dd>
+          <dt pn="section-7.1-5.3">
+Priority Field Value:  </dt>
+          <dd pn="section-7.1-5.4">
+            <t indent="0" pn="section-7.1-5.4.1">The priority update value in ASCII text, encoded using Structured Fields. This
+is the same representation as the Priority header field value.</t>
+          </dd>
+        </dl>
+        <t indent="0" pn="section-7.1-6">When the PRIORITY_UPDATE frame applies to a request stream, clients <bcp14>SHOULD</bcp14>
+provide a prioritized stream ID that refers to a stream in the "open",
+"half-closed (local)", or "idle" state (i.e., streams where data might still be received). Servers can discard frames where the
+prioritized stream ID refers to a stream in the "half-closed (local)" or
+"closed" state (i.e., streams where no further data will be sent).
+ The number of streams that have been prioritized but remain in
+the "idle" state plus the number of active streams (those in the "open" state or
+in either of the "half-closed" states; see <xref section="5.1.2" sectionFormat="of" target="HTTP2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-5.1.2" derivedContent="HTTP/2"/>) <bcp14>MUST NOT</bcp14> exceed
+the value of the SETTINGS_MAX_CONCURRENT_STREAMS parameter. Servers that receive
+such a PRIORITY_UPDATE <bcp14>MUST</bcp14> respond with a connection error of type
+PROTOCOL_ERROR.</t>
+        <t indent="0" pn="section-7.1-7">When the PRIORITY_UPDATE frame applies to a push stream, clients <bcp14>SHOULD</bcp14> provide
+a prioritized stream ID that refers to a stream in the "reserved (remote)" or
+"half-closed (local)" state. Servers can discard frames where the prioritized
+stream ID refers to a stream in the "closed" state. Clients <bcp14>MUST NOT</bcp14> provide a
+prioritized stream ID that refers to a push stream in the "idle" state. Servers
+that receive a PRIORITY_UPDATE for a push stream in the "idle" state <bcp14>MUST</bcp14>
+respond with a connection error of type PROTOCOL_ERROR.</t>
+        <t indent="0" pn="section-7.1-8">If a PRIORITY_UPDATE frame is received with a prioritized stream ID of 0x0, the
+recipient <bcp14>MUST</bcp14> respond with a connection error of type PROTOCOL_ERROR.</t>
+        <t indent="0" pn="section-7.1-9">Servers <bcp14>MUST NOT</bcp14> send PRIORITY_UPDATE frames. If a client receives a
+PRIORITY_UPDATE frame, it <bcp14>MUST</bcp14> respond with a connection error of type
+PROTOCOL_ERROR.</t>
+      </section>
+      <section anchor="h3-update-frame" numbered="true" toc="include" removeInRFC="false" pn="section-7.2">
+        <name slugifiedName="name-http-3-priority_update-fram">HTTP/3 PRIORITY_UPDATE Frame</name>
+        <t indent="0" pn="section-7.2-1">The HTTP/3 PRIORITY_UPDATE frame (type=0xF0700 or 0xF0701) is used by clients to
+signal the initial priority of a response, or to reprioritize a response or push
+stream. It carries the identifier of the element that is being prioritized and
+the updated priority in ASCII text that uses the same representation as that of
+the Priority header field value. PRIORITY_UPDATE with a frame type of 0xF0700 is
+used for request streams, while PRIORITY_UPDATE with a frame type of 0xF0701 is
+used for push streams.</t>
+        <t indent="0" pn="section-7.2-2">The PRIORITY_UPDATE frame <bcp14>MUST</bcp14> be sent on the client control stream
+(see <xref section="6.2.1" sectionFormat="of" target="HTTP3" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9114#section-6.2.1" derivedContent="HTTP/3"/>). Receiving a PRIORITY_UPDATE frame on a
+stream other than the client control stream <bcp14>MUST</bcp14> be treated as a connection
+error of type H3_FRAME_UNEXPECTED.</t>
+        <figure anchor="fig-h3-reprioritization-frame" align="left" suppress-title="false" pn="figure-2">
+          <name slugifiedName="name-http-3-priority_update-frame">HTTP/3 PRIORITY_UPDATE Frame</name>
+          <artwork type="" align="left" pn="section-7.2-3.1">
+HTTP/3 PRIORITY_UPDATE Frame {
+  Type (i) = 0xF0700..0xF0701,
+  Length (i),
+  Prioritized Element ID (i),
+  Priority Field Value (..),
+}
+</artwork>
+        </figure>
+        <t indent="0" pn="section-7.2-4">The PRIORITY_UPDATE frame payload has the following fields:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-7.2-5">
+          <dt pn="section-7.2-5.1">
+Prioritized Element ID:  </dt>
+          <dd pn="section-7.2-5.2">
+            <t indent="0" pn="section-7.2-5.2.1">The stream ID or push ID that is the target of the priority update.</t>
+          </dd>
+          <dt pn="section-7.2-5.3">
+Priority Field Value:  </dt>
+          <dd pn="section-7.2-5.4">
+            <t indent="0" pn="section-7.2-5.4.1">The priority update value in ASCII text, encoded using Structured Fields. This
+is the same representation as the Priority header field value.</t>
+          </dd>
+        </dl>
+        <t indent="0" pn="section-7.2-6">The request-stream variant of PRIORITY_UPDATE (type=0xF0700) <bcp14>MUST</bcp14> reference a
+request stream. If a server receives a PRIORITY_UPDATE (type=0xF0700) for a
+stream ID that is not a request stream, this <bcp14>MUST</bcp14> be treated as a connection
+error of type H3_ID_ERROR. The stream ID <bcp14>MUST</bcp14> be within the client-initiated
+bidirectional stream limit. If a server receives a PRIORITY_UPDATE
+(type=0xF0700) with a stream ID that is beyond the stream limits, this <bcp14>SHOULD</bcp14> be
+treated as a connection error of type H3_ID_ERROR. Generating an error is not
+mandatory because HTTP/3 implementations might have practical barriers to
+determining the active stream concurrency limit that is applied by the QUIC
+layer.</t>
+        <t indent="0" pn="section-7.2-7">The push-stream variant of PRIORITY_UPDATE (type=0xF0701) <bcp14>MUST</bcp14> reference a promised
+push stream. If a server receives a PRIORITY_UPDATE (type=0xF0701) with a push ID
+that is greater than the maximum push ID or that has not yet been promised, this
+<bcp14>MUST</bcp14> be treated as a connection error of type H3_ID_ERROR.</t>
+        <t indent="0" pn="section-7.2-8">Servers <bcp14>MUST NOT</bcp14> send PRIORITY_UPDATE frames of either type. If a client
+receives a PRIORITY_UPDATE frame, this <bcp14>MUST</bcp14> be treated as a connection error of
+type H3_FRAME_UNEXPECTED.</t>
+      </section>
+    </section>
+    <section anchor="merging" numbered="true" toc="include" removeInRFC="false" pn="section-8">
+      <name slugifiedName="name-merging-client-and-server-d">Merging Client- and Server-Driven Priority Parameters</name>
+      <t indent="0" pn="section-8-1">It is not always the case that the client has the best understanding of how the
+HTTP responses deserve to be prioritized. The server might have additional
+information that can be combined with the client's indicated priority in order
+to improve the prioritization of the response. For example, use of an HTML
+document might depend heavily on one of the inline images; the existence of such
+dependencies is typically best known to the server. Or, a server that receives
+requests for a font <xref target="RFC8081" format="default" sectionFormat="of" derivedContent="RFC8081"/> and images with the same urgency might give
+higher precedence to the font, so that a visual client can render textual
+information at an early moment.</t>
+      <t indent="0" pn="section-8-2">An origin can use the Priority response header field to indicate its view on how
+an HTTP response should be prioritized. An intermediary that forwards an HTTP
+response can use the priority parameters found in the Priority response header
+field, in combination with the client Priority request header field, as input to
+its prioritization process. No guidance is provided for merging priorities; this
+is left as an implementation decision.</t>
+      <t indent="0" pn="section-8-3">The absence of a priority parameter in an HTTP response indicates the server's
+disinterest in changing the client-provided value. This is different from the
+request header field, in which omission of a priority parameter implies the use of its default value (see <xref target="parameters" format="default" sectionFormat="of" derivedContent="Section 4"/>).</t>
+      <t indent="0" pn="section-8-4">As a non-normative example, when the client sends an HTTP request with the
+urgency parameter set to <tt>5</tt> and the incremental parameter set to <tt>true</tt></t>
+      <artwork type="" align="left" pn="section-8-5">
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /menu.png
+priority = u=5, i
+</artwork>
+      <t indent="0" pn="section-8-6">and the origin responds with</t>
+      <artwork type="" align="left" pn="section-8-7">
+:status = 200
+content-type = image/png
+priority = u=1
+</artwork>
+      <t indent="0" pn="section-8-8">the intermediary might alter its understanding of the urgency from <tt>5</tt> to <tt>1</tt>,
+because it prefers the server-provided value over the client's. The incremental
+value continues to be <tt>true</tt>, i.e., the value specified by the client, as the server did
+not specify the incremental (<tt>i</tt>) parameter.</t>
+    </section>
+    <section anchor="client-scheduling" numbered="true" toc="include" removeInRFC="false" pn="section-9">
+      <name slugifiedName="name-client-scheduling">Client Scheduling</name>
+      <t indent="0" pn="section-9-1">A client <bcp14>MAY</bcp14> use priority values to make local processing or scheduling choices
+about the requests it initiates.</t>
+    </section>
+    <section anchor="server-scheduling" numbered="true" toc="include" removeInRFC="false" pn="section-10">
+      <name slugifiedName="name-server-scheduling">Server Scheduling</name>
+      <t indent="0" pn="section-10-1">It is generally beneficial for an HTTP server to send all responses as early as
+possible. However, when serving multiple requests on a single connection, there
+could be competition between the requests for resources such as connection
+bandwidth. This section describes considerations regarding how servers can
+schedule the order in which the competing responses will be sent when such
+competition exists.</t>
+      <t indent="0" pn="section-10-2">Server scheduling is a prioritization process based on many inputs, with
+priority signals being only one form of input. Factors such as implementation
+choices or deployment environment also play a role. Any given connection is
+likely to have many dynamic permutations. For these reasons, it is not possible
+to describe a universal scheduling algorithm. This document provides some basic,
+non-exhaustive recommendations for how servers might act on priority
+parameters. It does not describe in detail how servers might combine priority
+signals with other factors. Endpoints cannot depend on particular treatment
+based on priority signals. Expressing priority is only a suggestion.</t>
+      <t indent="0" pn="section-10-3">It is <bcp14>RECOMMENDED</bcp14> that, when possible, servers respect the urgency parameter
+(<xref target="urgency" format="default" sectionFormat="of" derivedContent="Section 4.1"/>), sending higher-urgency responses before lower-urgency responses.</t>
+      <t indent="0" pn="section-10-4">The incremental parameter indicates how a client processes response bytes as
+they arrive. It is <bcp14>RECOMMENDED</bcp14> that, when possible, servers respect the
+incremental parameter (<xref target="incremental" format="default" sectionFormat="of" derivedContent="Section 4.2"/>).</t>
+      <t indent="0" pn="section-10-5">Non-incremental responses of the same urgency <bcp14>SHOULD</bcp14> be served by prioritizing
+bandwidth allocation in ascending order of the stream ID, which corresponds to
+the order in which clients make requests. Doing so ensures that clients can use
+request ordering to influence response order.</t>
+      <t indent="0" pn="section-10-6">Incremental responses of the same urgency <bcp14>SHOULD</bcp14> be served by sharing bandwidth
+among them. The message content of incremental responses is used as parts, or chunks,
+are received. A client might benefit more from receiving a portion of all
+these resources rather than the entirety of a single resource. How large a
+portion of the resource is needed to be useful in improving performance varies.
+Some resource types place critical elements early; others can use information
+progressively. This scheme provides no explicit mandate about how a server
+should use size, type, or any other input to decide how to prioritize.</t>
+      <t indent="0" pn="section-10-7">There can be scenarios where a server will need to schedule multiple incremental
+and non-incremental responses at the same urgency level. Strictly abiding by the
+scheduling guidance based on urgency and request generation order might lead
+to suboptimal results at the client, as early non-incremental responses might
+prevent the serving of incremental responses issued later. The following are
+examples of such challenges:</t>
+      <ol spacing="normal" type="1" indent="adaptive" start="1" pn="section-10-8"><li pn="section-10-8.1" derivedCounter="1.">At the same urgency level, a non-incremental request for a large resource
+followed by an incremental request for a small resource.</li>
+        <li pn="section-10-8.2" derivedCounter="2.">At the same urgency level, an incremental request of indeterminate length
+followed by a non-incremental large resource.</li>
+      </ol>
+      <t indent="0" pn="section-10-9">It is <bcp14>RECOMMENDED</bcp14> that servers avoid such starvation where possible. The method
+for doing so is an implementation decision. For example, a server might
+preemptively send responses of a particular incremental type based on other
+information such as content size.</t>
+      <t indent="0" pn="section-10-10">Optimal scheduling of server push is difficult, especially when pushed resources
+contend with active concurrent requests. Servers can consider many factors when
+scheduling, such as the type or size of resource being pushed, the priority of
+the request that triggered the push, the count of active concurrent responses,
+the priority of other active concurrent responses, etc. There is no general
+guidance on the best way to apply these. A server that is too simple could
+easily push at too high a priority and block client requests, or push at too low
+a priority and delay the response, negating intended goals of server push.</t>
+      <t indent="0" pn="section-10-11">Priority signals are a factor for server push scheduling. The concept of
+parameter value defaults applies slightly differently because there is no
+explicit client-signaled initial priority. A server can apply priority signals
+provided in an origin response; see the merging guidance given in <xref target="merging" format="default" sectionFormat="of" derivedContent="Section 8"/>.
+In the absence of origin signals, applying default parameter values could be
+suboptimal. By whatever means a server decides to schedule a pushed response, it
+can signal the intended priority to the client by including the Priority field
+in a PUSH_PROMISE or HEADERS frame.</t>
+      <section anchor="intermediaries-with-multiple-backend-connections" numbered="true" toc="include" removeInRFC="false" pn="section-10.1">
+        <name slugifiedName="name-intermediaries-with-multipl">Intermediaries with Multiple Backend Connections</name>
+        <t indent="0" pn="section-10.1-1">An intermediary serving an HTTP connection might split requests over multiple
+backend connections. When it applies prioritization rules strictly, low-priority
+requests cannot make progress while requests with higher priorities are in
+flight. This blocking can propagate to backend connections, which the peer might
+interpret as a connection stall. Endpoints often implement protections against
+stalls, such as abruptly closing connections after a certain time period. To
+reduce the possibility of this occurring, intermediaries can avoid strictly
+following prioritization and instead allocate small amounts of bandwidth for all
+the requests that they are forwarding, so that every request can make some
+progress over time.</t>
+        <t indent="0" pn="section-10.1-2">Similarly, servers <bcp14>SHOULD</bcp14> allocate some amount of bandwidths to streams acting
+as tunnels.</t>
+      </section>
+    </section>
+    <section anchor="connect-scheduling" numbered="true" toc="include" removeInRFC="false" pn="section-11">
+      <name slugifiedName="name-scheduling-and-the-connect-">Scheduling and the CONNECT Method</name>
+      <t indent="0" pn="section-11-1">When a stream carries a CONNECT request, the scheduling guidance in
+this document applies to the frames on the stream.  A client that issues multiple
+CONNECT requests can set the incremental parameter to <tt>true</tt>. Servers that
+implement the recommendations for handling of the incremental parameter (<xref target="server-scheduling" format="default" sectionFormat="of" derivedContent="Section 10"/>) are likely to schedule these fairly, preventing one
+CONNECT stream from blocking others.</t>
+    </section>
+    <section anchor="retransmission-scheduling" numbered="true" toc="include" removeInRFC="false" pn="section-12">
+      <name slugifiedName="name-retransmission-scheduling">Retransmission Scheduling</name>
+      <t indent="0" pn="section-12-1">Transport protocols such as TCP and QUIC provide reliability by detecting packet
+losses and retransmitting lost information. In addition to the considerations in
+<xref target="server-scheduling" format="default" sectionFormat="of" derivedContent="Section 10"/>, scheduling of retransmission data could compete with new
+data. The remainder of this section discusses considerations when using QUIC.</t>
+      <t indent="0" pn="section-12-2"><xref section="13.3" sectionFormat="of" target="QUIC" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9000#section-13.3" derivedContent="QUIC"/> states the following: "Endpoints <bcp14>SHOULD</bcp14> prioritize
+retransmission of data over sending new data, unless priorities specified by the
+application indicate otherwise". When an HTTP/3 application uses the priority
+scheme defined in this document and the QUIC transport implementation supports
+application-indicated stream priority, a transport that considers the relative
+priority of streams when scheduling both new data and retransmission data might
+better match the expectations of the application. However, there are no
+requirements on how a transport chooses to schedule based on this information
+because the decision depends on several factors and trade-offs. It could
+prioritize new data for a higher-urgency stream over retransmission data for a
+lower-priority stream, or it could prioritize retransmission data over new data
+irrespective of urgencies.</t>
+      <t indent="0" pn="section-12-3"><xref section="6.2.4" sectionFormat="of" target="QUIC-RECOVERY" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9002#section-6.2.4" derivedContent="QUIC-RECOVERY"/> also highlights considerations regarding
+application priorities when sending probe packets after Probe Timeout timer
+expiration. A QUIC implementation supporting application-indicated priorities
+might use the relative priority of streams when choosing probe data.</t>
+    </section>
+    <section anchor="fairness" numbered="true" toc="include" removeInRFC="false" pn="section-13">
+      <name slugifiedName="name-fairness">Fairness</name>
+      <t indent="0" pn="section-13-1">Typically, HTTP implementations depend on the underlying transport to maintain
+fairness between connections competing for bandwidth. When an intermediary receives HTTP requests on client connections, it forwards them to backend connections. Depending on how the intermediary coalesces or splits requests across different backend connections, different clients might experience dissimilar performance. This dissimilarity might expand if the intermediary also uses priority signals when
+forwarding requests. Sections <xref target="coalescing" format="counter" sectionFormat="of" derivedContent="13.1"/> and <xref target="h1-backends" format="counter" sectionFormat="of" derivedContent="13.2"/> discuss
+mitigations of this expansion of unfairness.</t>
+      <t indent="0" pn="section-13-2">Conversely, <xref target="intentional-unfairness" format="default" sectionFormat="of" derivedContent="Section 13.3"/> discusses how servers might intentionally
+allocate unequal bandwidth to some connections, depending on the priority
+signals.</t>
+      <section anchor="coalescing" numbered="true" toc="include" removeInRFC="false" pn="section-13.1">
+        <name slugifiedName="name-coalescing-intermediaries">Coalescing Intermediaries</name>
+        <t indent="0" pn="section-13.1-1">When an intermediary coalesces HTTP requests coming from multiple clients into
+one HTTP/2 or HTTP/3 connection going to the backend server, requests that
+originate from one client might carry signals indicating higher priority than
+those coming from others.</t>
+        <t indent="0" pn="section-13.1-2">It is sometimes beneficial for the server running behind an intermediary to obey
+Priority header field values. As an example, a resource-constrained
+server might defer the transmission of software update files that have the
+background urgency level (7). However, in the worst case, the asymmetry
+between the priority declared by multiple clients might cause all responses going to
+one user agent to be delayed until all responses going to another user agent have
+ been sent.</t>
+        <t indent="0" pn="section-13.1-3">In order to mitigate this fairness problem, a server could use knowledge about
+the intermediary as another input in its prioritization decisions. For
+instance, if a server knows the intermediary is coalescing requests, then it
+could avoid serving the responses in their entirety and instead distribute
+bandwidth (for example, in a round-robin manner). This can work if the
+constrained resource is network capacity between the intermediary and the user
+agent, as the intermediary buffers responses and forwards the chunks based on
+the prioritization scheme it implements.</t>
+        <t indent="0" pn="section-13.1-4">A server can determine if a request came from an intermediary through
+configuration or can check to see if the request contains one of the following
+header fields:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-13.1-5">
+          <li pn="section-13.1-5.1">Forwarded <xref target="FORWARDED" format="default" sectionFormat="of" derivedContent="FORWARDED"/>, X-Forwarded-For</li>
+          <li pn="section-13.1-5.2">Via (see <xref section="7.6.3" sectionFormat="of" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-7.6.3" derivedContent="HTTP"/>)</li>
+        </ul>
+      </section>
+      <section anchor="h1-backends" numbered="true" toc="include" removeInRFC="false" pn="section-13.2">
+        <name slugifiedName="name-http-1x-back-ends">HTTP/1.x Back Ends</name>
+        <t indent="0" pn="section-13.2-1">It is common for Content Delivery Network (CDN) infrastructure to support different HTTP versions on the
+front end and back end. For instance, the client-facing edge might support
+HTTP/2 and HTTP/3 while communication to backend servers is done using
+HTTP/1.1. Unlike connection coalescing, the CDN will "demux" requests into
+discrete connections to the back end. Response multiplexing in a single connection is not supported by HTTP/1.1 (or older), so there is not a fairness problem.
+However, backend servers <bcp14>MAY</bcp14> still use client headers for request scheduling.
+Backend servers <bcp14>SHOULD</bcp14> only schedule based on client priority information where
+that information can be scoped to individual end clients. Authentication and
+other session information might provide this linkability.</t>
+      </section>
+      <section anchor="intentional-unfairness" numbered="true" toc="include" removeInRFC="false" pn="section-13.3">
+        <name slugifiedName="name-intentional-introduction-of">Intentional Introduction of Unfairness</name>
+        <t indent="0" pn="section-13.3-1">It is sometimes beneficial to deprioritize the transmission of one connection
+over others, knowing that doing so introduces a certain amount of unfairness
+between the connections and therefore between the requests served on those
+connections.</t>
+        <t indent="0" pn="section-13.3-2">For example, a server might use a scavenging congestion controller on
+connections that only convey background priority responses such as software
+update images. Doing so improves responsiveness of other connections at the cost
+of delaying the delivery of updates.</t>
+      </section>
+    </section>
+    <section anchor="header-field-rationale" numbered="true" toc="include" removeInRFC="false" pn="section-14">
+      <name slugifiedName="name-why-use-an-end-to-end-heade">Why Use an End-to-End Header Field?</name>
+      <t indent="0" pn="section-14-1">In contrast to the prioritization scheme of HTTP/2, which uses a hop-by-hop frame,
+the Priority header field is defined as "end-to-end".</t>
+      <t indent="0" pn="section-14-2">The way that a client processes a response is a property associated with the
+client generating that request, not that of an intermediary.  Therefore, it is
+an end-to-end property.  How these end-to-end properties carried by the Priority
+header field affect the prioritization between the responses that share a
+connection is a hop-by-hop issue.</t>
+      <t indent="0" pn="section-14-3">Having the Priority header field defined as end-to-end is important for caching
+intermediaries.  Such intermediaries can cache the value of the Priority header
+field along with the response and utilize the value of the cached header field
+when serving the cached response, only because the header field is defined as
+end-to-end rather than hop-by-hop.</t>
+    </section>
+    <section anchor="security-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-15">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-15-1"><xref target="frame" format="default" sectionFormat="of" derivedContent="Section 7"/> describes considerations for server buffering of PRIORITY_UPDATE
+frames.</t>
+      <t indent="0" pn="section-15-2"><xref target="server-scheduling" format="default" sectionFormat="of" derivedContent="Section 10"/> presents examples where servers that prioritize responses
+in a certain way might be starved of the ability to transmit responses.</t>
+      <t indent="0" pn="section-15-3">The security considerations from <xref target="STRUCTURED-FIELDS" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/> apply to the processing of
+priority parameters defined in <xref target="parameters" format="default" sectionFormat="of" derivedContent="Section 4"/>.</t>
+    </section>
+    <section anchor="iana-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-16">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-16-1">This specification registers the following entry in the "Hypertext Transfer
+Protocol (HTTP) Field Name Registry" defined in <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-16-2">
+        <dt pn="section-16-2.1">
+Field Name:  </dt>
+        <dd pn="section-16-2.2">
+          <t indent="0" pn="section-16-2.2.1">Priority</t>
+        </dd>
+        <dt pn="section-16-2.3">
+Status:  </dt>
+        <dd pn="section-16-2.4">
+          <t indent="0" pn="section-16-2.4.1">permanent</t>
+        </dd>
+        <dt pn="section-16-2.5">
+Reference:  </dt>
+        <dd pn="section-16-2.6">
+          <t indent="0" pn="section-16-2.6.1">This document</t>
+        </dd>
+      </dl>
+      <t indent="0" pn="section-16-3">This specification registers the following entry in the "HTTP/2 Settings" registry
+defined in <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-16-4">
+        <dt pn="section-16-4.1">
+Code:  </dt>
+        <dd pn="section-16-4.2">
+          <t indent="0" pn="section-16-4.2.1">0x9</t>
+        </dd>
+        <dt pn="section-16-4.3">
+Name:  </dt>
+        <dd pn="section-16-4.4">
+          <t indent="0" pn="section-16-4.4.1">SETTINGS_NO_RFC7540_PRIORITIES</t>
+        </dd>
+        <dt pn="section-16-4.5">
+Initial Value:  </dt>
+        <dd pn="section-16-4.6">
+          <t indent="0" pn="section-16-4.6.1">0</t>
+        </dd>
+        <dt pn="section-16-4.7">
+Reference:  </dt>
+        <dd pn="section-16-4.8">
+          <t indent="0" pn="section-16-4.8.1">This document</t>
+        </dd>
+      </dl>
+      <t indent="0" pn="section-16-5">This specification registers the following entry in the "HTTP/2 Frame Type"
+registry defined in <xref target="HTTP2" format="default" sectionFormat="of" derivedContent="HTTP/2"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-16-6">
+        <dt pn="section-16-6.1">
+Code:  </dt>
+        <dd pn="section-16-6.2">
+          <t indent="0" pn="section-16-6.2.1">0x10</t>
+        </dd>
+        <dt pn="section-16-6.3">
+Frame Type:  </dt>
+        <dd pn="section-16-6.4">
+          <t indent="0" pn="section-16-6.4.1">PRIORITY_UPDATE</t>
+        </dd>
+        <dt pn="section-16-6.5">
+Reference:  </dt>
+        <dd pn="section-16-6.6">
+          <t indent="0" pn="section-16-6.6.1">This document</t>
+        </dd>
+      </dl>
+      <t indent="0" pn="section-16-7">This specification registers the following entry in the "HTTP/3 Frame Types"
+registry established by <xref target="HTTP3" format="default" sectionFormat="of" derivedContent="HTTP/3"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-16-8">
+        <dt pn="section-16-8.1">
+Value:  </dt>
+        <dd pn="section-16-8.2">
+          <t indent="0" pn="section-16-8.2.1">0xF0700-0xF0701</t>
+        </dd>
+        <dt pn="section-16-8.3">
+Frame Type:  </dt>
+        <dd pn="section-16-8.4">
+          <t indent="0" pn="section-16-8.4.1">PRIORITY_UPDATE</t>
+        </dd>
+        <dt pn="section-16-8.5">
+Status:  </dt>
+        <dd pn="section-16-8.6">
+          <t indent="0" pn="section-16-8.6.1">permanent</t>
+        </dd>
+        <dt pn="section-16-8.7">
+Reference:  </dt>
+        <dd pn="section-16-8.8">
+          <t indent="0" pn="section-16-8.8.1">This document</t>
+        </dd>
+        <dt pn="section-16-8.9">
+Change Controller:  </dt>
+        <dd pn="section-16-8.10">
+          <t indent="0" pn="section-16-8.10.1">IETF</t>
+        </dd>
+        <dt pn="section-16-8.11">
+Contact:  </dt>
+        <dd pn="section-16-8.12">
+          <t indent="0" pn="section-16-8.12.1">ietf-http-wg@w3.org</t>
+        </dd>
+      </dl>
+      <t indent="0" pn="section-16-9">IANA has created the "Hypertext Transfer Protocol (HTTP) Priority" registry at
+<eref target="https://www.iana.org/assignments/http-priority" brackets="angle"/> and has populated it with the entries in
+<xref target="iana-parameter-table" format="default" sectionFormat="of" derivedContent="Table 1"/>; see <xref target="register" format="default" sectionFormat="of" derivedContent="Section 4.3.1"/> for its associated procedures.</t>
+      <table anchor="iana-parameter-table" align="center" pn="table-1">
+        <name slugifiedName="name-initial-priority-parameters">Initial Priority Parameters</name>
+        <thead>
+          <tr>
+            <th align="left" colspan="1" rowspan="1">Name</th>
+            <th align="center" colspan="1" rowspan="1">Description</th>
+            <th align="left" colspan="1" rowspan="1">Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">u</td>
+            <td align="center" colspan="1" rowspan="1">The urgency of an HTTP response.</td>
+            <td align="left" colspan="1" rowspan="1">
+              <xref target="urgency" format="default" sectionFormat="of" derivedContent="Section 4.1"/></td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">i</td>
+            <td align="center" colspan="1" rowspan="1">Whether an HTTP response can be processed incrementally.</td>
+            <td align="left" colspan="1" rowspan="1">
+              <xref target="incremental" format="default" sectionFormat="of" derivedContent="Section 4.2"/></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="HTTP2" to="HTTP/2"/>
+    <displayreference target="HTTP3" to="HTTP/3"/>
+    <displayreference target="I-D.lassey-priority-setting" to="PRIORITY-SETTING"/>
+    <references pn="section-17">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-17.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="HTTP" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="HTTP2" target="https://www.rfc-editor.org/info/rfc9113" quoteTitle="true" derivedAnchor="HTTP/2">
+          <front>
+            <title>HTTP/2</title>
+            <author initials="M" surname="Thomson" fullname="Martin Thomson" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="C" surname="Benfield" fullname="Cory Benfield" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="RFC" value="9113"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9113"/>
+        </reference>
+        <reference anchor="HTTP3" target="https://www.rfc-editor.org/info/rfc9114" quoteTitle="true" derivedAnchor="HTTP/3">
+          <front>
+            <title>HTTP/3</title>
+            <author initials="M" surname="Bishop" fullname="Mike Bishop" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="RFC" value="9114"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9114"/>
+        </reference>
+        <reference anchor="QUIC" target="https://www.rfc-editor.org/info/rfc9000" quoteTitle="true" derivedAnchor="QUIC">
+          <front>
+            <title>QUIC: A UDP-Based Multiplexed and Secure Transport</title>
+            <author fullname="J. Iyengar" initials="J." role="editor" surname="Iyengar">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="May" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="9000"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9000"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="S. Bradner">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="1997" month="March"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8126" target="https://www.rfc-editor.org/info/rfc8126" quoteTitle="true" derivedAnchor="RFC8126">
+          <front>
+            <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+            <author initials="M." surname="Cotton" fullname="M. Cotton">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="T." surname="Narten" fullname="T. Narten">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="June"/>
+            <abstract>
+              <t indent="0">Many protocols make use of points of extensibility that use constants to identify various protocol parameters.  To ensure that the values in these fields do not have conflicting uses and to promote interoperability, their allocations are often coordinated by a central record keeper.  For IETF protocols, that role is filled by the Internet Assigned Numbers Authority (IANA).</t>
+              <t indent="0">To make assignments in a given registry prudently, guidance describing the conditions under which new values should be assigned, as well as when and how modifications to existing values can be made, is needed.  This document defines a framework for the documentation of these guidelines by specification authors, in order to assure that the provided guidance for the IANA Considerations is clear and addresses the various issues that are likely in the operation of a registry.</t>
+              <t indent="0">This is the third edition of this document; it obsoletes RFC 5226.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="26"/>
+          <seriesInfo name="RFC" value="8126"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8126"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="May"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="STRUCTURED-FIELDS" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="P-H. Kamp" initials="P-H." surname="Kamp">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="February" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+      </references>
+      <references pn="section-17.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="CACHING" target="https://www.rfc-editor.org/info/rfc9111" quoteTitle="true" derivedAnchor="CACHING">
+          <front>
+            <title>HTTP Caching</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="FORWARDED" target="https://www.rfc-editor.org/info/rfc7239" quoteTitle="true" derivedAnchor="FORWARDED">
+          <front>
+            <title>Forwarded HTTP Extension</title>
+            <author fullname="A. Petersson" initials="A." surname="Petersson">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="M. Nilsson" initials="M." surname="Nilsson">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="June" year="2014"/>
+          </front>
+          <seriesInfo name="RFC" value="7239"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7239"/>
+        </reference>
+        <reference anchor="MARX" target="https://www.doi.org/10.5220/0008191701300143" quoteTitle="true" derivedAnchor="MARX">
+          <front>
+            <title>Of the Utmost Importance: Resource Prioritization in HTTP/3 over QUIC</title>
+            <author initials="R." surname="Marx" fullname="Robin Marx">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="T." surname="De Decker" fullname="Tom De Decker">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="P." surname="Quax" fullname="Peter Quax">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="W." surname="Lamotte" fullname="Wim Lamotte">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2019" month="September"/>
+          </front>
+          <seriesInfo name="DOI" value="10.5220/0008191701300143"/>
+          <refcontent>SCITEPRESS Proceedings of the 15th International Conference on Web Information Systems and Technologies (pages 130-143)</refcontent>
+        </reference>
+        <reference anchor="I-D.lassey-priority-setting" quoteTitle="true" target="https://datatracker.ietf.org/doc/html/draft-lassey-priority-setting-00" derivedAnchor="PRIORITY-SETTING">
+          <front>
+            <title>Declaring Support for HTTP/2 Priorities</title>
+            <author fullname="Brad Lassey">
+              <organization showOnFrontPage="true">Google</organization>
+            </author>
+            <author fullname="Lucas Pardue">
+              <organization showOnFrontPage="true">Cloudflare</organization>
+            </author>
+            <date month="July" day="25" year="2019"/>
+            <abstract>
+              <t indent="0">   HTTP/2 provides a prioritization scheme but experience has shown that
+   implementation support varies.  This document defines an HTTP/2
+   setting that endpoints can use as an affirmative signal to indicate
+   their support for HTTP/2 Priorities.
+
+              </t>
+            </abstract>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-lassey-priority-setting-00"/>
+          <format type="TXT" target="https://www.ietf.org/archive/id/draft-lassey-priority-setting-00.txt"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="QUIC-RECOVERY" target="https://www.rfc-editor.org/info/rfc9002" quoteTitle="true" derivedAnchor="QUIC-RECOVERY">
+          <front>
+            <title>QUIC Loss Detection and Congestion Control</title>
+            <author fullname="J. Iyengar" initials="J." role="editor" surname="Iyengar">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="I. Swett" initials="I." role="editor" surname="Swett">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="May" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="9002"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9002"/>
+        </reference>
+        <reference anchor="RFC7540" target="https://www.rfc-editor.org/info/rfc7540" quoteTitle="true" derivedAnchor="RFC7540">
+          <front>
+            <title>Hypertext Transfer Protocol Version 2 (HTTP/2)</title>
+            <author initials="M." surname="Belshe" fullname="M. Belshe">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="R." surname="Peon" fullname="R. Peon">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M." surname="Thomson" fullname="M. Thomson" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2015" month="May"/>
+            <abstract>
+              <t indent="0">This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2).  HTTP/2 enables a more efficient use of network resources and a reduced perception of latency by introducing header field compression and allowing multiple concurrent exchanges on the same connection.  It also introduces unsolicited push of representations from servers to clients.</t>
+              <t indent="0">This specification is an alternative to, but does not obsolete, the HTTP/1.1 message syntax.  HTTP's existing semantics remain unchanged.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7540"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7540"/>
+        </reference>
+        <reference anchor="RFC8081" target="https://www.rfc-editor.org/info/rfc8081" quoteTitle="true" derivedAnchor="RFC8081">
+          <front>
+            <title>The "font" Top-Level Media Type</title>
+            <author initials="C." surname="Lilley" fullname="C. Lilley">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="February"/>
+            <abstract>
+              <t indent="0">This memo serves to register and document the "font" top-level media type, under which subtypes for representation formats for fonts may be registered.  This document also serves as a registration application for a set of intended subtypes, which are representative of some existing subtypes already in use, and currently registered under the "application" tree by their separate registrations.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8081"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8081"/>
+        </reference>
+      </references>
+    </references>
+    <section anchor="acknowledgements" numbered="false" toc="include" removeInRFC="false" pn="section-appendix.a">
+      <name slugifiedName="name-acknowledgements">Acknowledgements</name>
+      <t indent="0" pn="section-appendix.a-1"><contact fullname="Roy Fielding"/>
+presented the idea of using a header field for representing
+priorities in <eref target="https://www.ietf.org/proceedings/83/slides/slides-83-httpbis-5.pdf" brackets="angle"/>.
+In <eref target="https://github.com/pmeenan/http3-prioritization-proposal" brackets="angle"/>, <contact fullname="Patrick Meenan"/>
+advocated for representing the priorities using a tuple of urgency and
+concurrency. The ability to disable HTTP/2 prioritization is inspired by
+<xref target="I-D.lassey-priority-setting" format="default" sectionFormat="of" derivedContent="PRIORITY-SETTING"/>, authored by <contact fullname="Brad Lassey"/> and <contact fullname="Lucas Pardue"/>, with
+modifications based on feedback that was not incorporated into an update to that
+document.</t>
+      <t indent="0" pn="section-appendix.a-2">The motivation for defining an alternative to HTTP/2 priorities is drawn from
+discussion within the broad HTTP community. Special thanks to <contact fullname="Roberto Peon"/>,
+<contact fullname="Martin Thomson"/>, and Netflix for text that was incorporated explicitly in this
+document.</t>
+      <t indent="0" pn="section-appendix.a-3">In addition to the people above, this document owes a lot to the extensive
+discussion in the HTTP priority design team, consisting of <contact fullname="Alan Frindell"/>,
+<contact fullname="Andrew Galloni"/>, <contact fullname="Craig Taylor"/>, <contact fullname="Ian Swett"/>, <contact fullname="Matthew Cox"/>,
+<contact fullname="Mike Bishop"/>, <contact fullname="Roberto Peon"/>, <contact fullname="Robin Marx"/>, <contact fullname="Roy Fielding"/>, and the authors
+ of this document.</t>
+      <t indent="0" pn="section-appendix.a-4"><contact fullname="Yang Chi"/> contributed the section on retransmission scheduling.</t>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author asciiFullname="Kazuho Oku" fullname="奥 一穂">
+        <organization showOnFrontPage="true">Fastly</organization>
+        <address>
+          <email>kazuhooku@gmail.com</email>
+        </address>
+      </author>
+      <author initials="L." surname="Pardue" fullname="Lucas Pardue">
+        <organization showOnFrontPage="true">Cloudflare</organization>
+        <address>
+          <email>lucaspardue.24.7@gmail.com</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

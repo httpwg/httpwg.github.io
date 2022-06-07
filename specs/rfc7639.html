@@ -206,7 +206,7 @@ window.addEventListener('DOMContentLoaded', anchorRewrite);
         font: 11pt consolas, monospace;
         font-size-adjust: none;
       }
-    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 The ALPN HTTP Header Field" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 References" href="#rfc.section.5"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc7639.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7639"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="HTTP CONNECT, Firewall, HTTP proxy"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Hutton, A."><meta name="dcterms.creator" content="Uberti, J."><meta name="dcterms.creator" content="Thomson, M."><meta name="dcterms.identifier" content="urn:ietf:rfc:7639"><meta name="dcterms.issued" content="2015-08"><meta name="dcterms.abstract" content="This specification allows HTTP CONNECT requests to indicate what protocol is intended to be used within the tunnel once established, using the ALPN header field."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification allows HTTP CONNECT requests to indicate what protocol is intended to be used within the tunnel once established, using the ALPN header field."></head><body onload="getMeta(7639,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top" role="navigation">
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 The ALPN HTTP Header Field" href="#rfc.section.2"><link rel="Chapter" title="3 IANA Considerations" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 References" href="#rfc.section.5"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc7639.txt"><link rel="Help" title="RFC-Editor's Status Page" href="http://www.rfc-editor.org/info/rfc7639"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="HTTP CONNECT, Firewall, HTTP proxy"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Hutton, A."><meta name="dcterms.creator" content="Uberti, J."><meta name="dcterms.creator" content="Thomson, M."><meta name="dcterms.identifier" content="urn:ietf:rfc:7639"><meta name="dcterms.issued" content="2015-08"><meta name="dcterms.abstract" content="This specification allows HTTP CONNECT requests to indicate what protocol is intended to be used within the tunnel once established, using the ALPN header field."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification allows HTTP CONNECT requests to indicate what protocol is intended to be used within the tunnel once established, using the ALPN header field."></head><body onload="getMeta(7639,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top ps-3 pe-3" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
@@ -218,22 +218,22 @@ window.addEventListener('DOMContentLoaded', anchorRewrite);
   
   <div class="collapse navbar-collapse" id="navbar-collapse">
       
-    <div class="navbar-nav mr-auto">
+    <div class="navbar-nav me-auto">
 
-      <a class="nav-item ml-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
+      <a class="nav-item ms-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
 
-      <div class="dropdown ml-4">
-        <a href="#" class="nav-item dropdown-toggle text-white" data-toggle="dropdown">Work in Progress</a>
-          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-core/">HTTP Core</a></li><li class="dropdown-item"><a href="https://httpwg.org/http2-spec/">HTTP/2 Revision</a></li><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Work in Progress</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
       </div>
 
-      <div class="dropdown ml-4">
-        <a href="#" class="nav-item dropdown-toggle text-white" data-toggle="dropdown">Participate</a>
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Participate</a>
           <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li><li class="divider"></li><li class="dropdown-item"><a href="https://httpwg.org/CONTRIBUTING.html">Contribution Policy</a></li><li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li><li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li><li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li><li class="dropdown-item"><a href="https://httpwg.org/admin/editors/">Document Editor Resources</a></li></ul>
       </div>
     </div>
             
-    <div class="nav navbar-nav ml-auto">
+    <div class="nav navbar-nav ms-auto">
       <a class="navbar" href="https://twitter.com/http_wg">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="twtr-icon  twtr-color-fill--blue-dark  has-hover"><path opacity="0" d="M0 0h24v24H0z"/><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
       </a>

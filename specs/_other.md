@@ -36,6 +36,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC8164: [Opportunistic Security for HTTP/2](/specs/rfc8164.html)
 * RFC8336: [ORIGIN HTTP/2 Frame](/specs/rfc8336.html)
 * RFC8441: [Bootstrapping WebSockets with HTTP/2](/specs/rfc8441.html)
+* RFC9218: [Extensible Prioritization Scheme for HTTP](/specs/rfc9218.html)
 
 ### Security-Related Extensions
 
