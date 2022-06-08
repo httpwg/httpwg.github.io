@@ -1,0 +1,319 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>RFC 9211 - The Cache-Status HTTP Response Header Field</title><script>
+function getMeta(rfcno, container) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.rfc-editor.org/rfc/rfc" + rfcno + ".json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        var c = data.status;
+        if (c) {
+          var bld = newElementWithText("b", c);
+          cont.appendChild(bld);
+        } else {
+          cont.appendChild(newElementWithText("i", "(document status unknown)"));
+        }
+
+        c = data.updated_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.obsoleted_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.errata_url;
+        if (c) {
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", c);
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+function appendRfcLinks(parent, updates) {
+  var template = "https://www.rfc-editor.org/rfc/rfc{rfc}.html";
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim().toLowerCase();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = parseInt(rfc.substring(3), 10);
+      
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+function getMeta(docname, revision, container) {
+  var xhr = new XMLHttpRequest();
+  var datatracker = "https://datatracker.ietf.org/doc/" + docname;
+  xhr.open("GET", datatracker + "/doc.json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        if (data.rev) {
+          cont.style.display = "block";
+          var bld = newElementWithText("b", "Internet Draft Status");
+          cont.appendChild(bld);
+          cont.appendChild(newElement("br"));
+          if (data.state == "RFC") {
+            var txt = newElementWithText("i", "This document has been published as RFC - please see ");
+            cont.appendChild(txt);
+            var link = newElement("a");
+            link.setAttribute("href", datatracker);
+            link.appendChild(newText("IETF Datatracker"));
+            cont.appendChild(link);
+            txt = newElementWithText("i", " for details.");
+            cont.appendChild(txt);
+          } else if (data.rev == revision) {
+            var rev = newElementWithText("i", "This is the latest submitted version.");
+            cont.appendChild(rev);
+          } else {
+            var rev = newElementWithText("i", "This is not the current version:");
+            cont.appendChild(rev);
+            cont.appendChild(newElement("br"));
+            var dat = "";
+            if (data.time) {
+              dat = ", submitted on " + data.time.substring(0,10);
+            }
+            rev = newElementWithText("i", "please see version " + data.rev + dat + ".");
+            cont.appendChild(rev);
+          }
+        }
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+</script><script>
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8).replace("-",".p.");
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9).replace("-",".p.");
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5).replace("-",".p.");
+          } else {
+            window.location.hash = prefix + "section." + postfix.replace("-",".p.");
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC9211"><meta property="og:description" content="The Cache-Status HTTP Response Header Field"><meta property="og:url" content="https://httpwg.org/specs/rfc9211.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/assets/favicon/apple-icon-180x180.png"><link rel="stylesheet" type="text/css" href="/assets/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #sidebar {
+        margin-top: -10px;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      .toc ul {
+        list-style: none;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 The Cache-Status HTTP Response Header Field" href="#rfc.section.2"><link rel="Chapter" title="3 Examples" href="#rfc.section.3"><link rel="Chapter" title="4 Defining New Cache-Status Parameters" href="#rfc.section.4"><link rel="Chapter" title="5 IANA Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 Security Considerations" href="#rfc.section.6"><link rel="Chapter" title="7 References" href="#rfc.section.7"><link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-cache-header-10" rel="prev"><link href="https://dx.doi.org/10.17487/rfc9211" rel="alternate"><link href="urn:issn:2070-1721" rel="alternate"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc9211.txt"><link rel="Help" title="RFC-Editor's Status Page" href="https://www.rfc-editor.org/info/rfc9211"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="http, cache, debugging, x-cache"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.identifier" content="urn:ietf:rfc:9211"><meta name="dcterms.issued" content="2022-06"><meta name="dcterms.abstract" content="To aid debugging, HTTP caches often append header fields to a response, explaining how they handled the request in an ad hoc manner. This specification defines a standard mechanism to do so that is aligned with HTTP's caching model."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="To aid debugging, HTTP caches often append header fields to a response, explaining how they handled the request in an ad hoc manner. This specification defines a standard mechanism to do so that is aligned with HTTP's caching model."></head><body onload="getMeta(9211,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top ps-3 pe-3" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" href="https://httpwg.org/"><img src="https://httpwg.org/assets/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+      
+    <div class="navbar-nav me-auto">
+
+      <a class="nav-item ms-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Work in Progress</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
+      </div>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Participate</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li><li class="divider"></li><li class="dropdown-item"><a href="https://httpwg.org/CONTRIBUTING.html">Contribution Policy</a></li><li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li><li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li><li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li><li class="dropdown-item"><a href="https://httpwg.org/admin/editors/">Document Editor Resources</a></li></ul>
+      </div>
+    </div>
+            
+    <div class="nav navbar-nav ms-auto">
+      <a class="navbar" href="https://twitter.com/http_wg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="twtr-icon  twtr-color-fill--blue-dark  has-hover"><path opacity="0" d="M0 0h24v24H0z"/><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
+      </a>
+    </div>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-lg-4 order-last d-none d-lg-block" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>9211</a></div><br clear="all"><div class=""><div class="toc "><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#field">The Cache-Status HTTP Response Header Field</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#the-hit-parameter">The hit Parameter</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#the-fwd-parameter">The fwd Parameter</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#the-fwd-status-parameter">The fwd-status Parameter</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#the-ttl-parameter">The ttl Parameter</a></li><li><a href="#rfc.section.2.5">2.5.</a>&nbsp;&nbsp;&nbsp;<a href="#the-stored-parameter">The stored Parameter</a></li><li><a href="#rfc.section.2.6">2.6.</a>&nbsp;&nbsp;&nbsp;<a href="#the-collapsed-parameter">The collapsed Parameter</a></li><li><a href="#rfc.section.2.7">2.7.</a>&nbsp;&nbsp;&nbsp;<a href="#the-key-parameter">The key Parameter</a></li><li><a href="#rfc.section.2.8">2.8.</a>&nbsp;&nbsp;&nbsp;<a href="#the-detail-parameter">The detail Parameter</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#register">Defining New Cache-Status Parameters</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#security">Security Considerations</a></li><li><a href="#rfc.section.7">7.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.7.1">7.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.7.2">7.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div></div></div></div><div class="col-lg-8 order-first main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">Request for Comments: 9211</td><td class="text-right">Fastly</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">June 2022</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right"></td></tr></tbody></table><div id="rfc.title"><h1>The Cache-Status HTTP Response Header Field</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>To aid debugging, HTTP caches often append header fields to a response, explaining how they handled the request in an ad hoc manner. This specification defines a standard mechanism to do so that is aligned with HTTP's caching model.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of This Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This is an Internet Standards Track document.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in <a href="https://www.rfc-editor.org/rfc/rfc7841.html#section-2">Section 2 of RFC 7841</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="https://www.rfc-editor.org/info/rfc9211">https://www.rfc-editor.org/info/rfc9211</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright (c) 2022 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.</p></div></section><div class="toc d-lg-none"><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#field">The Cache-Status HTTP Response Header Field</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#the-hit-parameter">The hit Parameter</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#the-fwd-parameter">The fwd Parameter</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#the-fwd-status-parameter">The fwd-status Parameter</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#the-ttl-parameter">The ttl Parameter</a></li><li><a href="#rfc.section.2.5">2.5.</a>&nbsp;&nbsp;&nbsp;<a href="#the-stored-parameter">The stored Parameter</a></li><li><a href="#rfc.section.2.6">2.6.</a>&nbsp;&nbsp;&nbsp;<a href="#the-collapsed-parameter">The collapsed Parameter</a></li><li><a href="#rfc.section.2.7">2.7.</a>&nbsp;&nbsp;&nbsp;<a href="#the-key-parameter">The key Parameter</a></li><li><a href="#rfc.section.2.8">2.8.</a>&nbsp;&nbsp;&nbsp;<a href="#the-detail-parameter">The detail Parameter</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#register">Defining New Cache-Status Parameters</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#security">Security Considerations</a></li><li><a href="#rfc.section.7">7.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.7.1">7.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.7.2">7.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.authors">Author's Address</a></li></ul></div><hr class="hidden-print"><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>To aid debugging (both by humans and automated tools), HTTP caches often append header fields to a response explaining how they handled the request. Unfortunately, the semantics of these header fields are often unclear, and both the semantics and syntax used vary between implementations.</p></div><div id="rfc.section.1.p.2"><p>This specification defines a new HTTP response header field, "Cache-Status", for this purpose with standardized syntax and semantics.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words "<em class="bcp14">MUST</em>", "<em class="bcp14">MUST NOT</em>", "<em class="bcp14">REQUIRED</em>", "<em class="bcp14">SHALL</em>", "<em class="bcp14">SHALL NOT</em>", "<em class="bcp14">SHOULD</em>", "<em class="bcp14">SHOULD NOT</em>", "<em class="bcp14">RECOMMENDED</em>", "<em class="bcp14">NOT RECOMMENDED</em>", "<em class="bcp14">MAY</em>", and "<em class="bcp14">OPTIONAL</em>" in this document are to be interpreted as described in BCP&nbsp;14 <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div><div id="rfc.section.1.1.p.2"><p>This document uses the following terminology from <a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3">Section 3</a> of <a href="#STRUCTURED-FIELDS"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a> to specify syntax and parsing: List, String, Token, Integer, and Boolean.</p></div><div id="rfc.section.1.1.p.3"><p>This document also uses terminology from <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a> and <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>.</p></div></section></section><hr class="hidden-print"><section id="field"><h2 id="rfc.section.2" class="np"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#field">The Cache-Status HTTP Response Header Field</a></h2><div id="rfc.section.2.p.1"><p>The Cache-Status HTTP response header field indicates how caches have handled that response and its corresponding request. The syntax of this header field conforms to <a href="#STRUCTURED-FIELDS"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>.</p></div><div id="rfc.section.2.p.2"><p>Its value is a List. Each member of the List represents a cache that has handled the request. The first member represents the cache closest to the origin server, and the last member represents the cache closest to the user (possibly including the user agent's cache itself if it appends a value).</p></div><div id="rfc.section.2.p.3"><p>Caches determine when it is appropriate to add the Cache-Status header field to a response. Some might add it to all responses, whereas others might only do so when specifically configured to, or when the request contains a header field that activates a debugging mode. See <a href="#security" title="Security Considerations">Section 6</a> for related security considerations.</p></div><div id="rfc.section.2.p.4"><p>An intermediary <em class="bcp14">SHOULD NOT</em> append a Cache-Status member to responses that it generates locally, even if that intermediary contains a cache, unless the generated response is based upon a stored response (e.g., 304 (Not Modified) and 206 (Partial Content) are both based upon a stored response). For example, a proxy generating a 400 response due to a malformed request will not add a Cache-Status value, because that response was generated by the proxy, not the origin server.</p></div><div id="rfc.section.2.p.5"><p>When adding a value to the Cache-Status header field, caches <em class="bcp14">SHOULD</em> preserve the existing field value, to allow debugging of the entire chain of caches handling the request.</p></div><div id="rfc.section.2.p.6"><p>Each List member identifies the cache that inserted it, and this identifier <em class="bcp14">MUST</em> be a String or Token. Depending on the deployment, this might be a product or service name (e.g., "ExampleCache" or "Example CDN"), a hostname ("cache-3.example.com"), an IP address, or a generated string.</p></div><div id="rfc.section.2.p.7"><p>Each member of the list can have parameters that describe that cache's handling of the request. While these parameters are <em class="bcp14">OPTIONAL</em>, caches are encouraged to provide as much information as possible.</p></div><div id="rfc.section.2.p.8"><p>This specification defines the following parameters.</p></div><section id="the-hit-parameter"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a>&nbsp;<a href="#the-hit-parameter">The hit Parameter</a></h3><div id="rfc.section.2.1.p.1"><p>The value of "hit" is a Boolean that, when true, indicates that the request was satisfied by the cache; that is, it was not forwarded, and the response was obtained from the cache.</p></div><div id="rfc.section.2.1.p.2"><p>A response that was originally produced by the origin but was modified by the cache (for example, a 304 or 206 status code) is still considered a hit, as long as it did not go forward (e.g., for validation).</p></div><div id="rfc.section.2.1.p.3"><p>A response that was in cache but not able to be used without going forward (e.g., because it was stale or partial) is not considered a hit. Note that a stale response that is used without going forward (e.g., because the origin server is not available) can be considered a hit.</p></div><div id="rfc.section.2.1.p.4"><p>"hit" and "fwd" are exclusive; only one of them should appear on each list member.</p></div></section><section id="the-fwd-parameter"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a>&nbsp;<a href="#the-fwd-parameter">The fwd Parameter</a></h3><div id="rfc.section.2.2.p.1"><p>"fwd", when present, indicates that the request went forward towards the origin; its value is a Token that indicates why.</p></div><div id="rfc.section.2.2.p.2" class="avoidbreakafter"><p>The following parameter values are defined to explain why the request went forward, from most specific to least:</p></div><div id="rfc.section.2.2.p.3"><dl><dt>bypass:</dt><dd>The cache was configured to not handle this request.</dd><dt>method:</dt><dd>The request method's semantics require the request to be forwarded.</dd><dt>uri-miss:</dt><dd>The cache did not contain any responses that matched the request URI.</dd><dt>vary-miss:</dt><dd>The cache contained a response that matched the request URI, but it could not select a response based upon this request's header fields and stored Vary header fields.</dd><dt>miss:</dt><dd>The cache did not contain any responses that could be used to satisfy this request (to be used when an implementation cannot distinguish between uri-miss and vary-miss).</dd><dt>request:</dt><dd>The cache was able to select a fresh response for the request, but the request's semantics (e.g., Cache-Control request directives) did not allow its use.</dd><dt>stale:</dt><dd>The cache was able to select a response for the request, but it was stale.</dd><dt>partial:</dt><dd>The cache was able to select a partial response for the request, but it did not contain all of the requested ranges (or the request was for the complete response).</dd></dl></div><div id="rfc.section.2.2.p.4"><p>The most specific reason known to the cache <em class="bcp14">SHOULD</em> be used, to the extent that it is possible to implement. See also <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4">Section 4</a>.</p></div></section><section id="the-fwd-status-parameter"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3.</a>&nbsp;<a href="#the-fwd-status-parameter">The fwd-status Parameter</a></h3><div id="rfc.section.2.3.p.1"><p>The value of "fwd-status" is an Integer that indicates which status code (see <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15">Section 15</a>) the next-hop server returned in response to the forwarded request. The fwd-status parameter is only meaningful when fwd is present. If fwd-status is not present but the fwd parameter is, it defaults to the status code sent in the response.</p></div><div id="rfc.section.2.3.p.2"><p>This parameter is useful to distinguish cases when the next-hop server sends a 304 (Not Modified) response to a conditional request or a 206 (Partial Content) response because of a range request.</p></div></section><section id="the-ttl-parameter"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a>&nbsp;<a href="#the-ttl-parameter">The ttl Parameter</a></h3><div id="rfc.section.2.4.p.1"><p>The value of "ttl" is an Integer that indicates the response's remaining freshness lifetime (see <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2.1">Section 4.2.1</a>) as calculated by the cache, as an integer number of seconds, measured as closely as possible to when the response header section is sent by the cache. This includes freshness assigned by the cache through, for example, heuristics (see <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2.2">Section 4.2.2</a>), local configuration, or other factors. It may be negative, to indicate staleness.</p></div></section><section id="the-stored-parameter"><h3 id="rfc.section.2.5"><a href="#rfc.section.2.5">2.5.</a>&nbsp;<a href="#the-stored-parameter">The stored Parameter</a></h3><div id="rfc.section.2.5.p.1"><p>The value of "stored" is a Boolean that indicates whether the cache stored the response (see <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-3">Section 3</a>); a true value indicates that it did. The stored parameter is only meaningful when fwd is present.</p></div></section><section id="the-collapsed-parameter"><h3 id="rfc.section.2.6"><a href="#rfc.section.2.6">2.6.</a>&nbsp;<a href="#the-collapsed-parameter">The collapsed Parameter</a></h3><div id="rfc.section.2.6.p.1"><p>The value of "collapsed" is a Boolean that indicates whether this request was collapsed together with one or more other forward requests (see <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4">Section 4</a>). If true, the response was successfully reused; if not, a new request had to be made. If not present, the request was not collapsed with others. The collapsed parameter is only meaningful when fwd is present.</p></div></section><section id="the-key-parameter"><h3 id="rfc.section.2.7"><a href="#rfc.section.2.7">2.7.</a>&nbsp;<a href="#the-key-parameter">The key Parameter</a></h3><div id="rfc.section.2.7.p.1"><p>The value of "key" is a String that conveys a representation of the cache key (see <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-2">Section 2</a>) used for the response. Note that this may be implementation specific.</p></div></section><section id="the-detail-parameter"><h3 id="rfc.section.2.8"><a href="#rfc.section.2.8">2.8.</a>&nbsp;<a href="#the-detail-parameter">The detail Parameter</a></h3><div id="rfc.section.2.8.p.1"><p>The value of "detail" is either a String or a Token that allows implementations to convey additional information not captured in other parameters, such as implementation-specific states or other caching-related metrics.</p></div><div id="rfc.section.2.8.p.2" class="avoidbreakafter"><p>For example:</p></div><div id="rfc.section.2.8.p.3"><pre class="text">
+Cache-Status: ExampleCache; hit; detail=MEMORY
+</pre></div><div id="rfc.section.2.8.p.4"><p>The semantics of a detail parameter are always specific to the cache that sent it; even if a details parameter from another cache shares the same value, it might not mean the same thing.</p></div><div id="rfc.section.2.8.p.5"><p>This parameter is intentionally limited. If an implementation's developer or operator needs to convey additional information in an interoperable fashion, they are encouraged to register extension parameters (see <a href="#register" title="Defining New Cache-Status Parameters">Section 4</a>) or define another header field.</p></div></section></section><hr class="hidden-print"><section id="examples"><h2 id="rfc.section.3" class="np"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#examples">Examples</a></h2><div id="rfc.section.3.p.1" class="avoidbreakafter"><p>The following is an example of a minimal cache hit:</p></div><div id="rfc.section.3.p.2"><pre class="text">
+Cache-Status: ExampleCache; hit
+</pre></div><div id="rfc.section.3.p.3" class="avoidbreakafter"><p>However, a polite cache will give some more information, e.g.:</p></div><div id="rfc.section.3.p.4"><pre class="text">
+Cache-Status: ExampleCache; hit; ttl=376
+</pre></div><div id="rfc.section.3.p.5" class="avoidbreakafter"><p>A stale hit just has negative freshness, as in this example:</p></div><div id="rfc.section.3.p.6"><pre class="text">
+Cache-Status: ExampleCache; hit; ttl=-412
+</pre></div><div id="rfc.section.3.p.7" class="avoidbreakafter"><p>Whereas this is an example of a complete miss:</p></div><div id="rfc.section.3.p.8"><pre class="text">
+Cache-Status: ExampleCache; fwd=uri-miss
+</pre></div><div id="rfc.section.3.p.9" class="avoidbreakafter"><p>This is an example of a miss that successfully validated on the backend server:</p></div><div id="rfc.section.3.p.10"><pre class="text">
+Cache-Status: ExampleCache; fwd=stale; fwd-status=304
+</pre></div><div id="rfc.section.3.p.11" class="avoidbreakafter"><p>This is an example of a miss that was collapsed with another request:</p></div><div id="rfc.section.3.p.12"><pre class="text">
+Cache-Status: ExampleCache; fwd=uri-miss; collapsed
+</pre></div><div id="rfc.section.3.p.13" class="avoidbreakafter"><p>This is an example of a miss that the cache attempted to collapse, but couldn't:</p></div><div id="rfc.section.3.p.14"><pre class="text">
+Cache-Status: ExampleCache; fwd=uri-miss; collapsed=?0
+</pre></div><div id="rfc.section.3.p.15" class="avoidbreakafter"><p>The following is an example of going through two separate layers of caching, where the cache closest to the origin responded to an earlier request with a stored response, and a second cache stored that response and later reused it to satisfy the current request:</p></div><div id="rfc.section.3.p.16"><pre class="text">
+Cache-Status: OriginCache; hit; ttl=1100,
+              "CDN Company Here"; hit; ttl=545
+</pre></div><div id="rfc.section.3.p.17" class="avoidbreakafter"><p>The following is an example of going through a three-layer caching system, where the closest to the origin is a reverse proxy (where the response was served from cache); the next is a forward proxy interposed by the network (where the request was forwarded because there wasn't any response cached with its URI, the request was collapsed with others, and the resulting response was stored); and the closest to the user is a browser cache (where there wasn't any response cached with the request's URI):</p></div><div id="rfc.section.3.p.18"><pre class="text">
+Cache-Status: ReverseProxyCache; hit
+Cache-Status: ForwardProxyCache; fwd=uri-miss; collapsed; stored
+Cache-Status: BrowserCache; fwd=uri-miss
+</pre></div></section><hr class="hidden-print"><section id="register"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#register">Defining New Cache-Status Parameters</a></h2><div id="rfc.section.4.p.1"><p>New Cache-Status parameters can be defined by registering them in the "HTTP Cache-Status" registry.</p></div><div id="rfc.section.4.p.2"><p>Registration requests are reviewed and approved by a designated expert, per <a href="#RFC8126"><cite title="Guidelines for Writing an IANA Considerations Section in RFCs">[RFC8126]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc8126.html#section-4.5">Section 4.5</a>. A specification document is appreciated but not required.</p></div><div id="rfc.section.4.p.3" class="avoidbreakafter"><p>The expert(s) should consider the following factors when evaluating requests:</p></div><div id="rfc.section.4.p.4"><ul><li>Community feedback</li><li>If the value is sufficiently well defined</li><li>Generic parameters are preferred over vendor-specific, application-specific, or deployment-specific values. If a generic value cannot be agreed upon in the community, the parameter's name should be correspondingly specific (e.g., with a prefix that identifies the vendor, application, or deployment).</li></ul></div><div id="rfc.section.4.p.5" class="avoidbreakafter"><p>Registration requests should use the following template:</p></div><div id="rfc.section.4.p.6"><dl><dt>Name:</dt><dd>[a name for the Cache-Status parameter's key; see <a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.1.2">Section 3.1.2</a> of <a href="#STRUCTURED-FIELDS"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a> for syntactic requirements]</dd><dt>Type:</dt><dd>[the Structured Type of the parameter's value; see <a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.1.2">Section 3.1.2</a> of <a href="#STRUCTURED-FIELDS"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>]</dd><dt>Description:</dt><dd>[a description of the parameter's semantics]</dd><dt>Reference:</dt><dd>[to a specification defining this parameter, if available]</dd></dl></div><div id="rfc.section.4.p.7"><p>See the registry at &lt;<a href="https://www.iana.org/assignments/http-cache-status">https://www.iana.org/assignments/http-cache-status</a>&gt; for details on where to send registration requests.</p></div></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.5.p.1"><p>IANA has created the "HTTP Cache-Status" registry at &lt;<a href="https://www.iana.org/assignments/http-cache-status">https://www.iana.org/assignments/http-cache-status</a>&gt; and populated it with the types defined in <a href="#field" title="The Cache-Status HTTP Response Header Field">Section 2</a>; see <a href="#register" title="Defining New Cache-Status Parameters">Section 4</a> for its associated procedures.</p></div><div id="rfc.section.5.p.2" class="avoidbreakafter"><p>IANA has added the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined in <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-18.4">Section 18.4</a>:</p></div><div id="rfc.section.5.p.3"><dl class="compact"><dt>Field name:</dt><dd>Cache-Status</dd><dt>Status:</dt><dd>permanent</dd><dt>Reference:</dt><dd>RFC 9211</dd></dl></div></section><hr class="hidden-print"><section id="security"><h2 id="rfc.section.6" class="np"><a href="#rfc.section.6">6.</a>&nbsp;<a href="#security">Security Considerations</a></h2><div id="rfc.section.6.p.1"><p>Attackers can use the information in Cache-Status to probe the behavior of the cache (and other components) and infer the activity of those using the cache. The Cache-Status header field may not create these risks on its own, but it can assist attackers in exploiting them.</p></div><div id="rfc.section.6.p.2"><p>For example, knowing if a cache has stored a response can help an attacker execute a timing attack on sensitive data.</p></div><div id="rfc.section.6.p.3"><p>Additionally, exposing the cache key can help an attacker understand modifications to the cache key, which may assist cache poisoning attacks. See <a href="#ENTANGLE"><cite title="Web Cache Entanglement: Novel Pathways to Poisoning">[ENTANGLE]</cite></a> for details.</p></div><div id="rfc.section.6.p.4"><p>The underlying risks can be mitigated with a variety of techniques (e.g., using encryption and authentication and avoiding the inclusion of attacker-controlled data in the cache key), depending on their exact nature. Note that merely obfuscating the key does not mitigate this risk.</p></div><div id="rfc.section.6.p.5"><p>To avoid assisting such attacks, the Cache-Status header field can be omitted, only sent when the client is authorized to receive it, or sent with sensitive information (e.g., the key parameter) only when the client is authorized.</p></div></section><section class="np"><div id="rfc.references"><h2 id="rfc.section.7"><a href="#rfc.section.7">7.</a> References</h2><section><div id="rfc.references.2"><h3 id="rfc.section.7.1"><a href="#rfc.section.7.1">7.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="HTTP">[HTTP]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, STD 97, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="HTTP-CACHING">[HTTP-CACHING]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9111.html">HTTP Caching</a>”, STD 98, RFC 9111, <a href="https://dx.doi.org/10.17487/RFC9111">DOI 10.17487/RFC9111</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9111">https://www.rfc-editor.org/info/rfc9111</a>&gt;.</dd><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP 14, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8126">[RFC8126]</dt><dd>Cotton, M., Leiba, B., and T. Narten, “<a href="https://www.rfc-editor.org/rfc/rfc8126.html">Guidelines for Writing an IANA Considerations Section in RFCs</a>”, BCP 26, RFC 8126, <a href="https://dx.doi.org/10.17487/RFC8126">DOI 10.17487/RFC8126</a>, June 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8126">https://www.rfc-editor.org/info/rfc8126</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP 14, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="STRUCTURED-FIELDS">[STRUCTURED-FIELDS]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc8941.html">Structured Field Values for HTTP</a>”, RFC 8941, <a href="https://dx.doi.org/10.17487/RFC8941">DOI 10.17487/RFC8941</a>, February 2021, &lt;<a href="https://www.rfc-editor.org/info/rfc8941">https://www.rfc-editor.org/info/rfc8941</a>&gt;.</dd></dl></div></section><section><div id="rfc.references.3"><h3 id="rfc.section.7.2"><a href="#rfc.section.7.2">7.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="ENTANGLE">[ENTANGLE]</dt><dd>Kettle, J., “<a href="https://portswigger.net/research/web-cache-entanglement">Web Cache Entanglement: Novel Pathways to Poisoning</a>”, September 2020, &lt;<a href="https://portswigger.net/research/web-cache-entanglement">https://portswigger.net/research/web-cache-entanglement</a>&gt;.</dd></dl></div></section></div></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Author's Address</a></h2><address><b>Mark Nottingham</b><br>Fastly<br>Prahran<br>Australia<br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>

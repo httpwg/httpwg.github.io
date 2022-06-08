@@ -1,0 +1,315 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>RFC 9213 - Targeted HTTP Cache Control</title><script>
+function getMeta(rfcno, container) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.rfc-editor.org/rfc/rfc" + rfcno + ".json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        var c = data.status;
+        if (c) {
+          var bld = newElementWithText("b", c);
+          cont.appendChild(bld);
+        } else {
+          cont.appendChild(newElementWithText("i", "(document status unknown)"));
+        }
+
+        c = data.updated_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.obsoleted_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.errata_url;
+        if (c) {
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", c);
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+function appendRfcLinks(parent, updates) {
+  var template = "https://www.rfc-editor.org/rfc/rfc{rfc}.html";
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim().toLowerCase();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = parseInt(rfc.substring(3), 10);
+      
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+function getMeta(docname, revision, container) {
+  var xhr = new XMLHttpRequest();
+  var datatracker = "https://datatracker.ietf.org/doc/" + docname;
+  xhr.open("GET", datatracker + "/doc.json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        if (data.rev) {
+          cont.style.display = "block";
+          var bld = newElementWithText("b", "Internet Draft Status");
+          cont.appendChild(bld);
+          cont.appendChild(newElement("br"));
+          if (data.state == "RFC") {
+            var txt = newElementWithText("i", "This document has been published as RFC - please see ");
+            cont.appendChild(txt);
+            var link = newElement("a");
+            link.setAttribute("href", datatracker);
+            link.appendChild(newText("IETF Datatracker"));
+            cont.appendChild(link);
+            txt = newElementWithText("i", " for details.");
+            cont.appendChild(txt);
+          } else if (data.rev == revision) {
+            var rev = newElementWithText("i", "This is the latest submitted version.");
+            cont.appendChild(rev);
+          } else {
+            var rev = newElementWithText("i", "This is not the current version:");
+            cont.appendChild(rev);
+            cont.appendChild(newElement("br"));
+            var dat = "";
+            if (data.time) {
+              dat = ", submitted on " + data.time.substring(0,10);
+            }
+            rev = newElementWithText("i", "please see version " + data.rev + dat + ".");
+            cont.appendChild(rev);
+          }
+        }
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+</script><script>
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8).replace("-",".p.");
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9).replace("-",".p.");
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5).replace("-",".p.");
+          } else {
+            window.location.hash = prefix + "section." + postfix.replace("-",".p.");
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC9213"><meta property="og:description" content="Targeted HTTP Cache Control"><meta property="og:url" content="https://httpwg.org/specs/rfc9213.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/assets/favicon/apple-icon-180x180.png"><link rel="stylesheet" type="text/css" href="/assets/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #sidebar {
+        margin-top: -10px;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      .toc ul {
+        list-style: none;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Targeted Cache-Control Header Fields" href="#rfc.section.2"><link rel="Chapter" title="3 The CDN-Cache-Control Targeted Field" href="#rfc.section.3"><link rel="Chapter" title="4 IANA Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 Security Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 References" href="#rfc.section.6"><link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-targeted-cache-control-04" rel="prev"><link href="https://dx.doi.org/10.17487/rfc9213" rel="alternate"><link href="urn:issn:2070-1721" rel="alternate"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc9213.txt"><link rel="Help" title="RFC-Editor's Status Page" href="https://www.rfc-editor.org/info/rfc9213"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica http://www.saxonica.com/"><meta name="keywords" content="CDN, Content Delivery Network, Caching"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Ludin, S."><meta name="dcterms.creator" content="Nottingham, M."><meta name="dcterms.creator" content="Wu, Y."><meta name="dcterms.identifier" content="urn:ietf:rfc:9213"><meta name="dcterms.issued" content="2022-06"><meta name="dcterms.abstract" content="This specification defines a convention for HTTP response header fields that allow cache directives to be targeted at specific caches or classes of caches. It also defines one such header field, the CDN-Cache-Control response header field, which is targeted at content delivery network (CDN) caches."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification defines a convention for HTTP response header fields that allow cache directives to be targeted at specific caches or classes of caches. It also defines one such header field, the CDN-Cache-Control response header field, which is targeted at content delivery network (CDN) caches."></head><body onload="getMeta(9213,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark navbar-expand-lg fixed-top ps-3 pe-3" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" href="https://httpwg.org/"><img src="https://httpwg.org/assets/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+      
+    <div class="navbar-nav me-auto">
+
+      <a class="nav-item ms-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Work in Progress</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
+      </div>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Participate</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li><li class="divider"></li><li class="dropdown-item"><a href="https://httpwg.org/CONTRIBUTING.html">Contribution Policy</a></li><li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li><li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li><li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li><li class="dropdown-item"><a href="https://httpwg.org/admin/editors/">Document Editor Resources</a></li></ul>
+      </div>
+    </div>
+            
+    <div class="nav navbar-nav ms-auto">
+      <a class="navbar" href="https://twitter.com/http_wg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="twtr-icon  twtr-color-fill--blue-dark  has-hover"><path opacity="0" d="M0 0h24v24H0z"/><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/></svg>
+      </a>
+    </div>
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-lg-4 order-last d-none d-lg-block" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>9213</a></div><br clear="all"><div class=""><div class="toc "><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#targeted">Targeted Cache-Control Header Fields</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#syntax">Syntax</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#cache-behavior">Cache Behavior</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#interaction-with-http-freshness">Interaction with HTTP Freshness</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#defining-targeted-fields">Defining Targeted Fields</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#cdn-cache-control">The CDN-Cache-Control Targeted Field</a><ul><li><a href="#rfc.section.3.1">3.1.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a></li></ul></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div></div></div></div><div class="col-lg-8 order-first main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">S. Ludin</td></tr><tr><td class="text-left">Request for Comments: 9213</td><td class="text-right">Akamai</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">M. Nottingham</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right">Fastly</td></tr><tr><td class="text-left"></td><td class="text-right">Y. Wu</td></tr><tr><td class="text-left"></td><td class="text-right">Cloudflare</td></tr><tr><td class="text-left"></td><td class="text-right">June 2022</td></tr></tbody></table><div id="rfc.title"><h1>Targeted HTTP Cache Control</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>This specification defines a convention for HTTP response header fields that allow cache directives to be targeted at specific caches or classes of caches. It also defines one such header field, the CDN-Cache-Control response header field, which is targeted at content delivery network (CDN) caches.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of This Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This is an Internet Standards Track document.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in <a href="https://www.rfc-editor.org/rfc/rfc7841.html#section-2">Section 2 of RFC 7841</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="https://www.rfc-editor.org/info/rfc9213">https://www.rfc-editor.org/info/rfc9213</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright (c) 2022 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.</p></div></section><div class="toc d-lg-none"><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#notational-conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#targeted">Targeted Cache-Control Header Fields</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#syntax">Syntax</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#cache-behavior">Cache Behavior</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#interaction-with-http-freshness">Interaction with HTTP Freshness</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#defining-targeted-fields">Defining Targeted Fields</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#cdn-cache-control">The CDN-Cache-Control Targeted Field</a><ul><li><a href="#rfc.section.3.1">3.1.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a></li></ul></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#security-considerations">Security Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div><hr class="hidden-print"><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>Modern deployments of HTTP often use multiple layers of caching. For example, a website might use a cache on the origin server itself; it might deploy a caching layer in the same network as the origin server, it might use one or more CDNs that are distributed throughout the Internet, and it might benefit from browser caching as well.</p></div><div id="rfc.section.1.p.2"><p>Because it is often desirable to control these different classes of caches separately, some means of targeting cache directives at them is necessary. For example, if a publisher has a mechanism to invalidate the contents of a cache that it has a relationship with (such as a CDN cache), they might be more comfortable assigning a more generous caching policy to it while still wanting to restrict the behavior of other caches.</p></div><div id="rfc.section.1.p.3"><p>The HTTP Cache-Control response header field (defined in <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2">Section 5.2</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) is widely used to direct caching behavior. However, it is relatively undifferentiated; while some cache directives (e.g., s-maxage) are targeted at a specific class of caches (for s-maxage, shared caches), targeting is not consistently available across all existing cache directives (e.g., stale-while-revalidate). This is problematic especially as the number of caching extensions grows along with the number of potential targets.</p></div><div id="rfc.section.1.p.4"><p>Some implementations have defined ad hoc control mechanisms to overcome this issue, but their interoperability is low. <a href="#targeted" title="Targeted Cache-Control Header Fields">Section 2</a> defines a standard framework for targeted cache control using HTTP response headers, and <a href="#cdn-cache-control" title="The CDN-Cache-Control Targeted Field">Section 3</a> defines one such header: the CDN-Cache-Control response header field.</p></div><section id="notational-conventions"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#notational-conventions">Notational Conventions</a></h3><div id="rfc.section.1.1.p.1"><p>The key words "<em class="bcp14">MUST</em>", "<em class="bcp14">MUST NOT</em>", "<em class="bcp14">REQUIRED</em>", "<em class="bcp14">SHALL</em>", "<em class="bcp14">SHALL NOT</em>", "<em class="bcp14">SHOULD</em>", "<em class="bcp14">SHOULD NOT</em>", "<em class="bcp14">RECOMMENDED</em>", "<em class="bcp14">NOT RECOMMENDED</em>", "<em class="bcp14">MAY</em>", and "<em class="bcp14">OPTIONAL</em>" in this document are to be interpreted as described in BCP&nbsp;14 <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div></section></section><hr class="hidden-print"><section id="targeted"><h2 id="rfc.section.2" class="np"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#targeted">Targeted Cache-Control Header Fields</a></h2><div id="rfc.section.2.p.1"><p>A Targeted Cache-Control Header Field (hereafter "targeted field") is an HTTP response header field that has the same semantics as the Cache-Control response header field (<a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2">Section 5.2</a>). However, it has a distinct field name that indicates the target for its cache directives.</p></div><div id="rfc.section.2.p.2" class="avoidbreakafter"><p>For example:</p></div><div id="rfc.section.2.p.3"><pre class="text">
+CDN-Cache-Control: max-age=60
+</pre></div><div id="rfc.section.2.p.4"><p>is a targeted field that applies to CDNs, as defined in <a href="#cdn-cache-control" title="The CDN-Cache-Control Targeted Field">Section 3</a>.</p></div><section id="syntax"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a>&nbsp;<a href="#syntax">Syntax</a></h3><div id="rfc.section.2.1.p.1"><p>Targeted fields are Dictionary Structured Fields (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.2">Section 3.2</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>). Each member of the Dictionary is an HTTP cache response directive (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.2">Section 5.2.2</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) including extension response directives (as per <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.3">Section 5.2.3</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>). Note that while targeted fields often have the same syntax as Cache-Control fields, differences in error handling mean that using a Cache-Control parser rather than a Structured Fields parser can introduce interoperability issues.</p></div><div id="rfc.section.2.1.p.2"><p>Because cache directives are not defined in terms of structured data types, it is necessary to map their values into the appropriate types. <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2">Section 5.2</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a> defines cache directive values to be either absent, a quoted-string, or a token.</p></div><div id="rfc.section.2.1.p.3"><p>This means that cache directives that have no value will be mapped to a Boolean (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.3.6">Section 3.3.6</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>). When the value is a quoted-string, it will be mapped to a String (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.3.3">Section 3.3.3</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>), and when it is a token, it will map to a Token (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.3.4">Section 3.3.4</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>), an Integer (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.3.1">Section 3.3.1</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>), or a Decimal (<a href="https://www.rfc-editor.org/rfc/rfc8941.html#section-3.3.2">Section 3.3.2</a> of <a href="#RFC8941"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>), depending on the content of the value.</p></div><div id="rfc.section.2.1.p.4"><p>For example, the max-age directive (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.2.1">Section 5.2.2.1</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) has an integer value; no-store (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.2.5">Section 5.2.2.5</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) always has a Boolean true value, and no-cache (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.2.4">Section 5.2.2.4</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) has a value that can be either Boolean true or a string containing a comma-delimited list of field names.</p></div><div id="rfc.section.2.1.p.5"><p>Implementations <em class="bcp14">MUST NOT</em> generate values that violate these inferred constraints on the cache directive's value. In particular, string values whose first character is not alphabetic or "*" <em class="bcp14">MUST</em> be generated as Strings so that they are not mistaken for other types.</p></div><div id="rfc.section.2.1.p.6"><p>Implementations <em class="bcp14">SHOULD NOT</em> consume values that violate these inferred constraints. For example, a consuming implementation that coerces a max-age with a decimal value into an integer would behave differently than other implementations, potentially causing interoperability issues.</p></div><div id="rfc.section.2.1.p.7"><p>Parameters received on cache directives are to be ignored, unless other handling is explicitly specified.</p></div><div id="rfc.section.2.1.p.8"><p>If a targeted field in a given response is empty, or a parsing error is encountered, that field <em class="bcp14">MUST</em> be ignored by the cache (i.e., it behaves as if the field were not present, likely falling back to other cache-control mechanisms present).</p></div></section><section id="cache-behavior"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a>&nbsp;<a href="#cache-behavior">Cache Behavior</a></h3><div id="rfc.section.2.2.p.1"><p>A cache that implements this specification maintains a target list. A target list is an ordered list of the targeted field names that it uses for caching policy, with the order reflecting priority from most applicable to least. The target list might be fixed, user configurable, or generated per request, depending upon the implementation.</p></div><div id="rfc.section.2.2.p.2" class="avoidbreakafter"><p>For example, a CDN cache might support both CDN-Cache-Control and a header specific to that CDN, ExampleCDN-Cache-Control, with the latter overriding the former. Its target list would be:</p></div><div id="rfc.section.2.2.p.3"><pre>
+  [ExampleCDN-Cache-Control, CDN-Cache-Control]
+  </pre></div><div id="rfc.section.2.2.p.4"><p>When a cache that implements this specification receives a response with one or more of the header field names on its target list, the cache <em class="bcp14">MUST</em> select the first (in target-list order) field with a valid, non-empty value and use its value to determine the caching policy for the response, and it <em class="bcp14">MUST</em> ignore the Cache-Control and Expires header fields in that response, unless no valid, non-empty value is available from the listed header fields.</p></div><div id="rfc.section.2.2.p.5"><p>Note that this occurs on a response-by-response basis; if no member of the cache's target list is present, valid, and non-empty, a cache falls back to other cache control mechanisms as required by HTTP <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>.</p></div><div id="rfc.section.2.2.p.6"><p>Targeted fields that are not on a cache's target list <em class="bcp14">MUST NOT</em> change that cache's behavior and <em class="bcp14">MUST</em> be passed through.</p></div><div id="rfc.section.2.2.p.7" class="avoidbreakafter"><p>Caches that use a targeted field <em class="bcp14">MUST</em> implement the semantics of the following cache directives:</p></div><div id="rfc.section.2.2.p.8"><ul><li>max-age</li><li>must-revalidate</li><li>no-store</li><li>no-cache</li><li>private</li></ul></div><div id="rfc.section.2.2.p.9"><p>Furthermore, they <em class="bcp14">SHOULD</em> implement other cache directives (including extension cache directives) that they support in the Cache-Control response header field.</p></div><div id="rfc.section.2.2.p.10"><p>The semantics and precedence of cache directives in a targeted field are the same as those in Cache-Control. In particular, no-store and no-cache make max-age inoperative, and unrecognized extension directives are ignored.</p></div></section><section id="interaction-with-http-freshness"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3.</a>&nbsp;<a href="#interaction-with-http-freshness">Interaction with HTTP Freshness</a></h3><div id="rfc.section.2.3.p.1"><p>HTTP caching has a single, end-to-end freshness model defined in <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2">Section 4.2</a> of <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>. When additional freshness mechanisms are only available to some caches along a request path (for example, using targeted fields), their interactions need to be carefully considered. In particular, a targeted cache might have longer freshness lifetimes available to it than other caches, causing it to serve responses that appear to be prematurely (or even immediately) stale to those other caches, negatively impacting cache efficiency.</p></div><div id="rfc.section.2.3.p.2" class="avoidbreakafter"><p>For example, a response stored by a CDN cache might be served with the following headers:</p></div><div id="rfc.section.2.3.p.3"><pre class="text">
+Age: 1800
+Cache-Control: max-age=600
+CDN-Cache-Control: max-age=3600
+</pre></div><div id="rfc.section.2.3.p.4"><p>From the CDN's perspective, this response is still fresh after being cached for 30 minutes, while from the standpoint of other caches, this response is already stale. See <a href="#AGE-PENALTY"><cite title="The age penalty and its effect on cache performance">[AGE-PENALTY]</cite></a> for more discussion.</p></div><div id="rfc.section.2.3.p.5" class="avoidbreakafter"><p>When the targeted cache has a strong coherence mechanism (e.g., the origin server has the ability to proactively invalidate cached responses), it is often desirable to mitigate these effects. Some techniques seen in deployments include:</p></div><div id="rfc.section.2.3.p.6"><ul><li>Removing the Age header field</li><li>Updating the Date header field value to the current time</li><li>Updating the Expires header field value to the current time, plus any Cache-Control: max-age value</li></ul></div><div id="rfc.section.2.3.p.7"><p>This specification does not place any specific requirements on implementations to mitigate these effects, but definitions of targeted fields can do so.</p></div></section><section id="defining-targeted-fields"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a>&nbsp;<a href="#defining-targeted-fields">Defining Targeted Fields</a></h3><div id="rfc.section.2.4.p.1"><p>A targeted field for a particular class of cache can be defined by requesting registration in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" (&lt;<a href="https://www.iana.org/assignments/http-fields/">https://www.iana.org/assignments/http-fields/</a>&gt;).</p></div><div id="rfc.section.2.4.p.2"><p>Registration requests can use this document as the specification document; in which case, the Comments field should clearly define the class of caches that the targeted field applies to. Alternatively, if other documentation for the field has been created, it can be used as the specification document.</p></div><div id="rfc.section.2.4.p.3"><p>By convention, targeted fields have the suffix "-Cache-Control", e.g., "ExampleCDN-Cache-Control". However, this suffix <em class="bcp14">MUST NOT</em> be used on its own to identify targeted fields; it is only a convention.</p></div></section></section><hr class="hidden-print"><section id="cdn-cache-control"><h2 id="rfc.section.3" class="np"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#cdn-cache-control">The CDN-Cache-Control Targeted Field</a></h2><div id="rfc.section.3.p.1"><p>The CDN-Cache-Control response header field is a targeted field (<a href="#targeted" title="Targeted Cache-Control Header Fields">Section 2</a>) that allows origin servers to control the behavior of CDN caches interposed between them and clients separately from other caches that might handle the response.</p></div><div id="rfc.section.3.p.2"><p>It applies to caches that are part of a distributed network that operate on behalf of an origin server (commonly called a CDN).</p></div><div id="rfc.section.3.p.3"><p>CDN caches that use CDN-Cache-Control will typically forward this header so that downstream CDN caches can use it as well. However, they <em class="bcp14">MAY</em> remove it when this is undesirable (for example, when configured to do so because it is known not to be used downstream).</p></div><section id="examples"><h3 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a>&nbsp;<a href="#examples">Examples</a></h3><div id="rfc.section.3.1.p.1" class="avoidbreakafter"><p>For example, the following header fields would instruct a CDN cache (i.e., a cache with a target list of <span class="tt">[CDN-Cache-Control]</span>) to consider the response fresh for 600 seconds, other shared caches to consider the response fresh for 120 seconds, and any remaining caches to consider the response fresh for 60 seconds:</p></div><div id="rfc.section.3.1.p.2"><pre class="text">
+Cache-Control: max-age=60, s-maxage=120
+CDN-Cache-Control: max-age=600
+</pre></div><div id="rfc.section.3.1.p.3" class="avoidbreakafter"><p>These header fields would instruct a CDN cache to consider the response fresh for 600 seconds, while all other caches would be prevented from storing it:</p></div><div id="rfc.section.3.1.p.4"><pre class="text">
+CDN-Cache-Control: max-age=600
+Cache-Control: no-store
+</pre></div><div id="rfc.section.3.1.p.5" class="avoidbreakafter"><p>Because CDN-Cache-Control is not present, this header field would prevent all caches from storing the response:</p></div><div id="rfc.section.3.1.p.6"><pre class="text">
+Cache-Control: no-store
+</pre></div><div id="rfc.section.3.1.p.7" class="avoidbreakafter"><p>Whereas these would prevent all caches except for CDN caches from storing the response:</p></div><div id="rfc.section.3.1.p.8"><pre class="text">
+Cache-Control: no-store
+CDN-Cache-Control: none
+</pre></div><div id="rfc.section.3.1.p.9"><p>(Note that 'none' is not a registered cache directive; it is here to avoid sending a header field with an empty value, which would be ignored.)</p></div></section></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.4.p.1" class="avoidbreakafter"><p>IANA has registered the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined by <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a>:</p></div><div id="rfc.section.4.p.2"><dl class="compact"><dt>Field Name:</dt><dd>CDN-Cache-Control</dd><dt>Status:</dt><dd>permanent</dd><dt>Specification Document:</dt><dd>RFC 9213</dd><dt>Comments:</dt><dd>Cache directives targeted at content delivery networks</dd></dl></div></section><hr class="hidden-print"><section id="security-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.5.p.1"><p>The security considerations of HTTP caching <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a> apply.</p></div><div id="rfc.section.5.p.2"><p>The ability to carry multiple caching policies on a response can result in confusion about how a response will be cached in different systems, potentially resulting in unintentional reuse of responses with sensitive information. For this reason, care must be exercised.</p></div></section><section class="np"><div id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section><div id="rfc.references.2"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="HTTP">[HTTP]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, STD 97, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="HTTP-CACHING">[HTTP-CACHING]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9111.html">HTTP Caching</a>”, STD 98, RFC 9111, <a href="https://dx.doi.org/10.17487/RFC9111">DOI 10.17487/RFC9111</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9111">https://www.rfc-editor.org/info/rfc9111</a>&gt;.</dd><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP 14, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP 14, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="RFC8941">[STRUCTURED-FIELDS]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc8941.html">Structured Field Values for HTTP</a>”, RFC 8941, <a href="https://dx.doi.org/10.17487/RFC8941">DOI 10.17487/RFC8941</a>, February 2021, &lt;<a href="https://www.rfc-editor.org/info/rfc8941">https://www.rfc-editor.org/info/rfc8941</a>&gt;.</dd></dl></div></section><section><div id="rfc.references.3"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="AGE-PENALTY">[AGE-PENALTY]</dt><dd>Cohen, E. and H. Kaplan, “<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">The age penalty and its effect on cache performance</a>”, March 2001, &lt;<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">https://dl.acm.org/doi/10.5555/1251440.1251447</a>&gt;.</dd></dl></div></section></div></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Stephen Ludin</b><br>Akamai<br>EMail: <a href="mailto:sludin@ludin.org">sludin@ludin.org</a></address><address><b>Mark Nottingham</b><br>Fastly<br>Prahran<br>Australia<br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address><address><b>Yuchen Wu</b><br>Cloudflare<br>EMail: <a href="mailto:me@yuchenwu.net">me@yuchenwu.net</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
