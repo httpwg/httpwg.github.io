@@ -22,3 +22,7 @@ clean:
 
 %.html: %.xml $(stylesheet) lib/rfc2629.xslt
 	$(saxon) $< $(stylesheet) $(saxparam) pageUrl='https://httpwg.org/specs/$@' > $@
+
+%.xml:
+	wget https://rfc-editor.org/rfc/$@
+	xml2rfc --unprep -o $@ $@
