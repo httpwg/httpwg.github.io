@@ -4,7 +4,7 @@
 The "core" semantics of the HTTP protocol are defined by:
 
  * RFC9110: [HTTP Semantics](/specs/rfc9110.html)
- * RFC9112: [HTTP Caching](/specs/rfc9112.html)
+ * RFC9111: [HTTP Caching](/specs/rfc9111.html)
 
 Those semantics are expressed "on the wire" in three ways:
 
