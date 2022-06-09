@@ -1,9 +1,10 @@
 
 ## Core Specifications
 
-The "core" semantics of the HTTP protocol are defined by this specification:
+The "core" semantics of the HTTP protocol are defined by:
 
  * RFC9110: [HTTP Semantics](/specs/rfc9110.html)
+ * RFC9112: [HTTP Caching](/specs/rfc9112.html)
 
 Those semantics are expressed "on the wire" in three ways:
 
@@ -21,3 +22,7 @@ These RFCs collectively obsolete all preceding RFCs defining HTTP, including **R
 Also relevant is the Structured Field Values specification, which is used in a growing number of headers and trailers:
 
  * RFC8941: [Structured Field Values for HTTP](/specs/rfc8941.html)
+ 
+Protocols built "on top" of HTTP should follow Best Current Practice, as documented here:
+
+ * RFC9205: [Building Protocols with HTTP](/specs/rfc9205.html)

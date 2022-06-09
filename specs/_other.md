@@ -15,27 +15,30 @@ list of HTTP extensions, see the relevant registry.
 * RFC7725: [Status Code 451](/specs/rfc7725.html) (Unavailable For Legal Reasons)
 * RFC8297: [Status Code 103](/specs/rfc8297.html) (Early Hints)
 
-### Caching
+### Caching Extensions
 
-* RFC9112: [HTTP Caching](/specs/rfc9112.html)
 * RFC5861: [Cache-Control: stale-while-revalidate and stale-if-error](/specs/rfc5861.html)
 * RFC8246: [Cache-Control: immutable](/specs/rfc8246.html)
+* RFC9211: [Cache-Status Header Field](/specs/rfc9211.html)
+* RFC9213: [Targeted Cache Control Fields](/specs/rfc9213.html)
 
 ### Content-Related Extensions
 
 * RFC6265: [Cookies](/specs/rfc6265.html)
 * RFC6266: [Content-Disposition](/specs/rfc6266.html)
 * RFC7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
-* RFC8144: [Prefer Header](/specs/rfc7240.html)
+* RFC8144: [Prefer Header Field](/specs/rfc7240.html)
 * RFC8288: [Web Linking](/specs/rfc8288.html) - *link relations*
 
-### Connection Extensions
+### Connection and Intermediary Extensions
 
 * RFC7639: [ALPN Header Field](/specs/rfc7639.html)
 * RFC7838: [Alternative Services](/specs/rfc7838.html)
 * RFC8336: [ORIGIN HTTP/2 Frame](/specs/rfc8336.html)
 * RFC8441: [Bootstrapping WebSockets with HTTP/2](/specs/rfc8441.html)
+* RFC9209: [Proxy-Status Field](/specs/rfc9209.html)
 * RFC9218: [Extensible Prioritization Scheme for HTTP](/specs/rfc9218.html)
+* RFC9220: [Bootstrapping WebSockets with HTTP/3](/specs/rfc9220.html)
 
 ### Security-Related Extensions
 
