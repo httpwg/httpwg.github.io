@@ -78,60 +78,6 @@ function appendRfcLinks(parent, updates) {
     }
   }
 }
-function getMeta(docname, revision, container) {
-  var xhr = new XMLHttpRequest();
-  var datatracker = "https://datatracker.ietf.org/doc/" + docname;
-  xhr.open("GET", datatracker + "/doc.json", true);
-  xhr.onload = function (e) {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        var data = JSON.parse(xhr.response);
-        
-        var cont = document.getElementById(container);
-        // empty the container
-        while (cont.firstChild) {
-          cont.removeChild(myNode.firstChild);
-        }
-
-        if (data.rev) {
-          cont.style.display = "block";
-          var bld = newElementWithText("b", "Internet Draft Status");
-          cont.appendChild(bld);
-          cont.appendChild(newElement("br"));
-          if (data.state == "RFC") {
-            var txt = newElementWithText("i", "This document has been published as RFC - please see ");
-            cont.appendChild(txt);
-            var link = newElement("a");
-            link.setAttribute("href", datatracker);
-            link.appendChild(newText("IETF Datatracker"));
-            cont.appendChild(link);
-            txt = newElementWithText("i", " for details.");
-            cont.appendChild(txt);
-          } else if (data.rev == revision) {
-            var rev = newElementWithText("i", "This is the latest submitted version.");
-            cont.appendChild(rev);
-          } else {
-            var rev = newElementWithText("i", "This is not the current version:");
-            cont.appendChild(rev);
-            cont.appendChild(newElement("br"));
-            var dat = "";
-            if (data.time) {
-              dat = ", submitted on " + data.time.substring(0,10);
-            }
-            rev = newElementWithText("i", "please see version " + data.rev + dat + ".");
-            cont.appendChild(rev);
-          }
-        }
-      } else {
-        console.error(xhr.statusText);
-      }
-    }
-  };
-  xhr.onerror = function (e) {
-    console.error(xhr.status + " " + xhr.statusText);
-  };
-  xhr.send(null);
-}
 
 // DOM helpers
 function newElement(name) {
@@ -312,4 +258,4 @@ Cache-Control: no-store
 </pre></div><div id="rfc.section.3.1.p.7" class="avoidbreakafter"><p>Whereas these would prevent all caches except for CDN caches from storing the response:</p></div><div id="rfc.section.3.1.p.8"><pre class="text">
 Cache-Control: no-store
 CDN-Cache-Control: none
-</pre></div><div id="rfc.section.3.1.p.9"><p>(Note that 'none' is not a registered cache directive; it is here to avoid sending a header field with an empty value, which would be ignored.)</p></div></section></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.4.p.1" class="avoidbreakafter"><p>IANA has registered the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined by <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a>:</p></div><div id="rfc.section.4.p.2"><dl class="compact"><dt>Field Name:</dt><dd>CDN-Cache-Control</dd><dt>Status:</dt><dd>permanent</dd><dt>Specification Document:</dt><dd>RFC 9213</dd><dt>Comments:</dt><dd>Cache directives targeted at content delivery networks</dd></dl></div></section><hr class="hidden-print"><section id="security-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.5.p.1"><p>The security considerations of HTTP caching <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a> apply.</p></div><div id="rfc.section.5.p.2"><p>The ability to carry multiple caching policies on a response can result in confusion about how a response will be cached in different systems, potentially resulting in unintentional reuse of responses with sensitive information. For this reason, care must be exercised.</p></div></section><section class="np"><div id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section><div id="rfc.references.2"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="HTTP">[HTTP]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, STD 97, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="HTTP-CACHING">[HTTP-CACHING]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9111.html">HTTP Caching</a>”, STD 98, RFC 9111, <a href="https://dx.doi.org/10.17487/RFC9111">DOI 10.17487/RFC9111</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9111">https://www.rfc-editor.org/info/rfc9111</a>&gt;.</dd><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP 14, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP 14, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="RFC8941">[STRUCTURED-FIELDS]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc8941.html">Structured Field Values for HTTP</a>”, RFC 8941, <a href="https://dx.doi.org/10.17487/RFC8941">DOI 10.17487/RFC8941</a>, February 2021, &lt;<a href="https://www.rfc-editor.org/info/rfc8941">https://www.rfc-editor.org/info/rfc8941</a>&gt;.</dd></dl></div></section><section><div id="rfc.references.3"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="AGE-PENALTY">[AGE-PENALTY]</dt><dd>Cohen, E. and H. Kaplan, “<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">The age penalty and its effect on cache performance</a>”, March 2001, &lt;<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">https://dl.acm.org/doi/10.5555/1251440.1251447</a>&gt;.</dd></dl></div></section></div></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Stephen Ludin</b><br>Akamai<br>EMail: <a href="mailto:sludin@ludin.org">sludin@ludin.org</a></address><address><b>Mark Nottingham</b><br>Fastly<br>Prahran<br>Australia<br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address><address><b>Yuchen Wu</b><br>Cloudflare<br>EMail: <a href="mailto:me@yuchenwu.net">me@yuchenwu.net</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
+</pre></div><div id="rfc.section.3.1.p.9"><p>(Note that 'none' is not a registered cache directive; it is here to avoid sending a header field with an empty value, which would be ignored.)</p></div></section></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.4.p.1" class="avoidbreakafter"><p>IANA has registered the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined by <a href="#HTTP"><cite title="HTTP Semantics">[HTTP]</cite></a>:</p></div><div id="rfc.section.4.p.2"><dl class="compact"><dt>Field Name:</dt><dd>CDN-Cache-Control</dd><dt>Status:</dt><dd>permanent</dd><dt>Specification Document:</dt><dd>RFC 9213</dd><dt>Comments:</dt><dd>Cache directives targeted at content delivery networks</dd></dl></div></section><hr class="hidden-print"><section id="security-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#security-considerations">Security Considerations</a></h2><div id="rfc.section.5.p.1"><p>The security considerations of HTTP caching <a href="#HTTP-CACHING"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a> apply.</p></div><div id="rfc.section.5.p.2"><p>The ability to carry multiple caching policies on a response can result in confusion about how a response will be cached in different systems, potentially resulting in unintentional reuse of responses with sensitive information. For this reason, care must be exercised.</p></div></section><section class="np"><div id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section><div id="rfc.references.2"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="HTTP">[HTTP]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, <a href="https://www.rfc-editor.org/info/std97">STD 97</a>, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="HTTP-CACHING">[HTTP-CACHING]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9111.html">HTTP Caching</a>”, <a href="https://www.rfc-editor.org/info/std98">STD 98</a>, RFC 9111, <a href="https://dx.doi.org/10.17487/RFC9111">DOI 10.17487/RFC9111</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9111">https://www.rfc-editor.org/info/rfc9111</a>&gt;.</dd><dt id="RFC2119">[RFC2119]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, BCP 14, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[RFC8174]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, BCP 14, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="RFC8941">[STRUCTURED-FIELDS]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc8941.html">Structured Field Values for HTTP</a>”, RFC 8941, <a href="https://dx.doi.org/10.17487/RFC8941">DOI 10.17487/RFC8941</a>, February 2021, &lt;<a href="https://www.rfc-editor.org/info/rfc8941">https://www.rfc-editor.org/info/rfc8941</a>&gt;.</dd></dl></div></section><section><div id="rfc.references.3"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="AGE-PENALTY">[AGE-PENALTY]</dt><dd>Cohen, E. and H. Kaplan, “<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">The age penalty and its effect on cache performance</a>”, March 2001, &lt;<a href="https://dl.acm.org/doi/10.5555/1251440.1251447">https://dl.acm.org/doi/10.5555/1251440.1251447</a>&gt;.</dd></dl></div></section></div></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Stephen Ludin</b><br>Akamai<br>EMail: <a href="mailto:sludin@ludin.org">sludin@ludin.org</a></address><address><b>Mark Nottingham</b><br>Fastly<br>Prahran<br>Australia<br>EMail: <a href="mailto:mnot@mnot.net">mnot@mnot.net</a><br>URI: <a href="https://www.mnot.net/">https://www.mnot.net/</a></address><address><b>Yuchen Wu</b><br>Cloudflare<br>EMail: <a href="mailto:me@yuchenwu.net">me@yuchenwu.net</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
