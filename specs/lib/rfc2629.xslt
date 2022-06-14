@@ -635,6 +635,9 @@
   <xsl:for-each select="//reference[x:source/@href and not(seriesInfo)]">
     <xsl:copy>
       <xsl:variable name="f" select="document(x:source/@href)"/>
+      <xsl:if test="$f/rfc/@seriesNo and $f/rfc/@category='std'" myns:namespaceless-elements="xml2rfc">
+        <seriesInfo name="STD" value="{$f/rfc/@seriesNo}"/>
+      </xsl:if>
       <xsl:if test="$f/rfc/@number" myns:namespaceless-elements="xml2rfc">
         <seriesInfo name="RFC" value="{$f/rfc/@number}"/>
       </xsl:if>
@@ -1067,6 +1070,23 @@
     <xsl:with-param name="string" select="$xml2rfc-ext-rfc-uri"/>
     <xsl:with-param name="replace" select="'{rfc}'"/>
     <xsl:with-param name="by" select="$rfc"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:param name="xml2rfc-ext-std-uri">
+  <xsl:call-template name="parse-pis">
+    <xsl:with-param name="nodes" select="/processing-instruction('rfc-ext')"/>
+    <xsl:with-param name="attr" select="'rfc-uri'"/>
+    <xsl:with-param name="default">https://www.rfc-editor.org/info/std{std}</xsl:with-param>
+  </xsl:call-template>
+</xsl:param>
+
+<xsl:template name="compute-std-uri">
+  <xsl:param name="std"/>
+  <xsl:call-template name="replace-substring">
+    <xsl:with-param name="string" select="$xml2rfc-ext-std-uri"/>
+    <xsl:with-param name="replace" select="'{std}'"/>
+    <xsl:with-param name="by" select="$std"/>
   </xsl:call-template>
 </xsl:template>
 
@@ -4038,6 +4058,21 @@
         </xsl:with-param>
       </xsl:call-template>
     </xsl:when>
+    <xsl:when test="@name='STD'">
+      <xsl:variable name="uri">
+        <xsl:call-template name="compute-std-uri">
+          <xsl:with-param name="std" select="@value"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:text>, </xsl:text>
+      <xsl:call-template name="emit-link">
+        <xsl:with-param name="target" select="$uri"/>
+        <xsl:with-param name="text">
+          <xsl:value-of select="@name" />
+          <xsl:if test="@value!=''"><xsl:text> </xsl:text><xsl:value-of select="@value" /></xsl:if>
+        </xsl:with-param>
+      </xsl:call-template>
+    </xsl:when>
     <xsl:when test="@name='DOI'">
       <xsl:choose>
         <xsl:when test="starts-with(@value,'10.17487/RFC') and $xml2rfc-ext-insert-doi='no'">
@@ -4348,11 +4383,15 @@
     <!-- fall back to x:source when needed -->
     <xsl:if test="not($si) and x:source/@href">
       <xsl:variable name="derivedsi" myns:namespaceless-elements="xml2rfc">
-        <xsl:if test="document(x:source/@href)/rfc/@docName">
-          <seriesInfo name="Internet-Draft" value="{document(x:source/@href)/rfc/@docName}"/>
+        <xsl:variable name="r" select="document(x:source/@href)/rfc"/>
+        <xsl:if test="$r/@seriesNo and $r/@category='std'">
+          <seriesInfo name="STD" value="{$r/@seriesNo}"/>
         </xsl:if>
-        <xsl:if test="document(x:source/@href)/rfc/@number">
-          <seriesInfo name="RFC" value="{document(x:source/@href)/rfc/@number}"/>
+        <xsl:if test="$r/@docName">
+          <seriesInfo name="Internet-Draft" value="{$r/@docName}"/>
+        </xsl:if>
+        <xsl:if test="$r/@number">
+          <seriesInfo name="RFC" value="{$r/@number}"/>
         </xsl:if>
       </xsl:variable>
       <xsl:variable name="tsi" select="exslt:node-set($derivedsi)/seriesInfo"/>
@@ -5002,9 +5041,12 @@
   <body>
     <!-- insert onload scripts, when required -->
     <xsl:variable name="onload">
-      <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and $is-rfc">getMeta("<xsl:value-of select="$rfcno"/>","rfc.meta");</xsl:if>
-      <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and not($is-rfc) and /rfc/@docName">
-        <xsl:if test="$is-submitted-draft">getMeta("<xsl:value-of select="$draft-basename"/>","<xsl:value-of select="$draft-seq"/>","rfc.meta");</xsl:if>
+      <xsl:if test="$xml2rfc-ext-insert-metadata='yes'">
+        <xsl:choose>
+          <xsl:when test="$is-rfc">getMeta("<xsl:value-of select="$rfcno"/>","rfc.meta");</xsl:when>
+          <xsl:when test="/rfc/@docName and $is-submitted-draft">getMeta("<xsl:value-of select="$draft-basename"/>","<xsl:value-of select="$draft-seq"/>","rfc.meta");</xsl:when>
+          <xsl:otherwise/>
+        </xsl:choose>
       </xsl:if>
       <xsl:if test="/rfc/x:feedback">initFeedback();</xsl:if>
       <xsl:if test="$xml2rfc-ext-refresh-from!=''">RfcRefresh.initRefresh()</xsl:if>
@@ -5226,10 +5268,15 @@
 <!-- irefs that are section-level thus can use the section anchor -->
 <xsl:variable name="section-level-irefs" select="//section/iref[count(preceding-sibling::*[not(self::iref) and not(self::x:anchor-alias) and not(self::name)])=0]"/>
 
-<!-- suppress xml2rfc preptool artefacts -->
-<xsl:template match="back/section[author]">
+<!-- suppress xml2rfc preptool artefacts; see https://github.com/ietf-tools/xml2rfc/issues/791 -->
+<xsl:template match="back[ancestor::*/@prepTime]/section[author]">
   <xsl:call-template name="warning">
     <xsl:with-param name="msg">Ignoring appendix containing &lt;author&gt; elements (likely added by preptool step).</xsl:with-param>
+  </xsl:call-template>
+</xsl:template>
+<xsl:template match="back[ancestor::*/@prepTime]/section[@numbered='false' and name/@slugifiedName='name-index']">
+  <xsl:call-template name="warning">
+    <xsl:with-param name="msg">Ignoring appendix containing index (likely added by preptool step).</xsl:with-param>
   </xsl:call-template>
 </xsl:template>
 
@@ -7752,7 +7799,7 @@ function toggleButton(node) {
   }
 }</script></xsl:if>
 <xsl:if test="$xml2rfc-ext-insert-metadata='yes' and ($is-rfc or $is-submitted-draft)"><script>
-<xsl:if test="$rfcno!=''">
+<xsl:if test="$is-rfc">
 function getMeta(rfcno, container) {
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "https://www.rfc-editor.org/rfc/rfc" + rfcno + ".json", true);
@@ -7833,7 +7880,7 @@ function appendRfcLinks(parent, updates) {
       parent.appendChild(newText(", "));
     }
   }
-}</xsl:if><xsl:if test="$is-submitted-draft">
+}</xsl:if><xsl:if test="$is-submitted-draft and not($is-rfc)">
 function getMeta(docname, revision, container) {
   var xhr = new XMLHttpRequest();
   var datatracker = "https://datatracker.ietf.org/doc/" + docname;
@@ -9972,8 +10019,9 @@ dd, li, p {
   </li>
 </xsl:template>
 
-<!-- suppress xml2rfc preptool artefacts -->
-<xsl:template match="section[author]" mode="toc"/>
+<!-- suppress xml2rfc preptool artefacts: see https://github.com/ietf-tools/xml2rfc/issues/791 -->
+<xsl:template match="section[ancestor::*/@prepTime][author]" mode="toc"/>
+<xsl:template match="back[ancestor::*/@prepTime]/section[@numbered='false' and name/@slugifiedName='name-index']" mode="toc"/>
 
 <xsl:template match="section|appendix" mode="toc">
   <xsl:variable name="sectionNumber">
@@ -11130,7 +11178,7 @@ dd, li, p {
   </xsl:if>
 
   <!-- check IDs -->
-  <xsl:variable name="badTargets" select="//xref[not(ancestor::toc)][not(@target=//@anchor) and not(@target=exslt:node-set($includeDirectives)//@anchor) and not(ancestor::ed:del)]" />
+  <xsl:variable name="badTargets" select="//xref[not(ancestor::toc)][not(@target=//@anchor) and not(@target=//@pn) and not(@target=exslt:node-set($includeDirectives)//@anchor) and not(ancestor::ed:del)]" />
   <xsl:if test="$badTargets">
     <xsl:variable name="text">
       <xsl:text>The following target names do not exist: </xsl:text>
@@ -11821,7 +11869,7 @@ dd, li, p {
   <xsl:apply-templates mode="links" />
 </xsl:template>
 
-<xsl:template match="/*/back//section[not(ancestor::section)]" mode="links">
+<xsl:template match="/*/back//section[not(ancestor::section)][not(author)][not(@numbered='false' and name/@slugifiedName='name-index')]" mode="links">
   <xsl:variable name="sectionNumber"><xsl:call-template name="get-section-number" /></xsl:variable>
   <xsl:variable name="title">
     <xsl:if test="$sectionNumber!='' and not(contains($sectionNumber,$unnumbered))">
@@ -11928,11 +11976,11 @@ dd, li, p {
   <xsl:variable name="gen">
     <xsl:text>http://greenbytes.de/tech/webdav/rfcxml.xslt, </xsl:text>
     <!-- when RCS keyword substitution in place, add version info -->
-    <xsl:if test="contains('$Revision: 1.1456 $',':')">
-      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1456 $', 'Revision: '),'$','')),', ')" />
+    <xsl:if test="contains('$Revision: 1.1467 $',':')">
+      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1467 $', 'Revision: '),'$','')),', ')" />
     </xsl:if>
-    <xsl:if test="contains('$Date: 2022/06/03 05:02:23 $',':')">
-      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2022/06/03 05:02:23 $', 'Date: '),'$','')),', ')" />
+    <xsl:if test="contains('$Date: 2022/06/09 13:05:53 $',':')">
+      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2022/06/09 13:05:53 $', 'Date: '),'$','')),', ')" />
     </xsl:if>
     <xsl:variable name="product" select="normalize-space(concat(system-property('xsl:product-name'),' ',system-property('xsl:product-version')))"/>
     <xsl:if test="$product!=''">
