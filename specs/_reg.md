@@ -7,6 +7,7 @@ There are a large number of HTTP extensions, including methods, status codes and
 * [HTTP Status Code Registry](http://www.iana.org/assignments/http-status-codes/) - _[more info](/specs/rfc9110.html#status.code.registry)_
 * [HTTP Field Name Registry](https://www.iana.org/assignments/http-fields/) - _[more info](/specs/rfc9110.html#fields.registry)_
 * [HTTP/2 Parameters](http://www.iana.org/assignments/http2-parameters/http2-parameters.xhtml) - *Frame types, settings, error codes*
+* [HTTP/3 Parameters](http://www.iana.org/assignments/http3-parameters/http3-parameters.xhtml) - *Frame types, settings, error codes*
 
 Individual headers have their own registries that regulate permissible values, including:
 
