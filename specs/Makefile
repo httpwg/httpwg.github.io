@@ -26,3 +26,7 @@ clean:
 %.xml:
 	wget https://rfc-editor.org/rfc/$@
 	xml2rfc --unprep -o $@ $@
+
+.PHONY: lib/rfc2629.xslt
+lib/rfc2629.xslt:
+	wget -O $@ https://raw.githubusercontent.com/reschke/xml2rfc/master/rfc2629.xslt
