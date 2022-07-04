@@ -1,7 +1,0 @@
----
-  suppress_site: true
-  markdown: kramdown
-  exclude:
-      - sass-cache/
-      - .jekyll-cache/
-  remote_theme: httpwg/theme@main
