@@ -25,12 +25,8 @@ a:not([class*="btn"]):hover {
     text-decoration: underline;
 }
 
-*:not([href])[id]:before  { 
-  display: block; 
-  content: " "; 
-  margin-top: -65px; 
-  height: 65px; 
-  visibility: hidden; 
+*:not([href])[id]  {
+  scroll-margin-top: 72px;
 }
 
 #col1 {
