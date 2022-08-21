@@ -27,7 +27,7 @@ Before doing so, it's a good idea to familiarize yourself with our [charter](htt
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## Contributing to HTTP
+## Contributing to Work in Progress
 
 ### Following Discussion
 
