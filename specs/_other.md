@@ -38,6 +38,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC9209: [Proxy-Status Field](/specs/rfc9209.html)
 * RFC9218: [Extensible Prioritization Scheme for HTTP](/specs/rfc9218.html)
 * RFC9220: [Bootstrapping WebSockets with HTTP/3](/specs/rfc9220.html)
+* RFC9298: [Proxying UDP in HTTP](https://www.rfc-editor.org/rfc/rfc9298)
 
 ### Security-Related Extensions
 
