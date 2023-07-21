@@ -1,7 +1,8 @@
 <!--
-    XSLT transformation from RFC2629/7991 XML format to HTML
+    XSLT transformation for the XML format defined in RFCs 2629, 7749 and 7991
+    to HTML
 
-    Copyright (c) 2006-2022, Julian Reschke (julian.reschke@greenbytes.de)
+    Copyright (c) 2006-2023, Julian Reschke (julian.reschke@greenbytes.de)
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -1034,8 +1035,8 @@
   <xsl:call-template name="parse-pis">
     <xsl:with-param name="nodes" select="/processing-instruction('rfc-ext')"/>
     <xsl:with-param name="attr" select="'rfc-reference-base-uri'"/>
-    <!-- previously 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/' -->
-    <xsl:with-param name="default">https://www.rfc-editor.org/refs/bibxml/</xsl:with-param>
+    <!-- previously 'https://xml2rfc.tools.ietf.org/public/rfc/bibxml/', then 'https://www.rfc-editor.org/refs/bibxml/' -->
+    <xsl:with-param name="default">https://bib.ietf.org/public/rfc/bibxml/</xsl:with-param>
   </xsl:call-template>
 </xsl:param>
 
@@ -1392,7 +1393,7 @@
   </xsl:call-template>
 </xsl:variable>
 
-<xsl:variable name="is-submitted-draft" select="number($draft-seq)=$draft-seq"/>
+<xsl:variable name="is-submitted-draft" select="$draft-seq!='' and translate($draft-seq,$digits,'')=''"/>
 
 <xsl:variable name="is-rfc" select="$src/rfc/@number"/>
 
@@ -1466,7 +1467,7 @@
 <xsl:variable name="submissionType">
   <xsl:choose>
     <xsl:when test="/rfc/@submissionType='IETF' or not(/rfc/@submissionType) or /rfc/submissionType=''">IETF</xsl:when>
-    <xsl:when test="/rfc/@submissionType='IAB' or /rfc/@submissionType='IRTF' or /rfc/@submissionType='independent'">
+    <xsl:when test="/rfc/@submissionType='IAB' or /rfc/@submissionType='IRTF' or /rfc/@submissionType='independent' or /rfc/@submissionType='editorial'">
       <xsl:value-of select="/rfc/@submissionType"/>
     </xsl:when>
     <xsl:otherwise>
@@ -1976,6 +1977,8 @@
 <xsl:template name="text-in-artwork">
   <xsl:param name="content" select="."/>
   <xsl:variable name="c" select="translate($content,'&#13;','')"/>
+  
+  <xsl:variable name="folding" select="ancestor-or-self::*/@x:line-folding"/>
   <xsl:choose>
     <xsl:when test="contains($c,'&#9;')">
       <xsl:call-template name="text-in-artwork">
@@ -1986,19 +1989,58 @@
         <xsl:with-param name="content" select="substring-after($c,'&#9;')"/>
       </xsl:call-template>
     </xsl:when>
-    <xsl:when test="ancestor-or-self::*[@x:line-folding='\'] and contains($c,'\&#10;')">
+    <xsl:when test="($folding='\' or $folding='\\') and contains($c,'\&#10;')">
       <xsl:call-template name="text-in-artwork">
         <xsl:with-param name="content" select="substring-before($c,'\&#10;')"/>
       </xsl:call-template>
-      <small title="line folding">\</small>
-      <xsl:text>&#10;</xsl:text>
+      <xsl:variable name="remainder" select="substring-after($c,'\&#10;')"/>
+      <xsl:variable name="ls">
+        <xsl:call-template name="leading-SPs">
+          <xsl:with-param name="content" select="$remainder"/>
+          <xsl:with-param name="eat-trailing-slash" select="$folding='\\'"/>
+        </xsl:call-template>
+      </xsl:variable>
+      <xsl:variable name="bad" select="$folding='\\' and not(substring($ls,string-length($ls))='\')"/>
+      <xsl:variable name="title">
+        <xsl:value-of select="concat('RFC 8792 ',$folding,' Line Wrapping')"/>
+        <xsl:if test="$bad"> (but trailing '\' missing)</xsl:if>
+      </xsl:variable>
+      <span class="folding" title="{$title}">
+        <xsl:if test="$bad"><xsl:attribute name="style">color: red;</xsl:attribute></xsl:if>
+        <xsl:text>\&#10;</xsl:text>
+        <xsl:value-of select="$ls"/>
+      </span>
       <xsl:call-template name="text-in-artwork">
-        <xsl:with-param name="content" select="substring-after($c,'\&#10;')"/>
+        <xsl:with-param name="content" select="substring-after($remainder,$ls)"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:otherwise>
       <xsl:value-of select="$c"/>
     </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template name="leading-SPs">
+  <xsl:param name="content" select="."/>
+  <xsl:param name="eat-trailing-slash"/>
+  <xsl:choose>
+    <xsl:when test="starts-with($content,' ')">
+      <xsl:text> </xsl:text>
+      <xsl:call-template name="leading-SPs">
+        <xsl:with-param name="content" select="substring($content, 2)"/>
+        <xsl:with-param name="eat-trailing-slash" select="$eat-trailing-slash"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:when test="$eat-trailing-slash and starts-with($content,'\')">
+      <xsl:text>\</xsl:text>
+    </xsl:when>
+    <xsl:when test="$eat-trailing-slash and not(starts-with($content,'\'))">
+      <xsl:call-template name="error">
+        <xsl:with-param name="msg">RFC 8792 line folding mode '\\' but no trailing '\' found</xsl:with-param>
+        <xsl:with-param name="inline" select="'no'"/>
+      </xsl:call-template>
+    </xsl:when>
+    <xsl:otherwise/>
   </xsl:choose>
 </xsl:template>
 
@@ -2810,7 +2852,7 @@
                   </xsl:variable>
                   <a href="{$status-uri}" class="smpl"><xsl:value-of select="$base"/></a>
                   <xsl:text>-</xsl:text>
-                  <a href="{$draft-uri}" class="smpl"><xsl:value-of select="$seq"/></a>
+                  <i><a href="{$draft-uri}" class="smpl"><xsl:value-of select="$seq"/></a></i>
                 </xsl:when>
                 <xsl:when test="$base!=''">
                   <a href="{$status-uri}" class="smpl"><xsl:value-of select="$docname"/></a>
@@ -3781,6 +3823,7 @@
       <xsl:if test="count($rfcEntries)!=1">
         <xsl:call-template name="warning">
           <xsl:with-param name="msg" select="concat('seriesInfo/@name=RFC encountered multiple times for reference ',$bib/@anchor,', will generate link to first entry only')"/>
+          <xsl:with-param name="node" select="$bib"/>
         </xsl:call-template>
       </xsl:if>
       <xsl:call-template name="compute-rfc-uri">
@@ -3798,6 +3841,7 @@
             <xsl:call-template name="error">
               <xsl:with-param name="msg" select="concat('cannot compute anchor for ',$sec,' of ',$bib/@anchor)"/>
               <xsl:with-param name="inline" select="'no'"/>
+              <xsl:with-param name="node" select="$ref"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
@@ -3939,6 +3983,7 @@
       <xsl:if test="not($nodes)">
         <xsl:call-template name="error">
           <xsl:with-param name="msg">Anchor '<xsl:value-of select="$anch"/>' in <xsl:value-of select="$bib/@anchor"/> not found in source file '<xsl:value-of select="$bib/x:source/@href"/>'.</xsl:with-param>
+          <xsl:with-param name="node" select="$ref"/>
         </xsl:call-template>
       </xsl:if>
       <xsl:variable name="number">
@@ -3988,7 +4033,8 @@
           </xsl:when>
           <xsl:otherwise>
             <xsl:call-template name="warning">
-              <xsl:with-param name="msg">Can't generate section link for to <xsl:value-of select="$bib/@anchor"/>; no @x:rel specified</xsl:with-param>
+              <xsl:with-param name="msg">Can't generate section link to <xsl:value-of select="$bib/@anchor"/>; no @x:rel specified</xsl:with-param>
+              <xsl:with-param name="node" select="$ref"/>
             </xsl:call-template>
           </xsl:otherwise>
         </xsl:choose>
@@ -4037,7 +4083,32 @@
   <xsl:variable name="t" select="@to"/>
   <xsl:if test="//reference/@anchor=$t or count(//displayreference[@to=$t])!=1">
     <xsl:call-template name="error">
-      <xsl:with-param name="msg">displayreference <xsl:value-of select="$t"/> will create non-unique reference name.</xsl:with-param>
+      <xsl:with-param name="msg">displayreference '<xsl:value-of select="$t"/>' will create non-unique reference name.</xsl:with-param>
+    </xsl:call-template>
+  </xsl:if>
+  <xsl:variable name="extra">-_.</xsl:variable>
+  <xsl:variable name="allowed" select="concat($alnum,$extra)"/>
+  <xsl:variable name="allowedwithwarn" select="concat($alnum,$extra,'/')"/>
+  <xsl:variable name="terr" select="translate($t,$allowed,'')"/>
+  <xsl:variable name="terrwarn" select="translate($t,$allowedwithwarn,'')"/>
+  <xsl:variable name="tstart" select="translate(substring($t,1,1),$alnum,'')"/>
+  <xsl:if test="$terr!=''">
+    <xsl:choose>
+      <xsl:when test="$terrwarn=''">
+        <xsl:call-template name="warning">
+          <xsl:with-param name="msg">displayreference '<xsl:value-of select="$t"/>' contains illegal characters: '<xsl:value-of select="$terr"/>'.</xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:call-template name="error">
+          <xsl:with-param name="msg">displayreference '<xsl:value-of select="$t"/>' contains illegal characters: '<xsl:value-of select="$terr"/>'.</xsl:with-param>
+        </xsl:call-template>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:if>
+  <xsl:if test="$tstart!=''">
+    <xsl:call-template name="error">
+      <xsl:with-param name="msg">displayreference '<xsl:value-of select="$t"/>' starts with characters not allowed as start character: '<xsl:value-of select="$tstart"/>'</xsl:with-param>
     </xsl:call-template>
   </xsl:if>
 </xsl:template>
@@ -5182,7 +5253,7 @@
       <xsl:if test="$xml2rfc-ext-insert-metadata='yes'">
         <xsl:choose>
           <xsl:when test="$is-rfc">getMeta("<xsl:value-of select="$rfcno"/>","rfc.meta");</xsl:when>
-          <xsl:when test="/rfc/@docName and $is-submitted-draft">getMeta("<xsl:value-of select="$draft-basename"/>","<xsl:value-of select="$draft-seq"/>","rfc.meta");</xsl:when>
+          <xsl:when test="$is-submitted-draft">getMeta("<xsl:value-of select="$draft-basename"/>","<xsl:value-of select="$draft-seq"/>","rfc.meta");</xsl:when>
           <xsl:otherwise/>
         </xsl:choose>
       </xsl:if>
@@ -5807,6 +5878,7 @@
           <xsl:call-template name="error">
             <xsl:with-param name="inline">no</xsl:with-param>
             <xsl:with-param name="msg">xref to abstract with format='counter' not allowed</xsl:with-param>
+            <xsl:with-param name="node" select="$from"/>
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise>
@@ -6212,6 +6284,7 @@
           <xsl:text>?</xsl:text>
           <xsl:call-template name="warning">
             <xsl:with-param name="msg" select="concat('No paragraph number for link target ',$from/@target)"/>
+            <xsl:with-param name="node" select="$from"/>
           </xsl:call-template>
         </xsl:when>
         <xsl:otherwise><xsl:value-of select="$pn"/></xsl:otherwise>
@@ -6257,6 +6330,7 @@
           <xsl:call-template name="error">
             <xsl:with-param name="inline">no</xsl:with-param>
             <xsl:with-param name="msg">xref to cref with format='counter' not allowed</xsl:with-param>
+            <xsl:with-param name="node" select="$from"/>
           </xsl:call-template>
           <xsl:value-of select="$name" />
         </xsl:when>
@@ -6460,6 +6534,7 @@
         <xsl:if test="not($nodes)">
           <xsl:call-template name="error">
             <xsl:with-param name="msg">Anchor '<xsl:value-of select="substring-after($from//@x:rel,'#')"/>' not found in <xsl:value-of select="$to/x:source/@href"/>.</xsl:with-param>
+            <xsl:with-param name="node" select="$from"/>
           </xsl:call-template>
         </xsl:if>
         <xsl:for-each select="$nodes">
@@ -8363,7 +8438,11 @@ pre.drawing {
   border-width: 1px;
   background-color: var(--col-bg-pre1);
   padding: 2em;
-}<xsl:if test="//x:q">
+}<xsl:if test="//@x:line-folding">
+span.folding {
+  text-decoration: dashed underline overline;
+}
+</xsl:if><xsl:if test="//x:q">
 q {
   font-style: italic;
 }</xsl:if>
@@ -12112,11 +12191,11 @@ dd, li, p {
   <xsl:variable name="gen">
     <xsl:text>http://greenbytes.de/tech/webdav/rfcxml.xslt, </xsl:text>
     <!-- when RCS keyword substitution in place, add version info -->
-    <xsl:if test="contains('$Revision: 1.1486 $',':')">
-      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1486 $', 'Revision: '),'$','')),', ')" />
+    <xsl:if test="contains('$Revision: 1.1520 $',':')">
+      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1520 $', 'Revision: '),'$','')),', ')" />
     </xsl:if>
-    <xsl:if test="contains('$Date: 2022/07/03 03:44:05 $',':')">
-      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2022/07/03 03:44:05 $', 'Date: '),'$','')),', ')" />
+    <xsl:if test="contains('$Date: 2023/06/09 20:00:42 $',':')">
+      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2023/06/09 20:00:42 $', 'Date: '),'$','')),', ')" />
     </xsl:if>
     <xsl:variable name="product" select="normalize-space(concat(system-property('xsl:product-name'),' ',system-property('xsl:product-version')))"/>
     <xsl:if test="$product!=''">
