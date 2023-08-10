@@ -40,7 +40,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC9220: [Bootstrapping WebSockets with HTTP/3](/specs/rfc9220.html)
 * RFC9298: [Proxying UDP in HTTP](https://www.rfc-editor.org/rfc/rfc9298)
 * RFC9412: [Origin HTTP/3 Frame](/specs/rfc9412.html)
-* RFC9440: [Client-Cert HTTP Header Field](specs/rfc9440.html)
+* RFC9440: [Client-Cert HTTP Header Field](/specs/rfc9440.html)
 
 ### Security-Related Extensions
 
