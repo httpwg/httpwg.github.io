@@ -37,7 +37,7 @@ The HTTP Working Group has a few venues for discussion:
 
 * Our [mailing list](https://lists.w3.org/Archives/Public/ietf-http-wg/) is used for notifications of meetings, adoption of documents, consensus calls, issue discussion, and other business. It's not mandatory to subscribe, but you're likely to miss important things if you don't.
 
-* We discuss most document issues on [GitHub](https://github.com/httpwg/). If you don't want to use Github to follow these discussions, you can subscribe to the [issue announce list](https://www.ietf.org/mailman/listinfo/http-issues).
+* We discuss most document issues on [GitHub](https://github.com/httpwg/).
 
 You can participate in any or all of these places.
 
