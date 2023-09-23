@@ -4574,8 +4574,8 @@
     <!-- fall back to x:source when needed -->
     <xsl:if test="not($si) and x:source/@href">
       <xsl:variable name="derivedsi" myns:namespaceless-elements="xml2rfc">
-        <xsl:variable name="r" select="document(x:source/@href)/bcp"/>
-        <xsl:if test="$r/@seriesNo and $r/@category='std'">
+        <xsl:variable name="r" select="document(x:source/@href)/rfc"/>
+        <xsl:if test="$r/@seriesNo and $r/@category='bcp'">
           <seriesInfo name="BCP" value="{$r/@seriesNo}"/>
         </xsl:if>
         <xsl:if test="$r/@seriesNo and $r/@category='std'">
@@ -12191,11 +12191,11 @@ dd, li, p {
   <xsl:variable name="gen">
     <xsl:text>http://greenbytes.de/tech/webdav/rfcxml.xslt, </xsl:text>
     <!-- when RCS keyword substitution in place, add version info -->
-    <xsl:if test="contains('$Revision: 1.1520 $',':')">
-      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1520 $', 'Revision: '),'$','')),', ')" />
+    <xsl:if test="contains('$Revision: 1.1529 $',':')">
+      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1529 $', 'Revision: '),'$','')),', ')" />
     </xsl:if>
-    <xsl:if test="contains('$Date: 2023/06/09 20:00:42 $',':')">
-      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2023/06/09 20:00:42 $', 'Date: '),'$','')),', ')" />
+    <xsl:if test="contains('$Date: 2023/08/17 12:20:00 $',':')">
+      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2023/08/17 12:20:00 $', 'Date: '),'$','')),', ')" />
     </xsl:if>
     <xsl:variable name="product" select="normalize-space(concat(system-property('xsl:product-name'),' ',system-property('xsl:product-version')))"/>
     <xsl:if test="$product!=''">
