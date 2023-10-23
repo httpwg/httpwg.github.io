@@ -14,15 +14,15 @@ blockquote {
 }
 
 pre.highlight {
-   background-color: #efefef;
-   padding: 3px;
+  background-color: #efefef;
+  padding: 3px;
 }
 
 a:not([class*="btn"]) {
-    text-decoration: none;
+  text-decoration: none;
 }
 a:not([class*="btn"]):hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 *:not([href])[id]  {
@@ -46,7 +46,7 @@ table {
 }
 
 tr:nth-child(2n) {
-    background-color: #f3f3f3;
+  background-color: #f3f3f3;
 }
 
 td {
@@ -58,11 +58,11 @@ td {
 }
 
 .octicon {
-    fill: #aaa;
+  fill: #aaa;
 }
 
 p.github-link {
-    text-align: right;
-    margin-top: 100px;
+  text-align: right;
+  margin-top: 100px;
 }
 
