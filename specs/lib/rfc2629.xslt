@@ -1338,11 +1338,11 @@
 
 <xsl:key name="index-item"
   match="iref"
-    use="@item" />
+    use="normalize-space(@item)" />
 
 <xsl:key name="index-item-subitem"
   match="iref"
-    use="concat(@item,'..',@subitem)" />
+    use="concat(normalize-space(@item),'..',normalize-space(@subitem))" />
 
 <xsl:key name="index-xref-by-sec"
   match="xref[@x:sec]|relref[@section]"
@@ -3030,6 +3030,16 @@
 
 <xsl:template match="iref">
   <xsl:variable name="anchor"><xsl:call-template name="compute-iref-anchor"/></xsl:variable>
+  <xsl:if test="@item!=normalize-space(@item)">
+    <xsl:call-template name="warning">
+      <xsl:with-param name="msg">iref "item" attribute contains non-normalized whitespace ("<xsl:value-of select="@item"/>")</xsl:with-param>
+    </xsl:call-template>
+  </xsl:if>
+  <xsl:if test="@subitem!=normalize-space(@subitem)">
+    <xsl:call-template name="warning">
+      <xsl:with-param name="msg">iref "subitem" attribute contains non-normalized whitespace ("<xsl:value-of select="@subitem"/>")</xsl:with-param>
+    </xsl:call-template>
+  </xsl:if>
   <xsl:choose>
     <xsl:when test="parent::figure and ancestor::t">
       <span id="{$anchor}"/>
@@ -4016,7 +4026,10 @@
   <xsl:variable name="bibtarget">
     <xsl:choose>
       <xsl:when test="starts-with($bib/@target,'http://www.rfc-editor.org/info/rfc') or starts-with($bib/@target,'https://www.rfc-editor.org/info/rfc') and $ref and ($ref/@x:sec or $ref/@x:rel or $ref/@section or $ref/@relative)">
-        <!--ignored, use ietf.org link instead -->
+        <!--RFC link: ignored, use auto generated link instead -->
+      </xsl:when>
+      <xsl:when test="starts-with($bib/@target,'http://www.rfc-editor.org/info/std') or starts-with($bib/@target,'https://www.rfc-editor.org/info/std') and $bib/seriesInfo[@name='RFC'] and $ref and ($ref/@x:sec or $ref/@x:rel or $ref/@section or $ref/@relative)">
+        <!--STD link that is to an actual RFC: ignored, use auto generated link instead -->
       </xsl:when>
       <xsl:otherwise>
         <xsl:value-of select="$bib/@target"/>
@@ -4434,7 +4447,9 @@
         <xsl:with-param name="deleted-anchor" select="$deleted"/>
       </xsl:call-template>
     </xsl:for-each>
-    <xsl:call-template name="reference-name"/>
+    <xsl:call-template name="reference-name">
+      <xsl:with-param name="anchor" select="@anchor"/>
+    </xsl:call-template>
   </dt>
 
   <xsl:call-template name="insert-reference-body"/>
@@ -9244,8 +9259,8 @@ dd, li, p {
     <div class="print2col">
       <ul class="ind">
         <xsl:for-each select="//iref | //reference[not(starts-with(@anchor,'deleted-'))]">
-          <xsl:sort select="translate(concat(@item,/rfc/back/displayreference[@target=current()/@anchor]/@to,@anchor),$lcase,$ucase)" />
-          <xsl:variable name="letter" select="translate(substring(concat(@item,/rfc/back/displayreference[@target=current()/@anchor]/@to,@anchor),1,1),$lcase,$ucase)"/>
+          <xsl:sort select="translate(concat(normalize-space(@item),/rfc/back/displayreference[@target=current()/@anchor]/@to,@anchor),$lcase,$ucase)" />
+          <xsl:variable name="letter" select="translate(substring(concat(normalize-space(@item),/rfc/back/displayreference[@target=current()/@anchor]/@to,@anchor),1,1),$lcase,$ucase)"/>
     
           <xsl:variable name="showit" select="$xml2rfc-ext-include-references-in-index='yes' or self::iref"/>
           <xsl:if test="$showit and generate-id(.) = generate-id(key('index-first-letter',$letter)[1])">
@@ -9255,11 +9270,11 @@ dd, li, p {
               <xsl:choose>
                 <xsl:when test="translate($letter,concat($lcase,$ucase,'0123456789'),'')=''">
                   <a id="{$anchor-pref}index.{$letter}" href="#{$anchor-pref}index.{$letter}">
-                    <b><xsl:value-of select="$letter" /></b>
+                    <b><xsl:value-of select="$letter"/></b>
                   </a>
                 </xsl:when>
                 <xsl:otherwise>
-                  <b><xsl:value-of select="$letter" /></b>
+                  <b><xsl:value-of select="$letter"/></b>
                 </xsl:otherwise>
               </xsl:choose>
     
@@ -10346,44 +10361,58 @@ dd, li, p {
 
 <xsl:template name="reference-name">
   <xsl:param name="node" select="."/>
+  <xsl:param name="anchor"/>
 
   <xsl:for-each select="$node">
+    <xsl:text>[</xsl:text>
     <xsl:choose>
-      <xsl:when test="$xml2rfc-symrefs!='no' and ancestor::ed:del">
-        <xsl:variable name="unprefixed" select="substring-after(@anchor,'deleted-')"/>
-        <xsl:choose>
-          <xsl:when test="$unprefixed!=''">
-            <xsl:value-of select="concat('[',$unprefixed,']')"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:if test="count(//reference[@anchor=current()/@anchor])!=1">
-              <xsl:message>Deleted duplicate anchors should have the prefix "deleted-": <xsl:value-of select="@anchor"/></xsl:message>
-            </xsl:if>
-            <xsl:value-of select="concat('[',@anchor,']')"/>
-          </xsl:otherwise>
-        </xsl:choose>
+      <xsl:when test="$anchor!=''">
+        <a href="#{$anchor}" class="smpl">
+          <xsl:call-template name="reference-name-text"/>
+        </a>
       </xsl:when>
-      <xsl:when test="$xml2rfc-symrefs!='no'">
-        <xsl:text>[</xsl:text>
-        <xsl:choose>
-          <xsl:when test="$src/rfc/back/displayreference[@target=current()/@anchor]">
-            <xsl:value-of select="$src/rfc/back/displayreference[@target=current()/@anchor]/@to"/>
-          </xsl:when>
-          <xsl:otherwise>
-            <xsl:value-of select="@anchor"/>
-          </xsl:otherwise>
-        </xsl:choose>
-        <xsl:text>]</xsl:text>
-      </xsl:when>
-      <xsl:when test="ancestor::ed:del">
-        <xsl:text>[del]</xsl:text>
-      </xsl:when>
-      <xsl:otherwise>[<xsl:number level="any" count="reference[not(ancestor::ed:del)]"/>]</xsl:otherwise>
+      <xsl:otherwise>
+        <xsl:call-template name="reference-name-text"/>
+      </xsl:otherwise>
     </xsl:choose>
+    <xsl:text>]</xsl:text>
   </xsl:for-each>
 </xsl:template>
 
-
+<xsl:template name="reference-name-text">
+  <xsl:choose>
+    <xsl:when test="$xml2rfc-symrefs!='no' and ancestor::ed:del">
+      <xsl:variable name="unprefixed" select="substring-after(@anchor,'deleted-')"/>
+      <xsl:choose>
+        <xsl:when test="$unprefixed!=''">
+          <xsl:value-of select="$unprefixed"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:if test="count(//reference[@anchor=current()/@anchor])!=1">
+            <xsl:message>Deleted duplicate anchors should have the prefix "deleted-": <xsl:value-of select="@anchor"/></xsl:message>
+          </xsl:if>
+          <xsl:value-of select="@anchor"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <xsl:when test="$xml2rfc-symrefs!='no'">
+      <xsl:choose>
+        <xsl:when test="$src/rfc/back/displayreference[@target=current()/@anchor]">
+          <xsl:value-of select="$src/rfc/back/displayreference[@target=current()/@anchor]/@to"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="@anchor"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    <xsl:when test="ancestor::ed:del">
+      <xsl:text>del</xsl:text>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:number level="any" count="reference[not(ancestor::ed:del)]"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
 
 <xsl:template name="replace-substring">
   <xsl:param name="string" />
@@ -11361,7 +11390,7 @@ dd, li, p {
 
   <!-- check ABNF syntax references -->
   <xsl:if test="//artwork[@type='abnf2616' or @type='abnf7230' or @type='abnf9110']|//sourcecode[@type='abnf2616' or type='abnf7320' or @type='abnf9110']">
-    <xsl:if test="not($all-refs//seriesInfo[@name='RFC' and (@value='2068' or @value='2616' or @value='7230' or @value='abnf9110')]) and not($all-refs//seriesInfo[@name='Internet-Draft' and (starts-with(@value, 'draft-ietf-httpbis-p1-messaging-') or starts-with(@value, 'draft-ietf-httpbis-semantics-'))])">
+    <xsl:if test="not($all-refs//seriesInfo[@name='RFC' and (@value='2068' or @value='2616' or @value='7230' or @value='9110')]) and not($all-refs//seriesInfo[@name='Internet-Draft' and (starts-with(@value, 'draft-ietf-httpbis-p1-messaging-') or starts-with(@value, 'draft-ietf-httpbis-semantics-'))])">
       <!-- check for draft-ietf-httpbis-p1-messaging- is for backwards compat -->
       <xsl:call-template name="warning">
         <xsl:with-param name="msg">document uses HTTP-style ABNF syntax, but doesn't reference RFC 2068, RFC 2616, RFC 7230, or RFC 9110.</xsl:with-param>
@@ -12191,11 +12220,11 @@ dd, li, p {
   <xsl:variable name="gen">
     <xsl:text>http://greenbytes.de/tech/webdav/rfcxml.xslt, </xsl:text>
     <!-- when RCS keyword substitution in place, add version info -->
-    <xsl:if test="contains('$Revision: 1.1529 $',':')">
-      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1529 $', 'Revision: '),'$','')),', ')" />
+    <xsl:if test="contains('$Revision: 1.1554 $',':')">
+      <xsl:value-of select="concat('Revision ',normalize-space(translate(substring-after('$Revision: 1.1554 $', 'Revision: '),'$','')),', ')" />
     </xsl:if>
-    <xsl:if test="contains('$Date: 2023/08/17 12:20:00 $',':')">
-      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2023/08/17 12:20:00 $', 'Date: '),'$','')),', ')" />
+    <xsl:if test="contains('$Date: 2023/12/10 11:48:18 $',':')">
+      <xsl:value-of select="concat(normalize-space(translate(substring-after('$Date: 2023/12/10 11:48:18 $', 'Date: '),'$','')),', ')" />
     </xsl:if>
     <xsl:variable name="product" select="normalize-space(concat(system-property('xsl:product-name'),' ',system-property('xsl:product-version')))"/>
     <xsl:if test="$product!=''">
