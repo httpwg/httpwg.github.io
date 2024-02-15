@@ -1,0 +1,2096 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-ietf-httpbis-digest-headers-13" number="9530" submissionType="IETF" category="std" consensus="true" updates="" obsoletes="3230" tocInclude="true" sortRefs="true" symRefs="true" xml:lang="en" prepTime="2024-02-14T09:28:32" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-digest-headers-13" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9530" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title>Digest Fields</title>
+    <seriesInfo name="RFC" value="9530" stream="IETF"/>
+    <author initials="R." surname="Polli" fullname="Roberto Polli">
+      <organization showOnFrontPage="true">Team Digitale, Italian Government</organization>
+      <address>
+        <postal>
+          <country>Italy</country>
+        </postal>
+        <email>robipolli@gmail.com</email>
+      </address>
+    </author>
+    <author initials="L." surname="Pardue" fullname="Lucas Pardue">
+      <organization showOnFrontPage="true">Cloudflare</organization>
+      <address>
+        <email>lucas@lucaspardue.com</email>
+      </address>
+    </author>
+    <date month="02" year="2024"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <keyword>Digest</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This document defines HTTP fields that support integrity digests. The
+<tt>Content-Digest</tt> field can be used for the integrity of HTTP message content. The
+<tt>Repr-Digest</tt> field can be used for the integrity of HTTP representations.
+<tt>Want-Content-Digest</tt> and <tt>Want-Repr-Digest</tt> can be used to indicate a sender's
+interest and preferences for receiving the respective Integrity fields.</t>
+      <t indent="0" pn="section-abstract-2">This document obsoletes RFC 3230 and the <tt>Digest</tt> and <tt>Want-Digest</tt> HTTP
+fields.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9530" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2024 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-document-structure">Document Structure</xref></t>
+              </li>
+              <li pn="section-toc.1-1.1.2.2">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.2.1"><xref derivedContent="1.2" format="counter" sectionFormat="of" target="section-1.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-concept-overview">Concept Overview</xref></t>
+              </li>
+              <li pn="section-toc.1-1.1.2.3">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.3.1"><xref derivedContent="1.3" format="counter" sectionFormat="of" target="section-1.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-obsoleting-rfc-3230">Obsoleting RFC 3230</xref></t>
+              </li>
+              <li pn="section-toc.1-1.1.2.4">
+                <t indent="0" pn="section-toc.1-1.1.2.4.1"><xref derivedContent="1.4" format="counter" sectionFormat="of" target="section-1.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-content-digest-field">The <tt>Content-Digest</tt> Field</xref></t>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-repr-digest-field">The <tt>Repr-Digest</tt> Field</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.3.2">
+              <li pn="section-toc.1-1.3.2.1">
+                <t indent="0" pn="section-toc.1-1.3.2.1.1"><xref derivedContent="3.1" format="counter" sectionFormat="of" target="section-3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-using-repr-digest-in-state-">Using <tt>Repr-Digest</tt> in State-Changing Requests</xref></t>
+              </li>
+              <li pn="section-toc.1-1.3.2.2">
+                <t indent="0" pn="section-toc.1-1.3.2.2.1"><xref derivedContent="3.2" format="counter" sectionFormat="of" target="section-3.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-repr-digest-and-content-loc"><tt>Repr-Digest</tt> and Content-Location in Responses</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-integrity-preference-fields">Integrity Preference Fields</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-hash-algorithm-consideratio">Hash Algorithm Considerations and Registration</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-messages-are-not-prote">HTTP Messages Are Not Protected in Full</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-end-to-end-integrity">End-to-End Integrity</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.3">
+                <t indent="0" pn="section-toc.1-1.6.2.3.1"><xref derivedContent="6.3" format="counter" sectionFormat="of" target="section-6.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-usage-in-signatures">Usage in Signatures</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.4">
+                <t indent="0" pn="section-toc.1-1.6.2.4.1"><xref derivedContent="6.4" format="counter" sectionFormat="of" target="section-6.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-usage-in-trailer-fields">Usage in Trailer Fields</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.5">
+                <t indent="0" pn="section-toc.1-1.6.2.5.1"><xref derivedContent="6.5" format="counter" sectionFormat="of" target="section-6.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-variations-within-content-e">Variations within Content-Encoding</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.6">
+                <t indent="0" pn="section-toc.1-1.6.2.6.1"><xref derivedContent="6.6" format="counter" sectionFormat="of" target="section-6.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-algorithm-agility">Algorithm Agility</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.7">
+                <t indent="0" pn="section-toc.1-1.6.2.7.1"><xref derivedContent="6.7" format="counter" sectionFormat="of" target="section-6.7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-resource-exhaustion">Resource Exhaustion</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="7" format="counter" sectionFormat="of" target="section-7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.7.2">
+              <li pn="section-toc.1-1.7.2.1">
+                <t indent="0" pn="section-toc.1-1.7.2.1.1"><xref derivedContent="7.1" format="counter" sectionFormat="of" target="section-7.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-field-name-registratio">HTTP Field Name Registration</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.2">
+                <t indent="0" pn="section-toc.1-1.7.2.2.1"><xref derivedContent="7.2" format="counter" sectionFormat="of" target="section-7.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-creation-of-the-hash-algori">Creation of the Hash Algorithms for HTTP Digest Fields Registry</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.3">
+                <t indent="0" pn="section-toc.1-1.7.2.3.1"><xref derivedContent="7.3" format="counter" sectionFormat="of" target="section-7.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-deprecate-the-hypertext-tra">Deprecate the Hypertext Transfer Protocol (HTTP) Digest Algorithm Values Registry</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="8" format="counter" sectionFormat="of" target="section-8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.8.2">
+              <li pn="section-toc.1-1.8.2.1">
+                <t indent="0" pn="section-toc.1-1.8.2.1.1"><xref derivedContent="8.1" format="counter" sectionFormat="of" target="section-8.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.8.2.2">
+                <t indent="0" pn="section-toc.1-1.8.2.2.1"><xref derivedContent="8.2" format="counter" sectionFormat="of" target="section-8.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.9">
+            <t indent="0" pn="section-toc.1-1.9.1"><xref derivedContent="Appendix A" format="default" sectionFormat="of" target="section-appendix.a"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-resource-representation-and">Resource Representation and Representation Data</xref></t>
+          </li>
+          <li pn="section-toc.1-1.10">
+            <t indent="0" pn="section-toc.1-1.10.1"><xref derivedContent="Appendix B" format="default" sectionFormat="of" target="section-appendix.b"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-examples-of-unsolicited-dig">Examples of Unsolicited <tt>Digest</tt></xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.10.2">
+              <li pn="section-toc.1-1.10.2.1">
+                <t indent="0" pn="section-toc.1-1.10.2.1.1"><xref derivedContent="B.1" format="counter" sectionFormat="of" target="section-appendix.b.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-returns-full-represe">Server Returns Full Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.2">
+                <t indent="0" pn="section-toc.1-1.10.2.2.1"><xref derivedContent="B.2" format="counter" sectionFormat="of" target="section-appendix.b.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-returns-no-represent">Server Returns No Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.3">
+                <t indent="0" pn="section-toc.1-1.10.2.3.1"><xref derivedContent="B.3" format="counter" sectionFormat="of" target="section-appendix.b.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-returns-partial-repr">Server Returns Partial Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.4">
+                <t indent="0" pn="section-toc.1-1.10.2.4.1"><xref derivedContent="B.4" format="counter" sectionFormat="of" target="section-appendix.b.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-and-server-provide-f">Client and Server Provide Full Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.5">
+                <t indent="0" pn="section-toc.1-1.10.2.5.1"><xref derivedContent="B.5" format="counter" sectionFormat="of" target="section-appendix.b.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-provides-full-repres">Client Provides Full Representation Data and Server Provides No Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.6">
+                <t indent="0" pn="section-toc.1-1.10.2.6.1"><xref derivedContent="B.6" format="counter" sectionFormat="of" target="section-appendix.b.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-and-server-provide-fu">Client and Server Provide Full Representation Data</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.7">
+                <t indent="0" pn="section-toc.1-1.10.2.7.1"><xref derivedContent="B.7" format="counter" sectionFormat="of" target="section-appendix.b.7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-post-response-does-not-refe">POST Response Does Not Reference the Request URI</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.8">
+                <t indent="0" pn="section-toc.1-1.10.2.8.1"><xref derivedContent="B.8" format="counter" sectionFormat="of" target="section-appendix.b.8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-post-response-describes-the">POST Response Describes the Request Status</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.9">
+                <t indent="0" pn="section-toc.1-1.10.2.9.1"><xref derivedContent="B.9" format="counter" sectionFormat="of" target="section-appendix.b.9"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-digest-with-patch"><tt>Digest</tt> with PATCH</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.10">
+                <t indent="0" pn="section-toc.1-1.10.2.10.1"><xref derivedContent="B.10" format="counter" sectionFormat="of" target="section-appendix.b.10"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-error-responses">Error Responses</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.11">
+                <t indent="0" pn="section-toc.1-1.10.2.11.1"><xref derivedContent="B.11" format="counter" sectionFormat="of" target="section-appendix.b.11"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-use-with-trailer-fields-and">Use with Trailer Fields and Transfer Coding</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.11">
+            <t indent="0" pn="section-toc.1-1.11.1"><xref derivedContent="Appendix C" format="default" sectionFormat="of" target="section-appendix.c"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-examples-of-want-repr-diges">Examples of <tt>Want-Repr-Digest</tt> Solicited <tt>Digest</tt></xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.11.2">
+              <li pn="section-toc.1-1.11.2.1">
+                <t indent="0" pn="section-toc.1-1.11.2.1.1"><xref derivedContent="C.1" format="counter" sectionFormat="of" target="section-appendix.c.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-selects-clients-leas">Server Selects Client's Least Preferred Algorithm</xref></t>
+              </li>
+              <li pn="section-toc.1-1.11.2.2">
+                <t indent="0" pn="section-toc.1-1.11.2.2.1"><xref derivedContent="C.2" format="counter" sectionFormat="of" target="section-appendix.c.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-selects-algorithm-un">Server Selects Algorithm Unsupported by Client</xref></t>
+              </li>
+              <li pn="section-toc.1-1.11.2.3">
+                <t indent="0" pn="section-toc.1-1.11.2.3.1"><xref derivedContent="C.3" format="counter" sectionFormat="of" target="section-appendix.c.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-does-not-support-cli">Server Does Not Support Client Algorithm and Returns an Error</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.12">
+            <t indent="0" pn="section-toc.1-1.12.1"><xref derivedContent="Appendix D" format="default" sectionFormat="of" target="section-appendix.d"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-sample-digest-values">Sample <tt>Digest</tt> Values</xref></t>
+          </li>
+          <li pn="section-toc.1-1.13">
+            <t indent="0" pn="section-toc.1-1.13.1"><xref derivedContent="Appendix E" format="default" sectionFormat="of" target="section-appendix.e"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-migrating-from-rfc-3230">Migrating from RFC 3230</xref></t>
+          </li>
+          <li pn="section-toc.1-1.14">
+            <t indent="0" pn="section-toc.1-1.14.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.f"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgements">Acknowledgements</xref></t>
+          </li>
+          <li pn="section-toc.1-1.15">
+            <t indent="0" pn="section-toc.1-1.15.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.g"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">HTTP does not define the means to protect the data integrity of content or
+representations. When HTTP messages are transferred between endpoints, lower-layer
+features or properties such as TCP checksums or TLS records <xref target="RFC8446" format="default" sectionFormat="of" derivedContent="TLS"/> can provide some integrity protection. However, transport-oriented integrity provides a
+limited utility because it is opaque to the application layer and only covers
+the extent of a single connection. HTTP messages often travel over a chain of
+separate connections. In between connections, there is a possibility for
+data corruption. An HTTP integrity mechanism can provide
+the means for endpoints, or applications using HTTP, to detect data corruption
+and make a choice about how to act on it. An example use case is to aid
+fault detection and diagnosis across system boundaries.</t>
+      <t indent="0" pn="section-1-2">This document defines two digest integrity mechanisms for HTTP.
+First, content integrity, which acts on conveyed content (<xref section="6.4" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.4" derivedContent="HTTP"/>).
+Second, representation data integrity, which acts on representation data (<xref section="8.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.1" derivedContent="HTTP"/>). This supports advanced use cases, such as validating the
+integrity of a resource that was reconstructed from parts retrieved using
+multiple requests or connections.</t>
+      <t indent="0" pn="section-1-3">This document obsoletes <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> and therefore the <tt>Digest</tt> and <tt>Want-Digest</tt> HTTP
+fields; see <xref target="obsolete-3230" format="default" sectionFormat="of" derivedContent="Section 1.3"/>.</t>
+      <section anchor="document-structure" numbered="true" removeInRFC="false" toc="include" pn="section-1.1">
+        <name slugifiedName="name-document-structure">Document Structure</name>
+        <t indent="0" pn="section-1.1-1">This document is structured as follows:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-1.1-2">
+          <li pn="section-1.1-2.1">
+            <t indent="0" pn="section-1.1-2.1.1">New request and response header and trailer field definitions.
+            </t>
+            <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-1.1-2.1.2">
+              <li pn="section-1.1-2.1.2.1">
+                <xref target="content-digest" format="default" sectionFormat="of" derivedContent="Section 2"/> (<tt>Content-Digest</tt>),</li>
+              <li pn="section-1.1-2.1.2.2">
+                <xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/> (<tt>Repr-Digest</tt>), and</li>
+              <li pn="section-1.1-2.1.2.3">
+                <xref target="want-fields" format="default" sectionFormat="of" derivedContent="Section 4"/> (<tt>Want-Content-Digest</tt> and <tt>Want-Repr-Digest</tt>).</li>
+            </ul>
+          </li>
+          <li pn="section-1.1-2.2">
+            <t indent="0" pn="section-1.1-2.2.1">Considerations specific to representation data integrity.
+            </t>
+            <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-1.1-2.2.2">
+              <li pn="section-1.1-2.2.2.1">
+                <xref target="state-changing-requests" format="default" sectionFormat="of" derivedContent="Section 3.1"/> (State-changing requests),</li>
+              <li pn="section-1.1-2.2.2.2">
+                <xref target="digest-and-content-location" format="default" sectionFormat="of" derivedContent="Section 3.2"/> (Content-Location),</li>
+              <li pn="section-1.1-2.2.2.3">
+                <xref target="resource-representation" format="default" sectionFormat="of" derivedContent="Appendix A"/> contains worked examples of representation data
+in message exchanges, and</li>
+              <li pn="section-1.1-2.2.2.4">
+                Appendixes <xref target="examples-unsolicited" format="counter" sectionFormat="of" derivedContent="B"/> and <xref target="examples-solicited" format="counter" sectionFormat="of" derivedContent="C"/> contain worked examples
+of <tt>Repr-Digest</tt> and <tt>Want-Repr-Digest</tt> fields in message exchanges.</li>
+            </ul>
+          </li>
+          <li pn="section-1.1-2.3">
+            <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/> presents hash algorithm considerations and defines
+registration procedures for future entries.</li>
+        </ul>
+      </section>
+      <section anchor="concept-overview" numbered="true" removeInRFC="false" toc="include" pn="section-1.2">
+        <name slugifiedName="name-concept-overview">Concept Overview</name>
+        <t indent="0" pn="section-1.2-1">The HTTP fields defined in this document can be used for HTTP integrity. Senders
+choose a hashing algorithm and calculate a digest from an input related to the
+HTTP message. The algorithm identifier and digest are transmitted in an HTTP
+field. Receivers can validate the digest for integrity purposes. Hashing
+algorithms are registered in the "Hash Algorithms for HTTP Digest Fields" registry (see
+<xref target="establish-hash-algorithm-registry" format="default" sectionFormat="of" derivedContent="Section 7.2"/>).</t>
+        <t indent="0" pn="section-1.2-2">Selecting the data on which digests are calculated depends on the use case of the
+HTTP messages. This document provides different fields for HTTP representation
+data and HTTP content.</t>
+        <t indent="0" pn="section-1.2-3">There are use cases where a simple digest of the HTTP content bytes is
+required. The <tt>Content-Digest</tt> request and response header and trailer field is
+defined to support digests of content (<xref section="6.4" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.4" derivedContent="HTTP"/>); see
+<xref target="content-digest" format="default" sectionFormat="of" derivedContent="Section 2"/>.</t>
+        <t indent="0" pn="section-1.2-4">For more advanced use cases, the <tt>Repr-Digest</tt> request and response header
+and trailer field (<xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/>) is defined. It contains a digest value
+computed by applying a hashing algorithm to selected representation data
+(<xref section="8.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.1" derivedContent="HTTP"/>). 
+
+Basing <tt>Repr-Digest</tt> on the selected
+representation makes it straightforward to apply it to use cases where the
+message content requires some sort of manipulation to be considered as
+representation of the resource or the content conveys a partial representation of a resource,
+such as range requests (see <xref section="14" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-14" derivedContent="HTTP"/>).</t>
+        <t indent="0" pn="section-1.2-5"><tt>Content-Digest</tt> and <tt>Repr-Digest</tt> support hashing algorithm agility.
+The <tt>Want-Content-Digest</tt> and <tt>Want-Repr-Digest</tt> fields allow
+endpoints to express interest in <tt>Content-Digest</tt> and <tt>Repr-Digest</tt>, respectively, and to express algorithm preferences in either.</t>
+        <t indent="0" pn="section-1.2-6"><tt>Content-Digest</tt> and <tt>Repr-Digest</tt> are collectively termed
+"Integrity fields".
+<tt>Want-Content-Digest</tt> and <tt>Want-Repr-Digest</tt> are
+collectively termed "Integrity preference fields".</t>
+        <t indent="0" pn="section-1.2-7">Integrity fields are tied to the <tt>Content-Encoding</tt>
+and <tt>Content-Type</tt> header fields. Therefore, a given resource may have multiple
+different digest values when transferred with HTTP.</t>
+        <t indent="0" pn="section-1.2-8">Integrity fields apply to HTTP message content or HTTP representations. They do
+not apply to HTTP messages or fields. However, they can be combined with other
+mechanisms that protect metadata, such as digital signatures, in order to
+protect the phases of an HTTP exchange in whole or in part. For example, HTTP
+Message Signatures <xref target="RFC9421" format="default" sectionFormat="of" derivedContent="SIGNATURES"/> could be used to sign Integrity fields, thus
+providing coverage for HTTP content or representation data.</t>
+        <t indent="0" pn="section-1.2-9">This specification does not define means for authentication, authorization, or privacy.</t>
+      </section>
+      <section anchor="obsolete-3230" numbered="true" removeInRFC="false" toc="include" pn="section-1.3">
+        <name slugifiedName="name-obsoleting-rfc-3230">Obsoleting RFC 3230</name>
+        <t indent="0" pn="section-1.3-1"><xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> defined the <tt>Digest</tt> and <tt>Want-Digest</tt> HTTP fields for HTTP integrity.
+It also coined the terms "instance" and "instance manipulation" in order to
+explain concepts, such as selected representation data (<xref section="8.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.1" derivedContent="HTTP"/>), that are now more universally defined and implemented as HTTP
+semantics.</t>
+        <t indent="0" pn="section-1.3-2">Experience has shown that implementations of <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> have interpreted the
+meaning of "instance" inconsistently, leading to interoperability issues. The
+most common issue relates to the mistake of calculating the digest using (what
+we now call) message content, rather than using (what we now call)
+representation data as was originally intended. Interestingly, time has also
+shown that a digest of message content can be beneficial for some use cases, so
+it is difficult to detect if non-conformance to <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> is intentional or
+unintentional.</t>
+        <t indent="0" pn="section-1.3-3">In order to address potential inconsistencies and ambiguity across
+implementations of <tt>Digest</tt> and <tt>Want-Digest</tt>, this document obsoletes
+<xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>. The Integrity fields (Sections <xref format="counter" target="content-digest" sectionFormat="of" derivedContent="2"/> and
+<xref format="counter" target="representation-digest" sectionFormat="of" derivedContent="3"/>) and Integrity preference fields (<xref target="want-fields" format="default" sectionFormat="of" derivedContent="Section 4"/>)
+defined in this document are better aligned with current HTTP semantics and
+have names that more clearly articulate the intended usages.</t>
+      </section>
+      <section anchor="notational-conventions" numbered="true" removeInRFC="false" toc="include" pn="section-1.4">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.4-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+    described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+        <t indent="0" pn="section-1.4-2">This document uses the Augmented BNF defined in <xref target="RFC5234" format="default" sectionFormat="of" derivedContent="RFC5234"/> and updated by
+<xref target="RFC7405" format="default" sectionFormat="of" derivedContent="RFC7405"/>. This includes the rules CR (carriage return), LF (line feed), and CRLF (CR LF).</t>
+        <t indent="0" pn="section-1.4-3">This document uses the following terminology from <xref section="3" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3" derivedContent="STRUCTURED-FIELDS"/> to specify syntax and parsing:
+Boolean, Byte Sequence, Dictionary, Integer, and List.</t>
+        <t indent="0" pn="section-1.4-4">The definitions "representation", "selected representation", "representation
+data", "representation metadata", "user agent", and "content" in this document are to be
+interpreted as described in <xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/>.</t>
+        <t indent="0" pn="section-1.4-5">This document uses the line folding strategies
+described in <xref target="RFC8792" format="default" sectionFormat="of" derivedContent="FOLDING"/>.</t>
+        <t indent="0" pn="section-1.4-6">Hashing algorithm names respect the casing used in their definition document (e.g., SHA-1, CRC32c).</t>
+        <t indent="0" pn="section-1.4-7">HTTP messages indicate hashing algorithms using an Algorithm Key (<contact fullname="algorithms"/>).
+Where the document refers to an Algorithm Key in prose, it is quoted (e.g., "sha", "crc32c").</t>
+        <t indent="0" pn="section-1.4-8">The term "checksum" describes the output of applying an algorithm
+        to a sequence of bytes, whereas "digest" is only used in relation to
+        the value contained in the fields.</t>
+        <t indent="0" pn="section-1.4-9">"Integrity fields" is the collective term for <tt>Content-Digest</tt> and
+<tt>Repr-Digest</tt>.</t>
+        <t indent="0" pn="section-1.4-10">"Integrity preference fields" is the collective term for <tt>Want-Repr-Digest</tt>
+and <tt>Want-Content-Digest</tt>.</t>
+      </section>
+    </section>
+    <section anchor="content-digest" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-the-content-digest-field">The <tt>Content-Digest</tt> Field</name>
+      <t indent="0" pn="section-2-1">The <tt>Content-Digest</tt> HTTP field can be used in requests and responses to
+communicate digests that are calculated using a hashing algorithm applied to
+the actual message content (see <xref section="6.4" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.4" derivedContent="HTTP"/>). It is a
+Dictionary (see <xref section="3.2" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.2" derivedContent="STRUCTURED-FIELDS"/>),
+where each:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-2-2">
+        <li pn="section-2-2.1">key conveys the hashing algorithm (see <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/>)
+used to compute the digest;</li>
+        <li pn="section-2-2.2">value is a Byte Sequence (<xref section="3.3.5" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.5" derivedContent="STRUCTURED-FIELDS"/>) that
+conveys an encoded version of the byte output produced by the digest
+calculation.</li>
+      </ul>
+      <t indent="0" pn="section-2-3">For example:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-4">
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</sourcecode>
+      <t indent="0" pn="section-2-5">The Dictionary type can be used, for example, to attach multiple digests
+calculated using different hashing algorithms in order to support a population
+of endpoints with different or evolving capabilities. Such an approach could
+support transitions away from weaker algorithms (see <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>).</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-6">
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</sourcecode>
+      <t indent="0" pn="section-2-7">A recipient <bcp14>MAY</bcp14> ignore any or all digests. Application-specific behavior or
+local policy <bcp14>MAY</bcp14> set additional constraints on the processing and validation
+practices of the conveyed digests.
+The security considerations cover some of the issues related to
+ignoring digests (see <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>)
+and validating multiple digests (see <xref target="sec-exhaustion" format="default" sectionFormat="of" derivedContent="Section 6.7"/>).</t>
+      <t indent="0" pn="section-2-8">A sender <bcp14>MAY</bcp14> send a digest without
+knowing whether the recipient supports a given hashing algorithm. A sender <bcp14>MAY</bcp14> send a digest if it knows the recipient will ignore it.</t>
+      <t indent="0" pn="section-2-9"><tt>Content-Digest</tt> can be sent in a trailer section.
+In this case,
+<tt>Content-Digest</tt> <bcp14>MAY</bcp14> be merged into the header section; see <xref section="6.5.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.5.1" derivedContent="HTTP"/>.</t>
+    </section>
+    <section anchor="representation-digest" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-the-repr-digest-field">The <tt>Repr-Digest</tt> Field</name>
+      <t indent="0" pn="section-3-1">The <tt>Repr-Digest</tt> HTTP field can be used in requests and responses to
+communicate digests that are calculated using a hashing algorithm applied to
+the entire selected representation data (see <xref section="8.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.1" derivedContent="HTTP"/>).</t>
+      <t indent="0" pn="section-3-2">Representations take into account the effect of the HTTP semantics on
+messages. For example, the content can be affected by range requests or methods, such as HEAD, while the way the content is transferred "on the wire" is
+dependent on other transformations (e.g., transfer codings for HTTP/1.1; see
+<xref section="6.1" sectionFormat="of" target="RFC9112" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9112#section-6.1" derivedContent="HTTP/1.1"/>). To help illustrate HTTP representation concepts,
+several examples are provided in <xref target="resource-representation" format="default" sectionFormat="of" derivedContent="Appendix A"/>.</t>
+      <t indent="0" pn="section-3-3">When a message has no representation data, it is still possible to assert that no
+representation data was sent by computing the digest on an empty
+string (see <xref target="usage-in-signatures" format="default" sectionFormat="of" derivedContent="Section 6.3"/>).</t>
+      <t indent="0" pn="section-3-4"><tt>Repr-Digest</tt> is a Dictionary (see <xref section="3.2" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.2" derivedContent="STRUCTURED-FIELDS"/>), where each:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-3-5">
+        <li pn="section-3-5.1">key conveys the hashing algorithm (see <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/>)
+used to compute the digest;</li>
+        <li pn="section-3-5.2">value is a Byte Sequence that conveys an encoded version of the byte
+output produced by the digest calculation.</li>
+      </ul>
+      <t indent="0" pn="section-3-6">For example:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-7">
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</sourcecode>
+      <t indent="0" pn="section-3-8">The Dictionary type can be used to attach multiple digests
+calculated using different hashing algorithms in order to support a population
+of endpoints with different or evolving capabilities. Such an approach could
+support transitions away from weaker algorithms (see <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>).</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-9">
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+</sourcecode>
+      <t indent="0" pn="section-3-10">A recipient <bcp14>MAY</bcp14> ignore any or all digests. Application-specific behavior or
+local policy <bcp14>MAY</bcp14> set additional constraints on the processing and validation
+practices of the conveyed digests.
+The security considerations cover some of the issues related to
+ignoring digests (see <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>)
+and validating multiple digests (see <xref target="sec-exhaustion" format="default" sectionFormat="of" derivedContent="Section 6.7"/>).</t>
+      <t indent="0" pn="section-3-11">A sender <bcp14>MAY</bcp14> send a digest without knowing whether the recipient supports a given hashing algorithm. A sender <bcp14>MAY</bcp14> send a digest if it knows the recipient will ignore it.</t>
+      <t indent="0" pn="section-3-12"><tt>Repr-Digest</tt> can be sent in a trailer section.
+In this case,
+<tt>Repr-Digest</tt> <bcp14>MAY</bcp14> be merged into the header section; see <xref section="6.5.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.5.1" derivedContent="HTTP"/>.</t>
+      <section anchor="state-changing-requests" numbered="true" removeInRFC="false" toc="include" pn="section-3.1">
+        <name slugifiedName="name-using-repr-digest-in-state-">Using <tt>Repr-Digest</tt> in State-Changing Requests</name>
+        <t indent="0" pn="section-3.1-1">When the representation enclosed in a state-changing request
+does not describe the target resource,
+the representation digest <bcp14>MUST</bcp14> be computed on the
+representation data.
+This is the only possible choice because representation digest requires complete
+representation metadata (see <xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/>).</t>
+        <t indent="0" pn="section-3.1-2">In responses,</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-3.1-3">
+          <li pn="section-3.1-3.1">if the representation describes the status of the request,
+<tt>Repr-Digest</tt> <bcp14>MUST</bcp14> be computed on the enclosed representation
+ (see <xref target="post-referencing-status" format="default" sectionFormat="of" derivedContent="Appendix B.8"/>);</li>
+          <li pn="section-3.1-3.2">if there is a referenced resource, <tt>Repr-Digest</tt>
+            <bcp14>MUST</bcp14> be computed on the selected representation of
+          the referenced resource even if that is different from the target
+          resource.  This might or might not result in computing
+          <tt>Repr-Digest</tt> on the enclosed representation.</li>
+        </ul>
+        <t indent="0" pn="section-3.1-4">The latter case is done according to the HTTP semantics of the given
+method, for example, using the <tt>Content-Location</tt> header field (see <xref section="8.7" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.7" derivedContent="HTTP"/>).
+In contrast, the <tt>Location</tt> header field does not affect <tt>Repr-Digest</tt> because
+it is not representation metadata.</t>
+        <t indent="0" pn="section-3.1-5">For example, in PATCH requests, the representation digest
+will be computed on the patch document
+because the representation metadata refers to the patch document and not
+the target resource (see <xref section="2" sectionFormat="of" target="RFC5789" format="default" derivedLink="https://rfc-editor.org/rfc/rfc5789#section-2" derivedContent="PATCH"/>).
+In responses, instead, the representation digest will be computed on the selected
+representation of the patched resource.</t>
+      </section>
+      <section anchor="digest-and-content-location" numbered="true" removeInRFC="false" toc="include" pn="section-3.2">
+        <name slugifiedName="name-repr-digest-and-content-loc"><tt>Repr-Digest</tt> and Content-Location in Responses</name>
+        <t indent="0" pn="section-3.2-1">When a state-changing method returns the <tt>Content-Location</tt> header field, the
+enclosed representation refers to the resource identified by its value and
+<tt>Repr-Digest</tt> is computed accordingly.
+An example is given in <xref target="post-not-request-uri" format="default" sectionFormat="of" derivedContent="Appendix B.7"/>.</t>
+      </section>
+    </section>
+    <section anchor="want-fields" numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-integrity-preference-fields">Integrity Preference Fields</name>
+      <t indent="0" pn="section-4-1">Senders can indicate their interest in Integrity fields and hashing algorithm
+preferences using the
+<tt>Want-Content-Digest</tt> or <tt>Want-Repr-Digest</tt> HTTP fields. These can be used in both
+requests and responses.</t>
+      <t indent="0" pn="section-4-2"><tt>Want-Content-Digest</tt> indicates that the sender would like to
+receive (via the <tt>Content-Digest</tt> field) a content digest on messages
+associated with the request URI and representation metadata.
+
+   <tt>Want-Repr-Digest</tt> indicates that the sender would like to receive
+   (via the <tt>Repr-Digest</tt> field) a representation digest on messages
+   associated with the request URI and representation metadata.
+</t>
+      <t indent="0" pn="section-4-3">If <tt>Want-Content-Digest</tt> or <tt>Want-Repr-Digest</tt> are used in a response, it
+indicates that the server would like the client to provide the respective
+Integrity field on future requests.</t>
+      <t indent="0" pn="section-4-4">Integrity preference fields are only a hint. The receiver of the field can
+ignore it and send an Integrity field using any algorithm or omit the field
+entirely; for example, see <xref target="ex-server-selects-unsupported-algorithm" format="default" sectionFormat="of" derivedContent="Appendix C.2"/>. It is not
+a protocol error if preferences are ignored. Applications that use Integrity
+fields and Integrity preferences can define expectations or constraints that
+operate in addition to this specification. Ignored preferences are an
+application-specific concern.</t>
+      <t indent="0" pn="section-4-5"><tt>Want-Content-Digest</tt> and <tt>Want-Repr-Digest</tt> are of type Dictionary
+where each:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-4-6">
+        <li pn="section-4-6.1">key conveys the hashing algorithm (see <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/>);</li>
+        <li pn="section-4-6.2">value is an <tt>Integer</tt> (<xref section="3.3.1" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.1" derivedContent="STRUCTURED-FIELDS"/>)
+that conveys an ascending, relative, weighted preference.
+It must be in the range 0 to 10 inclusive.
+1 is the least preferred, 10 is the most preferred,
+and a value of 0 means "not acceptable".</li>
+      </ul>
+      <t indent="0" pn="section-4-7">Examples:</t>
+      <sourcecode type="http-message" markers="false" pn="section-4-8">
+Want-Repr-Digest: sha-256=1
+Want-Repr-Digest: sha-512=3, sha-256=10, unixsum=0
+Want-Content-Digest: sha-256=1
+Want-Content-Digest: sha-512=3, sha-256=10, unixsum=0
+</sourcecode>
+    </section>
+    <section anchor="algorithms" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-hash-algorithm-consideratio">Hash Algorithm Considerations and Registration</name>
+      <t indent="0" pn="section-5-1">There are a wide variety of hashing algorithms that can be used for the purposes
+of integrity. The choice of algorithm depends on several factors such as the
+integrity use case, implementation needs or constraints, or application design
+and workflows.</t>
+      <t indent="0" pn="section-5-2">An initial set of algorithms will be registered with IANA in the "Hash
+Algorithms for HTTP Digest Fields" registry; see
+<xref target="establish-hash-algorithm-registry" format="default" sectionFormat="of" derivedContent="Section 7.2"/>. Additional algorithms can be registered
+in accordance with the policies set out in this section.</t>
+      <t indent="0" pn="section-5-3">Each algorithm has a status field that is intended to provide an aid to
+implementation selection.</t>
+      <t indent="0" pn="section-5-4">Algorithms with a status value of "Active" are suitable for many purposes and
+it is <bcp14>RECOMMENDED</bcp14> that applications use these algorithms. These can be used in
+adversarial situations where hash functions might need to provide resistance to
+collision, first-preimage, and second-preimage attacks. 
+
+   For adversarial situations, selection of the acceptable "Active" algorithms
+   will depend on the level of protection the circumstances demand. More
+   considerations are presented in <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>.</t>
+      <t indent="0" pn="section-5-5">Algorithms with a status value of "Deprecated" either provide none of these
+properties or are known to be weak (see <xref target="RFC6151" format="default" sectionFormat="of" derivedContent="NO-MD5"/> and <xref target="RFC6194" format="default" sectionFormat="of" derivedContent="NO-SHA"/>). These
+algorithms <bcp14>MAY</bcp14> be used to preserve integrity against corruption, but <bcp14>MUST NOT</bcp14> be
+used in a potentially adversarial setting, for example, when signing Integrity
+fields' values for authenticity. 
+
+   Permitting the use of these algorithms can help some applications (such as
+   those that previously used <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>, are migrating to this specification
+   (<xref target="migrating" format="default" sectionFormat="of" derivedContent="Appendix E"/>), and have existing stored collections of computed digest
+   values) avoid undue operational overhead caused by recomputation using
+   other more-secure algorithms.
+
+Such applications are not
+exempt from the requirements in this section. Furthermore, applications without
+such legacy or history ought to follow the guidance for using algorithms with
+the status value "Active".</t>
+      <t indent="0" pn="section-5-6">Discussion of algorithm agility is presented in <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>.</t>
+      <t indent="0" pn="section-5-7">Registration requests for the "Hash Algorithms for HTTP Digest Fields" registry
+use the Specification Required policy (<xref section="4.6" sectionFormat="of" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.6" derivedContent="RFC8126"/>). Requests
+should use the following template:</t>
+      <dl indent="3" newline="false" spacing="normal" pn="section-5-8">
+        <dt pn="section-5-8.1">Algorithm Key:</dt>
+        <dd pn="section-5-8.2">The Structured Fields key value used in
+<tt>Content-Digest</tt>, <tt>Repr-Digest</tt>, <tt>Want-Content-Digest</tt>, or <tt>Want-Repr-Digest</tt>
+ field Dictionary member keys.</dd>
+        <dt pn="section-5-8.3">Status:</dt>
+        <dd pn="section-5-8.4">The status of the algorithm. The options are:</dd>
+        <dt pn="section-5-8.5"/>
+        <dd pn="section-5-8.6">
+          <dl spacing="normal" indent="3" newline="false" pn="section-5-8.6.1">
+            <dt pn="section-5-8.6.1.1">"Active":</dt>
+            <dd pn="section-5-8.6.1.2">Algorithms without known problems</dd>
+            <dt pn="section-5-8.6.1.3">"Provisional":</dt>
+            <dd pn="section-5-8.6.1.4">Unproven algorithms</dd>
+            <dt pn="section-5-8.6.1.5">"Deprecated":</dt>
+            <dd pn="section-5-8.6.1.6">Deprecated or insecure algorithms</dd>
+          </dl>
+        </dd>
+        <dt pn="section-5-8.7">Description:</dt>
+        <dd pn="section-5-8.8">A short description of the algorithm.</dd>
+        <dt pn="section-5-8.9">Reference(s):</dt>
+        <dd pn="section-5-8.10">Pointer(s) to the primary document(s) defining the Algorithm
+Key and technical details of the algorithm.</dd>
+      </dl>
+      <t indent="0" pn="section-5-9">When reviewing registration requests, the designated expert(s) should pay
+attention to the requested status. The status value should reflect
+standardization status and the broad opinion of relevant interest groups such as
+the IETF or security-related Standards Development Organizations (SDOs). The "Active" status is not suitable for an
+algorithm that is known to be weak, broken, or experimental. If a registration
+request attempts to register such an algorithm as "Active", the designated
+expert(s) should suggest an alternative status of "Deprecated" or "Provisional".</t>
+      <t indent="0" pn="section-5-10">When reviewing registration requests, the designated expert(s) cannot use a
+status of "Deprecated" or "Provisional" as grounds for rejection.</t>
+      <t indent="0" pn="section-5-11">Requests to update or change the fields in an existing registration are
+permitted. For example, this could allow for the transition of an algorithm
+status from "Active" to "Deprecated" as the security environment evolves.</t>
+    </section>
+    <section anchor="security" numbered="true" removeInRFC="false" toc="include" pn="section-6">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <section anchor="sec-limitations" numbered="true" removeInRFC="false" toc="include" pn="section-6.1">
+        <name slugifiedName="name-http-messages-are-not-prote">HTTP Messages Are Not Protected in Full</name>
+        <t indent="0" pn="section-6.1-1">This document specifies a data integrity mechanism that protects HTTP
+representation data or content, but not HTTP header and trailer fields, from
+certain kinds of corruption.</t>
+        <t indent="0" pn="section-6.1-2">Integrity fields are not intended to be a general protection against malicious tampering with
+HTTP messages.
+In the absence of additional
+  security mechanisms, an on-path malicious actor can either remove
+  a digest value entirely or substitute it with a new digest value computed over
+  manipulated representation data or content.
+This attack can be mitigated by combining mechanisms described in this
+document with other approaches such
+as Transport Layer Security (TLS) or digital signatures (for example, HTTP Message
+Signatures <xref target="RFC9421" format="default" sectionFormat="of" derivedContent="SIGNATURES"/>).</t>
+      </section>
+      <section anchor="end-to-end-integrity" numbered="true" removeInRFC="false" toc="include" pn="section-6.2">
+        <name slugifiedName="name-end-to-end-integrity">End-to-End Integrity</name>
+        <t indent="0" pn="section-6.2-1">Integrity fields can help detect representation data or content modification due to implementation errors,
+undesired "transforming proxies" (see <xref section="7.7" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-7.7" derivedContent="HTTP"/>),
+or other actions as the data passes across multiple hops or system boundaries.
+Even a simple mechanism for end-to-end representation data integrity is valuable
+because a user agent can validate that resource retrieval succeeded before handing off to an
+HTML parser, video player, etc., for parsing.</t>
+        <t indent="0" pn="section-6.2-2">Note that using these mechanisms alone does not provide end-to-end integrity of HTTP messages over
+multiple hops since metadata could be manipulated at any stage. Methods to protect
+metadata are discussed in <xref target="usage-in-signatures" format="default" sectionFormat="of" derivedContent="Section 6.3"/>.</t>
+      </section>
+      <section anchor="usage-in-signatures" numbered="true" removeInRFC="false" toc="include" pn="section-6.3">
+        <name slugifiedName="name-usage-in-signatures">Usage in Signatures</name>
+        <t indent="0" pn="section-6.3-1">Digital signatures are widely used together with checksums to provide the
+certain identification of the origin of a message <xref target="FIPS186-5" format="default" sectionFormat="of" derivedContent="FIPS186-5"/>. Such signatures
+can protect one or more HTTP fields and there are additional considerations when
+Integrity fields are included in this set.</t>
+        <t indent="0" pn="section-6.3-2">There are no restrictions placed on the type or format of digital signature that
+Integrity fields can be used with. One possible approach is to combine them with
+HTTP Message Signatures <xref target="RFC9421" format="default" sectionFormat="of" derivedContent="SIGNATURES"/>.</t>
+        <t indent="0" pn="section-6.3-3">Digests explicitly
+depend on the "representation metadata" (e.g., the values of <tt>Content-Type</tt>,
+<tt>Content-Encoding</tt>, etc.). A signature that protects Integrity fields but not other
+"representation metadata" can expose the communication to tampering. For
+example, an actor could manipulate the <tt>Content-Type</tt> field-value and cause a
+digest validation failure at the recipient, preventing the application from
+accessing the representation. Such an attack consumes the resources of both
+endpoints. See also <xref target="digest-and-content-location" format="default" sectionFormat="of" derivedContent="Section 3.2"/>.</t>
+        <t indent="0" pn="section-6.3-4">Signatures are likely to be deemed an adversarial setting when applying
+Integrity fields; see <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/>. <tt>Repr-Digest</tt> offers an interesting
+possibility when combined with signatures. In the scenario where there is no
+content to send, the digest of an empty string can be included in the message
+and, if signed, can help the recipient detect if content was added either as a result of accident or purposeful manipulation. The opposite scenario is also
+supported; including an Integrity field for content and signing it can help a
+recipient detect where the content was removed.</t>
+        <t indent="0" pn="section-6.3-5">Any mangling of Integrity fields might affect signature validation. Examples of such mangling include de-duplicating digests or combining different field values (see <xref section="5.2" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-5.2" derivedContent="HTTP"/>).</t>
+      </section>
+      <section anchor="usage-in-trailer-fields" numbered="true" removeInRFC="false" toc="include" pn="section-6.4">
+        <name slugifiedName="name-usage-in-trailer-fields">Usage in Trailer Fields</name>
+        <t indent="0" pn="section-6.4-1">Before sending Integrity fields in a trailer section, the sender
+should consider that intermediaries are explicitly allowed to drop any trailer
+(see <xref section="6.5.2" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.5.2" derivedContent="HTTP"/>).</t>
+        <t indent="0" pn="section-6.4-2">When Integrity fields are used in a trailer section, the field-values are received after the content.
+Eager processing of content before the trailer section prevents digest validation, possibly leading to
+processing of invalid data.</t>
+        <t indent="0" pn="section-6.4-3">One of the benefits of using Integrity fields in a trailer section is that it
+allows hashing of bytes as they are sent. However, it is possible to
+design a hashing algorithm that requires processing of content in such a way
+that would negate these benefits. For example, Merkle Integrity Content Encoding
+<xref target="I-D.thomson-http-mice" format="default" sectionFormat="of" derivedContent="MICE"/> requires content to be processed in reverse order.
+This means the complete data needs to be available, which means there is
+negligible processing difference in sending an Integrity field in a header versus
+a trailer section.</t>
+      </section>
+      <section anchor="variations-within-content-encoding" numbered="true" removeInRFC="false" toc="include" pn="section-6.5">
+        <name slugifiedName="name-variations-within-content-e">Variations within Content-Encoding</name>
+        <t indent="0" pn="section-6.5-1">Content coding mechanisms can support different encoding parameters, meaning that the same input content can produce different outputs. For example, GZIP supports multiple compression levels. Such encoding parameters are generally not communicated as representation metadata. For instance, different compression levels would all use the same "Content-Encoding: gzip" field. Other examples include where encoding relies on nonces or timestamps, such as the aes128gcm content coding defined in <xref target="RFC8188" format="default" sectionFormat="of" derivedContent="RFC8188"/>.</t>
+        <t indent="0" pn="section-6.5-2">Since it is possible for there to be variation within content coding, the checksum conveyed by the Integrity fields cannot be used to provide a proof of integrity "at rest"
+unless the whole content is persisted.</t>
+      </section>
+      <section anchor="sec-agility" numbered="true" removeInRFC="false" toc="include" pn="section-6.6">
+        <name slugifiedName="name-algorithm-agility">Algorithm Agility</name>
+        <t indent="0" pn="section-6.6-1">The security properties of hashing algorithms are not fixed.
+Algorithm agility (see <xref target="RFC7696" format="default" sectionFormat="of" derivedContent="RFC7696"/>) is achieved by providing implementations with flexibility
+to choose hashing algorithms from the IANA Hash Algorithms for HTTP Digest Fields registry; see
+<xref target="establish-hash-algorithm-registry" format="default" sectionFormat="of" derivedContent="Section 7.2"/>.</t>
+        <t indent="0" pn="section-6.6-2">Transition from weak algorithms is supported
+by negotiation of hashing algorithm using <tt>Want-Content-Digest</tt> or <tt>Want-Repr-Digest</tt> (see <xref target="want-fields" format="default" sectionFormat="of" derivedContent="Section 4"/>)
+or by sending multiple digests from which the receiver chooses.
+A receiver that depends on a digest for security will be vulnerable
+to attacks on the weakest algorithm it is willing to accept.
+Endpoints are advised that sending multiple values consumes resources that may be wasted if the receiver ignores them (see <xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/>).</t>
+        <t indent="0" pn="section-6.6-3">While algorithm agility allows the migration to stronger algorithms,
+it does not prevent the use of weaker algorithms.
+Integrity fields do not provide any mitigations for downgrade or substitution
+attacks (see <xref target="RFC6211" sectionFormat="of" section="1" format="default" derivedLink="https://rfc-editor.org/rfc/rfc6211#section-1" derivedContent="RFC6211"/>) of the hashing algorithm.
+To protect against such attacks, endpoints could restrict their set of supported algorithms
+to stronger ones and protect the fields' values by using TLS and/or digital signatures.</t>
+      </section>
+      <section anchor="sec-exhaustion" numbered="true" removeInRFC="false" toc="include" pn="section-6.7">
+        <name slugifiedName="name-resource-exhaustion">Resource Exhaustion</name>
+        <t indent="0" pn="section-6.7-1">Integrity field validation consumes computational resources.
+In order to avoid resource exhaustion, implementations can restrict
+validation of the algorithm types, the number of validations, or the size of content.
+In these cases, skipping validation entirely or ignoring validation failure of a more-preferred algorithm
+leaves the possibility of a downgrade attack (see <xref target="sec-agility" format="default" sectionFormat="of" derivedContent="Section 6.6"/>).</t>
+      </section>
+    </section>
+    <section anchor="iana-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-7">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <section anchor="http-field-name-registration" numbered="true" removeInRFC="false" toc="include" pn="section-7.1">
+        <name slugifiedName="name-http-field-name-registratio">HTTP Field Name Registration</name>
+        <t indent="0" pn="section-7.1-1">IANA has updated the
+"Hypertext Transfer Protocol (HTTP) Field Name Registry" 
+<xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/> as shown in the table below:</t>
+        <table align="center" pn="table-1">
+          <name slugifiedName="name-hypertext-transfer-protocol">Hypertext Transfer Protocol (HTTP) Field
+   Name Registry Update</name>
+          <thead>
+            <tr>
+              <th align="left" colspan="1" rowspan="1">Field Name</th>
+              <th align="left" colspan="1" rowspan="1">Status</th>
+              <th align="left" colspan="1" rowspan="1">Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Content-Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="content-digest" format="default" sectionFormat="of" derivedContent="Section 2"/> of RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Repr-Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/> of RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Want-Content-Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="want-fields" format="default" sectionFormat="of" derivedContent="Section 4"/> of RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Want-Repr-Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="want-fields" format="default" sectionFormat="of" derivedContent="Section 4"/> of RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">obsoleted</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>, <xref target="obsolete-3230" format="default" sectionFormat="of" derivedContent="Section 1.3"/> of RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">
+                <tt>Want-Digest</tt></td>
+              <td align="left" colspan="1" rowspan="1">obsoleted</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>, <xref target="obsolete-3230" format="default" sectionFormat="of" derivedContent="Section 1.3"/> of RFC 9530</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section anchor="establish-hash-algorithm-registry" numbered="true" removeInRFC="false" toc="include" pn="section-7.2">
+        <name slugifiedName="name-creation-of-the-hash-algori">Creation of the Hash Algorithms for HTTP Digest Fields Registry</name>
+        <t indent="0" pn="section-7.2-1">IANA has created the new "Hash Algorithms for HTTP Digest Fields"
+registry at <eref brackets="angle" target="https://www.iana.org/assignments/http-digest-hash-alg/"/> and
+populated it with the entries in <xref target="iana-hash-algorithm-table" format="default" sectionFormat="of" derivedContent="Table 2"/>. The procedure for
+new registrations is provided in <xref target="algorithms" format="default" sectionFormat="of" derivedContent="Section 5"/>.</t>
+        <table anchor="iana-hash-algorithm-table" align="center" pn="table-2">
+          <name slugifiedName="name-initial-hash-algorithms">Initial Hash Algorithms</name>
+          <thead>
+            <tr>
+              <th align="left" colspan="1" rowspan="1">Algorithm Key</th>
+              <th align="left" colspan="1" rowspan="1">Status</th>
+              <th align="left" colspan="1" rowspan="1">Description</th>
+              <th align="left" colspan="1" rowspan="1">Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">sha-512</td>
+              <td align="left" colspan="1" rowspan="1">Active</td>
+              <td align="left" colspan="1" rowspan="1">The SHA-512 algorithm.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC6234" format="default" sectionFormat="of" derivedContent="RFC6234"/>, <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">sha-256</td>
+              <td align="left" colspan="1" rowspan="1">Active</td>
+              <td align="left" colspan="1" rowspan="1">The SHA-256 algorithm.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC6234" format="default" sectionFormat="of" derivedContent="RFC6234"/>, <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">md5</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The MD5 algorithm. It is vulnerable to collision attacks; see <xref target="RFC6151" format="default" sectionFormat="of" derivedContent="NO-MD5"/> and <xref target="CMU-836068" format="default" sectionFormat="of" derivedContent="CMU-836068"/></td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC1321" format="default" sectionFormat="of" derivedContent="RFC1321"/>, <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">sha</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The SHA-1 algorithm. It is vulnerable to collision attacks; see <xref target="RFC6194" format="default" sectionFormat="of" derivedContent="NO-SHA"/> and <xref target="IACR-2020-014" format="default" sectionFormat="of" derivedContent="IACR-2020-014"/></td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC3174" format="default" sectionFormat="of" derivedContent="RFC3174"/>, <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, <xref target="RFC6234" format="default" sectionFormat="of" derivedContent="RFC6234"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">unixsum</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The algorithm used by the UNIX "sum" command.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, <xref target="RFC6234" format="default" sectionFormat="of" derivedContent="RFC6234"/>, <xref target="UNIX" format="default" sectionFormat="of" derivedContent="UNIX"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">unixcksum</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The algorithm used by the UNIX "cksum" command.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC4648" format="default" sectionFormat="of" derivedContent="RFC4648"/>, <xref target="RFC6234" format="default" sectionFormat="of" derivedContent="RFC6234"/>, <xref target="UNIX" format="default" sectionFormat="of" derivedContent="UNIX"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">adler</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The ADLER32 algorithm.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC1950" format="default" sectionFormat="of" derivedContent="RFC1950"/>, RFC 9530</td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">crc32c</td>
+              <td align="left" colspan="1" rowspan="1">Deprecated</td>
+              <td align="left" colspan="1" rowspan="1">The CRC32c algorithm.</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="RFC9260" sectionFormat="of" section="A" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9260#appendix-A" derivedContent="RFC9260"/>, RFC 9530</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section anchor="deprecate-the-hypertext-transfer-protocol-http-digest-algorithm-values-registry" numbered="true" removeInRFC="false" toc="include" pn="section-7.3">
+        <name slugifiedName="name-deprecate-the-hypertext-tra">Deprecate the Hypertext Transfer Protocol (HTTP) Digest Algorithm Values Registry</name>
+        <t indent="0" pn="section-7.3-1">IANA has deprecated the "Hypertext Transfer Protocol (HTTP) Digest
+Algorithm Values" registry at
+<eref brackets="angle" target="https://www.iana.org/assignments/http-dig-alg/"/> and replaced the note on that registry with the following text:</t>
+        <blockquote pn="section-7.3-2">This registry is deprecated since it lists the algorithms that can be used
+with the <tt>Digest</tt> and <tt>Want-Digest</tt> fields defined in <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>, which has been obsoleted by
+RFC 9530. While registration is not closed, new registrations
+are encouraged to use the <eref target="https://www.iana.org/assignments/http-digest-hash-alg/" brackets="none">Hash Algorithms for HTTP Digest                                                   
+Fields</eref> registry instead.</blockquote>
+      </section>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="RFC9112" to="HTTP/1.1"/>
+    <displayreference target="RFC8792" to="FOLDING"/>
+    <displayreference target="RFC8941" to="STRUCTURED-FIELDS"/>
+    <displayreference target="RFC5789" to="PATCH"/>
+    <displayreference target="RFC6151" to="NO-MD5"/>
+    <displayreference target="RFC6194" to="NO-SHA"/>
+    <displayreference target="RFC9421" to="SIGNATURES"/>
+    <displayreference target="RFC8446" to="TLS"/>
+    <displayreference target="I-D.thomson-http-mice" to="MICE"/>
+    <references pn="section-8">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-8.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC8792" target="https://www.rfc-editor.org/info/rfc8792" quoteTitle="true" derivedAnchor="FOLDING">
+          <front>
+            <title>Handling Long Lines in Content of Internet-Drafts and RFCs</title>
+            <author fullname="K. Watsen" initials="K." surname="Watsen"/>
+            <author fullname="E. Auerswald" initials="E." surname="Auerswald"/>
+            <author fullname="A. Farrel" initials="A." surname="Farrel"/>
+            <author fullname="Q. Wu" initials="Q." surname="Wu"/>
+            <date month="June" year="2020"/>
+            <abstract>
+              <t indent="0">This document defines two strategies for handling long lines in width-bounded text content. One strategy, called the "single backslash" strategy, is based on the historical use of a single backslash ('\') character to indicate where line-folding has occurred, with the continuation occurring with the first character that is not a space character (' ') on the next line. The second strategy, called the "double backslash" strategy, extends the first strategy by adding a second backslash character to identify where the continuation begins and is thereby able to handle cases not supported by the first strategy. Both strategies use a self-describing header enabling automated reconstitution of the original content.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8792"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8792"/>
+        </reference>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC1321" target="https://www.rfc-editor.org/info/rfc1321" quoteTitle="true" derivedAnchor="RFC1321">
+          <front>
+            <title>The MD5 Message-Digest Algorithm</title>
+            <author fullname="R. Rivest" initials="R." surname="Rivest"/>
+            <date month="April" year="1992"/>
+            <abstract>
+              <t indent="0">This document describes the MD5 message-digest algorithm. The algorithm takes as input a message of arbitrary length and produces as output a 128-bit "fingerprint" or "message digest" of the input. This memo provides information for the Internet community. It does not specify an Internet standard.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="1321"/>
+          <seriesInfo name="DOI" value="10.17487/RFC1321"/>
+        </reference>
+        <reference anchor="RFC1950" target="https://www.rfc-editor.org/info/rfc1950" quoteTitle="true" derivedAnchor="RFC1950">
+          <front>
+            <title>ZLIB Compressed Data Format Specification version 3.3</title>
+            <author fullname="P. Deutsch" initials="P." surname="Deutsch"/>
+            <author fullname="J-L. Gailly" surname="J-L. Gailly"/>
+            <date month="May" year="1996"/>
+            <abstract>
+              <t indent="0">This specification defines a lossless compressed data format. This memo provides information for the Internet community. This memo does not specify an Internet standard of any kind.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="1950"/>
+          <seriesInfo name="DOI" value="10.17487/RFC1950"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC3174" target="https://www.rfc-editor.org/info/rfc3174" quoteTitle="true" derivedAnchor="RFC3174">
+          <front>
+            <title>US Secure Hash Algorithm 1 (SHA1)</title>
+            <author fullname="D. Eastlake 3rd" initials="D." surname="Eastlake 3rd"/>
+            <author fullname="P. Jones" initials="P." surname="Jones"/>
+            <date month="September" year="2001"/>
+            <abstract>
+              <t indent="0">The purpose of this document is to make the SHA-1 (Secure Hash Algorithm 1) hash algorithm conveniently available to the Internet community. This memo provides information for the Internet community.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="3174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3174"/>
+        </reference>
+        <reference anchor="RFC4648" target="https://www.rfc-editor.org/info/rfc4648" quoteTitle="true" derivedAnchor="RFC4648">
+          <front>
+            <title>The Base16, Base32, and Base64 Data Encodings</title>
+            <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+            <date month="October" year="2006"/>
+            <abstract>
+              <t indent="0">This document describes the commonly used base 64, base 32, and base 16 encoding schemes. It also discusses the use of line-feeds in encoded data, use of padding in encoded data, use of non-alphabet characters in encoded data, use of different encoding alphabets, and canonical encodings. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="4648"/>
+          <seriesInfo name="DOI" value="10.17487/RFC4648"/>
+        </reference>
+        <reference anchor="RFC5234" target="https://www.rfc-editor.org/info/rfc5234" quoteTitle="true" derivedAnchor="RFC5234">
+          <front>
+            <title>Augmented BNF for Syntax Specifications: ABNF</title>
+            <author fullname="D. Crocker" initials="D." role="editor" surname="Crocker"/>
+            <author fullname="P. Overell" initials="P." surname="Overell"/>
+            <date month="January" year="2008"/>
+            <abstract>
+              <t indent="0">Internet technical specifications often need to define a formal syntax. Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications. The current specification documents ABNF. It balances compactness and simplicity with reasonable representational power. The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges. This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="68"/>
+          <seriesInfo name="RFC" value="5234"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5234"/>
+        </reference>
+        <reference anchor="RFC6234" target="https://www.rfc-editor.org/info/rfc6234" quoteTitle="true" derivedAnchor="RFC6234">
+          <front>
+            <title>US Secure Hash Algorithms (SHA and SHA-based HMAC and HKDF)</title>
+            <author fullname="D. Eastlake 3rd" initials="D." surname="Eastlake 3rd"/>
+            <author fullname="T. Hansen" initials="T." surname="Hansen"/>
+            <date month="May" year="2011"/>
+            <abstract>
+              <t indent="0">Federal Information Processing Standard, FIPS</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6234"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6234"/>
+        </reference>
+        <reference anchor="RFC7405" target="https://www.rfc-editor.org/info/rfc7405" quoteTitle="true" derivedAnchor="RFC7405">
+          <front>
+            <title>Case-Sensitive String Support in ABNF</title>
+            <author fullname="P. Kyzivat" initials="P." surname="Kyzivat"/>
+            <date month="December" year="2014"/>
+            <abstract>
+              <t indent="0">This document extends the base definition of ABNF (Augmented Backus-Naur Form) to include a way to specify US-ASCII string literals that are matched in a case-sensitive manner.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7405"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7405"/>
+        </reference>
+        <reference anchor="RFC8126" target="https://www.rfc-editor.org/info/rfc8126" quoteTitle="true" derivedAnchor="RFC8126">
+          <front>
+            <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+            <author fullname="M. Cotton" initials="M." surname="Cotton"/>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <author fullname="T. Narten" initials="T." surname="Narten"/>
+            <date month="June" year="2017"/>
+            <abstract>
+              <t indent="0">Many protocols make use of points of extensibility that use constants to identify various protocol parameters. To ensure that the values in these fields do not have conflicting uses and to promote interoperability, their allocations are often coordinated by a central record keeper. For IETF protocols, that role is filled by the Internet Assigned Numbers Authority (IANA).</t>
+              <t indent="0">To make assignments in a given registry prudently, guidance describing the conditions under which new values should be assigned, as well as when and how modifications to existing values can be made, is needed. This document defines a framework for the documentation of these guidelines by specification authors, in order to assure that the provided guidance for the IANA Considerations is clear and addresses the various issues that are likely in the operation of a registry.</t>
+              <t indent="0">This is the third edition of this document; it obsoletes RFC 5226.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="26"/>
+          <seriesInfo name="RFC" value="8126"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8126"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8941" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" surname="P-H. Kamp"/>
+            <date month="February" year="2021"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields that wish to use a common syntax that is more restrictive than traditional HTTP field values.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+      </references>
+      <references pn="section-8.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="CMU-836068" target="https://www.kb.cert.org/vuls/id/836068/" quoteTitle="true" derivedAnchor="CMU-836068">
+          <front>
+            <title>MD5 vulnerable to collision attacks</title>
+            <author>
+              <organization showOnFrontPage="true">Carnegie Mellon University, Software Engineering Institute</organization>
+            </author>
+            <date year="2008" month="December"/>
+          </front>
+        </reference>
+        <reference anchor="FIPS186-5" target="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf" quoteTitle="true" derivedAnchor="FIPS186-5">
+          <front>
+            <title>Digital Signature Standard (DSS)</title>
+            <author>
+              <organization showOnFrontPage="true">National Institute of Standards and Technology (NIST)</organization>
+            </author>
+            <date year="2023" month="February"/>
+          </front>
+          <seriesInfo name="FIPS PUB" value="186-5"/>
+          <seriesInfo name="DOI" value="10.6028/NIST.FIPS.186-5"/>
+        </reference>
+        <reference anchor="RFC9112" target="https://www.rfc-editor.org/info/rfc9112" quoteTitle="true" derivedAnchor="HTTP/1.1">
+          <front>
+            <title>HTTP/1.1</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document specifies the HTTP/1.1 message syntax, message parsing, connection management, and related security concerns.</t>
+              <t indent="0">This document obsoletes portions of RFC 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="99"/>
+          <seriesInfo name="RFC" value="9112"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9112"/>
+        </reference>
+        <reference anchor="IACR-2020-014" target="https://eprint.iacr.org/2020/014.pdf" quoteTitle="true" derivedAnchor="IACR-2020-014">
+          <front>
+            <title>SHA-1 is a Shambles</title>
+            <author initials="G." surname="Leurent">
+            </author>
+            <author initials="T." surname="Peyrin">
+            </author>
+            <date year="2020" month="January"/>
+          </front>
+        </reference>
+        <reference anchor="I-D.thomson-http-mice" target="https://datatracker.ietf.org/doc/html/draft-thomson-http-mice-03" quoteTitle="true" derivedAnchor="MICE">
+          <front>
+            <title>Merkle Integrity Content Encoding</title>
+            <author initials="M." surname="Thomson" fullname="Martin Thomson">
+              <organization showOnFrontPage="true">Mozilla</organization>
+            </author>
+            <author initials="J." surname="Yasskin" fullname="Jeffrey Yasskin">
+              <organization showOnFrontPage="true">Google</organization>
+            </author>
+            <date month="August" day="13" year="2018"/>
+            <abstract>
+              <t indent="0">   This memo introduces a content-coding for HTTP that provides
+   progressive integrity for message contents.  This integrity
+   protection can be evaluated on a partial representation, allowing a
+   recipient to process a message as it is delivered while retaining
+   strong integrity protection.
+
+              </t>
+            </abstract>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-thomson-http-mice-03"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="RFC6151" target="https://www.rfc-editor.org/info/rfc6151" quoteTitle="true" derivedAnchor="NO-MD5">
+          <front>
+            <title>Updated Security Considerations for the MD5 Message-Digest and the HMAC-MD5 Algorithms</title>
+            <author fullname="S. Turner" initials="S." surname="Turner"/>
+            <author fullname="L. Chen" initials="L." surname="Chen"/>
+            <date month="March" year="2011"/>
+            <abstract>
+              <t indent="0">This document updates the security considerations for the MD5 message digest algorithm. It also updates the security considerations for HMAC-MD5. This document is not an Internet Standards Track specification; it is published for informational purposes.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6151"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6151"/>
+        </reference>
+        <reference anchor="RFC6194" target="https://www.rfc-editor.org/info/rfc6194" quoteTitle="true" derivedAnchor="NO-SHA">
+          <front>
+            <title>Security Considerations for the SHA-0 and SHA-1 Message-Digest Algorithms</title>
+            <author fullname="T. Polk" initials="T." surname="Polk"/>
+            <author fullname="L. Chen" initials="L." surname="Chen"/>
+            <author fullname="S. Turner" initials="S." surname="Turner"/>
+            <author fullname="P. Hoffman" initials="P." surname="Hoffman"/>
+            <date month="March" year="2011"/>
+            <abstract>
+              <t indent="0">This document includes security considerations for the SHA-0 and SHA-1 message digest algorithm. This document is not an Internet Standards Track specification; it is published for informational purposes.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6194"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6194"/>
+        </reference>
+        <reference anchor="RFC5789" target="https://www.rfc-editor.org/info/rfc5789" quoteTitle="true" derivedAnchor="PATCH">
+          <front>
+            <title>PATCH Method for HTTP</title>
+            <author fullname="L. Dusseault" initials="L." surname="Dusseault"/>
+            <author fullname="J. Snell" initials="J." surname="Snell"/>
+            <date month="March" year="2010"/>
+            <abstract>
+              <t indent="0">Several applications extending the Hypertext Transfer Protocol (HTTP) require a feature to do partial resource modification. The existing HTTP PUT method only allows a complete replacement of a document. This proposal adds a new HTTP method, PATCH, to modify an existing HTTP resource. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5789"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5789"/>
+        </reference>
+        <reference anchor="RFC3230" target="https://www.rfc-editor.org/info/rfc3230" quoteTitle="true" derivedAnchor="RFC3230">
+          <front>
+            <title>Instance Digests in HTTP</title>
+            <author fullname="J. Mogul" initials="J." surname="Mogul"/>
+            <author fullname="A. Van Hoff" initials="A." surname="Van Hoff"/>
+            <date month="January" year="2002"/>
+            <abstract>
+              <t indent="0">HTTP/1.1 defines a Content-MD5 header that allows a server to include a digest of the response body. However, this is specifically defined to cover the body of the actual message, not the contents of the full file (which might be quite different, if the response is a Content-Range, or uses a delta encoding). Also, the Content-MD5 is limited to one specific digest algorithm; other algorithms, such as SHA-1 (Secure Hash Standard), may be more appropriate in some circumstances. Finally, HTTP/1.1 provides no explicit mechanism by which a client may request a digest. This document proposes HTTP extensions that solve these problems. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="3230"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3230"/>
+        </reference>
+        <reference anchor="RFC6211" target="https://www.rfc-editor.org/info/rfc6211" quoteTitle="true" derivedAnchor="RFC6211">
+          <front>
+            <title>Cryptographic Message Syntax (CMS) Algorithm Identifier Protection Attribute</title>
+            <author fullname="J. Schaad" initials="J." surname="Schaad"/>
+            <date month="April" year="2011"/>
+            <abstract>
+              <t indent="0">The Cryptographic Message Syntax (CMS), unlike X.509/PKIX certificates, is vulnerable to algorithm substitution attacks. In an algorithm substitution attack, the attacker changes either the algorithm being used or the parameters of the algorithm in order to change the result of a signature verification process. In X.509 certificates, the signature algorithm is protected because it is duplicated in the TBSCertificate.signature field with the proviso that the validator is to compare both fields as part of the signature validation process. This document defines a new attribute that contains a copy of the relevant algorithm identifiers so that they are protected by the signature or authentication process. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6211"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6211"/>
+        </reference>
+        <reference anchor="RFC7396" target="https://www.rfc-editor.org/info/rfc7396" quoteTitle="true" derivedAnchor="RFC7396">
+          <front>
+            <title>JSON Merge Patch</title>
+            <author fullname="P. Hoffman" initials="P." surname="Hoffman"/>
+            <author fullname="J. Snell" initials="J." surname="Snell"/>
+            <date month="October" year="2014"/>
+            <abstract>
+              <t indent="0">This specification defines the JSON merge patch format and processing rules. The merge patch format is primarily intended for use with the HTTP PATCH method as a means of describing a set of modifications to a target resource's content.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7396"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7396"/>
+        </reference>
+        <reference anchor="RFC7696" target="https://www.rfc-editor.org/info/rfc7696" quoteTitle="true" derivedAnchor="RFC7696">
+          <front>
+            <title>Guidelines for Cryptographic Algorithm Agility and Selecting Mandatory-to-Implement Algorithms</title>
+            <author fullname="R. Housley" initials="R." surname="Housley"/>
+            <date month="November" year="2015"/>
+            <abstract>
+              <t indent="0">Many IETF protocols use cryptographic algorithms to provide confidentiality, integrity, authentication, or digital signature. Communicating peers must support a common set of cryptographic algorithms for these mechanisms to work properly. This memo provides guidelines to ensure that protocols have the ability to migrate from one mandatory-to-implement algorithm suite to another over time.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="201"/>
+          <seriesInfo name="RFC" value="7696"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7696"/>
+        </reference>
+        <reference anchor="RFC8188" target="https://www.rfc-editor.org/info/rfc8188" quoteTitle="true" derivedAnchor="RFC8188">
+          <front>
+            <title>Encrypted Content-Encoding for HTTP</title>
+            <author fullname="M. Thomson" initials="M." surname="Thomson"/>
+            <date month="June" year="2017"/>
+            <abstract>
+              <t indent="0">This memo introduces a content coding for HTTP that allows message payloads to be encrypted.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8188"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8188"/>
+        </reference>
+        <reference anchor="RFC9260" target="https://www.rfc-editor.org/info/rfc9260" quoteTitle="true" derivedAnchor="RFC9260">
+          <front>
+            <title>Stream Control Transmission Protocol</title>
+            <author fullname="R. Stewart" initials="R." surname="Stewart"/>
+            <author fullname="M. Tüxen" initials="M." surname="Tüxen"/>
+            <author fullname="K. Nielsen" initials="K." surname="Nielsen"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This document describes the Stream Control Transmission Protocol (SCTP) and obsoletes RFC 4960. It incorporates the specification of the chunk flags registry from RFC 6096 and the specification of the I bit of DATA chunks from RFC 7053. Therefore, RFCs 6096 and 7053 are also obsoleted by this document. In addition, RFCs 4460 and 8540, which describe errata for SCTP, are obsoleted by this document.</t>
+              <t indent="0">SCTP was originally designed to transport Public Switched Telephone Network (PSTN) signaling messages over IP networks. It is also suited to be used for other applications, for example, WebRTC.</t>
+              <t indent="0">SCTP is a reliable transport protocol operating on top of a connectionless packet network, such as IP. It offers the following services to its users:</t>
+              <t indent="0">The design of SCTP includes appropriate congestion avoidance behavior and resistance to flooding and masquerade attacks.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9260"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9260"/>
+        </reference>
+        <reference anchor="RFC9457" target="https://www.rfc-editor.org/info/rfc9457" quoteTitle="true" derivedAnchor="RFC9457">
+          <front>
+            <title>Problem Details for HTTP APIs</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="E. Wilde" initials="E." surname="Wilde"/>
+            <author fullname="S. Dalal" initials="S." surname="Dalal"/>
+            <date month="July" year="2023"/>
+            <abstract>
+              <t indent="0">This document defines a "problem detail" to carry machine-readable details of errors in HTTP response content to avoid the need to define new error response formats for HTTP APIs.</t>
+              <t indent="0">This document obsoletes RFC 7807.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9457"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9457"/>
+        </reference>
+        <reference anchor="RFC9421" target="https://www.rfc-editor.org/info/rfc9421" quoteTitle="true" derivedAnchor="SIGNATURES">
+          <front>
+            <title>HTTP Message Signatures</title>
+            <author initials="A." surname="Backman" fullname="Annabelle Backman" role="editor">
+              <organization showOnFrontPage="true">Amazon</organization>
+            </author>
+            <author initials="J." surname="Richer" fullname="Justin Richer" role="editor">
+              <organization showOnFrontPage="true">Bespoke Engineering</organization>
+            </author>
+            <author initials="M." surname="Sporny" fullname="Manu Sporny">
+              <organization showOnFrontPage="true">Digital Bazaar</organization>
+            </author>
+            <date month="February" year="2024"/>
+          </front>
+          <seriesInfo name="RFC" value="9421"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9421"/>
+        </reference>
+        <reference anchor="RFC8446" target="https://www.rfc-editor.org/info/rfc8446" quoteTitle="true" derivedAnchor="TLS">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="August" year="2018"/>
+            <abstract>
+              <t indent="0">This document specifies version 1.3 of the Transport Layer Security (TLS) protocol. TLS allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t>
+              <t indent="0">This document updates RFCs 5705 and 6066, and obsoletes RFCs 5077, 5246, and 6961. This document also specifies new requirements for TLS 1.2 implementations.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8446"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8446"/>
+        </reference>
+        <reference anchor="UNIX" quoteTitle="true" derivedAnchor="UNIX">
+          <front>
+            <title>The Single UNIX Specification, Version 2 - 6 Vol Set for UNIX 98</title>
+            <author>
+              <organization showOnFrontPage="true">The Open Group</organization>
+            </author>
+            <date year="1998" month="January"/>
+          </front>
+        </reference>
+      </references>
+    </references>
+    <section anchor="resource-representation" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-resource-representation-and">Resource Representation and Representation Data</name>
+      <t indent="0" pn="section-appendix.a-1">The following examples show how representation metadata, content
+transformations, and methods impact the message and content. These examples a
+not exhaustive.</t>
+      <t indent="0" pn="section-appendix.a-2">Unless otherwise indicated, the examples are based on the JSON object <tt>{"hello":
+"world"}</tt> followed by an LF. When the content contains non-printable characters
+(e.g., when it is encoded), it is shown as a sequence of hex-encoded bytes.</t>
+      <t indent="0" pn="section-appendix.a-3">Consider a client that wishes to upload a JSON object using the PUT method. 
+
+It
+could do this using the application/json <tt>Content-Type</tt> without any content
+coding.</t>
+      <figure align="left" suppress-title="false" pn="figure-1">
+        <name slugifiedName="name-request-containing-a-json-o">Request Containing a JSON Object without Any Content Coding</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-4.1">
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Length: 19
+
+{"hello": "world"}
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-5">However, the use of content coding is quite common. The client could also upload
+the same data with a GZIP coding (<xref section="8.4.1.3" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.4.1.3" derivedContent="HTTP"/>). Note that in
+this case, the <tt>Content-Length</tt> contains a larger value due to the coding
+overheads.</t>
+      <figure anchor="ex-put-gz" align="left" suppress-title="false" pn="figure-2">
+        <name slugifiedName="name-request-containing-a-gzip-e">Request Containing a GZIP-Encoded JSON Object</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-6.1">
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Encoding: gzip
+Content-Length: 39
+
+1F 8B 08 00 88 41 37 64 00 FF
+AB 56 CA 48 CD C9 C9 57 B2 52
+50 2A CF 2F CA 49 51 AA E5 02
+00 D9 E4 31 E7 13 00 00 00
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-7">Sending the GZIP-coded data without indicating it via <tt>Content-Encoding</tt> means
+that the content is malformed. In this case, the server can reply with an error.</t>
+      <figure align="left" suppress-title="false" pn="figure-3">
+        <name slugifiedName="name-request-containing-malforme">Request Containing Malformed JSON</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-8.1">
+PUT /entries/1234 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+
+Content-Length: 39
+
+1F 8B 08 00 88 41 37 64 00 FF
+AB 56 CA 48 CD C9 C9 57 B2 52
+50 2A CF 2F CA 49 51 AA E5 02
+00 D9 E4 31 E7 13 00 00 00
+</sourcecode>
+      </figure>
+      <figure align="left" suppress-title="false" pn="figure-4">
+        <name slugifiedName="name-an-error-response-for-malfo">An Error Response for Malformed Content</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-9.1">
+HTTP/1.1 400 Bad Request
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-10">A Range-Request affects the transferred message content. In this example, the
+client is accessing the resource at <tt>/entries/1234</tt>, which is the JSON object
+<tt>{"hello": "world"}</tt> followed by an LF. However, the client has indicated a
+preferred content coding and a specific byte range.</t>
+      <figure align="left" suppress-title="false" pn="figure-5">
+        <name slugifiedName="name-request-for-partial-content">Request for Partial Content</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-11.1">
+GET /entries/1234 HTTP/1.1
+Host: foo.example
+Accept-Encoding: gzip
+Range: bytes=1-7
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-12">The server satisfies the client request by responding with a partial
+representation (equivalent to the first 10 bytes of the JSON object displayed in whole
+in <xref target="ex-put-gz" format="default" sectionFormat="of" derivedContent="Figure 2"/>).</t>
+      <figure align="left" suppress-title="false" pn="figure-6">
+        <name slugifiedName="name-partial-response-from-a-gzi">Partial Response from a GZIP-Encoded Representation</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-13.1">
+HTTP/1.1 206 Partial Content
+Content-Encoding: gzip
+Content-Type: application/json
+Content-Range: bytes 0-9/39
+
+1F 8B 08 00 A5 B4 BD 62 02 FF
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-14">Aside from content coding or range requests, the method can also affect the
+transferred message content. For example, the response to a HEAD request does
+not carry content, but this example case includes <tt>Content-Length</tt>; see
+<xref section="8.6" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.6" derivedContent="HTTP"/>.</t>
+      <figure align="left" suppress-title="false" pn="figure-7">
+        <name slugifiedName="name-head-request">HEAD Request</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-15.1">
+HEAD /entries/1234 HTTP/1.1
+Host: foo.example
+Accept: application/json
+Accept-Encoding: gzip
+</sourcecode>
+      </figure>
+      <figure align="left" suppress-title="false" pn="figure-8">
+        <name slugifiedName="name-response-to-head-request-em">Response to HEAD Request (Empty Content)</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-16.1">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Encoding: gzip
+Content-Length: 39
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-17">Finally, the semantics of a response might decouple the target URI
+from the enclosed representation. In the example below, the client issues a POST
+request directed to <tt>/authors/</tt>, but the response includes a <tt>Content-Location</tt>
+header field indicating that the enclosed representation refers to the
+resource available at <tt>/authors/123</tt>. Note that <tt>Content-Length</tt> is not sent
+in this example.</t>
+      <figure align="left" suppress-title="false" pn="figure-9">
+        <name slugifiedName="name-post-request">POST Request</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-18.1">
+POST /authors/ HTTP/1.1
+Host: foo.example
+Accept: application/json
+Content-Type: application/json
+
+{"author": "Camilleri"}
+</sourcecode>
+      </figure>
+      <figure align="left" suppress-title="false" pn="figure-10">
+        <name slugifiedName="name-response-with-content-locat">Response with Content-Location Header</name>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a-19.1">
+HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Location: /authors/123
+Location: /authors/123
+
+{"id": "123", "author": "Camilleri"}
+</sourcecode>
+      </figure>
+    </section>
+    <section anchor="examples-unsolicited" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-examples-of-unsolicited-dig">Examples of Unsolicited <tt>Digest</tt></name>
+      <t indent="0" pn="section-appendix.b-1">The following examples demonstrate interactions where a server responds with a
+<tt>Content-Digest</tt> or <tt>Repr-Digest</tt> field, even though the client did not solicit one using
+<tt>Want-Content-Digest</tt> or <tt>Want-Repr-Digest</tt>.</t>
+      <t indent="0" pn="section-appendix.b-2">Some examples include JSON objects in the content.
+For presentation purposes, objects that fit completely within the line-length limits
+are presented on a single line using compact notation with no leading space.
+Objects that would exceed line-length limits are presented across multiple lines
+(one line per key-value pair) with two spaces of leading indentation.</t>
+      <t indent="0" pn="section-appendix.b-3">Checksum mechanisms defined in this document are media-type agnostic
+and do not provide canonicalization algorithms for specific formats.
+Examples are calculated inclusive of any space.
+While examples can include both fields,
+<tt>Content-Digest</tt> and <tt>Repr-Digest</tt> can be returned independently.</t>
+      <section anchor="example-full-representation" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.1">
+        <name slugifiedName="name-server-returns-full-represe">Server Returns Full Representation Data</name>
+        <t indent="0" pn="section-appendix.b.1-1">In this example, the message content conveys complete representation data.
+This means that in the response, <tt>Content-Digest</tt> and <tt>Repr-Digest</tt>
+are both computed over the JSON object <tt>{"hello": "world"}</tt> followed by an LF; thus, they have the same value.</t>
+        <figure align="left" suppress-title="false" pn="figure-11">
+          <name slugifiedName="name-get-request-for-an-item">GET Request for an Item</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.1-2.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-12">
+          <name slugifiedName="name-response-with-identical-rep">Response with Identical <tt>Repr-Digest</tt> and <tt>Content-Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.1-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 19
+Content-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+{"hello": "world"}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="server-returns-no-representation-data" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.2">
+        <name slugifiedName="name-server-returns-no-represent">Server Returns No Representation Data</name>
+        <t indent="0" pn="section-appendix.b.2-1">In this example, a HEAD request is used to retrieve the checksum
+of a resource.</t>
+        <t indent="0" pn="section-appendix.b.2-2">The response <tt>Content-Digest</tt> field-value is computed on empty content.
+<tt>Repr-Digest</tt> is calculated over the JSON object
+<tt>{"hello": "world"}</tt> followed by an LF, which is not shown because there is no content.</t>
+        <figure align="left" suppress-title="false" pn="figure-13">
+          <name slugifiedName="name-head-request-for-an-item">HEAD Request for an Item</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.2-3.1">
+HEAD /items/123 HTTP/1.1
+Host: foo.example
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-14">
+          <name slugifiedName="name-response-with-both-content-">Response with Both <tt>Content-Digest</tt> and <tt>Digest</tt> (Empty Content)</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.2-4.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Digest: \
+  sha-256=:47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="server-returns-partial-representation-data" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.3">
+        <name slugifiedName="name-server-returns-partial-repr">Server Returns Partial Representation Data</name>
+        <t indent="0" pn="section-appendix.b.3-1">In this example, the client makes a range request and the server responds with
+partial content.</t>
+        <figure align="left" suppress-title="false" pn="figure-15">
+          <name slugifiedName="name-request-for-partial-content-2">Request for Partial Content</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.3-2.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+Range: bytes=10-18
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-16">
+          <name slugifiedName="name-partial-response-with-both-">Partial Response with Both <tt>Content-Digest</tt> and <tt>Repr-Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.3-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 206 Partial Content
+Content-Type: application/json
+Content-Range: bytes 10-18/19
+Content-Digest: \
+  sha-256=:jjcgBDWNAtbYUXI37CVG3gRuGOAjaaDRGpIUFsdyepQ=:
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+"world"}
+</sourcecode>
+        </figure>
+        <t indent="0" pn="section-appendix.b.3-4">In the response message above, note that the
+<tt>Repr-Digest</tt> and <tt>Content-Digests</tt> are different.
+The <tt>Repr-Digest</tt> field-value is calculated across the entire JSON object
+<tt>{"hello": "world"}</tt> followed by an LF, and the field appears as follows:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.b.3-5">
+NOTE: '\' line wrapping per RFC 8792
+
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+</sourcecode>
+        <t indent="0" pn="section-appendix.b.3-6">However, since the message content is constrained to bytes 10-18,
+the <tt>Content-Digest</tt> field-value is calculated over the
+sequence  <tt>"world"}</tt> followed by an LF, thus resulting in the following:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.b.3-7">
+NOTE: '\' line wrapping per RFC 8792
+
+Content-Digest: \
+  sha-256=:jjcgBDWNAtbYUXI37CVG3gRuGOAjaaDRGpIUFsdyepQ=:
+</sourcecode>
+      </section>
+      <section anchor="client-and-server-provide-full-representation-data" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.4">
+        <name slugifiedName="name-client-and-server-provide-f">Client and Server Provide Full Representation Data</name>
+        <t indent="0" pn="section-appendix.b.4-1">The request contains a <tt>Repr-Digest</tt> field-value calculated on the enclosed
+representation. It also includes an <tt>Accept-Encoding: br</tt> header field that advertises that the
+client supports Brotli encoding.</t>
+        <t indent="0" pn="section-appendix.b.4-2">The response includes a <tt>Content-Encoding: br</tt> that indicates the selected
+representation is Brotli-encoded. The <tt>Repr-Digest</tt> field-value is therefore
+different compared to the request.</t>
+        <t indent="0" pn="section-appendix.b.4-3">For presentation purposes, the response body is displayed as a sequence of
+hex-encoded bytes because it contains non-printable characters.</t>
+        <figure align="left" suppress-title="false" pn="figure-17">
+          <name slugifiedName="name-put-request-with-digest">PUT Request with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.4-4.1">
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg=:
+
+{"hello": "world"}
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-18">
+          <name slugifiedName="name-response-with-digest-of-enc">Response with <tt>Digest</tt> of Encoded Response</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.4-5.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Location: /items/123
+Content-Encoding: br
+Content-Length: 23
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:
+
+8B 08 80 7B 22 68 65 6C 6C 6F
+22 3A 20 22 77 6F 72 6C 64 22
+7D 0A 03
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="client-provides-full-representation-data-server-provides-no-representation-data" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.5">
+        <name slugifiedName="name-client-provides-full-repres">Client Provides Full Representation Data and Server Provides No Representation Data</name>
+        <t indent="0" pn="section-appendix.b.5-1">The request <tt>Repr-Digest</tt> field-value is calculated on the enclosed content, which
+is the JSON object <tt>{"hello": "world"}</tt> followed by an LF.</t>
+        <t indent="0" pn="section-appendix.b.5-2">The response <tt>Repr-Digest</tt> field-value
+depends on the representation metadata header fields, including
+<tt>Content-Encoding: br</tt>, even when the response does not contain content.</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.b.5-3">
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Content-Length: 19
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</sourcecode>
+        <figure align="left" suppress-title="false" pn="figure-19">
+          <name slugifiedName="name-empty-response-with-digest">Empty Response with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.5-4.1">
+HTTP/1.1 204 No Content
+Content-Type: application/json
+Content-Encoding: br
+Repr-Digest: sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="client-and-server-provide-full-representation-data-1" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.6">
+        <name slugifiedName="name-client-and-server-provide-fu">Client and Server Provide Full Representation Data</name>
+        <t indent="0" pn="section-appendix.b.6-1">The response contains two digest values using different algorithms.</t>
+        <t indent="0" pn="section-appendix.b.6-2">For presentation purposes, the response body is displayed as a sequence of
+hex-encoded bytes because it contains non-printable characters.</t>
+        <figure align="left" suppress-title="false" pn="figure-20">
+          <name slugifiedName="name-put-request-with-digest-2">PUT Request with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.6-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+PUT /items/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept-Encoding: br
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-21">
+          <name slugifiedName="name-response-with-digest-of-enco">Response with <tt>Digest</tt> of Encoded Content</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.6-4.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Encoding: br
+Content-Location: /items/123
+Repr-Digest: \
+  sha-256=:d435Qo+nKZ+gLcUHn7GQtQ72hiBVAgqoLsZnZPiTGPk=:,\
+  sha-512=:db7fdBbgZMgX1Wb2MjA8zZj+rSNgfmDCEEXM8qLWfpfoNY0sCpHAzZbj\
+  09X1/7HAb7Od5Qfto4QpuBsFbUO3dQ==:
+
+8B 08 80 7B 22 68 65 6C 6C 6F
+22 3A 20 22 77 6F 72 6C 64 22
+7D 0A 03
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="post-not-request-uri" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.7">
+        <name slugifiedName="name-post-response-does-not-refe">POST Response Does Not Reference the Request URI</name>
+        <t indent="0" pn="section-appendix.b.7-1">The request <tt>Repr-Digest</tt> field-value is computed on the enclosed representation
+(see <xref target="state-changing-requests" format="default" sectionFormat="of" derivedContent="Section 3.1"/>), which is the JSON object <tt>{"title": "New
+Title"}</tt> followed by an LF.</t>
+        <t indent="0" pn="section-appendix.b.7-2">The representation enclosed in the response is a multiline JSON object followed by an LF.
+It refers to the resource identified by
+<tt>Content-Location</tt> (see <xref section="6.4.2" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.4.2" derivedContent="HTTP"/>);
+thus, an application can use <tt>Repr-Digest</tt> in association with the resource
+referenced by <tt>Content-Location</tt>.</t>
+        <figure align="left" suppress-title="false" pn="figure-22">
+          <name slugifiedName="name-post-request-with-digest">POST Request with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.7-3.1">
+POST /books HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-23">
+          <name slugifiedName="name-response-with-digest-of-res">Response with <tt>Digest</tt> of Resource</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.7-4.1">
+HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Location: /books/123
+Location: /books/123
+Repr-Digest: sha-256=:uVSlinTTdQUwm2On4k8TJUikGN1bf/Ds8WPX4oe0h9I=:
+
+{
+  "id": "123",
+  "title": "New Title"
+}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="post-referencing-status" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.8">
+        <name slugifiedName="name-post-response-describes-the">POST Response Describes the Request Status</name>
+        <t indent="0" pn="section-appendix.b.8-1">The request <tt>Repr-Digest</tt> field-value is computed on the enclosed representation (see
+<xref target="state-changing-requests" format="default" sectionFormat="of" derivedContent="Section 3.1"/>), which is the JSON object <tt>{"title": "New
+Title"}</tt> followed by an LF.</t>
+        <t indent="0" pn="section-appendix.b.8-2">The representation enclosed in the response describes the status of the request,
+so <tt>Repr-Digest</tt> is computed on that enclosed representation. It is a multiline
+JSON object followed by an LF.</t>
+        <t indent="0" pn="section-appendix.b.8-3">Response <tt>Repr-Digest</tt> has no explicit relation with the resource referenced by
+<tt>Location</tt>.</t>
+        <figure align="left" suppress-title="false" pn="figure-24">
+          <name slugifiedName="name-post-request-with-digest-2">POST Request with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.8-4.1">
+POST /books HTTP/1.1
+Host: foo.example
+Content-Type: application/json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-25">
+          <name slugifiedName="name-response-with-digest-of-rep">Response with <tt>Digest</tt> of Representation</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.8-5.1">
+HTTP/1.1 201 Created
+Content-Type: application/json
+Repr-Digest: sha-256=:yXIGDTN5VrfoyisKlXgRKUHHMs35SNtyC3szSz1dbO8=:
+Location: /books/123
+
+{
+  "status": "created",
+  "id": "123",
+  "ts": 1569327729,
+  "instance": "/books/123"
+}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="digest-with-patch" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.9">
+        <name slugifiedName="name-digest-with-patch"><tt>Digest</tt> with PATCH</name>
+        <t indent="0" pn="section-appendix.b.9-1">This case is analogous to a POST request where the target resource reflects the
+target URI.</t>
+        <t indent="0" pn="section-appendix.b.9-2">The PATCH request uses the <tt>application/merge-patch+json</tt> media type defined in
+<xref target="RFC7396" format="default" sectionFormat="of" derivedContent="RFC7396"/>. <tt>Repr-Digest</tt> is calculated on the content that corresponds to the
+patch document and is the JSON object <tt>{"title": "New Title"}</tt> followed by an
+LF.</t>
+        <t indent="0" pn="section-appendix.b.9-3">The response <tt>Repr-Digest</tt> field-value is computed on the complete representation of the patched
+resource. It is a multiline JSON object followed by an LF.</t>
+        <figure anchor="fig-patch" align="left" suppress-title="false" pn="figure-26">
+          <name slugifiedName="name-patch-request-with-digest">PATCH Request with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.9-4.1">
+PATCH /books/123 HTTP/1.1
+Host: foo.example
+Content-Type: application/merge-patch+json
+Accept: application/json
+Accept-Encoding: identity
+Repr-Digest: sha-256=:mEkdbO7Srd9LIOegftO0aBX+VPTVz7/CSHes2Z27gc4=:
+
+{"title": "New Title"}
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-27">
+          <name slugifiedName="name-response-with-digest-of-repr">Response with <tt>Digest</tt> of Representation</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.9-5.1">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: sha-256=:uVSlinTTdQUwm2On4k8TJUikGN1bf/Ds8WPX4oe0h9I=:
+
+{
+  "id": "123",
+  "title": "New Title"
+}
+</sourcecode>
+        </figure>
+        <t indent="0" pn="section-appendix.b.9-6">Note that a <tt>204 No Content</tt> response without content, but with the same
+<tt>Repr-Digest</tt> field-value, would have been legitimate too.
+In that case, <tt>Content-Digest</tt> would have been computed on an empty content.</t>
+      </section>
+      <section anchor="error-responses" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.10">
+        <name slugifiedName="name-error-responses">Error Responses</name>
+        <t indent="0" pn="section-appendix.b.10-1">In error responses, the representation data does not necessarily refer to the
+target resource. Instead, it refers to the representation of the error.</t>
+        <t indent="0" pn="section-appendix.b.10-2">In the following example, a client sends the same request from <xref target="fig-patch" format="default" sectionFormat="of" derivedContent="Figure 26"/> to
+patch the resource located at /books/123. However, the resource does not exist
+and the server generates a 404 response with a body that describes the error in
+accordance with <xref target="RFC9457" format="default" sectionFormat="of" derivedContent="RFC9457"/>.</t>
+        <t indent="0" pn="section-appendix.b.10-3">The response <tt>Repr-Digest</tt> field-value is computed on this enclosed representation.
+It is a multiline JSON object followed by an LF.</t>
+        <figure align="left" suppress-title="false" pn="figure-28">
+          <name slugifiedName="name-response-with-digest-of-err">Response with <tt>Digest</tt> of Error Representation</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.10-4.1">
+HTTP/1.1 404 Not Found
+Content-Type: application/problem+json
+Repr-Digest: sha-256=:EXB0S2VF2H7ijkAVJkH1Sm0pBho0iDZcvVUHHXTTZSA=:
+
+{
+  "title": "Not Found",
+  "detail": "Cannot PATCH a non-existent resource",
+  "status": 404
+}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="use-with-trailer-fields-and-transfer-coding" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.11">
+        <name slugifiedName="name-use-with-trailer-fields-and">Use with Trailer Fields and Transfer Coding</name>
+        <t indent="0" pn="section-appendix.b.11-1">An origin server sends <tt>Repr-Digest</tt> as trailer field, so it can calculate digest-value
+while streaming content and thus mitigate resource consumption.
+The <tt>Repr-Digest</tt> field-value is the same as in <xref target="example-full-representation" format="default" sectionFormat="of" derivedContent="Appendix B.1"/> because <tt>Repr-Digest</tt> is designed to
+be independent of the use of one or more transfer codings (see <xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/>).</t>
+        <t indent="0" pn="section-appendix.b.11-2">In the response content below, the string "\r\n" represents the CRLF bytes.</t>
+        <figure align="left" suppress-title="false" pn="figure-29">
+          <name slugifiedName="name-get-request">GET Request</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.11-3.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-30">
+          <name slugifiedName="name-chunked-response-with-diges">Chunked Response with <tt>Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.b.11-4.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+Trailer: Repr-Digest
+
+8\r\n
+{"hello"\r\n
+8\r\n
+: "world\r\n
+3\r\n
+"}\n\r\n
+0\r\n
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:\r\n
+</sourcecode>
+        </figure>
+      </section>
+    </section>
+    <section anchor="examples-solicited" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.c">
+      <name slugifiedName="name-examples-of-want-repr-diges">Examples of <tt>Want-Repr-Digest</tt> Solicited <tt>Digest</tt></name>
+      <t indent="0" pn="section-appendix.c-1">The following examples demonstrate interactions where a client solicits a
+<tt>Repr-Digest</tt> using <tt>Want-Repr-Digest</tt>.
+The behavior of <tt>Content-Digest</tt> and <tt>Want-Content-Digest</tt> is identical.</t>
+      <t indent="0" pn="section-appendix.c-2">Some examples include JSON objects in the content.
+For presentation purposes, objects that fit completely within the line-length limits
+are presented on a single line using compact notation with no leading space.
+Objects that would exceed line-length limits are presented across multiple lines
+(one line per key-value pair) with two spaces of leading indentation.</t>
+      <t indent="0" pn="section-appendix.c-3">Checksum mechanisms described in this document are media-type agnostic
+and do not provide canonicalization algorithms for specific formats.
+Examples are calculated inclusive of any space.</t>
+      <section anchor="server-selects-clients-least-preferred-algorithm" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.c.1">
+        <name slugifiedName="name-server-selects-clients-leas">Server Selects Client's Least Preferred Algorithm</name>
+        <t indent="0" pn="section-appendix.c.1-1">The client requests a digest and prefers "sha". The server is free to reply with
+"sha-256" anyway.</t>
+        <figure align="left" suppress-title="false" pn="figure-31">
+          <name slugifiedName="name-get-request-with-want-repr-">GET Request with <tt>Want-Repr-Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.1-2.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha-256=3, sha=10
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-32">
+          <name slugifiedName="name-response-with-different-alg">Response with Different Algorithm</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.1-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: \
+  sha-256=:RK/0qy18MlBSVnWgjwz6lZEWjP/lF5HF9bvEF8FabDg==:
+
+{"hello": "world"}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="ex-server-selects-unsupported-algorithm" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.c.2">
+        <name slugifiedName="name-server-selects-algorithm-un">Server Selects Algorithm Unsupported by Client</name>
+        <t indent="0" pn="section-appendix.c.2-1">The client requests a "sha" digest because that is the only algorithm it
+supports. The server is not obliged to produce a response containing a "sha"
+digest; it instead uses a different algorithm.</t>
+        <figure align="left" suppress-title="false" pn="figure-33">
+          <name slugifiedName="name-get-request-with-want-repr-d">GET Request with <tt>Want-Repr-Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.2-2.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha=10
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-34">
+          <name slugifiedName="name-response-with-unsupported-a">Response with Unsupported Algorithm</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.2-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Repr-Digest: \
+  sha-512=:YMAam51Jz/jOATT6/zvHrLVgOYTGFy1d6GJiOHTohq4yP+pgk4vf2aCs\
+  yRZOtw8MjkM7iw7yZ/WkppmM44T3qg==:
+
+{"hello": "world"}
+</sourcecode>
+        </figure>
+      </section>
+      <section anchor="server-does-not-support-client-algorithm-and-returns-an-error" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.c.3">
+        <name slugifiedName="name-server-does-not-support-cli">Server Does Not Support Client Algorithm and Returns an Error</name>
+        <t indent="0" pn="section-appendix.c.3-1"><xref target="ex-server-selects-unsupported-algorithm" format="default" sectionFormat="of" derivedContent="Appendix C.2"/> is an example where a server ignores
+the client's preferred digest algorithm.
+Alternatively, a server can also reject
+the request and return a response with
+an error status code such as 4xx or 5xx.
+This specification does not prescribe
+any requirement on status code selection;
+the following example illustrates one possible
+option.</t>
+        <t indent="0" pn="section-appendix.c.3-2">In this example, the client requests a "sha" <tt>Repr-Digest</tt>, and the server returns an
+error with problem details <xref target="RFC9457" format="default" sectionFormat="of" derivedContent="RFC9457"/> contained in the content. The problem
+details contain a list of the hashing algorithms that the server supports. This
+is purely an example; this specification does not define any format or
+requirements for such content.</t>
+        <figure align="left" suppress-title="false" pn="figure-35">
+          <name slugifiedName="name-get-request-with-want-repr-di">GET Request with <tt>Want-Repr-Digest</tt></name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.3-3.1">
+GET /items/123 HTTP/1.1
+Host: foo.example
+Want-Repr-Digest: sha=10
+</sourcecode>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-36">
+          <name slugifiedName="name-response-advertising-the-su">Response Advertising the Supported Algorithms</name>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.c.3-4.1">
+HTTP/1.1 400 Bad Request
+Content-Type: application/problem+json
+
+{
+  "title": "Bad Request",
+  "detail": "Supported hashing algorithms: sha-256, sha-512",
+  "status": 400
+}
+</sourcecode>
+        </figure>
+      </section>
+    </section>
+    <section anchor="sample-digest-values" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.d">
+      <name slugifiedName="name-sample-digest-values">Sample <tt>Digest</tt> Values</name>
+      <t indent="0" pn="section-appendix.d-1">This section shows examples of digest values for different hashing algorithms.
+The input value is the JSON object <tt>{"hello": "world"}</tt>. The digest values are
+each produced by running the relevant hashing algorithm over the input and
+running the output bytes through Byte Sequence serialization; see <xref section="4.1.8" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-4.1.8" derivedContent="STRUCTURED-FIELDS"/>.</t>
+      <sourcecode markers="false" pn="section-appendix.d-2">
+NOTE: '\' line wrapping per RFC 8792
+
+sha-512 -   :WZDPaVn/7XgHaAy8pmojAkGWoRx2UFChF41A2svX+TaPm+\
+            AbwAgBWnrIiYllu7BNNyealdVLvRwEmTHWXvJwew==:
+
+sha-256 -   :X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=:
+
+md5 -       :Sd/dVLAcvNLSq16eXua5uQ==:
+
+sha -       :07CavjDP4u3/TungoUHJO/Wzr4c=:
+
+unixsum -   :GQU=:
+
+unixcksum - :7zsHAA==:
+
+adler -     :OZkGFw==:
+
+crc32c -    :Q3lHIA==:
+</sourcecode>
+    </section>
+    <section anchor="migrating" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.e">
+      <name slugifiedName="name-migrating-from-rfc-3230">Migrating from RFC 3230</name>
+      <t indent="0" pn="section-appendix.e-1">HTTP digests are computed by applying a hashing algorithm to input data.
+<xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> defined the input data as an "instance", a term it also defined.
+The concept of an instance has since been superseded by the HTTP semantic term "representation".
+It is understood that some implementations of <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>
+mistook "instance" to mean HTTP content.
+Using content for the <tt>Digest</tt> field is an error
+that leads to interoperability problems between peers that implement <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>.</t>
+      <t indent="0" pn="section-appendix.e-2"><xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> was only ever intended
+to use what HTTP now defines as selected representation data.
+The semantic concept of digest and representation are explained
+alongside the definition of the <tt>Repr-Digest</tt> field (<xref target="representation-digest" format="default" sectionFormat="of" derivedContent="Section 3"/>).</t>
+      <t indent="0" pn="section-appendix.e-3">While the syntax of <tt>Digest</tt> and <tt>Repr-Digest</tt> are different,
+the considerations and examples this document gives for <tt>Repr-Digest</tt>
+apply equally to <tt>Digest</tt> because they operate on the same input data;
+see Sections <xref format="counter" target="state-changing-requests" sectionFormat="of" derivedContent="3.1"/>, <xref format="counter" target="security" sectionFormat="of" derivedContent="6"/> and <xref format="counter" target="usage-in-signatures" sectionFormat="of" derivedContent="6.3"/>.</t>
+      <t indent="0" pn="section-appendix.e-4"><xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> could never communicate
+the digest of HTTP message content in the <tt>Digest</tt> field;
+<tt>Content-Digest</tt> now provides that capability.</t>
+      <t indent="0" pn="section-appendix.e-5"><xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> allowed algorithms to define their output encoding format for use with
+the <tt>Digest</tt> field. This resulted in a mix of formats such as base64, hex, or
+decimal. By virtue of using Structured Fields, <tt>Content-Digest</tt>, and <tt>Repr-Digest</tt>
+use only a single encoding format. Further explanation and examples are provided in <xref target="sample-digest-values" format="default" sectionFormat="of" derivedContent="Appendix D"/>.</t>
+    </section>
+    <section numbered="false" anchor="acknowledgements" removeInRFC="false" toc="include" pn="section-appendix.f">
+      <name slugifiedName="name-acknowledgements">Acknowledgements</name>
+      <t indent="0" pn="section-appendix.f-1">This document is based on ideas from <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/>, so thanks
+to <contact fullname="Jeff Mogul"/> and <contact fullname="Arthur Van Hoff"/> for their great work.
+The original idea of refreshing <xref target="RFC3230" format="default" sectionFormat="of" derivedContent="RFC3230"/> arose from an interesting
+discussion with <contact fullname="Mark Nottingham"/>, <contact fullname="Jeffrey Yasskin"/>, and <contact fullname="Martin Thomson"/> when reviewing
+the MICE content coding.</t>
+      <t indent="0" pn="section-appendix.f-2">Thanks to <contact fullname="Julian Reschke"/> for his valuable contributions to this document,
+and to the following contributors that have helped improve this specification by reporting bugs,
+asking smart questions, drafting or reviewing text, and evaluating open issues:
+<contact fullname="Mike Bishop"/>,
+<contact fullname="Brian Campbell"/>,
+<contact fullname="Matthew Kerwin"/>,
+<contact fullname="James Manger"/>,
+<contact fullname="Tommy Pauly"/>,
+<contact fullname="Sean Turner"/>,
+<contact fullname="Justin Richer"/>,
+and <contact fullname="Erik Wilde"/>.</t>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.g">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="R." surname="Polli" fullname="Roberto Polli">
+        <organization showOnFrontPage="true">Team Digitale, Italian Government</organization>
+        <address>
+          <postal>
+            <country>Italy</country>
+          </postal>
+          <email>robipolli@gmail.com</email>
+        </address>
+      </author>
+      <author initials="L." surname="Pardue" fullname="Lucas Pardue">
+        <organization showOnFrontPage="true">Cloudflare</organization>
+        <address>
+          <email>lucas@lucaspardue.com</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

@@ -1,0 +1,454 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" category="std" consensus="true" docName="draft-ietf-httpbis-cache-header-10" indexInclude="true" ipr="trust200902" number="9211" prepTime="2022-06-08T11:25:45" scripts="Common,Latin" sortRefs="true" submissionType="IETF" symRefs="true" tocDepth="3" tocInclude="true" xml:lang="en">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-cache-header-10" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9211" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="Cache-Status Header">The Cache-Status HTTP Response Header Field</title>
+    <seriesInfo name="RFC" value="9211" stream="IETF"/>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization showOnFrontPage="true">Fastly</organization>
+      <address>
+        <postal>
+          <postalLine>Prahran</postalLine>
+          <postalLine>Australia</postalLine>
+        </postal>
+        <email>mnot@mnot.net</email>
+        <uri>https://www.mnot.net/</uri>
+      </address>
+    </author>
+    <date month="06" year="2022"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <keyword>http</keyword>
+    <keyword>cache</keyword>
+    <keyword>debugging</keyword>
+    <keyword>x-cache</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">To aid debugging, HTTP caches often append header fields to a response, explaining how they handled the request in an ad hoc manner. This specification defines a standard mechanism to do so that is aligned with HTTP's caching model.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9211" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2022 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-cache-status-http-respo">The Cache-Status HTTP Response Header Field</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-hit-parameter">The hit Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-fwd-parameter">The fwd Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.3">
+                <t indent="0" pn="section-toc.1-1.2.2.3.1"><xref derivedContent="2.3" format="counter" sectionFormat="of" target="section-2.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-fwd-status-parameter">The fwd-status Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.4">
+                <t indent="0" pn="section-toc.1-1.2.2.4.1"><xref derivedContent="2.4" format="counter" sectionFormat="of" target="section-2.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-ttl-parameter">The ttl Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.5">
+                <t indent="0" pn="section-toc.1-1.2.2.5.1"><xref derivedContent="2.5" format="counter" sectionFormat="of" target="section-2.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-stored-parameter">The stored Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.6">
+                <t indent="0" pn="section-toc.1-1.2.2.6.1"><xref derivedContent="2.6" format="counter" sectionFormat="of" target="section-2.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-collapsed-parameter">The collapsed Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.7">
+                <t indent="0" pn="section-toc.1-1.2.2.7.1"><xref derivedContent="2.7" format="counter" sectionFormat="of" target="section-2.7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-key-parameter">The key Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.8">
+                <t indent="0" pn="section-toc.1-1.2.2.8.1"><xref derivedContent="2.8" format="counter" sectionFormat="of" target="section-2.8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-detail-parameter">The detail Parameter</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-examples">Examples</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-defining-new-cache-status-p">Defining New Cache-Status Parameters</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="7" format="counter" sectionFormat="of" target="section-7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.7.2">
+              <li pn="section-toc.1-1.7.2.1">
+                <t indent="0" pn="section-toc.1-1.7.2.1.1"><xref derivedContent="7.1" format="counter" sectionFormat="of" target="section-7.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.2">
+                <t indent="0" pn="section-toc.1-1.7.2.2.1"><xref derivedContent="7.2" format="counter" sectionFormat="of" target="section-7.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-address">Author's Address</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" toc="include" removeInRFC="false" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">To aid debugging (both by humans and automated tools), HTTP caches often append header fields to a response explaining how they handled the request. Unfortunately, the semantics of these header fields are often unclear, and both the semantics and syntax used vary between implementations.</t>
+      <t indent="0" pn="section-1-2">This specification defines a new HTTP response header field, "Cache-Status", for this purpose with standardized syntax and semantics.</t>
+      <section anchor="notational-conventions" numbered="true" toc="include" removeInRFC="false" pn="section-1.1">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.1-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+    described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+        <t indent="0" pn="section-1.1-2">This document uses the following terminology from <xref section="3" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3" derivedContent="STRUCTURED-FIELDS"/> to specify syntax and parsing: List, String, Token, Integer, and Boolean.</t>
+        <t indent="0" pn="section-1.1-3">This document also uses terminology from <xref target="HTTP" format="default" sectionFormat="of" derivedContent="HTTP"/> and <xref target="HTTP-CACHING" format="default" sectionFormat="of" derivedContent="HTTP-CACHING"/>.</t>
+      </section>
+    </section>
+    <section anchor="field" numbered="true" toc="include" removeInRFC="false" pn="section-2">
+      <name slugifiedName="name-the-cache-status-http-respo">The Cache-Status HTTP Response Header Field</name>
+      <t indent="0" pn="section-2-1">The Cache-Status HTTP response header field indicates how caches have handled that response and its corresponding request. The syntax of this header field conforms to <xref target="STRUCTURED-FIELDS" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>.</t>
+      <t indent="0" pn="section-2-2">Its value is a List. Each member of the List represents a cache that has handled the request. The first member represents the cache closest to the origin server, and the last member represents the cache closest to the user (possibly including the user agent's cache itself if it appends a value).</t>
+      <t indent="0" pn="section-2-3">Caches determine when it is appropriate to add the Cache-Status header field to a response. Some might add it to all responses, whereas others might only do so when specifically configured to, or when the request contains a header field that activates a debugging mode. See <xref target="security" format="default" sectionFormat="of" derivedContent="Section 6"/> for related security considerations.</t>
+      <t indent="0" pn="section-2-4">An intermediary <bcp14>SHOULD NOT</bcp14> append a Cache-Status member to responses that it generates locally, even if that intermediary contains a cache, unless the generated response is based upon a stored response (e.g., 304 (Not Modified) and 206 (Partial Content) are both based upon a stored response). For example, a proxy generating a 400 response due to a malformed request will not add a Cache-Status value, because that response was generated by the proxy, not the origin server.</t>
+      <t indent="0" pn="section-2-5">When adding a value to the Cache-Status header field, caches <bcp14>SHOULD</bcp14> preserve the existing field value, to allow debugging of the entire chain of caches handling the request.</t>
+      <t indent="0" pn="section-2-6">Each List member identifies the cache that inserted it, and this identifier <bcp14>MUST</bcp14> be a String or Token. Depending on the deployment, this might be a product or service name (e.g., "ExampleCache" or "Example CDN"), a hostname ("cache-3.example.com"), an IP address, or a generated string.</t>
+      <t indent="0" pn="section-2-7">Each member of the list can have parameters that describe that cache's handling of the request. While these parameters are <bcp14>OPTIONAL</bcp14>, caches are encouraged to provide as much information as possible.</t>
+      <t indent="0" pn="section-2-8">This specification defines the following parameters.</t>
+      <section anchor="the-hit-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.1">
+        <name slugifiedName="name-the-hit-parameter">The hit Parameter</name>
+        <t indent="0" pn="section-2.1-1">The value of "hit" is a Boolean that, when true, indicates that the request was satisfied by the cache; that is, it was not forwarded, and the response was obtained from the cache.</t>
+        <t indent="0" pn="section-2.1-2">A response that was originally produced by the origin but was modified by the cache (for example, a 304 or 206 status code) is still considered a hit, as long as it did not go forward (e.g., for validation).</t>
+        <t indent="0" pn="section-2.1-3">A response that was in cache but not able to be used without going forward (e.g., because it was stale or partial) is not considered a hit. Note that a stale response that is used without going forward (e.g., because the origin server is not available) can be considered a hit.</t>
+        <t indent="0" pn="section-2.1-4">"hit" and "fwd" are exclusive; only one of them should appear on each list member.</t>
+      </section>
+      <section anchor="the-fwd-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.2">
+        <name slugifiedName="name-the-fwd-parameter">The fwd Parameter</name>
+        <t indent="0" pn="section-2.2-1">"fwd", when present, indicates that the request went forward towards the origin; its value is a Token that indicates why.</t>
+        <t indent="0" pn="section-2.2-2">The following parameter values are defined to explain why the request went forward, from most specific to least:</t>
+        <dl spacing="normal" indent="3" newline="false" pn="section-2.2-3">
+          <dt pn="section-2.2-3.1">bypass:</dt>
+          <dd pn="section-2.2-3.2">The cache was configured to not handle this request.</dd>
+          <dt pn="section-2.2-3.3">method:</dt>
+          <dd pn="section-2.2-3.4">The request method's semantics require the request to be forwarded.</dd>
+          <dt pn="section-2.2-3.5">uri-miss:</dt>
+          <dd pn="section-2.2-3.6">The cache did not contain any responses that matched the request URI.</dd>
+          <dt pn="section-2.2-3.7">vary-miss:</dt>
+          <dd pn="section-2.2-3.8">The cache contained a response that matched the request URI, but it could not select a response based upon this request's header fields and stored Vary header fields.</dd>
+          <dt pn="section-2.2-3.9">miss:</dt>
+          <dd pn="section-2.2-3.10">The cache did not contain any responses that could be used to satisfy this request (to be used when an implementation cannot distinguish between uri-miss and vary-miss).</dd>
+          <dt pn="section-2.2-3.11">request:</dt>
+          <dd pn="section-2.2-3.12">The cache was able to select a fresh response for the request, but the request's semantics (e.g., Cache-Control request directives) did not allow its use.</dd>
+          <dt pn="section-2.2-3.13">stale:</dt>
+          <dd pn="section-2.2-3.14">The cache was able to select a response for the request, but it was stale.</dd>
+          <dt pn="section-2.2-3.15">partial:</dt>
+          <dd pn="section-2.2-3.16">The cache was able to select a partial response for the request, but it did not contain all of the requested ranges (or the request was for the complete response).</dd>
+        </dl>
+        <t indent="0" pn="section-2.2-4">The most specific reason known to the cache <bcp14>SHOULD</bcp14> be used, to the extent that it is possible to implement. See also <xref section="4" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4" derivedContent="HTTP-CACHING"/>.</t>
+      </section>
+      <section anchor="the-fwd-status-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.3">
+        <name slugifiedName="name-the-fwd-status-parameter">The fwd-status Parameter</name>
+        <t indent="0" pn="section-2.3-1">The value of "fwd-status" is an Integer that indicates which status code (see <xref section="15" sectionFormat="comma" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15" derivedContent="HTTP"/>) the next-hop server returned in response to the forwarded request. The fwd-status parameter is only meaningful when fwd is present. If fwd-status is not present but the fwd parameter is, it defaults to the status code sent in the response.</t>
+        <t indent="0" pn="section-2.3-2">This parameter is useful to distinguish cases when the next-hop server sends a 304 (Not Modified) response to a conditional request or a 206 (Partial Content) response because of a range request.</t>
+      </section>
+      <section anchor="the-ttl-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.4">
+        <name slugifiedName="name-the-ttl-parameter">The ttl Parameter</name>
+        <t indent="0" pn="section-2.4-1">The value of "ttl" is an Integer that indicates the response's remaining freshness lifetime (see <xref section="4.2.1" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4.2.1" derivedContent="HTTP-CACHING"/>) as calculated by the cache, as an integer number of seconds, measured as closely as possible to when the response header section is sent by the cache. This includes freshness assigned by the cache through, for example, heuristics (see <xref section="4.2.2" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4.2.2" derivedContent="HTTP-CACHING"/>), local configuration, or other factors. It may be negative, to indicate staleness.</t>
+      </section>
+      <section anchor="the-stored-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.5">
+        <name slugifiedName="name-the-stored-parameter">The stored Parameter</name>
+        <t indent="0" pn="section-2.5-1">The value of "stored" is a Boolean that indicates whether the cache stored the response (see <xref section="3" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-3" derivedContent="HTTP-CACHING"/>); a true value indicates that it did. The stored parameter is only meaningful when fwd is present.</t>
+      </section>
+      <section anchor="the-collapsed-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.6">
+        <name slugifiedName="name-the-collapsed-parameter">The collapsed Parameter</name>
+        <t indent="0" pn="section-2.6-1">The value of "collapsed" is a Boolean that indicates whether this request was collapsed together with one or more other forward requests (see <xref section="4" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4" derivedContent="HTTP-CACHING"/>). If true, the response was successfully reused; if not, a new request had to be made. If not present, the request was not collapsed with others. The collapsed parameter is only meaningful when fwd is present.</t>
+      </section>
+      <section anchor="the-key-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.7">
+        <name slugifiedName="name-the-key-parameter">The key Parameter</name>
+        <t indent="0" pn="section-2.7-1">The value of "key" is a String that conveys a representation of the cache key (see <xref section="2" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-2" derivedContent="HTTP-CACHING"/>) used for the response. Note that this may be implementation specific.</t>
+      </section>
+      <section anchor="the-detail-parameter" numbered="true" toc="include" removeInRFC="false" pn="section-2.8">
+        <name slugifiedName="name-the-detail-parameter">The detail Parameter</name>
+        <t indent="0" pn="section-2.8-1">The value of "detail" is either a String or a Token that allows implementations to convey additional information not captured in other parameters, such as implementation-specific states or other caching-related metrics.</t>
+        <t indent="0" pn="section-2.8-2">For example:</t>
+        <sourcecode type="http-message" markers="false" pn="section-2.8-3">
+Cache-Status: ExampleCache; hit; detail=MEMORY
+</sourcecode>
+        <t indent="0" pn="section-2.8-4">The semantics of a detail parameter are always specific to the cache that sent it; even if a details parameter from another cache shares the same value, it might not mean the same thing.</t>
+        <t indent="0" pn="section-2.8-5">This parameter is intentionally limited. If an implementation's developer or operator needs to convey additional information in an interoperable fashion, they are encouraged to register extension parameters (see <xref target="register" format="default" sectionFormat="of" derivedContent="Section 4"/>) or define another header field.</t>
+      </section>
+    </section>
+    <section anchor="examples" numbered="true" toc="include" removeInRFC="false" pn="section-3">
+      <name slugifiedName="name-examples">Examples</name>
+      <t indent="0" pn="section-3-1">The following is an example of a minimal cache hit:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-2">
+Cache-Status: ExampleCache; hit
+</sourcecode>
+      <t indent="0" pn="section-3-3">However, a polite cache will give some more information, e.g.:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-4">
+Cache-Status: ExampleCache; hit; ttl=376
+</sourcecode>
+      <t indent="0" pn="section-3-5">A stale hit just has negative freshness, as in this example:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-6">
+Cache-Status: ExampleCache; hit; ttl=-412
+</sourcecode>
+      <t indent="0" pn="section-3-7">Whereas this is an example of a complete miss:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-8">
+Cache-Status: ExampleCache; fwd=uri-miss
+</sourcecode>
+      <t indent="0" pn="section-3-9">This is an example of a miss that successfully validated on the backend server:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-10">
+Cache-Status: ExampleCache; fwd=stale; fwd-status=304
+</sourcecode>
+      <t indent="0" pn="section-3-11">This is an example of a miss that was collapsed with another request:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-12">
+Cache-Status: ExampleCache; fwd=uri-miss; collapsed
+</sourcecode>
+      <t indent="0" pn="section-3-13">This is an example of a miss that the cache attempted to collapse, but couldn't:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-14">
+Cache-Status: ExampleCache; fwd=uri-miss; collapsed=?0
+</sourcecode>
+      <t indent="0" pn="section-3-15">The following is an example of going through two separate layers of caching, where the cache closest to the origin responded to an earlier request with a stored response, and a second cache stored that response and later reused it to satisfy the current request:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-16">
+Cache-Status: OriginCache; hit; ttl=1100,
+              "CDN Company Here"; hit; ttl=545
+</sourcecode>
+      <t indent="0" pn="section-3-17">The following is an example of going through a three-layer caching system, where the closest to the origin is a reverse proxy (where the response was served from cache); the next is a forward proxy interposed by the network (where the request was forwarded because there wasn't any response cached with its URI, the request was collapsed with others, and the resulting response was stored); and the closest to the user is a browser cache (where there wasn't any response cached with the request's URI):</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-18">
+Cache-Status: ReverseProxyCache; hit
+Cache-Status: ForwardProxyCache; fwd=uri-miss; collapsed; stored
+Cache-Status: BrowserCache; fwd=uri-miss
+</sourcecode>
+    </section>
+    <section anchor="register" numbered="true" toc="include" removeInRFC="false" pn="section-4">
+      <name slugifiedName="name-defining-new-cache-status-p">Defining New Cache-Status Parameters</name>
+      <t indent="0" pn="section-4-1">New Cache-Status parameters can be defined by registering them in the "HTTP Cache-Status" registry.</t>
+      <t indent="0" pn="section-4-2">Registration requests are reviewed and approved by a designated expert, per <xref section="4.5" sectionFormat="comma" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.5" derivedContent="RFC8126"/>. A specification document is appreciated but not required.</t>
+      <t indent="0" pn="section-4-3">The expert(s) should consider the following factors when evaluating requests:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-4-4">
+        <li pn="section-4-4.1">Community feedback</li>
+        <li pn="section-4-4.2">If the value is sufficiently well defined</li>
+        <li pn="section-4-4.3">Generic parameters are preferred over vendor-specific, application-specific, or deployment-specific values. If a generic value cannot be agreed upon in the community, the parameter's name should be correspondingly specific (e.g., with a prefix that identifies the vendor, application, or deployment).</li>
+      </ul>
+      <t indent="0" pn="section-4-5">Registration requests should use the following template:</t>
+      <dl spacing="normal" indent="3" newline="false" pn="section-4-6">
+        <dt pn="section-4-6.1">Name:</dt>
+        <dd pn="section-4-6.2">[a name for the Cache-Status parameter's key; see <xref section="3.1.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.1.2" derivedContent="STRUCTURED-FIELDS"/> for syntactic requirements]</dd>
+        <dt pn="section-4-6.3">Type:</dt>
+        <dd pn="section-4-6.4">[the Structured Type of the parameter's value; see <xref section="3.1.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.1.2" derivedContent="STRUCTURED-FIELDS"/>]</dd>
+        <dt pn="section-4-6.5">Description:</dt>
+        <dd pn="section-4-6.6">[a description of the parameter's semantics]</dd>
+        <dt pn="section-4-6.7">Reference:</dt>
+        <dd pn="section-4-6.8">[to a specification defining this parameter, if available]</dd>
+      </dl>
+      <t indent="0" pn="section-4-7">See the registry at <eref brackets="angle" target="https://www.iana.org/assignments/http-cache-status"/> for details on where to send registration requests.</t>
+    </section>
+    <section anchor="iana-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-5">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-5-1">IANA has created the "HTTP Cache-Status" registry at <eref brackets="angle" target="https://www.iana.org/assignments/http-cache-status"/> and populated it with the types defined in <xref target="field" format="default" sectionFormat="of" derivedContent="Section 2"/>; see <xref target="register" format="default" sectionFormat="of" derivedContent="Section 4"/> for its associated procedures.</t>
+      <t indent="0" pn="section-5-2">IANA has added the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined in <xref section="18.4" sectionFormat="comma" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-18.4" derivedContent="HTTP"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-5-3">
+        <dt pn="section-5-3.1">Field name:</dt>
+        <dd pn="section-5-3.2">Cache-Status</dd>
+        <dt pn="section-5-3.3">Status:</dt>
+        <dd pn="section-5-3.4">permanent</dd>
+        <dt pn="section-5-3.5">Reference:</dt>
+        <dd pn="section-5-3.6">RFC 9211</dd>
+      </dl>
+    </section>
+    <section anchor="security" numbered="true" toc="include" removeInRFC="false" pn="section-6">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-6-1">Attackers can use the information in Cache-Status to probe the behavior of the cache (and other components) and infer the activity of those using the cache. The Cache-Status header field may not create these risks on its own, but it can assist attackers in exploiting them.</t>
+      <t indent="0" pn="section-6-2">For example, knowing if a cache has stored a response can help an attacker execute a timing attack on sensitive data.</t>
+      <t indent="0" pn="section-6-3">Additionally, exposing the cache key can help an attacker understand modifications to the cache key, which may assist cache poisoning attacks. See <xref target="ENTANGLE" format="default" sectionFormat="of" derivedContent="ENTANGLE"/> for details.</t>
+      <t indent="0" pn="section-6-4">The underlying risks can be mitigated with a variety of techniques (e.g., using encryption and authentication and avoiding the inclusion of attacker-controlled data in the cache key), depending on their exact nature. Note that merely obfuscating the key does not mitigate this risk.</t>
+      <t indent="0" pn="section-6-5">To avoid assisting such attacks, the Cache-Status header field can be omitted, only sent when the client is authorized to receive it, or sent with sensitive information (e.g., the key parameter) only when the client is authorized.</t>
+    </section>
+  </middle>
+  <back>
+    <references pn="section-7">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-7.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="HTTP" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="HTTP-CACHING" target="https://www.rfc-editor.org/info/rfc9111" quoteTitle="true" derivedAnchor="HTTP-CACHING">
+          <front>
+            <title>HTTP Caching</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="S. Bradner">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="1997" month="March"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8126" target="https://www.rfc-editor.org/info/rfc8126" quoteTitle="true" derivedAnchor="RFC8126">
+          <front>
+            <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+            <author initials="M." surname="Cotton" fullname="M. Cotton">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="T." surname="Narten" fullname="T. Narten">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="June"/>
+            <abstract>
+              <t indent="0">Many protocols make use of points of extensibility that use constants to identify various protocol parameters.  To ensure that the values in these fields do not have conflicting uses and to promote interoperability, their allocations are often coordinated by a central record keeper.  For IETF protocols, that role is filled by the Internet Assigned Numbers Authority (IANA).</t>
+              <t indent="0">To make assignments in a given registry prudently, guidance describing the conditions under which new values should be assigned, as well as when and how modifications to existing values can be made, is needed.  This document defines a framework for the documentation of these guidelines by specification authors, in order to assure that the provided guidance for the IANA Considerations is clear and addresses the various issues that are likely in the operation of a registry.</t>
+              <t indent="0">This is the third edition of this document; it obsoletes RFC 5226.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="26"/>
+          <seriesInfo name="RFC" value="8126"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8126"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="May"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="STRUCTURED-FIELDS" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="P-H. Kamp" initials="P-H." surname="Kamp">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="February" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+      </references>
+      <references pn="section-7.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="ENTANGLE" target="https://portswigger.net/research/web-cache-entanglement" quoteTitle="true" derivedAnchor="ENTANGLE">
+          <front>
+            <title>Web Cache Entanglement: Novel Pathways to Poisoning</title>
+            <author initials="J." surname="Kettle" fullname="James Kettle">
+              <organization showOnFrontPage="true">PortSwigger</organization>
+            </author>
+            <date month="September" year="2020"/>
+          </front>
+        </reference>
+      </references>
+    </references>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-authors-address">Author's Address</name>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+        <organization showOnFrontPage="true">Fastly</organization>
+        <address>
+          <postal>
+            <postalLine>Prahran</postalLine>
+            <postalLine>Australia</postalLine>
+          </postal>
+          <email>mnot@mnot.net</email>
+          <uri>https://www.mnot.net/</uri>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

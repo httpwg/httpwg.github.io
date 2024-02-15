@@ -1,0 +1,411 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" category="std" consensus="true" docName="draft-ietf-httpbis-targeted-cache-control-04" indexInclude="true" ipr="trust200902" number="9213" prepTime="2022-06-08T15:56:40" scripts="Common,Latin" sortRefs="true" submissionType="IETF" symRefs="true" tocDepth="3" tocInclude="true" xml:lang="en">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-targeted-cache-control-04" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9213" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="Targeted HTTP Cache Control">Targeted HTTP Cache Control</title>
+    <seriesInfo name="RFC" value="9213" stream="IETF"/>
+    <author initials="S." surname="Ludin" fullname="Stephen Ludin">
+      <organization showOnFrontPage="true">Akamai</organization>
+      <address>
+        <email>sludin@ludin.org</email>
+      </address>
+    </author>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization showOnFrontPage="true">Fastly</organization>
+      <address>
+        <postal>
+          <postalLine>Prahran</postalLine>
+          <postalLine>Australia</postalLine>
+        </postal>
+        <email>mnot@mnot.net</email>
+        <uri>https://www.mnot.net/</uri>
+      </address>
+    </author>
+    <author initials="Y." surname="Wu" fullname="Yuchen Wu">
+      <organization showOnFrontPage="true">Cloudflare</organization>
+      <address>
+        <email>me@yuchenwu.net</email>
+      </address>
+    </author>
+    <date month="06" year="2022"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <keyword>CDN</keyword>
+    <keyword>Content Delivery Network</keyword>
+    <keyword>Caching</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">
+This specification defines a convention for HTTP response header fields that allow cache directives to be targeted at specific caches or classes of caches. It also defines one such header field, the CDN-Cache-Control response header field, which is targeted at content delivery network (CDN) caches.
+
+      </t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9213" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2022 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-targeted-cache-control-head">Targeted Cache-Control Header Fields</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-syntax">Syntax</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-cache-behavior">Cache Behavior</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.3">
+                <t indent="0" pn="section-toc.1-1.2.2.3.1"><xref derivedContent="2.3" format="counter" sectionFormat="of" target="section-2.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-interaction-with-http-fresh">Interaction with HTTP Freshness</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.4">
+                <t indent="0" pn="section-toc.1-1.2.2.4.1"><xref derivedContent="2.4" format="counter" sectionFormat="of" target="section-2.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-defining-targeted-fields">Defining Targeted Fields</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-cdn-cache-control-targe">The CDN-Cache-Control Targeted Field</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.3.2">
+              <li pn="section-toc.1-1.3.2.1">
+                <t indent="0" pn="section-toc.1-1.3.2.1.1"><xref derivedContent="3.1" format="counter" sectionFormat="of" target="section-3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-examples">Examples</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" toc="include" removeInRFC="false" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">Modern deployments of HTTP often use multiple layers of caching. For example, a website might use a cache on the origin server itself; it might deploy a caching layer in the same network as the origin server, it might use one or more CDNs that are distributed throughout the Internet, and it might benefit from browser caching as well.</t>
+      <t indent="0" pn="section-1-2">Because it is often desirable to control these different classes of caches separately, some means of targeting cache directives at them is necessary. For example, if a publisher has a mechanism to invalidate the contents of a cache that it has a relationship with (such as a CDN cache), they might be more comfortable assigning a more generous caching policy to it while still wanting to restrict the behavior of other caches.</t>
+      <t indent="0" pn="section-1-3">The HTTP Cache-Control response header field (defined in <xref section="5.2" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2" derivedContent="HTTP-CACHING"/>) is widely used to direct caching behavior. However, it is relatively undifferentiated; while some cache directives (e.g., s-maxage) are targeted at a specific class of caches (for s-maxage, shared caches), targeting is not consistently available across all existing cache directives (e.g., stale-while-revalidate). This is problematic especially as the number of caching extensions grows along with the number of potential targets.</t>
+      <t indent="0" pn="section-1-4">Some implementations have defined ad hoc control mechanisms to overcome this issue, but their interoperability is low. <xref target="targeted" format="default" sectionFormat="of" derivedContent="Section 2"/> defines a standard framework for targeted cache control using HTTP response headers, and <xref target="cdn-cache-control" format="default" sectionFormat="of" derivedContent="Section 3"/> defines one such header: the CDN-Cache-Control response header field.</t>
+      <section anchor="notational-conventions" numbered="true" toc="include" removeInRFC="false" pn="section-1.1">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.1-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+    "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>",
+    "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are
+    to be interpreted as described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/>
+          <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> when, and only when, they appear in all capitals,
+    as shown here.
+        </t>
+      </section>
+    </section>
+    <section anchor="targeted" numbered="true" toc="include" removeInRFC="false" pn="section-2">
+      <name slugifiedName="name-targeted-cache-control-head">Targeted Cache-Control Header Fields</name>
+      <t indent="0" pn="section-2-1">A Targeted Cache-Control Header Field (hereafter "targeted field") is an HTTP response header field that has the same semantics as the Cache-Control response header field (<xref section="5.2" sectionFormat="comma" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2" derivedContent="HTTP-CACHING"/>). However, it has a distinct field name that indicates the target for its cache directives.</t>
+      <t indent="0" pn="section-2-2">For example:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-3">
+CDN-Cache-Control: max-age=60
+</sourcecode>
+      <t indent="0" pn="section-2-4">is a targeted field that applies to CDNs, as defined in <xref target="cdn-cache-control" format="default" sectionFormat="of" derivedContent="Section 3"/>.</t>
+      <section anchor="syntax" numbered="true" toc="include" removeInRFC="false" pn="section-2.1">
+        <name slugifiedName="name-syntax">Syntax</name>
+        <t indent="0" pn="section-2.1-1">Targeted fields are Dictionary Structured Fields (<xref section="3.2" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.2" derivedContent="STRUCTURED-FIELDS"/>). Each member of the Dictionary is an HTTP cache response directive (<xref section="5.2.2" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.2" derivedContent="HTTP-CACHING"/>) including extension response directives (as per <xref section="5.2.3" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.3" derivedContent="HTTP-CACHING"/>). Note that while targeted fields often have the same syntax as Cache-Control fields, differences in error handling mean that using a Cache-Control parser rather than a Structured Fields parser can introduce interoperability issues.</t>
+        <t indent="0" pn="section-2.1-2">Because cache directives are not defined in terms of structured data types, it is necessary to map their values into the appropriate types. <xref section="5.2" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2" derivedContent="HTTP-CACHING"/> defines cache directive values to be either absent, a quoted-string, or a token.</t>
+        <t indent="0" pn="section-2.1-3">This means that cache directives that have no value will be mapped to a Boolean (<xref section="3.3.6" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.6" derivedContent="STRUCTURED-FIELDS"/>). When the value is a quoted-string, it will be mapped to a String (<xref section="3.3.3" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.3" derivedContent="STRUCTURED-FIELDS"/>), and when it is a token, it will map to a Token (<xref section="3.3.4" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.4" derivedContent="STRUCTURED-FIELDS"/>), an Integer (<xref section="3.3.1" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.1" derivedContent="STRUCTURED-FIELDS"/>), or a Decimal (<xref section="3.3.2" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.2" derivedContent="STRUCTURED-FIELDS"/>), depending on the content of the value.</t>
+        <t indent="0" pn="section-2.1-4">For example, the max-age directive (<xref section="5.2.2.1" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.2.1" derivedContent="HTTP-CACHING"/>) has an integer value; no-store (<xref section="5.2.2.5" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.2.5" derivedContent="HTTP-CACHING"/>) always has a Boolean true value, and no-cache (<xref section="5.2.2.4" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.2.4" derivedContent="HTTP-CACHING"/>) has a value that can be either Boolean true or a string containing a comma-delimited list of field names.</t>
+        <t indent="0" pn="section-2.1-5">Implementations <bcp14>MUST NOT</bcp14> generate values that violate these inferred constraints on the cache directive's value. In particular, string values whose first character is not alphabetic or "*" <bcp14>MUST</bcp14> be generated as Strings so that they are not mistaken for other types.</t>
+        <t indent="0" pn="section-2.1-6">Implementations <bcp14>SHOULD NOT</bcp14> consume values that violate these inferred constraints. For example, a consuming implementation that coerces a max-age with a decimal value into an integer would behave differently than other implementations, potentially causing interoperability issues.</t>
+        <t indent="0" pn="section-2.1-7">Parameters received on cache directives are to be ignored, unless other handling is explicitly specified.</t>
+        <t indent="0" pn="section-2.1-8">If a targeted field in a given response is empty, or a parsing error is encountered, that field <bcp14>MUST</bcp14> be ignored by the cache (i.e., it behaves as if the field were not present, likely falling back to other cache-control mechanisms present).</t>
+      </section>
+      <section anchor="cache-behavior" numbered="true" toc="include" removeInRFC="false" pn="section-2.2">
+        <name slugifiedName="name-cache-behavior">Cache Behavior</name>
+        <t indent="0" pn="section-2.2-1">A cache that implements this specification maintains a target list. A target list is an ordered list of the targeted field names that it uses for caching policy, with the order reflecting priority from most applicable to least. The target list might be fixed, user configurable, or generated per request, depending upon the implementation.</t>
+        <t indent="0" pn="section-2.2-2">For example, a CDN cache might support both CDN-Cache-Control and a header specific to that CDN, ExampleCDN-Cache-Control, with the latter overriding the former. Its target list would be:</t>
+        <artwork align="left" pn="section-2.2-3">
+  [ExampleCDN-Cache-Control, CDN-Cache-Control]
+  </artwork>
+        <t indent="0" pn="section-2.2-4">When a cache that implements this specification receives a response with one or more of the header field names on its target list, the cache <bcp14>MUST</bcp14> select the first (in target-list order) field with a valid, non-empty value and use its value to determine the caching policy for the response, and it <bcp14>MUST</bcp14> ignore the Cache-Control and Expires header fields in that response, unless no valid, non-empty value is available from the listed header fields.</t>
+        <t indent="0" pn="section-2.2-5">Note that this occurs on a response-by-response basis; if no member of the cache's target list is present, valid, and non-empty, a cache falls back to other cache control mechanisms as required by HTTP <xref target="HTTP-CACHING" format="default" sectionFormat="of" derivedContent="HTTP-CACHING"/>.</t>
+        <t indent="0" pn="section-2.2-6">Targeted fields that are not on a cache's target list <bcp14>MUST NOT</bcp14> change that cache's behavior and <bcp14>MUST</bcp14> be passed through.</t>
+        <t indent="0" pn="section-2.2-7">Caches that use a targeted field <bcp14>MUST</bcp14> implement the semantics of the following cache directives:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-2.2-8">
+          <li pn="section-2.2-8.1">max-age</li>
+          <li pn="section-2.2-8.2">must-revalidate</li>
+          <li pn="section-2.2-8.3">no-store</li>
+          <li pn="section-2.2-8.4">no-cache</li>
+          <li pn="section-2.2-8.5">private</li>
+        </ul>
+        <t indent="0" pn="section-2.2-9">Furthermore, they <bcp14>SHOULD</bcp14> implement other cache directives (including extension cache directives) that they support in the Cache-Control response header field.</t>
+        <t indent="0" pn="section-2.2-10">The semantics and precedence of cache directives in a targeted field are the same as those in Cache-Control. In particular, no-store and no-cache make max-age inoperative, and unrecognized extension directives are ignored.</t>
+      </section>
+      <section anchor="interaction-with-http-freshness" numbered="true" toc="include" removeInRFC="false" pn="section-2.3">
+        <name slugifiedName="name-interaction-with-http-fresh">Interaction with HTTP Freshness</name>
+        <t indent="0" pn="section-2.3-1">HTTP caching has a single, end-to-end freshness model defined in <xref section="4.2" sectionFormat="of" target="HTTP-CACHING" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4.2" derivedContent="HTTP-CACHING"/>. When additional freshness mechanisms are only available to some caches along a request path (for example, using targeted fields), their interactions need to be carefully considered. In particular, a targeted cache might have longer freshness lifetimes available to it than other caches, causing it to serve responses that appear to be prematurely (or even immediately) stale to those other caches, negatively impacting cache efficiency.</t>
+        <t indent="0" pn="section-2.3-2">For example, a response stored by a CDN cache might be served with the following headers:</t>
+        <sourcecode type="http-message" markers="false" pn="section-2.3-3">
+Age: 1800
+Cache-Control: max-age=600
+CDN-Cache-Control: max-age=3600
+</sourcecode>
+        <t indent="0" pn="section-2.3-4">From the CDN's perspective, this response is still fresh after being cached for 30 minutes, while from the standpoint of other caches, this response is already stale. See <xref target="AGE-PENALTY" format="default" sectionFormat="of" derivedContent="AGE-PENALTY"/> for more discussion.</t>
+        <t indent="0" pn="section-2.3-5">When the targeted cache has a strong coherence mechanism (e.g., the origin server has the ability to proactively invalidate cached responses), it is often desirable to mitigate these effects. Some techniques seen in deployments include:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-2.3-6">
+          <li pn="section-2.3-6.1">Removing the Age header field</li>
+          <li pn="section-2.3-6.2">Updating the Date header field value to the current time</li>
+          <li pn="section-2.3-6.3">Updating the Expires header field value to the current time, plus any Cache-Control: max-age value</li>
+        </ul>
+        <t indent="0" pn="section-2.3-7">This specification does not place any specific requirements on implementations to mitigate these effects, but definitions of targeted fields can do so.</t>
+      </section>
+      <section anchor="defining-targeted-fields" numbered="true" toc="include" removeInRFC="false" pn="section-2.4">
+        <name slugifiedName="name-defining-targeted-fields">Defining Targeted Fields</name>
+        <t indent="0" pn="section-2.4-1">A targeted field for a particular class of cache can be defined by requesting registration in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" (<eref target="https://www.iana.org/assignments/http-fields/" brackets="angle"/>).</t>
+        <t indent="0" pn="section-2.4-2">Registration requests can use this document as the specification document; in which case, the Comments field should clearly define the class of caches that the targeted field applies to. Alternatively, if other documentation for the field has been created, it can be used as the specification document.</t>
+        <t indent="0" pn="section-2.4-3">By convention, targeted fields have the suffix "-Cache-Control", e.g., "ExampleCDN-Cache-Control". However, this suffix <bcp14>MUST NOT</bcp14> be used on its own to identify targeted fields; it is only a convention.</t>
+      </section>
+    </section>
+    <section anchor="cdn-cache-control" numbered="true" toc="include" removeInRFC="false" pn="section-3">
+      <name slugifiedName="name-the-cdn-cache-control-targe">The CDN-Cache-Control Targeted Field</name>
+      <t indent="0" pn="section-3-1">The CDN-Cache-Control response header field is a targeted field (<xref target="targeted" format="default" sectionFormat="of" derivedContent="Section 2"/>) that allows origin servers to control the behavior of CDN caches interposed between them and clients separately from other caches that might handle the response.</t>
+      <t indent="0" pn="section-3-2">It applies to caches that are part of a distributed network that operate on behalf of an origin server (commonly called a CDN).</t>
+      <t indent="0" pn="section-3-3">CDN caches that use CDN-Cache-Control will typically forward this header so that downstream CDN caches can use it as well. However, they <bcp14>MAY</bcp14> remove it when this is undesirable (for example, when configured to do so because it is known not to be used downstream).</t>
+      <section anchor="examples" numbered="true" toc="include" removeInRFC="false" pn="section-3.1">
+        <name slugifiedName="name-examples">Examples</name>
+        <t indent="0" pn="section-3.1-1">For example, the following header fields would instruct a CDN cache (i.e., a cache with a target list of <tt>[CDN-Cache-Control]</tt>) to consider the response fresh for 600 seconds, other shared caches to consider the response fresh for 120 seconds, and any remaining caches to consider the response fresh for 60 seconds:</t>
+        <sourcecode type="http-message" markers="false" pn="section-3.1-2">
+Cache-Control: max-age=60, s-maxage=120
+CDN-Cache-Control: max-age=600
+</sourcecode>
+        <t indent="0" pn="section-3.1-3">These header fields would instruct a CDN cache to consider the response fresh for 600 seconds, while all other caches would be prevented from storing it:</t>
+        <sourcecode type="http-message" markers="false" pn="section-3.1-4">
+CDN-Cache-Control: max-age=600
+Cache-Control: no-store
+</sourcecode>
+        <t indent="0" pn="section-3.1-5">Because CDN-Cache-Control is not present, this header field would prevent all caches from storing the response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-3.1-6">
+Cache-Control: no-store
+</sourcecode>
+        <t indent="0" pn="section-3.1-7">Whereas these would prevent all caches except for CDN caches from storing the response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-3.1-8">
+Cache-Control: no-store
+CDN-Cache-Control: none
+</sourcecode>
+        <t indent="0" pn="section-3.1-9">(Note that 'none' is not a registered cache directive; it is here to avoid sending a header field with an empty value, which would be ignored.)</t>
+      </section>
+    </section>
+    <section anchor="iana-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-4">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-4-1">IANA has registered the following entry in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" defined by <xref target="HTTP" format="default" sectionFormat="of" derivedContent="HTTP"/>:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-4-2">
+        <dt pn="section-4-2.1">Field Name:</dt>
+        <dd pn="section-4-2.2">CDN-Cache-Control</dd>
+        <dt pn="section-4-2.3">Status:</dt>
+        <dd pn="section-4-2.4">permanent</dd>
+        <dt pn="section-4-2.5">Specification Document:</dt>
+        <dd pn="section-4-2.6">RFC 9213</dd>
+        <dt pn="section-4-2.7">Comments:</dt>
+        <dd pn="section-4-2.8">Cache directives targeted at content delivery networks</dd>
+      </dl>
+    </section>
+    <section anchor="security-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-5">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-5-1">The security considerations of HTTP caching <xref target="HTTP-CACHING" format="default" sectionFormat="of" derivedContent="HTTP-CACHING"/> apply.</t>
+      <t indent="0" pn="section-5-2">The ability to carry multiple caching policies on a response can result in confusion about how a response will be cached in different systems, potentially resulting in unintentional reuse of responses with sensitive information. For this reason, care must be exercised.</t>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC8941" to="STRUCTURED-FIELDS"/>
+    <references pn="section-6">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-6.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="HTTP" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="HTTP-CACHING" target="https://www.rfc-editor.org/info/rfc9111" quoteTitle="true" derivedAnchor="HTTP-CACHING">
+          <front>
+            <title>HTTP Caching</title>
+            <author initials="R" surname="Fielding" fullname="Roy T. Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="S. Bradner">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="1997" month="March"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="May"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8941" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author initials="M." surname="Nottingham" fullname="M. Nottingham">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="P-H." surname="Kamp" fullname="P-H. Kamp">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2021" month="February"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields that wish to use a common syntax that is more restrictive than traditional HTTP field values.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+      </references>
+      <references pn="section-6.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="AGE-PENALTY" target="https://dl.acm.org/doi/10.5555/1251440.1251447" quoteTitle="true" derivedAnchor="AGE-PENALTY">
+          <front>
+            <title>The age penalty and its effect on cache performance</title>
+            <author initials="E." surname="Cohen" fullname="Edith Cohen">
+              <organization showOnFrontPage="true">AT&amp;T Labs - Research</organization>
+            </author>
+            <author initials="H." surname="Kaplan" fullname="Haim Kaplan">
+              <organization showOnFrontPage="true">School of Computer Science, Tel-Aviv University</organization>
+            </author>
+            <date year="2001" month="March"/>
+          </front>
+        </reference>
+      </references>
+    </references>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="S." surname="Ludin" fullname="Stephen Ludin">
+        <organization showOnFrontPage="true">Akamai</organization>
+        <address>
+          <email>sludin@ludin.org</email>
+        </address>
+      </author>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+        <organization showOnFrontPage="true">Fastly</organization>
+        <address>
+          <postal>
+            <postalLine>Prahran</postalLine>
+            <postalLine>Australia</postalLine>
+          </postal>
+          <email>mnot@mnot.net</email>
+          <uri>https://www.mnot.net/</uri>
+        </address>
+      </author>
+      <author initials="Y." surname="Wu" fullname="Yuchen Wu">
+        <organization showOnFrontPage="true">Cloudflare</organization>
+        <address>
+          <email>me@yuchenwu.net</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

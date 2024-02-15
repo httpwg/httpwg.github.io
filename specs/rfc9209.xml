@@ -1,0 +1,1281 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" category="std" consensus="true" docName="draft-ietf-httpbis-proxy-status-08" indexInclude="true" ipr="trust200902" number="9209" prepTime="2022-06-08T15:43:00" scripts="Common,Latin" sortRefs="true" submissionType="IETF" symRefs="true" tocDepth="3" tocInclude="true" xml:lang="en">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-proxy-status-08" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9209" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="Proxy-Status Header">The Proxy-Status HTTP Response Header Field</title>
+    <seriesInfo name="RFC" value="9209" stream="IETF"/>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization showOnFrontPage="true">Fastly</organization>
+      <address>
+        <postal>
+          <postalLine>Prahran</postalLine>
+          <postalLine>Australia</postalLine>
+        </postal>
+        <email>mnot@mnot.net</email>
+        <uri>https://www.mnot.net/</uri>
+      </address>
+    </author>
+    <author initials="P." surname="Sikora" fullname="Piotr Sikora">
+      <organization showOnFrontPage="true">Google</organization>
+      <address>
+        <email>piotrsikora@google.com</email>
+      </address>
+    </author>
+    <date month="06" year="2022"/>
+    <area>Applications and Real-Time</area>
+    <workgroup>HTTP</workgroup>
+    <keyword>proxy</keyword>
+    <keyword>intermediary</keyword>
+    <keyword>reverse proxy</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This document defines the Proxy-Status HTTP response field to convey the details of an intermediary's response handling, including generated errors.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9209" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2022 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-proxy-status-http-field">The Proxy-Status HTTP Field</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-status-parameters">Proxy-Status Parameters</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2.1.2">
+                  <li pn="section-toc.1-1.2.2.1.2.1">
+                    <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.2.1.2.1.1"><xref derivedContent="2.1.1" format="counter" sectionFormat="of" target="section-2.1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-error">error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.1.2.2">
+                    <t indent="0" pn="section-toc.1-1.2.2.1.2.2.1"><xref derivedContent="2.1.2" format="counter" sectionFormat="of" target="section-2.1.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-next-hop">next-hop</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.1.2.3">
+                    <t indent="0" pn="section-toc.1-1.2.2.1.2.3.1"><xref derivedContent="2.1.3" format="counter" sectionFormat="of" target="section-2.1.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-next-protocol">next-protocol</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.1.2.4">
+                    <t indent="0" pn="section-toc.1-1.2.2.1.2.4.1"><xref derivedContent="2.1.4" format="counter" sectionFormat="of" target="section-2.1.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-received-status">received-status</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.1.2.5">
+                    <t indent="0" pn="section-toc.1-1.2.2.1.2.5.1"><xref derivedContent="2.1.5" format="counter" sectionFormat="of" target="section-2.1.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-details">details</xref></t>
+                  </li>
+                </ul>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-defining-new-proxy-status-p">Defining New Proxy-Status Parameters</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.3">
+                <t indent="0" pn="section-toc.1-1.2.2.3.1"><xref derivedContent="2.3" format="counter" sectionFormat="of" target="section-2.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-error-types">Proxy Error Types</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2.3.2">
+                  <li pn="section-toc.1-1.2.2.3.2.1">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.1.1"><xref derivedContent="2.3.1" format="counter" sectionFormat="of" target="section-2.3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-dns-timeout">DNS Timeout</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.2">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.2.1"><xref derivedContent="2.3.2" format="counter" sectionFormat="of" target="section-2.3.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-dns-error">DNS Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.3">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.3.1"><xref derivedContent="2.3.3" format="counter" sectionFormat="of" target="section-2.3.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-destination-not-found">Destination Not Found</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.4">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.4.1"><xref derivedContent="2.3.4" format="counter" sectionFormat="of" target="section-2.3.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-destination-unavailable">Destination Unavailable</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.5">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.5.1"><xref derivedContent="2.3.5" format="counter" sectionFormat="of" target="section-2.3.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-destination-ip-prohibited">Destination IP Prohibited</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.6">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.6.1"><xref derivedContent="2.3.6" format="counter" sectionFormat="of" target="section-2.3.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-destination-ip-unroutable">Destination IP Unroutable</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.7">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.7.1"><xref derivedContent="2.3.7" format="counter" sectionFormat="of" target="section-2.3.7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-refused">Connection Refused</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.8">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.8.1"><xref derivedContent="2.3.8" format="counter" sectionFormat="of" target="section-2.3.8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-terminated">Connection Terminated</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.9">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.9.1"><xref derivedContent="2.3.9" format="counter" sectionFormat="of" target="section-2.3.9"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-timeout">Connection Timeout</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.10">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.10.1"><xref derivedContent="2.3.10" format="counter" sectionFormat="of" target="section-2.3.10"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-read-timeout">Connection Read Timeout</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.11">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.11.1"><xref derivedContent="2.3.11" format="counter" sectionFormat="of" target="section-2.3.11"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-write-timeout">Connection Write Timeout</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.12">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.12.1"><xref derivedContent="2.3.12" format="counter" sectionFormat="of" target="section-2.3.12"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-connection-limit-reached">Connection Limit Reached</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.13">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.13.1"><xref derivedContent="2.3.13" format="counter" sectionFormat="of" target="section-2.3.13"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-tls-protocol-error">TLS Protocol Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.14">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.14.1"><xref derivedContent="2.3.14" format="counter" sectionFormat="of" target="section-2.3.14"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-tls-certificate-error">TLS Certificate Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.15">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.15.1"><xref derivedContent="2.3.15" format="counter" sectionFormat="of" target="section-2.3.15"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-tls-alert-received">TLS Alert Received</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.16">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.16.1"><xref derivedContent="2.3.16" format="counter" sectionFormat="of" target="section-2.3.16"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-request-error">HTTP Request Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.17">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.17.1"><xref derivedContent="2.3.17" format="counter" sectionFormat="of" target="section-2.3.17"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-request-denied">HTTP Request Denied</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.18">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.18.1"><xref derivedContent="2.3.18" format="counter" sectionFormat="of" target="section-2.3.18"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-incomplete-response">HTTP Incomplete Response</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.19">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.19.1"><xref derivedContent="2.3.19" format="counter" sectionFormat="of" target="section-2.3.19"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-header-sectio">HTTP Response Header Section Too Large</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.20">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.20.1"><xref derivedContent="2.3.20" format="counter" sectionFormat="of" target="section-2.3.20"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-header-field-">HTTP Response Header Field Line Too Large</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.21">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.21.1"><xref derivedContent="2.3.21" format="counter" sectionFormat="of" target="section-2.3.21"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-body-too-larg">HTTP Response Body Too Large</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.22">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.22.1"><xref derivedContent="2.3.22" format="counter" sectionFormat="of" target="section-2.3.22"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-trailer-secti">HTTP Response Trailer Section Too Large</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.23">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.23.1"><xref derivedContent="2.3.23" format="counter" sectionFormat="of" target="section-2.3.23"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-trailer-field">HTTP Response Trailer Field Line Too Large</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.24">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.24.1"><xref derivedContent="2.3.24" format="counter" sectionFormat="of" target="section-2.3.24"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-transfer-codi">HTTP Response Transfer-Coding Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.25">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.25.1"><xref derivedContent="2.3.25" format="counter" sectionFormat="of" target="section-2.3.25"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-content-codin">HTTP Response Content-Coding Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.26">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.26.1"><xref derivedContent="2.3.26" format="counter" sectionFormat="of" target="section-2.3.26"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-response-timeout">HTTP Response Timeout</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.27">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.27.1"><xref derivedContent="2.3.27" format="counter" sectionFormat="of" target="section-2.3.27"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-upgrade-failed">HTTP Upgrade Failed</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.28">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.28.1"><xref derivedContent="2.3.28" format="counter" sectionFormat="of" target="section-2.3.28"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-http-protocol-error">HTTP Protocol Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.29">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.29.1"><xref derivedContent="2.3.29" format="counter" sectionFormat="of" target="section-2.3.29"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-internal-response">Proxy Internal Response</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.30">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.30.1"><xref derivedContent="2.3.30" format="counter" sectionFormat="of" target="section-2.3.30"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-internal-error">Proxy Internal Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.31">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.31.1"><xref derivedContent="2.3.31" format="counter" sectionFormat="of" target="section-2.3.31"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-configuration-error">Proxy Configuration Error</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.2.2.3.2.32">
+                    <t indent="0" pn="section-toc.1-1.2.2.3.2.32.1"><xref derivedContent="2.3.32" format="counter" sectionFormat="of" target="section-2.3.32"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-proxy-loop-detected">Proxy Loop Detected</xref></t>
+                  </li>
+                </ul>
+              </li>
+              <li pn="section-toc.1-1.2.2.4">
+                <t indent="0" pn="section-toc.1-1.2.2.4.1"><xref derivedContent="2.4" format="counter" sectionFormat="of" target="section-2.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-defining-new-proxy-error-ty">Defining New Proxy Error Types</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.5.2">
+              <li pn="section-toc.1-1.5.2.1">
+                <t indent="0" pn="section-toc.1-1.5.2.1.1"><xref derivedContent="5.1" format="counter" sectionFormat="of" target="section-5.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.5.2.2">
+                <t indent="0" pn="section-toc.1-1.5.2.2.1"><xref derivedContent="5.2" format="counter" sectionFormat="of" target="section-5.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" toc="include" removeInRFC="false" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">HTTP intermediaries (see <xref section="3.7" sectionFormat="of" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3.7" derivedContent="HTTP"/>) -- including both forward proxies and gateways (also known as "reverse proxies") -- have become an increasingly significant part of HTTP deployments. In particular, reverse proxies and content delivery networks (CDNs) form part of the critical infrastructure of many websites.</t>
+      <t indent="0" pn="section-1-2">Typically, HTTP intermediaries forward requests towards the origin server (inbound) and then forward their responses back to clients (outbound). However, if an error occurs before a response is obtained from an inbound server, the response is often generated by the intermediary itself.</t>
+      <t indent="0" pn="section-1-3">HTTP accommodates these types of errors with a few status codes -- for example, 502 (Bad Gateway) and 504 (Gateway Timeout). However, experience has shown that more information is necessary to aid debugging and communicate what's happened to the client. Additionally, intermediaries sometimes want to convey additional information about their handling of a response, even if they did not generate it.</t>
+      <t indent="0" pn="section-1-4">To enable these uses, <xref target="header" format="default" sectionFormat="of" derivedContent="Section 2"/> defines a new HTTP response field to allow intermediaries to convey details of their handling of a response. <xref target="params" format="default" sectionFormat="of" derivedContent="Section 2.1"/> enumerates the information that can be added to the field by intermediaries, which can be extended per <xref target="register-param" format="default" sectionFormat="of" derivedContent="Section 2.2"/>. <xref target="error-types" format="default" sectionFormat="of" derivedContent="Section 2.3"/> defines a set of error types for use when a proxy encounters an issue when obtaining a response for the request; these can likewise be extended per <xref target="register-error" format="default" sectionFormat="of" derivedContent="Section 2.4"/>.</t>
+      <section anchor="notational-conventions" numbered="true" toc="include" removeInRFC="false" pn="section-1.1">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.1-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+    described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+        <t indent="0" pn="section-1.1-2">This document uses the following terminology from <xref target="STRUCTURED-FIELDS" section="3" sectionFormat="of" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3" derivedContent="STRUCTURED-FIELDS"/> to specify syntax and parsing: List, String, Token, Integer, and Byte Sequence.</t>
+        <t indent="0" pn="section-1.1-3">Note that in this specification, "proxy" is used to indicate both forward and reverse proxies, otherwise known as gateways. "Next hop" indicates the connection in the direction leading to the origin server for the request.</t>
+      </section>
+    </section>
+    <section anchor="header" numbered="true" toc="include" removeInRFC="false" pn="section-2">
+      <name slugifiedName="name-the-proxy-status-http-field">The Proxy-Status HTTP Field</name>
+      <t indent="0" pn="section-2-1">The Proxy-Status HTTP response field allows an intermediary to convey additional information about its handling of a response and its associated request.</t>
+      <t indent="0" pn="section-2-2">Its value is a List (see <xref section="3.1" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.1" derivedContent="STRUCTURED-FIELDS"/>). Each member of the List represents an intermediary that has handled the response. The first member represents the intermediary closest to the origin server, and the last member represents the intermediary closest to the user agent.</t>
+      <t indent="0" pn="section-2-3">For example:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-4">
+Proxy-Status: revproxy1.example.net, ExampleCDN
+</sourcecode>
+      <t indent="0" pn="section-2-5">indicates that this response was handled first by revproxy1.example.net (a reverse proxy adjacent to the origin server) and then ExampleCDN.</t>
+      <t indent="0" pn="section-2-6">Intermediaries determine when it is appropriate to add the Proxy-Status field to a response. Some might decide to append it to all responses, whereas others might only do so when specifically configured to or when the request contains a header field that activates a debugging mode.</t>
+      <t indent="0" pn="section-2-7">Each member of the List identifies the intermediary that inserted the value and <bcp14>MUST</bcp14> have a type of either String or Token. Depending on the deployment, this might be a service name (but not a software or hardware product name; e.g., "ExampleCDN" is appropriate, but "ExampleProxy" is not because it doesn't identify the deployment), a hostname ("proxy-3.example.com"), an IP address, or a generated string.</t>
+      <t indent="0" pn="section-2-8">Parameters of each member (per <xref section="3.1.2" sectionFormat="of" target="STRUCTURED-FIELDS" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.1.2" derivedContent="STRUCTURED-FIELDS"/>) convey additional information about that intermediary's handling of the response and its associated request; see <xref target="params" format="default" sectionFormat="of" derivedContent="Section 2.1"/>. While all of these parameters are <bcp14>OPTIONAL</bcp14>, intermediaries are encouraged to provide as much information as possible (but see <xref target="security" format="default" sectionFormat="of" derivedContent="Section 4"/> for security considerations in doing so).</t>
+      <t indent="0" pn="section-2-9">When adding a value to the Proxy-Status field, intermediaries <bcp14>SHOULD</bcp14> preserve the existing members of the field to allow debugging of the entire chain of intermediaries handling the request unless explicitly configured to remove them (e.g., to prevent internal network details from leaking; see <xref target="security" format="default" sectionFormat="of" derivedContent="Section 4"/>).</t>
+      <t indent="0" pn="section-2-10">Origin servers <bcp14>MUST NOT</bcp14> generate the Proxy-Status field.</t>
+      <t indent="0" pn="section-2-11">Proxy-Status <bcp14>MAY</bcp14> be sent as an HTTP trailer field. For example, if an intermediary is streaming a response and the inbound connection suddenly terminates, Proxy-Status can only be appended to the trailer section of the outbound message since the header section has already been sent. However, because it might be silently discarded along the path to the user agent (as is the case for all trailer fields; see <xref section="6.5" sectionFormat="of" target="HTTP" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.5" derivedContent="HTTP"/>), Proxy-Status <bcp14>SHOULD NOT</bcp14> be sent as a trailer field unless it is not possible to send it in the header section.</t>
+      <t indent="0" pn="section-2-12">To allow recipients to reconstruct the relative ordering of Proxy-Status members conveyed in trailer fields with those conveyed in header fields, an intermediary <bcp14>MUST NOT</bcp14> send Proxy-Status as a trailer field unless it has also generated a Proxy-Status header field with the same member (although potentially different parameters) in that message.</t>
+      <t indent="0" pn="section-2-13">For example, a proxy identified as 'ThisProxy' that receives a response bearing a header field:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-14">
+Proxy-Status: SomeOtherProxy
+</sourcecode>
+      <t indent="0" pn="section-2-15">would add its own entry to the header field:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-16">
+Proxy-Status: SomeOtherProxy, ThisProxy
+</sourcecode>
+      <t indent="0" pn="section-2-17">thus allowing it to append a trailer field:</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-18">
+Proxy-Status: ThisProxy; error=read_timeout
+</sourcecode>
+      <t indent="0" pn="section-2-19">which would thereby allow a downstream recipient to understand that processing by 'SomeOtherProxy' occurred before 'ThisProxy'.</t>
+      <t indent="0" pn="section-2-20">A client <bcp14>MAY</bcp14> promote the Proxy-Status trailer field into a header field by following these steps:</t>
+      <ol spacing="normal" type="1" indent="adaptive" start="1" pn="section-2-21"><li pn="section-2-21.1" derivedCounter="1.">
+          <t indent="0" pn="section-2-21.1.1">For each member trailer_member of the Proxy-Status trailer field value:
+          </t>
+          <ol spacing="normal" type="1" indent="adaptive" start="1" pn="section-2-21.1.2"><li pn="section-2-21.1.2.1" derivedCounter="1.">Let header_member be the first (leftmost) value of the Proxy-Status header field value, comparing the String or Token character by character without consideration of parameters.</li>
+            <li pn="section-2-21.1.2.2" derivedCounter="2.">If no matching header_member is found, continue processing the next trailer_member.</li>
+            <li pn="section-2-21.1.2.3" derivedCounter="3.">Replace header_member with trailer_member in its entirety, including any parameters.</li>
+          </ol>
+        </li>
+        <li pn="section-2-21.2" derivedCounter="2.">Remove the Proxy-Status trailer field if empty.</li>
+      </ol>
+      <section anchor="params" numbered="true" toc="include" removeInRFC="false" pn="section-2.1">
+        <name slugifiedName="name-proxy-status-parameters">Proxy-Status Parameters</name>
+        <t indent="0" pn="section-2.1-1">This section lists parameters that can be used on the members of the Proxy-Status field. Unrecognised parameters <bcp14>MUST</bcp14> be ignored.</t>
+        <section anchor="error" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.1">
+          <name slugifiedName="name-error">error</name>
+          <t indent="0" pn="section-2.1.1-1">The <tt>error</tt> parameter's value is a Token that is a proxy error type. When present, it indicates that the intermediary encountered an issue when obtaining this response.</t>
+          <t indent="0" pn="section-2.1.1-2">The presence of some proxy error types indicates that the response was generated by the intermediary itself, rather than being forwarded from the origin server. This is the case when, for example, the origin server can't be contacted, so the proxy has to create its own response.</t>
+          <t indent="0" pn="section-2.1.1-3">Other proxy error types can be added to (potentially partial) responses that were generated by the
+origin server or some other inbound server. For example, if the forward connection abruptly closes, an intermediary might add Proxy-Status with an appropriate error as a trailer field.</t>
+          <t indent="0" pn="section-2.1.1-4">Proxy error types that are registered with a 'Response only generated by intermediaries' value of 'true' indicate that they can only occur in responses generated by the intermediary. If the value is 'false', the response might be generated by the intermediary or an inbound server.</t>
+          <t indent="0" pn="section-2.1.1-5"><xref target="error-types" format="default" sectionFormat="of" derivedContent="Section 2.3"/> lists the proxy error types defined in this document; new ones can be defined using the procedure outlined in <xref target="register-error" format="default" sectionFormat="of" derivedContent="Section 2.4"/>.</t>
+          <t indent="0" pn="section-2.1.1-6">For example:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.1-7">
+HTTP/1.1 504 Gateway Timeout
+Proxy-Status: ExampleCDN; error=connection_timeout
+</sourcecode>
+          <t indent="0" pn="section-2.1.1-8">indicates that this 504 response was generated by ExampleCDN due to a connection timeout when going forward.</t>
+          <t indent="0" pn="section-2.1.1-9">Or:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.1-10">
+HTTP/1.1 429 Too Many Requests
+Proxy-Status: r34.example.net; error=http_request_error, ExampleCDN
+</sourcecode>
+          <t indent="0" pn="section-2.1.1-11">indicates that this 429 (Too Many Requests) response was generated by r34.example.net, not the CDN or the origin.</t>
+          <t indent="0" pn="section-2.1.1-12">When sending the error parameter, the most specific proxy error type <bcp14>SHOULD</bcp14> be sent, provided that it accurately represents the error condition. If an appropriate proxy error type is not defined, there are a number of generic error types (e.g., proxy_internal_error, http_protocol_error) that can be used. If they are not suitable, consider registering a new proxy error type (see <xref target="register-error" format="default" sectionFormat="of" derivedContent="Section 2.4"/>).</t>
+          <t indent="0" pn="section-2.1.1-13">Each proxy error type has a recommended HTTP status code. When generating an HTTP response containing the <tt>error</tt>, its HTTP status code <bcp14>SHOULD</bcp14> be set to the recommended HTTP status code. However, there may be circumstances (e.g., for backwards compatibility with previous behaviours, a status code has already been sent) when another status code might be used.</t>
+          <t indent="0" pn="section-2.1.1-14">Proxy error types can also define any number of extra parameters for use with that type. Their use, like all parameters, is optional. As a result, if an extra parameter is used with a proxy error type for which it is not defined, it will be ignored.</t>
+        </section>
+        <section anchor="next-hop" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.2">
+          <name slugifiedName="name-next-hop">next-hop</name>
+          <t indent="0" pn="section-2.1.2-1">The <tt>next-hop</tt> parameter's value is a String or Token that identifies the intermediary or origin server selected (and used, if contacted) to obtain this response. It might be a hostname, IP address, or alias.</t>
+          <t indent="0" pn="section-2.1.2-2">For example:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.2-3">
+Proxy-Status: cdn.example.org; next-hop=backend.example.org:8001
+</sourcecode>
+          <t indent="0" pn="section-2.1.2-4">indicates that cdn.example.org used backend.example.org:8001 as the next hop for this request.</t>
+        </section>
+        <section anchor="next-protocol" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.3">
+          <name slugifiedName="name-next-protocol">next-protocol</name>
+          <t indent="0" pn="section-2.1.3-1">The <tt>next-protocol</tt> parameter's value indicates the Application-Layer Protocol Negotiation (ALPN) protocol identifier <xref target="RFC7301" format="default" sectionFormat="of" derivedContent="RFC7301"/> of the protocol used by the intermediary to connect to the next hop when obtaining this response.</t>
+          <t indent="0" pn="section-2.1.3-2">The value <bcp14>MUST</bcp14> be either a Token or Byte Sequence representing a TLS ALPN Protocol ID (see <eref brackets="angle" target="https://www.iana.org/assignments/tls-extensiontype-values#alpn-protocol-ids"/>). If the protocol identifier is able to be expressed as a Token using ASCII encoding, that form <bcp14>MUST</bcp14> be used.</t>
+          <t indent="0" pn="section-2.1.3-3">For example:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.3-4">
+Proxy-Status: "proxy.example.org"; next-protocol=h2
+</sourcecode>
+          <t indent="0" pn="section-2.1.3-5">Note that the ALPN identifier is being used here to identify the protocol in use; it may or may not have been actually used in the protocol negotiation.</t>
+        </section>
+        <section anchor="received-status" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.4">
+          <name slugifiedName="name-received-status">received-status</name>
+          <t indent="0" pn="section-2.1.4-1">The <tt>received-status</tt> parameter's value indicates the HTTP status code that the intermediary received from the next-hop server when obtaining this response.</t>
+          <t indent="0" pn="section-2.1.4-2">The value <bcp14>MUST</bcp14> be an Integer.</t>
+          <t indent="0" pn="section-2.1.4-3">For example:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.4-4">
+Proxy-Status: ExampleCDN; received-status=200
+</sourcecode>
+        </section>
+        <section anchor="details" numbered="true" toc="include" removeInRFC="false" pn="section-2.1.5">
+          <name slugifiedName="name-details">details</name>
+          <t indent="0" pn="section-2.1.5-1">The <tt>details</tt> parameter's value is a String containing additional information not captured anywhere else. This can include implementation-specific or deployment-specific information.</t>
+          <t indent="0" pn="section-2.1.5-2">For example:</t>
+          <sourcecode type="http-message" markers="false" pn="section-2.1.5-3">
+Proxy-Status: proxy.example.net; error="http_protocol_error";
+              details="Malformed response header: space before colon"
+</sourcecode>
+        </section>
+      </section>
+      <section anchor="register-param" numbered="true" toc="include" removeInRFC="false" pn="section-2.2">
+        <name slugifiedName="name-defining-new-proxy-status-p">Defining New Proxy-Status Parameters</name>
+        <t indent="0" pn="section-2.2-1">New Proxy-Status parameters can be defined by registering them in the "HTTP Proxy-Status Parameters" registry.</t>
+        <t indent="0" pn="section-2.2-2">Registration requests are reviewed and approved by Expert Review, per <xref section="4.5" sectionFormat="comma" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.5" derivedContent="RFC8126"/>. A specification document is appreciated but not required.</t>
+        <t indent="0" pn="section-2.2-3">The expert(s) should consider the following factors when evaluating requests:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-2.2-4">
+          <li pn="section-2.2-4.1">Community feedback</li>
+          <li pn="section-2.2-4.2">If the value is sufficiently well defined</li>
+          <li pn="section-2.2-4.3">Generic parameters are preferred over vendor-specific, application-specific, or deployment-specific values. If a generic value cannot be agreed upon in the community, the parameter's name should be correspondingly specific (e.g., with a prefix that identifies the vendor, application, or deployment).</li>
+          <li pn="section-2.2-4.4">Parameter names should not conflict with registered extra parameters in the "HTTP Proxy Error Types" registry.</li>
+        </ul>
+        <t indent="0" pn="section-2.2-5">Registration requests should use the following template:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-2.2-6">
+          <dt pn="section-2.2-6.1">Name:</dt>
+          <dd pn="section-2.2-6.2">[a name for the Proxy-Status parameter that matches key]</dd>
+          <dt pn="section-2.2-6.3">Description:</dt>
+          <dd pn="section-2.2-6.4">[a description of the parameter semantics and value]</dd>
+          <dt pn="section-2.2-6.5">Reference:</dt>
+          <dd pn="section-2.2-6.6">[to a specification defining this parameter; optional]</dd>
+        </dl>
+        <t indent="0" pn="section-2.2-7">See the registry at <eref target="https://www.iana.org/assignments/http-proxy-status" brackets="angle"/> for details on where to send registration requests.</t>
+      </section>
+      <section anchor="error-types" numbered="true" toc="include" removeInRFC="false" pn="section-2.3">
+        <name slugifiedName="name-proxy-error-types">Proxy Error Types</name>
+        <t indent="0" pn="section-2.3-1">This section lists the proxy error types defined by this document. See <xref target="register-error" format="default" sectionFormat="of" derivedContent="Section 2.4"/> for information about defining new proxy error types.</t>
+        <t indent="0" pn="section-2.3-2">Note that implementations might not produce all proxy error types. The set of types below is designed to map to existing states in implementations and therefore may not be applicable to some.</t>
+        <section anchor="dns-timeout" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.1">
+          <name slugifiedName="name-dns-timeout">DNS Timeout</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.1-1">
+            <dt pn="section-2.3.1-1.1">Name:</dt>
+            <dd pn="section-2.3.1-1.2">dns_timeout</dd>
+            <dt pn="section-2.3.1-1.3">Description:</dt>
+            <dd pn="section-2.3.1-1.4">The intermediary encountered a timeout when trying to find an IP address for the next-hop hostname.</dd>
+            <dt pn="section-2.3.1-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.1-1.6">None</dd>
+            <dt pn="section-2.3.1-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.1-1.8">504</dd>
+            <dt pn="section-2.3.1-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.1-1.10">true</dd>
+            <dt pn="section-2.3.1-1.11">Reference:</dt>
+            <dd pn="section-2.3.1-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="dns-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.2">
+          <name slugifiedName="name-dns-error">DNS Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.2-1">
+            <dt pn="section-2.3.2-1.1">Name:</dt>
+            <dd pn="section-2.3.2-1.2">dns_error</dd>
+            <dt pn="section-2.3.2-1.3">Description:</dt>
+            <dd pn="section-2.3.2-1.4">The intermediary encountered a DNS error when trying to find an IP address for the next-hop hostname.</dd>
+            <dt pn="section-2.3.2-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.2-1.6">
+              <t indent="0" pn="section-2.3.2-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.2-1.6.2">
+                <dt pn="section-2.3.2-1.6.2.1">rcode:</dt>
+                <dd pn="section-2.3.2-1.6.2.2"> A String conveying the DNS RCODE that indicates the error type. See <xref section="3" sectionFormat="comma" target="RFC8499" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8499#section-3" derivedContent="RFC8499"/>.</dd>
+                <dt pn="section-2.3.2-1.6.2.3">info-code:</dt>
+                <dd pn="section-2.3.2-1.6.2.4">An Integer conveying the Extended DNS Error Code INFO-CODE. See <xref target="RFC8914" format="default" sectionFormat="of" derivedContent="RFC8914"/>.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.2-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.2-1.8">502</dd>
+            <dt pn="section-2.3.2-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.2-1.10">true</dd>
+            <dt pn="section-2.3.2-1.11">Reference:</dt>
+            <dd pn="section-2.3.2-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="destination-not-found" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.3">
+          <name slugifiedName="name-destination-not-found">Destination Not Found</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.3-1">
+            <dt pn="section-2.3.3-1.1">Name:</dt>
+            <dd pn="section-2.3.3-1.2">destination_not_found</dd>
+            <dt pn="section-2.3.3-1.3">Description:</dt>
+            <dd pn="section-2.3.3-1.4">The intermediary cannot determine the appropriate next hop to use for this request; for example, it may not be configured. Note that this error is specific to gateways, which typically require specific configuration to identify the "backend" server; forward proxies use in-band information to identify the origin server.</dd>
+            <dt pn="section-2.3.3-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.3-1.6">None</dd>
+            <dt pn="section-2.3.3-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.3-1.8">500</dd>
+            <dt pn="section-2.3.3-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.3-1.10">true</dd>
+            <dt pn="section-2.3.3-1.11">Reference:</dt>
+            <dd pn="section-2.3.3-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="destination-unavailable" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.4">
+          <name slugifiedName="name-destination-unavailable">Destination Unavailable</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.4-1">
+            <dt pn="section-2.3.4-1.1">Name:</dt>
+            <dd pn="section-2.3.4-1.2">destination_unavailable</dd>
+            <dt pn="section-2.3.4-1.3">Description:</dt>
+            <dd pn="section-2.3.4-1.4">The intermediary considers the next hop to be unavailable; e.g., recent attempts to communicate with it may have failed, or a health check may indicate that it is down.</dd>
+            <dt pn="section-2.3.4-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.4-1.6">None</dd>
+            <dt pn="section-2.3.4-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.4-1.8">503</dd>
+            <dt pn="section-2.3.4-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.4-1.10">true</dd>
+            <dt pn="section-2.3.4-1.11">Reference:</dt>
+            <dd pn="section-2.3.4-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="destination-ip-prohibited" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.5">
+          <name slugifiedName="name-destination-ip-prohibited">Destination IP Prohibited</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.5-1">
+            <dt pn="section-2.3.5-1.1">Name:</dt>
+            <dd pn="section-2.3.5-1.2">destination_ip_prohibited</dd>
+            <dt pn="section-2.3.5-1.3">Description:</dt>
+            <dd pn="section-2.3.5-1.4">The intermediary is configured to prohibit connections to the next-hop IP address.</dd>
+            <dt pn="section-2.3.5-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.5-1.6">None</dd>
+            <dt pn="section-2.3.5-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.5-1.8">502</dd>
+            <dt pn="section-2.3.5-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.5-1.10">true</dd>
+            <dt pn="section-2.3.5-1.11">Reference:</dt>
+            <dd pn="section-2.3.5-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="destination-ip-unroutable" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.6">
+          <name slugifiedName="name-destination-ip-unroutable">Destination IP Unroutable</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.6-1">
+            <dt pn="section-2.3.6-1.1">Name:</dt>
+            <dd pn="section-2.3.6-1.2">destination_ip_unroutable</dd>
+            <dt pn="section-2.3.6-1.3">Description:</dt>
+            <dd pn="section-2.3.6-1.4">The intermediary cannot find a route to the next-hop IP address.</dd>
+            <dt pn="section-2.3.6-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.6-1.6">None</dd>
+            <dt pn="section-2.3.6-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.6-1.8">502</dd>
+            <dt pn="section-2.3.6-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.6-1.10">true</dd>
+            <dt pn="section-2.3.6-1.11">Reference:</dt>
+            <dd pn="section-2.3.6-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-refused" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.7">
+          <name slugifiedName="name-connection-refused">Connection Refused</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.7-1">
+            <dt pn="section-2.3.7-1.1">Name:</dt>
+            <dd pn="section-2.3.7-1.2">connection_refused</dd>
+            <dt pn="section-2.3.7-1.3">Description:</dt>
+            <dd pn="section-2.3.7-1.4">The intermediary's connection to the next hop was refused.</dd>
+            <dt pn="section-2.3.7-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.7-1.6">None</dd>
+            <dt pn="section-2.3.7-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.7-1.8">502</dd>
+            <dt pn="section-2.3.7-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.7-1.10">true</dd>
+            <dt pn="section-2.3.7-1.11">Reference:</dt>
+            <dd pn="section-2.3.7-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-terminated" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.8">
+          <name slugifiedName="name-connection-terminated">Connection Terminated</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.8-1">
+            <dt pn="section-2.3.8-1.1">Name:</dt>
+            <dd pn="section-2.3.8-1.2">connection_terminated</dd>
+            <dt pn="section-2.3.8-1.3">Description:</dt>
+            <dd pn="section-2.3.8-1.4">The intermediary's connection to the next hop was closed before a complete response was received.</dd>
+            <dt pn="section-2.3.8-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.8-1.6">None</dd>
+            <dt pn="section-2.3.8-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.8-1.8">502</dd>
+            <dt pn="section-2.3.8-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.8-1.10">false</dd>
+            <dt pn="section-2.3.8-1.11">Reference:</dt>
+            <dd pn="section-2.3.8-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-timeout" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.9">
+          <name slugifiedName="name-connection-timeout">Connection Timeout</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.9-1">
+            <dt pn="section-2.3.9-1.1">Name:</dt>
+            <dd pn="section-2.3.9-1.2">connection_timeout</dd>
+            <dt pn="section-2.3.9-1.3">Description:</dt>
+            <dd pn="section-2.3.9-1.4">The intermediary's attempt to open a connection to the next hop timed out.</dd>
+            <dt pn="section-2.3.9-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.9-1.6">None</dd>
+            <dt pn="section-2.3.9-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.9-1.8">504</dd>
+            <dt pn="section-2.3.9-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.9-1.10">true</dd>
+            <dt pn="section-2.3.9-1.11">Reference:</dt>
+            <dd pn="section-2.3.9-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-read-timeout" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.10">
+          <name slugifiedName="name-connection-read-timeout">Connection Read Timeout</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.10-1">
+            <dt pn="section-2.3.10-1.1">Name:</dt>
+            <dd pn="section-2.3.10-1.2">connection_read_timeout</dd>
+            <dt pn="section-2.3.10-1.3">Description:</dt>
+            <dd pn="section-2.3.10-1.4">The intermediary was expecting data on a connection (e.g., part of a response) but did not receive any new data in a configured time limit.</dd>
+            <dt pn="section-2.3.10-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.10-1.6">None</dd>
+            <dt pn="section-2.3.10-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.10-1.8">504</dd>
+            <dt pn="section-2.3.10-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.10-1.10">false</dd>
+            <dt pn="section-2.3.10-1.11">Reference:</dt>
+            <dd pn="section-2.3.10-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-write-timeout" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.11">
+          <name slugifiedName="name-connection-write-timeout">Connection Write Timeout</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.11-1">
+            <dt pn="section-2.3.11-1.1">Name:</dt>
+            <dd pn="section-2.3.11-1.2">connection_write_timeout</dd>
+            <dt pn="section-2.3.11-1.3">Description:</dt>
+            <dd pn="section-2.3.11-1.4">The intermediary was attempting to write data to a connection but was not able to (e.g., because its buffers were full).</dd>
+            <dt pn="section-2.3.11-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.11-1.6">None</dd>
+            <dt pn="section-2.3.11-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.11-1.8">504</dd>
+            <dt pn="section-2.3.11-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.11-1.10">false</dd>
+            <dt pn="section-2.3.11-1.11">Reference:</dt>
+            <dd pn="section-2.3.11-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="connection-limit-reached" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.12">
+          <name slugifiedName="name-connection-limit-reached">Connection Limit Reached</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.12-1">
+            <dt pn="section-2.3.12-1.1">Name:</dt>
+            <dd pn="section-2.3.12-1.2">connection_limit_reached</dd>
+            <dt pn="section-2.3.12-1.3">Description:</dt>
+            <dd pn="section-2.3.12-1.4">The intermediary is configured to limit the number of connections it has to the next hop, and that limit has been exceeded.</dd>
+            <dt pn="section-2.3.12-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.12-1.6">None</dd>
+            <dt pn="section-2.3.12-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.12-1.8">503</dd>
+            <dt pn="section-2.3.12-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.12-1.10">true</dd>
+            <dt pn="section-2.3.12-1.11">Reference:</dt>
+            <dd pn="section-2.3.12-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="tls-protocol-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.13">
+          <name slugifiedName="name-tls-protocol-error">TLS Protocol Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.13-1">
+            <dt pn="section-2.3.13-1.1">Name:</dt>
+            <dd pn="section-2.3.13-1.2">tls_protocol_error</dd>
+            <dt pn="section-2.3.13-1.3">Description:</dt>
+            <dd pn="section-2.3.13-1.4">The intermediary encountered a TLS error when communicating with the next hop, either during the handshake or afterwards.</dd>
+            <dt pn="section-2.3.13-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.13-1.6">None</dd>
+            <dt pn="section-2.3.13-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.13-1.8">502</dd>
+            <dt pn="section-2.3.13-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.13-1.10">false</dd>
+            <dt pn="section-2.3.13-1.11">Reference:</dt>
+            <dd pn="section-2.3.13-1.12">RFC 9209</dd>
+            <dt pn="section-2.3.13-1.13">Notes:</dt>
+            <dd pn="section-2.3.13-1.14">Not appropriate when a TLS alert is received; see tls_alert_received.</dd>
+          </dl>
+        </section>
+        <section anchor="tls-certificate-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.14">
+          <name slugifiedName="name-tls-certificate-error">TLS Certificate Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.14-1">
+            <dt pn="section-2.3.14-1.1">Name:</dt>
+            <dd pn="section-2.3.14-1.2">tls_certificate_error</dd>
+            <dt pn="section-2.3.14-1.3">Description:</dt>
+            <dd pn="section-2.3.14-1.4">The intermediary encountered an error when verifying the certificate presented by the next hop.</dd>
+            <dt pn="section-2.3.14-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.14-1.6">None</dd>
+            <dt pn="section-2.3.14-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.14-1.8">502</dd>
+            <dt pn="section-2.3.14-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.14-1.10">true</dd>
+            <dt pn="section-2.3.14-1.11">Reference:</dt>
+            <dd pn="section-2.3.14-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="tls-alert-received" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.15">
+          <name slugifiedName="name-tls-alert-received">TLS Alert Received</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.15-1">
+            <dt pn="section-2.3.15-1.1">Name:</dt>
+            <dd pn="section-2.3.15-1.2">tls_alert_received</dd>
+            <dt pn="section-2.3.15-1.3">Description:</dt>
+            <dd pn="section-2.3.15-1.4">The intermediary received a TLS alert from the next hop.</dd>
+            <dt pn="section-2.3.15-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.15-1.6">
+              <t indent="0" pn="section-2.3.15-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.15-1.6.2">
+                <dt pn="section-2.3.15-1.6.2.1">alert-id:</dt>
+                <dd pn="section-2.3.15-1.6.2.2">An Integer containing the applicable value from the "TLS Alerts" registry. See <xref target="TLS" format="default" sectionFormat="of" derivedContent="TLS"/>.</dd>
+                <dt pn="section-2.3.15-1.6.2.3">alert-message:</dt>
+                <dd pn="section-2.3.15-1.6.2.4">A Token or String containing the applicable description string from the "TLS Alerts" registry. See <xref target="TLS" format="default" sectionFormat="of" derivedContent="TLS"/>.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.15-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.15-1.8">502</dd>
+            <dt pn="section-2.3.15-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.15-1.10">false</dd>
+            <dt pn="section-2.3.15-1.11">Reference:</dt>
+            <dd pn="section-2.3.15-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-request-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.16">
+          <name slugifiedName="name-http-request-error">HTTP Request Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.16-1">
+            <dt pn="section-2.3.16-1.1">Name:</dt>
+            <dd pn="section-2.3.16-1.2">http_request_error</dd>
+            <dt pn="section-2.3.16-1.3">Description:</dt>
+            <dd pn="section-2.3.16-1.4">The intermediary is generating a client (4xx) response on the origin's behalf. Applicable status codes include (but are not limited to) 400, 403, 405, 406, 408, 411, 413, 414, 415, 416, 417, and 429.</dd>
+            <dt pn="section-2.3.16-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.16-1.6">
+              <t indent="0" pn="section-2.3.16-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.16-1.6.2">
+                <dt pn="section-2.3.16-1.6.2.1">status-code:</dt>
+                <dd pn="section-2.3.16-1.6.2.2">An Integer containing the generated status code.</dd>
+                <dt pn="section-2.3.16-1.6.2.3">status-phrase:</dt>
+                <dd pn="section-2.3.16-1.6.2.4">A String containing the generated status phrase.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.16-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.16-1.8">The applicable 4xx status code</dd>
+            <dt pn="section-2.3.16-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.16-1.10">true</dd>
+            <dt pn="section-2.3.16-1.11">Reference:</dt>
+            <dd pn="section-2.3.16-1.12">RFC 9209</dd>
+            <dt pn="section-2.3.16-1.13">Notes:</dt>
+            <dd pn="section-2.3.16-1.14">This type helps distinguish between responses generated by intermediaries from those generated by the origin.</dd>
+          </dl>
+        </section>
+        <section anchor="http-request-denied" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.17">
+          <name slugifiedName="name-http-request-denied">HTTP Request Denied</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.17-1">
+            <dt pn="section-2.3.17-1.1">Name:</dt>
+            <dd pn="section-2.3.17-1.2">http_request_denied</dd>
+            <dt pn="section-2.3.17-1.3">Description:</dt>
+            <dd pn="section-2.3.17-1.4">The intermediary rejected the HTTP request based on its configuration and/or policy settings. The request wasn't forwarded to the next hop.</dd>
+            <dt pn="section-2.3.17-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.17-1.6">None</dd>
+            <dt pn="section-2.3.17-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.17-1.8">403</dd>
+            <dt pn="section-2.3.17-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.17-1.10">true</dd>
+            <dt pn="section-2.3.17-1.11">Reference:</dt>
+            <dd pn="section-2.3.17-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-incomplete-response" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.18">
+          <name slugifiedName="name-http-incomplete-response">HTTP Incomplete Response</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.18-1">
+            <dt pn="section-2.3.18-1.1">Name:</dt>
+            <dd pn="section-2.3.18-1.2">http_response_incomplete</dd>
+            <dt pn="section-2.3.18-1.3">Description:</dt>
+            <dd pn="section-2.3.18-1.4">The intermediary received an incomplete response to the request from the next hop.</dd>
+            <dt pn="section-2.3.18-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.18-1.6">None</dd>
+            <dt pn="section-2.3.18-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.18-1.8">502</dd>
+            <dt pn="section-2.3.18-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.18-1.10">false</dd>
+            <dt pn="section-2.3.18-1.11">Reference:</dt>
+            <dd pn="section-2.3.18-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-header-section-too-large" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.19">
+          <name slugifiedName="name-http-response-header-sectio">HTTP Response Header Section Too Large</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.19-1">
+            <dt pn="section-2.3.19-1.1">Name:</dt>
+            <dd pn="section-2.3.19-1.2">http_response_header_section_size</dd>
+            <dt pn="section-2.3.19-1.3">Description:</dt>
+            <dd pn="section-2.3.19-1.4">The intermediary received a response to the request whose header section was considered too large.</dd>
+            <dt pn="section-2.3.19-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.19-1.6">
+              <t indent="0" pn="section-2.3.19-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.19-1.6.2">
+                <dt pn="section-2.3.19-1.6.2.1">header-section-size:</dt>
+                <dd pn="section-2.3.19-1.6.2.2">An Integer indicating how large the received headers were. Note that they might not be complete; i.e., the intermediary may have discarded or refused additional data.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.19-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.19-1.8">502</dd>
+            <dt pn="section-2.3.19-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.19-1.10">false</dd>
+            <dt pn="section-2.3.19-1.11">Reference:</dt>
+            <dd pn="section-2.3.19-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-header-field-line-too-large" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.20">
+          <name slugifiedName="name-http-response-header-field-">HTTP Response Header Field Line Too Large</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.20-1">
+            <dt pn="section-2.3.20-1.1">Name:</dt>
+            <dd pn="section-2.3.20-1.2">http_response_header_size</dd>
+            <dt pn="section-2.3.20-1.3">Description:</dt>
+            <dd pn="section-2.3.20-1.4">The intermediary received a response to the request containing an individual header field line that was considered too large.</dd>
+            <dt pn="section-2.3.20-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.20-1.6">
+              <t indent="0" pn="section-2.3.20-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.20-1.6.2">
+                <dt pn="section-2.3.20-1.6.2.1">header-name:</dt>
+                <dd pn="section-2.3.20-1.6.2.2">A String indicating the name of the header field that triggered the error.</dd>
+                <dt pn="section-2.3.20-1.6.2.3">header-size:</dt>
+                <dd pn="section-2.3.20-1.6.2.4">An Integer indicating the size of the header field that triggered the error.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.20-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.20-1.8">502</dd>
+            <dt pn="section-2.3.20-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.20-1.10">false</dd>
+            <dt pn="section-2.3.20-1.11">Reference:</dt>
+            <dd pn="section-2.3.20-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-body-too-large" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.21">
+          <name slugifiedName="name-http-response-body-too-larg">HTTP Response Body Too Large</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.21-1">
+            <dt pn="section-2.3.21-1.1">Name:</dt>
+            <dd pn="section-2.3.21-1.2">http_response_body_size</dd>
+            <dt pn="section-2.3.21-1.3">Description:</dt>
+            <dd pn="section-2.3.21-1.4">The intermediary received a response to the request whose body was considered too large.</dd>
+            <dt pn="section-2.3.21-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.21-1.6">
+              <t indent="0" pn="section-2.3.21-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.21-1.6.2">
+                <dt pn="section-2.3.21-1.6.2.1">body-size:</dt>
+                <dd pn="section-2.3.21-1.6.2.2">An Integer indicating how large the received body was. Note that it may not have been complete; i.e., the intermediary may have discarded or refused additional data.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.21-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.21-1.8">502</dd>
+            <dt pn="section-2.3.21-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.21-1.10">false</dd>
+            <dt pn="section-2.3.21-1.11">Reference:</dt>
+            <dd pn="section-2.3.21-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-trailer-section-too-large" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.22">
+          <name slugifiedName="name-http-response-trailer-secti">HTTP Response Trailer Section Too Large</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.22-1">
+            <dt pn="section-2.3.22-1.1">Name:</dt>
+            <dd pn="section-2.3.22-1.2">http_response_trailer_section_size</dd>
+            <dt pn="section-2.3.22-1.3">Description:</dt>
+            <dd pn="section-2.3.22-1.4">The intermediary received a response to the request whose trailer section was considered too large.</dd>
+            <dt pn="section-2.3.22-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.22-1.6">
+              <t indent="0" pn="section-2.3.22-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.22-1.6.2">
+                <dt pn="section-2.3.22-1.6.2.1">trailer-section-size:</dt>
+                <dd pn="section-2.3.22-1.6.2.2">An Integer indicating how large the received trailers were. Note that they might not be complete; i.e., the intermediary may have discarded or refused additional data.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.22-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.22-1.8">502</dd>
+            <dt pn="section-2.3.22-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.22-1.10">false</dd>
+            <dt pn="section-2.3.22-1.11">Reference:</dt>
+            <dd pn="section-2.3.22-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-trailer-field-line-too-large" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.23">
+          <name slugifiedName="name-http-response-trailer-field">HTTP Response Trailer Field Line Too Large</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.23-1">
+            <dt pn="section-2.3.23-1.1">Name:</dt>
+            <dd pn="section-2.3.23-1.2">http_response_trailer_size</dd>
+            <dt pn="section-2.3.23-1.3">Description:</dt>
+            <dd pn="section-2.3.23-1.4">The intermediary received a response to the request containing an individual trailer field line that was considered too large.</dd>
+            <dt pn="section-2.3.23-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.23-1.6">
+              <t indent="0" pn="section-2.3.23-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.23-1.6.2">
+                <dt pn="section-2.3.23-1.6.2.1">trailer-name:</dt>
+                <dd pn="section-2.3.23-1.6.2.2">A String indicating the name of the trailer field that triggered the error.</dd>
+                <dt pn="section-2.3.23-1.6.2.3">trailer-size:</dt>
+                <dd pn="section-2.3.23-1.6.2.4">An Integer indicating the size of the trailer field that triggered the error.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.23-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.23-1.8">502</dd>
+            <dt pn="section-2.3.23-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.23-1.10">false</dd>
+            <dt pn="section-2.3.23-1.11">Reference:</dt>
+            <dd pn="section-2.3.23-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-transfer-coding-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.24">
+          <name slugifiedName="name-http-response-transfer-codi">HTTP Response Transfer-Coding Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.24-1">
+            <dt pn="section-2.3.24-1.1">Name:</dt>
+            <dd pn="section-2.3.24-1.2">http_response_transfer_coding</dd>
+            <dt pn="section-2.3.24-1.3">Description:</dt>
+            <dd pn="section-2.3.24-1.4">The intermediary encountered an error decoding the transfer coding of the response.</dd>
+            <dt pn="section-2.3.24-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.24-1.6">
+              <t indent="0" pn="section-2.3.24-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.24-1.6.2">
+                <dt pn="section-2.3.24-1.6.2.1">coding:</dt>
+                <dd pn="section-2.3.24-1.6.2.2">A Token containing the specific coding (from the "HTTP Transfer Coding Registry") that caused the error.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.24-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.24-1.8">502</dd>
+            <dt pn="section-2.3.24-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.24-1.10">false</dd>
+            <dt pn="section-2.3.24-1.11">Reference:</dt>
+            <dd pn="section-2.3.24-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-content-coding-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.25">
+          <name slugifiedName="name-http-response-content-codin">HTTP Response Content-Coding Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.25-1">
+            <dt pn="section-2.3.25-1.1">Name:</dt>
+            <dd pn="section-2.3.25-1.2">http_response_content_coding</dd>
+            <dt pn="section-2.3.25-1.3">Description:</dt>
+            <dd pn="section-2.3.25-1.4">The intermediary encountered an error decoding the content coding of the response.</dd>
+            <dt pn="section-2.3.25-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.25-1.6">
+              <t indent="0" pn="section-2.3.25-1.6.1"><br/></t>
+              <dl indent="3" newline="false" spacing="normal" pn="section-2.3.25-1.6.2">
+                <dt pn="section-2.3.25-1.6.2.1">coding:</dt>
+                <dd pn="section-2.3.25-1.6.2.2">A Token containing the specific coding (from the "HTTP Content Coding Registry") that caused the error.</dd>
+              </dl>
+            </dd>
+            <dt pn="section-2.3.25-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.25-1.8">502</dd>
+            <dt pn="section-2.3.25-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.25-1.10">false</dd>
+            <dt pn="section-2.3.25-1.11">Reference:</dt>
+            <dd pn="section-2.3.25-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-response-timeout" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.26">
+          <name slugifiedName="name-http-response-timeout">HTTP Response Timeout</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.26-1">
+            <dt pn="section-2.3.26-1.1">Name:</dt>
+            <dd pn="section-2.3.26-1.2">http_response_timeout</dd>
+            <dt pn="section-2.3.26-1.3">Description:</dt>
+            <dd pn="section-2.3.26-1.4">The intermediary reached a configured time limit waiting for the complete response.</dd>
+            <dt pn="section-2.3.26-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.26-1.6">None</dd>
+            <dt pn="section-2.3.26-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.26-1.8">504</dd>
+            <dt pn="section-2.3.26-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.26-1.10">false</dd>
+            <dt pn="section-2.3.26-1.11">Reference:</dt>
+            <dd pn="section-2.3.26-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-upgrade-failed" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.27">
+          <name slugifiedName="name-http-upgrade-failed">HTTP Upgrade Failed</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.27-1">
+            <dt pn="section-2.3.27-1.1">Name:</dt>
+            <dd pn="section-2.3.27-1.2">http_upgrade_failed</dd>
+            <dt pn="section-2.3.27-1.3">Description:</dt>
+            <dd pn="section-2.3.27-1.4">The process of negotiating an upgrade of the HTTP version between the intermediary and the next hop failed.</dd>
+            <dt pn="section-2.3.27-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.27-1.6">None</dd>
+            <dt pn="section-2.3.27-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.27-1.8">502</dd>
+            <dt pn="section-2.3.27-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.27-1.10">true</dd>
+            <dt pn="section-2.3.27-1.11">Reference:</dt>
+            <dd pn="section-2.3.27-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="http-protocol-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.28">
+          <name slugifiedName="name-http-protocol-error">HTTP Protocol Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.28-1">
+            <dt pn="section-2.3.28-1.1">Name:</dt>
+            <dd pn="section-2.3.28-1.2">http_protocol_error</dd>
+            <dt pn="section-2.3.28-1.3">Description:</dt>
+            <dd pn="section-2.3.28-1.4">The intermediary encountered an HTTP protocol error when communicating with the next hop. This error should only be used when a more specific one is not defined.</dd>
+            <dt pn="section-2.3.28-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.28-1.6">None</dd>
+            <dt pn="section-2.3.28-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.28-1.8">502</dd>
+            <dt pn="section-2.3.28-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.28-1.10">false</dd>
+            <dt pn="section-2.3.28-1.11">Reference:</dt>
+            <dd pn="section-2.3.28-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="proxy-internal-response" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.29">
+          <name slugifiedName="name-proxy-internal-response">Proxy Internal Response</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.29-1">
+            <dt pn="section-2.3.29-1.1">Name:</dt>
+            <dd pn="section-2.3.29-1.2">proxy_internal_response</dd>
+            <dt pn="section-2.3.29-1.3">Description:</dt>
+            <dd pn="section-2.3.29-1.4">The intermediary generated the response itself without attempting to connect to the next hop.</dd>
+            <dt pn="section-2.3.29-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.29-1.6">None</dd>
+            <dt pn="section-2.3.29-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.29-1.8">The most appropriate status code for the response</dd>
+            <dt pn="section-2.3.29-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.29-1.10">true</dd>
+            <dt pn="section-2.3.29-1.11">Reference:</dt>
+            <dd pn="section-2.3.29-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="proxy-internal-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.30">
+          <name slugifiedName="name-proxy-internal-error">Proxy Internal Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.30-1">
+            <dt pn="section-2.3.30-1.1">Name:</dt>
+            <dd pn="section-2.3.30-1.2">proxy_internal_error</dd>
+            <dt pn="section-2.3.30-1.3">Description:</dt>
+            <dd pn="section-2.3.30-1.4">The intermediary encountered an internal error unrelated to the origin.</dd>
+            <dt pn="section-2.3.30-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.30-1.6">None</dd>
+            <dt pn="section-2.3.30-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.30-1.8">500</dd>
+            <dt pn="section-2.3.30-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.30-1.10">true</dd>
+            <dt pn="section-2.3.30-1.11">Reference:</dt>
+            <dd pn="section-2.3.30-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="proxy-configuration-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.31">
+          <name slugifiedName="name-proxy-configuration-error">Proxy Configuration Error</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.31-1">
+            <dt pn="section-2.3.31-1.1">Name:</dt>
+            <dd pn="section-2.3.31-1.2">proxy_configuration_error</dd>
+            <dt pn="section-2.3.31-1.3">Description:</dt>
+            <dd pn="section-2.3.31-1.4">The intermediary encountered an error regarding its configuration.</dd>
+            <dt pn="section-2.3.31-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.31-1.6">None</dd>
+            <dt pn="section-2.3.31-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.31-1.8">500</dd>
+            <dt pn="section-2.3.31-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.31-1.10">true</dd>
+            <dt pn="section-2.3.31-1.11">Reference:</dt>
+            <dd pn="section-2.3.31-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+        <section anchor="proxy-loop-detected" numbered="true" toc="include" removeInRFC="false" pn="section-2.3.32">
+          <name slugifiedName="name-proxy-loop-detected">Proxy Loop Detected</name>
+          <dl indent="3" newline="false" spacing="normal" pn="section-2.3.32-1">
+            <dt pn="section-2.3.32-1.1">Name:</dt>
+            <dd pn="section-2.3.32-1.2">proxy_loop_detected</dd>
+            <dt pn="section-2.3.32-1.3">Description:</dt>
+            <dd pn="section-2.3.32-1.4">The intermediary tried to forward the request to itself, or a loop has been detected using different means (e.g., <xref target="RFC8586" format="default" sectionFormat="of" derivedContent="RFC8586"/>).</dd>
+            <dt pn="section-2.3.32-1.5">Extra Parameters:</dt>
+            <dd pn="section-2.3.32-1.6">None</dd>
+            <dt pn="section-2.3.32-1.7">Recommended HTTP Status Code:</dt>
+            <dd pn="section-2.3.32-1.8">502</dd>
+            <dt pn="section-2.3.32-1.9">Response Only Generated by Intermediaries:</dt>
+            <dd pn="section-2.3.32-1.10">true</dd>
+            <dt pn="section-2.3.32-1.11">Reference:</dt>
+            <dd pn="section-2.3.32-1.12">RFC 9209</dd>
+          </dl>
+        </section>
+      </section>
+      <section anchor="register-error" numbered="true" toc="include" removeInRFC="false" pn="section-2.4">
+        <name slugifiedName="name-defining-new-proxy-error-ty">Defining New Proxy Error Types</name>
+        <t indent="0" pn="section-2.4-1">New proxy error types can be defined by registering them in the "HTTP Proxy Error Types" registry.</t>
+        <t indent="0" pn="section-2.4-2">Registration requests are reviewed and approved by Expert Review, per <xref section="4.5" sectionFormat="comma" target="RFC8126" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8126#section-4.5" derivedContent="RFC8126"/>. A specification document is appreciated but not required.</t>
+        <t indent="0" pn="section-2.4-3">The expert(s) should consider the following factors when evaluating requests:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-2.4-4">
+          <li pn="section-2.4-4.1">Community feedback</li>
+          <li pn="section-2.4-4.2">If the value is sufficiently well-defined</li>
+          <li pn="section-2.4-4.3">Generic types are preferred over vendor-specific, application-specific, or deployment-specific values. If a generic value cannot be agreed upon in the community, the type's name should be correspondingly specific (e.g., with a prefix that identifies the vendor, application, or deployment).</li>
+          <li pn="section-2.4-4.4">Extra parameters should not conflict with registered Proxy-Status parameters.</li>
+        </ul>
+        <t indent="0" pn="section-2.4-5">Registration requests should use the following template:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-2.4-6">
+          <dt pn="section-2.4-6.1">Name:</dt>
+          <dd pn="section-2.4-6.2">[a name for the proxy error type that is of type Token]</dd>
+          <dt pn="section-2.4-6.3">Description:</dt>
+          <dd pn="section-2.4-6.4">[a description of the conditions that generate the proxy error type]</dd>
+          <dt pn="section-2.4-6.5">Extra Parameters:</dt>
+          <dd pn="section-2.4-6.6">[zero or more optional parameters, along with their allowable Structured Type(s)]</dd>
+          <dt pn="section-2.4-6.7">Recommended HTTP Status Code:</dt>
+          <dd pn="section-2.4-6.8">[the appropriate HTTP status code for this entry]</dd>
+          <dt pn="section-2.4-6.9">Response Only Generated by Intermediaries:</dt>
+          <dd pn="section-2.4-6.10">['true' or 'false']</dd>
+          <dt pn="section-2.4-6.11">Reference:</dt>
+          <dd pn="section-2.4-6.12">[to a specification defining this error type; optional]</dd>
+          <dt pn="section-2.4-6.13">Notes:</dt>
+          <dd pn="section-2.4-6.14">[optional]</dd>
+        </dl>
+        <t indent="0" pn="section-2.4-7">If the proxy error type might occur in responses that are not generated by the intermediary -- for example, when an error is detected as the response is streamed from a forward connection, causing a Proxy-Status trailer field to be appended -- the 'Response only generated by intermediaries' should be 'false'. If the proxy error type only occurs in responses that are generated by the intermediary, it should be 'true'.</t>
+        <t indent="0" pn="section-2.4-8">See the registry at <eref target="https://www.iana.org/assignments/http-proxy-status" brackets="angle"/> for details on where to send registration requests.</t>
+      </section>
+    </section>
+    <section anchor="iana-considerations" numbered="true" toc="include" removeInRFC="false" pn="section-3">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-3-1">IANA has created the "HTTP Proxy-Status Parameters" registry and the "HTTP Proxy Error Types" registry at <eref target="https://www.iana.org/assignments/http-proxy-status" brackets="angle"/> and has populated them with the types defined in Sections <xref target="params" format="counter" sectionFormat="of" derivedContent="2.1"/> and <xref target="error-types" format="counter" sectionFormat="of" derivedContent="2.3"/> respectively; see Sections <xref target="register-param" format="counter" sectionFormat="of" derivedContent="2.2"/> and <xref target="register-error" format="counter" sectionFormat="of" derivedContent="2.4"/> for their associated procedures.</t>
+      <t indent="0" pn="section-3-2">Additionally, the following entry has been added to the "Hypertext Transfer Protocol (HTTP) Field Name Registry":</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-3-3">
+        <dt pn="section-3-3.1">Field name:</dt>
+        <dd pn="section-3-3.2">Proxy-Status</dd>
+        <dt pn="section-3-3.3">Status:</dt>
+        <dd pn="section-3-3.4">permanent</dd>
+        <dt pn="section-3-3.5">Specification document(s):</dt>
+        <dd pn="section-3-3.6">RFC 9209</dd>
+        <dt pn="section-3-3.7">Comments:</dt>
+        <dd pn="section-3-3.8"/>
+      </dl>
+    </section>
+    <section anchor="security" numbered="true" toc="include" removeInRFC="false" pn="section-4">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-4-1">One of the primary security concerns when using Proxy-Status is leaking information that might aid an attacker. For example, information about the intermediary's configuration and backend topology can be exposed, allowing attackers to directly target backend services that are not prepared for high traffic volume or malformed inputs.  Some information might only be suitable to reveal to authorized parties.</t>
+      <t indent="0" pn="section-4-2">As a result, care needs to be taken when deciding to generate a Proxy-Status field and what information to include in it. Note that intermediaries are not required to generate a Proxy-Status field in any response and can conditionally generate them based upon request attributes (e.g., authentication tokens, IP address).</t>
+      <t indent="0" pn="section-4-3">Likewise, generation of all parameters is optional, as is the generation of the field itself. Also, the field's content is not verified; an intermediary can claim certain actions (e.g., sending a request over an encrypted channel) but fail to actually do that.</t>
+    </section>
+  </middle>
+  <back>
+    <references pn="section-5">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-5.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="HTTP" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author initials="R" surname="Fielding" fullname="Roy Fielding" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M" surname="Nottingham" fullname="Mark Nottingham" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="J" surname="Reschke" fullname="Julian Reschke" role="editor">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2022" month="June"/>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author initials="S." surname="Bradner" fullname="S. Bradner">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="1997" month="March"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification.  These words are often capitalized. This document defines these words as they should be interpreted in IETF documents.  This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC7301" target="https://www.rfc-editor.org/info/rfc7301" quoteTitle="true" derivedAnchor="RFC7301">
+          <front>
+            <title>Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</title>
+            <author initials="S." surname="Friedl" fullname="S. Friedl">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="A." surname="Popov" fullname="A. Popov">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="A." surname="Langley" fullname="A. Langley">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="E." surname="Stephan" fullname="E. Stephan">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2014" month="July"/>
+            <abstract>
+              <t indent="0">This document describes a Transport Layer Security (TLS) extension for application-layer protocol negotiation within the TLS handshake. For instances in which multiple application protocols are supported on the same TCP or UDP port, this extension allows the application layer to negotiate which protocol will be used within the TLS connection.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7301"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7301"/>
+        </reference>
+        <reference anchor="RFC8126" target="https://www.rfc-editor.org/info/rfc8126" quoteTitle="true" derivedAnchor="RFC8126">
+          <front>
+            <title>Guidelines for Writing an IANA Considerations Section in RFCs</title>
+            <author initials="M." surname="Cotton" fullname="M. Cotton">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="T." surname="Narten" fullname="T. Narten">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="June"/>
+            <abstract>
+              <t indent="0">Many protocols make use of points of extensibility that use constants to identify various protocol parameters.  To ensure that the values in these fields do not have conflicting uses and to promote interoperability, their allocations are often coordinated by a central record keeper.  For IETF protocols, that role is filled by the Internet Assigned Numbers Authority (IANA).</t>
+              <t indent="0">To make assignments in a given registry prudently, guidance describing the conditions under which new values should be assigned, as well as when and how modifications to existing values can be made, is needed.  This document defines a framework for the documentation of these guidelines by specification authors, in order to assure that the provided guidance for the IANA Considerations is clear and addresses the various issues that are likely in the operation of a registry.</t>
+              <t indent="0">This is the third edition of this document; it obsoletes RFC 5226.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="26"/>
+          <seriesInfo name="RFC" value="8126"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8126"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author initials="B." surname="Leiba" fullname="B. Leiba">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2017" month="May"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol  specifications.  This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the  defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8499" target="https://www.rfc-editor.org/info/rfc8499" quoteTitle="true" derivedAnchor="RFC8499">
+          <front>
+            <title>DNS Terminology</title>
+            <author initials="P." surname="Hoffman" fullname="P. Hoffman">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="A." surname="Sullivan" fullname="A. Sullivan">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="K." surname="Fujiwara" fullname="K. Fujiwara">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2019" month="January"/>
+            <abstract>
+              <t indent="0">The Domain Name System (DNS) is defined in literally dozens of different RFCs.  The terminology used by implementers and developers of DNS protocols, and by operators of DNS systems, has sometimes changed in the decades since the DNS was first defined.  This document gives current definitions for many of the terms used in the DNS in a single document.</t>
+              <t indent="0">This document obsoletes RFC 7719 and updates RFC 2308.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="219"/>
+          <seriesInfo name="RFC" value="8499"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8499"/>
+        </reference>
+        <reference anchor="RFC8914" target="https://www.rfc-editor.org/info/rfc8914" quoteTitle="true" derivedAnchor="RFC8914">
+          <front>
+            <title>Extended DNS Errors</title>
+            <author initials="W." surname="Kumari" fullname="W. Kumari">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="E." surname="Hunt" fullname="E. Hunt">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="R." surname="Arends" fullname="R. Arends">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="W." surname="Hardaker" fullname="W. Hardaker">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="D." surname="Lawrence" fullname="D. Lawrence">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2020" month="October"/>
+            <abstract>
+              <t indent="0">This document defines an extensible method to return additional information about the cause of DNS errors. Though created primarily to extend SERVFAIL to provide additional information about the cause of DNS and DNSSEC failures, the Extended DNS Errors option defined in this document allows all response types to contain extended error information. Extended DNS Error information does not change the processing of RCODEs.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8914"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8914"/>
+        </reference>
+        <reference anchor="STRUCTURED-FIELDS" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author fullname="P-H. Kamp" initials="P-H." surname="Kamp">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date month="March" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+        <reference anchor="TLS" target="https://www.rfc-editor.org/info/rfc8446" quoteTitle="true" derivedAnchor="TLS">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+            <author initials="E." surname="Rescorla" fullname="Eric Rescorla"/>
+            <date year="2018" month="August"/>
+          </front>
+          <seriesInfo name="RFC" value="8446"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8446"/>
+        </reference>
+      </references>
+      <references pn="section-5.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="RFC8586" target="https://www.rfc-editor.org/info/rfc8586" quoteTitle="true" derivedAnchor="RFC8586">
+          <front>
+            <title>Loop Detection in Content Delivery Networks (CDNs)</title>
+            <author initials="S." surname="Ludin" fullname="S. Ludin">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="M." surname="Nottingham" fullname="M. Nottingham">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="N." surname="Sullivan" fullname="N. Sullivan">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2019" month="April"/>
+            <abstract>
+              <t indent="0">This document defines the CDN-Loop request header field for HTTP. CDN-Loop addresses an operational need that occurs when an HTTP request is intentionally forwarded between Content Delivery Networks (CDNs), but is then accidentally or maliciously re-routed back into the original CDN causing a non-terminating loop.  The new header field can be used to identify the error and terminate the loop.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8586"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8586"/>
+        </reference>
+      </references>
+    </references>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+        <organization showOnFrontPage="true">Fastly</organization>
+        <address>
+          <postal>
+            <postalLine>Prahran</postalLine>
+            <postalLine>Australia</postalLine>
+          </postal>
+          <email>mnot@mnot.net</email>
+          <uri>https://www.mnot.net/</uri>
+        </address>
+      </author>
+      <author initials="P." surname="Sikora" fullname="Piotr Sikora">
+        <organization showOnFrontPage="true">Google</organization>
+        <address>
+          <email>piotrsikora@google.com</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

@@ -1,0 +1,1018 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-ietf-httpbis-client-cert-field-06" number="9440" submissionType="IETF" category="info" consensus="true" tocInclude="true" sortRefs="true" symRefs="true" xml:lang="en" updates="" obsoletes="" prepTime="2023-07-21T23:55:48" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-client-cert-field-06" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9440" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="Client-Cert Header">Client-Cert HTTP Header Field</title>
+    <seriesInfo name="RFC" value="9440" stream="IETF"/>
+    <author initials="B." surname="Campbell" fullname="Brian Campbell">
+      <organization showOnFrontPage="true">Ping Identity</organization>
+      <address>
+        <email>bcampbell@pingidentity.com</email>
+      </address>
+    </author>
+    <author initials="M." surname="Bishop" fullname="Mike Bishop" role="editor">
+      <organization showOnFrontPage="true">Akamai</organization>
+      <address>
+        <email>mbishop@evequefou.be</email>
+      </address>
+    </author>
+    <date month="07" year="2023"/>
+    <area>art</area>
+    <workgroup>httpbis</workgroup>
+    <keyword>http</keyword>
+    <keyword>client certificate</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This document describes HTTP extension header fields that allow a TLS
+      terminating reverse proxy (TTRP) to convey the client certificate
+      information of a mutually authenticated TLS connection to the origin
+      server in a common and predictable manner.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This document is not an Internet Standards Track specification; it is
+            published for informational purposes.  
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by the
+            Internet Engineering Steering Group (IESG).  Not all documents
+            approved by the IESG are candidates for any level of Internet
+            Standard; see Section 2 of RFC 7841. 
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9440" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2023 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-requirements-notation-and-c">Requirements Notation and Conventions</xref></t>
+              </li>
+              <li pn="section-toc.1-1.1.2.2">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.2.1"><xref derivedContent="1.2" format="counter" sectionFormat="of" target="section-1.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-terminology-and-applicabili">Terminology and Applicability</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-header-fields-and-proc">HTTP Header Fields and Processing Rules</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-encoding">Encoding</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-cert-http-header-fie">Client-Cert HTTP Header Field</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.3">
+                <t indent="0" pn="section-toc.1-1.2.2.3.1"><xref derivedContent="2.3" format="counter" sectionFormat="of" target="section-2.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-cert-chain-http-head">Client-Cert-Chain HTTP Header Field</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.4">
+                <t indent="0" pn="section-toc.1-1.2.2.4.1"><xref derivedContent="2.4" format="counter" sectionFormat="of" target="section-2.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-processing-rules">Processing Rules</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-deployment-considerations">Deployment Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.3.2">
+              <li pn="section-toc.1-1.3.2.1">
+                <t indent="0" pn="section-toc.1-1.3.2.1.1"><xref derivedContent="3.1" format="counter" sectionFormat="of" target="section-3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-header-field-compression">Header Field Compression</xref></t>
+              </li>
+              <li pn="section-toc.1-1.3.2.2">
+                <t indent="0" pn="section-toc.1-1.3.2.2.1"><xref derivedContent="3.2" format="counter" sectionFormat="of" target="section-3.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-message-header-size">Message Header Size</xref></t>
+              </li>
+              <li pn="section-toc.1-1.3.2.3">
+                <t indent="0" pn="section-toc.1-1.3.2.3.1"><xref derivedContent="3.3" format="counter" sectionFormat="of" target="section-3.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-tls-session-resumption">TLS Session Resumption</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.5.2">
+              <li pn="section-toc.1-1.5.2.1">
+                <t indent="0" pn="section-toc.1-1.5.2.1.1"><xref derivedContent="5.1" format="counter" sectionFormat="of" target="section-5.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-field-name-registratio">HTTP Field Name Registrations</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="Appendix A" format="default" sectionFormat="of" target="section-appendix.a"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-example">Example</xref></t>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="Appendix B" format="default" sectionFormat="of" target="section-appendix.b"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-select-design-consideration">Select Design Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.8.2">
+              <li pn="section-toc.1-1.8.2.1">
+                <t indent="0" pn="section-toc.1-1.8.2.1.1"><xref derivedContent="B.1" format="counter" sectionFormat="of" target="section-appendix.b.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-field-injection">Field Injection</xref></t>
+              </li>
+              <li pn="section-toc.1-1.8.2.2">
+                <t indent="0" pn="section-toc.1-1.8.2.2.1"><xref derivedContent="B.2" format="counter" sectionFormat="of" target="section-appendix.b.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-forwarded-http-extensio">The Forwarded HTTP Extension</xref></t>
+              </li>
+              <li pn="section-toc.1-1.8.2.3">
+                <t indent="0" pn="section-toc.1-1.8.2.3.1"><xref derivedContent="B.3" format="counter" sectionFormat="of" target="section-appendix.b.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-whole-certificate-and-c">The Whole Certificate and Certificate Chain</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.9">
+            <t indent="0" pn="section-toc.1-1.9.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.c"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgements">Acknowledgements</xref></t>
+          </li>
+          <li pn="section-toc.1-1.10">
+            <t indent="0" pn="section-toc.1-1.10.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.d"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="Introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">A fairly common deployment pattern for HTTPS applications is to have the origin
+HTTP application servers sit behind a reverse proxy that terminates TLS
+connections from clients. The proxy is accessible to the Internet and dispatches
+client requests to the appropriate origin server within a private or protected
+network. The origin servers are not directly accessible by clients and are only
+reachable through the reverse proxy. The backend details of this type of
+deployment are typically opaque to clients who make requests to the proxy server
+and see responses as though they originated from the proxy server itself.
+Although HTTPS is also usually employed between the proxy and the origin server,
+the TLS connection that the client establishes for HTTPS is only between itself
+and the reverse proxy server.</t>
+      <t indent="0" pn="section-1-2">The deployment pattern is found in a number of varieties such as n-tier
+architectures, content delivery networks, application load-balancing services,
+and ingress controllers.</t>
+      <t indent="0" pn="section-1-3">Although not exceedingly prevalent, TLS client certificate
+      authentication is sometimes employed, and in such cases the origin
+      server often requires information about the client certificate for its
+      application logic. Such logic might include access control decisions,
+      audit logging, and binding issued tokens or cookies to a certificate, including
+      the respective validation of such bindings. The specific details
+      needed from the certificate also vary with the application
+      requirements. In order for these types of application deployments to
+      work in practice, the reverse proxy needs to convey information about
+      the client certificate to the origin application server. At the time of
+      writing, a common way this information is conveyed is by using
+      non-standard fields to carry the certificate (in some encoding) or
+      individual parts thereof in the HTTP request that is dispatched to the
+      origin server. This solution works, but interoperability between
+      independently developed components can be cumbersome or even impossible
+      depending on the implementation choices respectively made (like what
+      field names are used or are configurable, which parts of the certificate
+      are exposed, or how the certificate is encoded). A well-known
+      predictable approach to this commonly occurring functionality could
+      improve and simplify interoperability between independent
+      implementations.</t>
+      <t indent="0" pn="section-1-4">The scope of this document is to describe existing practice while
+      codifying specific details sufficient to facilitate improved and
+      lower-touch interoperability.  As such, this document describes two HTTP
+      header fields, "Client-Cert" and "Client-Cert-Chain",
+      which a TLS terminating reverse proxy (TTRP) adds to requests sent to
+      the backend origin servers. The Client-Cert field value
+      contains the end-entity client certificate from the mutually
+      authenticated TLS connection between the originating client and the
+      TTRP. Optionally, the Client-Cert-Chain field value contains
+      the certificate chain used for validation of the end-entity
+      certificate. This enables the backend origin server to utilize the
+      client certificate information in its application logic. While there may
+      be additional proxies or hops between the TTRP and the origin server
+      (potentially even with mutually authenticated TLS connections between
+      them), the scope of the Client-Cert header field is
+      intentionally limited to exposing to the origin server the certificate
+      that was presented by the originating client in its connection to the
+      TTRP.</t>
+      <section anchor="requirements-notation-and-conventions" numbered="true" removeInRFC="false" toc="include" pn="section-1.1">
+        <name slugifiedName="name-requirements-notation-and-c">Requirements Notation and Conventions</name>
+        <t indent="0" pn="section-1.1-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+    described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+      </section>
+      <section anchor="terminology-and-applicability" numbered="true" removeInRFC="false" toc="include" pn="section-1.2">
+        <name slugifiedName="name-terminology-and-applicabili">Terminology and Applicability</name>
+        <t indent="0" pn="section-1.2-1">This document uses the following terminology from <xref section="3" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3" derivedContent="STRUCTURED-FIELDS"/> to specify syntax and parsing: List
+        and Byte Sequence.</t>
+        <t indent="0" pn="section-1.2-2">Phrases like "TLS client certificate authentication" or "mutually
+        authenticated TLS" are used throughout this document to refer to the
+        process whereby, in addition to the normal TLS server authentication
+        with a certificate, a client presents its X.509 certificate <xref target="RFC5280" format="default" sectionFormat="of" derivedContent="RFC5280"/> and proves possession of the corresponding private
+        key to a server when negotiating a TLS connection or the resumption of
+        such a connection.
+	In contemporary versions of TLS <xref target="RFC8446" format="default" sectionFormat="of" derivedContent="TLS"/> <xref target="RFC5246" format="default" sectionFormat="of" derivedContent="TLS1.2"/>, mutual authentication requires the client to send
+        the Certificate and CertificateVerify messages during the handshake
+        and the server to verify the CertificateVerify and Finished
+        messages.</t>
+        <t indent="0" pn="section-1.2-3">HTTP/2 restricts TLS 1.2 renegotiation (<xref section="9.2.1" sectionFormat="of" target="RFC9113" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-9.2.1" derivedContent="HTTP/2"/>) and prohibits TLS 1.3
+        post-handshake authentication (<xref section="9.2.3" sectionFormat="of" target="RFC9113" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9113#section-9.2.3" derivedContent="HTTP/2"/>). However, they are sometimes
+        used to implement reactive client certificate authentication in
+        HTTP/1.1 <xref target="RFC9112" format="default" sectionFormat="of" derivedContent="HTTP/1.1"/> where the server decides whether to
+        request a client certificate based on the HTTP request. HTTP
+        application data sent on such a connection after receipt and
+        verification of the client certificate is also mutually authenticated
+        and thus suitable for the mechanisms described in this
+        document. With post-handshake authentication, there is also the
+        possibility, though unlikely in practice, of multiple certificates and
+        certificate chains from the client on a connection. In this case, only
+        the certificate and chain of the last post-handshake authentication
+        are to be utilized for the header fields described herein.</t>
+      </section>
+    </section>
+    <section anchor="headers" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-http-header-fields-and-proc">HTTP Header Fields and Processing Rules</name>
+      <t indent="0" pn="section-2-1">This document designates the following headers, defined further in
+      Sections <xref target="header" format="counter" sectionFormat="of" derivedContent="2.2"/> and <xref target="chain-header" format="counter" sectionFormat="of" derivedContent="2.3"/>, respectively,
+      to carry the client certificate information of a mutually authenticated
+      TLS connection. The headers convey the information from the reverse
+      proxy to the origin server.</t>
+      <dl spacing="normal" newline="true" indent="3" pn="section-2-2">
+        <dt pn="section-2-2.1">Client-Cert:</dt>
+        <dd pn="section-2-2.2">The end-entity certificate used by the client in the TLS handshake
+        with the reverse proxy. </dd>
+        <dt pn="section-2-2.3">Client-Cert-Chain:</dt>
+        <dd pn="section-2-2.4">The certificate chain used for validation of the end-entity
+        certificate provided by the client in the TLS handshake with the
+        reverse proxy.</dd>
+      </dl>
+      <section anchor="encoding" numbered="true" removeInRFC="false" toc="include" pn="section-2.1">
+        <name slugifiedName="name-encoding">Encoding</name>
+        <t indent="0" pn="section-2.1-1">The headers in this document encode certificates as Byte Sequences
+        (<xref section="3.3.5" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.3.5" derivedContent="STRUCTURED-FIELDS"/>) where
+        the value of the binary data is a DER-encoded <xref target="ITU.X690" format="default" sectionFormat="of" derivedContent="ITU.X690"/> X.509 certificate <xref target="RFC5280" format="default" sectionFormat="of" derivedContent="RFC5280"/>.
+        In effect, this means that the binary DER certificate is encoded using
+        base64 (without line breaks, spaces, or other characters outside the
+        base64 alphabet) and delimited with colons on either side.</t>
+        <t indent="0" pn="section-2.1-2">Note that certificates are often stored in an encoded textual
+        format, such as the one described in <xref section="5.1" sectionFormat="of" target="RFC7468" format="default" derivedLink="https://rfc-editor.org/rfc/rfc7468#section-5.1" derivedContent="RFC7468"/>, which is already nearly
+        compatible with a Byte Sequence. If certificates are encoded as such, it will be sufficient to
+        replace "---(BEGIN|END) CERTIFICATE---" with ":" and
+        remove line breaks in order to generate an appropriate item.</t>
+      </section>
+      <section anchor="header" numbered="true" removeInRFC="false" toc="include" pn="section-2.2">
+        <name slugifiedName="name-client-cert-http-header-fie">Client-Cert HTTP Header Field</name>
+        <t indent="0" pn="section-2.2-1">In the context of a TLS terminating reverse proxy deployment, the
+        proxy makes the TLS client certificate available to the backend
+        application with the Client-Cert HTTP header field. This field
+        contains the end-entity certificate used by the client in the TLS
+        handshake.</t>
+        <t indent="0" pn="section-2.2-2">Client-Cert is a Byte Sequence with the value of the header
+        encoded as described in <xref target="encoding" format="default" sectionFormat="of" derivedContent="Section 2.1"/>.</t>
+        <t indent="0" pn="section-2.2-3">The Client-Cert header field is only for use in HTTP
+        requests and <bcp14>MUST NOT</bcp14> be used in HTTP responses.  It is
+        a singleton header field value as defined in <xref section="5.5" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-5.5" derivedContent="HTTP"/>, which <bcp14>MUST NOT</bcp14>
+        have a list of values or occur multiple times in a request.</t>
+        <t indent="0" pn="section-2.2-4"><xref target="example-header" format="default" sectionFormat="of" derivedContent="Figure 2"/> in <xref target="example" format="default" sectionFormat="of" derivedContent="Appendix A"/> has an example of the Client-Cert header field.</t>
+      </section>
+      <section anchor="chain-header" numbered="true" removeInRFC="false" toc="include" pn="section-2.3">
+        <name slugifiedName="name-client-cert-chain-http-head">Client-Cert-Chain HTTP Header Field</name>
+        <t indent="0" pn="section-2.3-1">In the context of a TLS terminating reverse proxy deployment, the proxy
+<bcp14>MAY</bcp14> make the certificate chain
+available to the backend application with the Client-Cert-Chain HTTP header
+field.</t>
+        <t indent="0" pn="section-2.3-2">Client-Cert-Chain is a List (<xref section="3.1" sectionFormat="of" target="RFC8941" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8941#section-3.1" derivedContent="STRUCTURED-FIELDS"/>). Each item in the
+List <bcp14>MUST</bcp14> be a Byte Sequence encoded as described in <xref target="encoding" format="default" sectionFormat="of" derivedContent="Section 2.1"/>. The order
+is the same as the ordering in TLS (as described in <xref section="4.4.2" sectionFormat="of" target="RFC8446" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8446#section-4.4.2" derivedContent="TLS"/>).</t>
+        <t indent="0" pn="section-2.3-3">Client-Cert-Chain <bcp14>MUST NOT</bcp14> appear unless Client-Cert is also present, and it does
+not itself include the end-entity certificate that is already present in Client-Cert.
+The root certificate <bcp14>MAY</bcp14> be omitted from Client-Cert-Chain, provided that the target
+origin server is known to possess the omitted trust anchor.</t>
+        <t indent="0" pn="section-2.3-4">The Client-Cert-Chain header field is only for use in HTTP requests and <bcp14>MUST NOT</bcp14> be used in HTTP responses.  It <bcp14>MAY</bcp14> have a list of values or occur multiple
+times in a request.  For header compression purposes, it might be advantageous
+to split lists into multiple instances.</t>
+        <t indent="0" pn="section-2.3-5"><xref target="example-chain-header" format="default" sectionFormat="of" derivedContent="Figure 3"/> in <xref target="example" format="default" sectionFormat="of" derivedContent="Appendix A"/> has an example of the Client-Cert-Chain header field.</t>
+      </section>
+      <section anchor="processing-rules" numbered="true" removeInRFC="false" toc="include" pn="section-2.4">
+        <name slugifiedName="name-processing-rules">Processing Rules</name>
+        <t indent="0" pn="section-2.4-1">This section outlines the applicable processing rules for a TTRP
+        that has negotiated a mutually authenticated TLS connection to convey
+        the client certificate from that connection to the backend origin
+        servers. This technique is to be used as a configuration or deployment
+        option, and the processing rules described herein are for servers
+        operating with that option enabled.</t>
+        <t indent="0" pn="section-2.4-2">A TTRP negotiates the use of a mutually authenticated TLS
+        connection with the client, such as is described in <xref target="RFC8446" format="default" sectionFormat="of" derivedContent="TLS"/> or <xref target="RFC5246" format="default" sectionFormat="of" derivedContent="TLS1.2"/>, and validates the
+        client certificate per its policy and trusted certificate authorities.
+        Each HTTP request on the underlying TLS connection is dispatched to
+        the origin server with the following modifications:</t>
+        <ol spacing="normal" type="1" indent="adaptive" start="1" pn="section-2.4-3">
+	  <li pn="section-2.4-3.1" derivedCounter="1.">The client certificate is placed in the Client-Cert
+	  header field of the dispatched request, as described in <xref target="header" format="default" sectionFormat="of" derivedContent="Section 2.2"/>.</li>
+          <li pn="section-2.4-3.2" derivedCounter="2.">If so configured, the validation chain of the client certificate
+          is placed in the Client-Cert-Chain header field of the
+          request, as described in <xref target="chain-header" format="default" sectionFormat="of" derivedContent="Section 2.3"/>.</li>
+          <li pn="section-2.4-3.3" derivedCounter="3.">Any occurrence of the Client-Cert or
+          Client-Cert-Chain header fields in the original incoming
+          request <bcp14>MUST</bcp14> be removed or overwritten before
+          forwarding the request. An incoming request that has a
+          Client-Cert or Client-Cert-Chain header field
+          <bcp14>MAY</bcp14> be rejected with an HTTP 400 response.</li>
+        </ol>
+        <t indent="0" pn="section-2.4-4">Requests to the TTRP made over a TLS connection where the use of client certificate
+authentication was not negotiated <bcp14>MUST</bcp14> be sanitized by removing any and all
+occurrences of the Client-Cert and Client-Cert-Chain header fields prior to
+dispatching the request to the backend server.</t>
+        <t indent="0" pn="section-2.4-5">Backend origin servers may then use the Client-Cert header
+        field of the request to determine if the connection from the client to
+        the TTRP was mutually authenticated and, if so, the certificate
+        thereby presented by the client.  Access control decisions based on
+        the client certificate (or lack thereof) can be conveyed by selecting
+        response content as appropriate or with an HTTP 403 response, if the
+        certificate is deemed unacceptable for the given context.  Note that
+        TLS clients that rely on error indications at the TLS layer for an
+        unacceptable certificate will not receive those signals.</t>
+        <t indent="0" pn="section-2.4-6">When the value of the Client-Cert request header field is
+        used to select a response (e.g., the response content is
+        access-controlled), the response <bcp14>MUST</bcp14> either be
+        uncacheable (e.g., by sending Cache-Control: no-store) or be
+        designated for selective reuse only for subsequent requests with the
+        same Client-Cert header field value by sending a "Vary:
+        Client-Cert" response header.  If a TTRP encounters a response
+        with Client-Cert or Client-Cert-Chain in the Vary header
+        field (<xref section="12.5.5" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-12.5.5" derivedContent="HTTP"/>), it <bcp14>SHOULD</bcp14> prevent the user agent from caching
+        the response by transforming the value of the Vary response
+        header field to "*".</t>
+        <t indent="0" pn="section-2.4-7">Forward proxies and other intermediaries <bcp14>MUST NOT</bcp14>
+        add the Client-Cert or Client-Cert-Chain header
+        fields to requests or modify an existing Client-Cert or
+        Client-Cert-Chain header field. Similarly, clients
+        <bcp14>MUST NOT</bcp14> employ the Client-Cert or
+        Client-Cert-Chain header field in requests.</t>
+      </section>
+    </section>
+    <section anchor="deployment" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-deployment-considerations">Deployment Considerations</name>
+      <section anchor="header-field-compression" numbered="true" removeInRFC="false" toc="include" pn="section-3.1">
+        <name slugifiedName="name-header-field-compression">Header Field Compression</name>
+        <t indent="0" pn="section-3.1-1">If the connection between the TTRP and origin is capable of field
+        compression (e.g., HPACK <xref target="RFC7541" format="default" sectionFormat="of" derivedContent="HPACK"/>
+        or QPACK <xref target="RFC9204" format="default" sectionFormat="of" derivedContent="QPACK"/>), and the TTRP
+        multiplexes more than one client's requests into that connection, the
+        size and variation of Client-Cert and
+        Client-Cert-Chain field values can reduce compression
+        efficiency significantly.  An origin could mitigate the efficiency
+        loss by increasing the size of the dynamic table.  If the TTRP
+        determines that the origin dynamic table is not sufficiently large, it
+        may find it beneficial to always send the field value as a literal
+        rather than entering it into the table.</t>
+      </section>
+      <section anchor="message-header-size" numbered="true" removeInRFC="false" toc="include" pn="section-3.2">
+        <name slugifiedName="name-message-header-size">Message Header Size</name>
+        <t indent="0" pn="section-3.2-1">A server in receipt of a larger message header than it is willing
+        to handle can send an HTTP 431 (Request Header Fields Too Large)
+        status code per <xref section="5" sectionFormat="of" target="RFC6585" format="default" derivedLink="https://rfc-editor.org/rfc/rfc6585#section-5" derivedContent="RFC6585"/>.  Due to the typical size of the field values
+        containing certificate data, recipients may need to be configured to
+        allow for a larger maximum header size.  An intermediary generating
+        client certificate header fields on connections that allow for
+        advertising the maximum acceptable header size (e.g., HTTP/2 <xref target="RFC9113" format="default" sectionFormat="of" derivedContent="HTTP/2"/> or HTTP/3 <xref target="RFC9114" format="default" sectionFormat="of" derivedContent="HTTP/3"/>) should account for the additional size of
+        the header of the requests it sends, versus the requests it receives,
+        by advertising a value to its clients that is sufficiently smaller so
+        as to allow for the addition of certificate data.</t>
+      </section>
+      <section anchor="tls-session-resumption" numbered="true" removeInRFC="false" toc="include" pn="section-3.3">
+        <name slugifiedName="name-tls-session-resumption">TLS Session Resumption</name>
+        <t indent="0" pn="section-3.3-1">Some TLS implementations do not retain client certificate
+        information when resuming.  Providing inconsistent values of
+        Client-Cert and Client-Cert-Chain when resuming might lead to errors,
+        so implementations that are unable to provide these values
+        <bcp14>SHOULD</bcp14> either disable resumption for connections with
+        client certificates or initially omit a Client-Cert or
+        Client-Cert-Chain field if it might not be available after
+        resuming.</t>
+      </section>
+    </section>
+    <section anchor="sec" numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-4-1">The header fields described herein enable a TTRP and backend or
+      origin server to function together as though, from the client's
+      perspective, they are a single logical server-side deployment of HTTPS
+      over a mutually authenticated TLS connection. However, use of the header
+      fields outside that intended use case may undermine the protections
+      afforded by TLS client certificate authentication. Therefore, steps such
+      as those described below need to be taken to prevent unintended use,
+      both in sending the header field and in relying on its value.</t>
+      <t indent="0" pn="section-4-2">Producing and consuming the Client-Cert and Client-Cert-Chain header
+fields <bcp14>SHOULD</bcp14> be configurable
+options, respectively, in a TTRP and backend server (or in an individual application in
+that server). The default configuration for both should be to not use the
+header fields, thus requiring an "opt-in" to the functionality.</t>
+      <t indent="0" pn="section-4-3">In order to prevent field injection, backend servers <bcp14>MUST</bcp14> only accept the
+Client-Cert and Client-Cert-Chain header fields from a trusted
+TTRP (or other proxy in a trusted path
+from the TTRP). A TTRP <bcp14>MUST</bcp14> sanitize the incoming request before forwarding it
+on by removing or overwriting any existing instances of the fields. Otherwise,
+arbitrary clients can control the field values as seen and used by the backend
+server. It is important to note that neglecting to prevent field injection does
+not "fail safe" in that the nominal functionality will still work as expected
+even when malicious actions are possible. As such, extra care is recommended in
+ensuring that proper field sanitation is in place.</t>
+      <t indent="0" pn="section-4-4">The communication between a TTRP and backend server needs to be secured against
+      eavesdropping and modification by unintended parties.</t>
+      <t indent="0" pn="section-4-5">The configuration options and request sanitization are necessary functionalities
+of the respective servers. The other requirements can be met in a number of
+ways, which will vary based on specific deployments. The communication between a
+TTRP and backend or origin server, for example, might be authenticated in some
+way with the insertion and consumption of the Client-Cert
+and Client-Cert-Chain header fields occurring
+only on that connection.
+<xref section="B.3" sectionFormat="of" target="I-D.ietf-httpbis-message-signatures" format="default" derivedLink="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17#appendix-B.3" derivedContent="HTTPSIG"/> gives one example of
+this with an application of HTTP Message Signatures.
+Alternatively, the network topology might dictate a
+private network such that the backend application is only able to accept
+requests from the TTRP and the proxy can only make requests to that server.
+Other deployments that meet the requirements set forth herein are also possible.</t>
+    </section>
+    <section anchor="iana-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <section anchor="http-field-name-registrations" numbered="true" removeInRFC="false" toc="include" pn="section-5.1">
+        <name slugifiedName="name-http-field-name-registratio">HTTP Field Name Registrations</name>
+        <t indent="0" pn="section-5.1-1">IANA has registered the following entries in the "Hypertext Transfer
+        Protocol (HTTP) Field Name Registry" defined by "HTTP Semantics" <xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/>:</t>
+        <table anchor="table_1" align="center" pn="table-1">
+          <name slugifiedName="name-hypertext-transfer-protocol">Hypertext Transfer Protocol (HTTP) Field Name Registry</name>
+          <thead>
+            <tr>
+              <th align="left" colspan="1" rowspan="1">Field Name</th>
+              <th align="left" colspan="1" rowspan="1">Status</th>
+              <th align="left" colspan="1" rowspan="1">Reference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">Client-Cert</td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">RFC 9440, <xref target="headers" format="default" sectionFormat="of" derivedContent="Section 2"/></td>
+            </tr>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">Client-Cert-Chain</td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">RFC 9440, <xref target="headers" format="default" sectionFormat="of" derivedContent="Section 2"/></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC8941" to="STRUCTURED-FIELDS"/>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="RFC9112" to="HTTP/1.1"/>
+    <displayreference target="RFC9113" to="HTTP/2"/>
+    <displayreference target="RFC9114" to="HTTP/3"/>
+    <displayreference target="I-D.ietf-httpbis-message-signatures" to="HTTPSIG"/>
+    <displayreference target="RFC8446" to="TLS"/>
+    <displayreference target="RFC9204" to="QPACK"/>
+    <displayreference target="RFC7541" to="HPACK"/>
+    <displayreference target="RFC5246" to="TLS1.2"/>
+    <references pn="section-6">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-6.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="ITU.X690" target="https://www.itu.int/rec/T-REC-X.690/en" quoteTitle="true" derivedAnchor="ITU.X690">
+          <front>
+            <title>Information technology - ASN.1 encoding rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)</title>
+            <author>
+              <organization showOnFrontPage="true">ITU-T</organization>
+            </author>
+            <date month="February" year="2021"/>
+          </front>
+          <seriesInfo name="ITU-T Recommendation" value="X.690"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC5280" target="https://www.rfc-editor.org/info/rfc5280" quoteTitle="true" derivedAnchor="RFC5280">
+          <front>
+            <title>Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</title>
+            <author fullname="D. Cooper" initials="D." surname="Cooper"/>
+            <author fullname="S. Santesson" initials="S." surname="Santesson"/>
+            <author fullname="S. Farrell" initials="S." surname="Farrell"/>
+            <author fullname="S. Boeyen" initials="S." surname="Boeyen"/>
+            <author fullname="R. Housley" initials="R." surname="Housley"/>
+            <author fullname="W. Polk" initials="W." surname="Polk"/>
+            <date month="May" year="2008"/>
+            <abstract>
+              <t indent="0">This memo profiles the X.509 v3 certificate and X.509 v2 certificate revocation list (CRL) for use in the Internet. An overview of this approach and model is provided as an introduction. The X.509 v3 certificate format is described in detail, with additional information regarding the format and semantics of Internet name forms. Standard certificate extensions are described and two Internet-specific extensions are defined. A set of required certificate extensions is specified. The X.509 v2 CRL format is described in detail along with standard and Internet-specific extensions. An algorithm for X.509 certification path validation is described. An ASN.1 module and examples are provided in the appendices. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5280"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5280"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8941" target="https://www.rfc-editor.org/info/rfc8941" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" initials="P-H." surname="Kamp"/>
+            <date month="February" year="2021"/>
+          </front>
+          <seriesInfo name="RFC" value="8941"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8941"/>
+        </reference>
+      </references>
+      <references pn="section-6.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="RFC7541" target="https://www.rfc-editor.org/info/rfc7541" quoteTitle="true" derivedAnchor="HPACK">
+          <front>
+            <title>HPACK: Header Compression for HTTP/2</title>
+            <author fullname="R. Peon" initials="R." surname="Peon"/>
+            <author fullname="H. Ruellan" initials="H." surname="Ruellan"/>
+            <date month="May" year="2015"/>
+            <abstract>
+              <t indent="0">This specification defines HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7541"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7541"/>
+        </reference>
+        <reference anchor="RFC9112" target="https://www.rfc-editor.org/info/rfc9112" quoteTitle="true" derivedAnchor="HTTP/1.1">
+          <front>
+            <title>HTTP/1.1</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document specifies the HTTP/1.1 message syntax, message parsing, connection management, and related security concerns.</t>
+              <t indent="0">This document obsoletes portions of RFC 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="99"/>
+          <seriesInfo name="RFC" value="9112"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9112"/>
+        </reference>
+        <reference anchor="RFC9113" target="https://www.rfc-editor.org/info/rfc9113" quoteTitle="true" derivedAnchor="HTTP/2">
+          <front>
+            <title>HTTP/2</title>
+            <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson"/>
+            <author fullname="C. Benfield" initials="C." role="editor" surname="Benfield"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2). HTTP/2 enables a more efficient use of network resources and a reduced latency by introducing field compression and allowing multiple concurrent exchanges on the same connection.</t>
+              <t indent="0">This document obsoletes RFCs 7540 and 8740.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9113"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9113"/>
+        </reference>
+        <reference anchor="RFC9114" target="https://www.rfc-editor.org/info/rfc9114" quoteTitle="true" derivedAnchor="HTTP/3">
+          <front>
+            <title>HTTP/3</title>
+            <author fullname="M. Bishop" initials="M." role="editor" surname="Bishop"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The QUIC transport protocol has several features that are desirable in a transport for HTTP, such as stream multiplexing, per-stream flow control, and low-latency connection establishment. This document describes a mapping of HTTP semantics over QUIC. This document also identifies HTTP/2 features that are subsumed by QUIC and describes how HTTP/2 extensions can be ported to HTTP/3.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9114"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9114"/>
+        </reference>
+        <reference anchor="I-D.ietf-httpbis-message-signatures" quoteTitle="true" target="https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-17" derivedAnchor="HTTPSIG">
+          <front>
+            <title>HTTP Message Signatures</title>
+            <author initials="A." surname="Backman" fullname="Annabelle Backman" role="editor">
+              <organization showOnFrontPage="true">Amazon</organization>
+            </author>
+            <author initials="J." surname="Richer" fullname="Justin Richer" role="editor">
+              <organization showOnFrontPage="true">Bespoke Engineering</organization>
+            </author>
+            <author initials="M." surname="Sporny" fullname="Manu Sporny">
+              <organization showOnFrontPage="true">Digital Bazaar</organization>
+            </author>
+            <date month="May" day="2" year="2023"/>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-ietf-httpbis-message-signatures-17"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="RFC9204" target="https://www.rfc-editor.org/info/rfc9204" quoteTitle="true" derivedAnchor="QPACK">
+          <front>
+            <title>QPACK: Field Compression for HTTP/3</title>
+            <author fullname="C. Krasic" initials="C." surname="Krasic"/>
+            <author fullname="M. Bishop" initials="M." surname="Bishop"/>
+            <author fullname="A. Frindell" initials="A." role="editor" surname="Frindell"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This specification defines QPACK: a compression format for efficiently representing HTTP fields that is to be used in HTTP/3. This is a variation of HPACK compression that seeks to reduce head-of-line blocking.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9204"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9204"/>
+        </reference>
+        <reference anchor="RFC6585" target="https://www.rfc-editor.org/info/rfc6585" quoteTitle="true" derivedAnchor="RFC6585">
+          <front>
+            <title>Additional HTTP Status Codes</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="R. Fielding" initials="R." surname="Fielding"/>
+            <date month="April" year="2012"/>
+            <abstract>
+              <t indent="0">This document specifies additional HyperText Transfer Protocol (HTTP) status codes for a variety of common situations. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6585"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6585"/>
+        </reference>
+        <reference anchor="RFC7239" target="https://www.rfc-editor.org/info/rfc7239" quoteTitle="true" derivedAnchor="RFC7239">
+          <front>
+            <title>Forwarded HTTP Extension</title>
+            <author fullname="A. Petersson" initials="A." surname="Petersson"/>
+            <author fullname="M. Nilsson" initials="M." surname="Nilsson"/>
+            <date month="June" year="2014"/>
+            <abstract>
+              <t indent="0">This document defines an HTTP extension header field that allows proxy components to disclose information lost in the proxying process, for example, the originating IP address of a request or IP address of the proxy on the user-agent-facing interface. In a path of proxying components, this makes it possible to arrange it so that each subsequent component will have access to, for example, all IP addresses used in the chain of proxied HTTP requests.</t>
+              <t indent="0">This document also specifies guidelines for a proxy administrator to anonymize the origin of a request.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7239"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7239"/>
+        </reference>
+        <reference anchor="RFC7468" target="https://www.rfc-editor.org/info/rfc7468" quoteTitle="true" derivedAnchor="RFC7468">
+          <front>
+            <title>Textual Encodings of PKIX, PKCS, and CMS Structures</title>
+            <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+            <author fullname="S. Leonard" initials="S." surname="Leonard"/>
+            <date month="April" year="2015"/>
+            <abstract>
+              <t indent="0">This document describes and discusses the textual encodings of the Public-Key Infrastructure X.509 (PKIX), Public-Key Cryptography Standards (PKCS), and Cryptographic Message Syntax (CMS). The textual encodings are well-known, are implemented by several applications and libraries, and are widely deployed. This document articulates the de facto rules by which existing implementations operate and defines them so that future implementations can interoperate.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7468"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7468"/>
+        </reference>
+        <reference anchor="RFC8705" target="https://www.rfc-editor.org/info/rfc8705" quoteTitle="true" derivedAnchor="RFC8705">
+          <front>
+            <title>OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens</title>
+            <author fullname="B. Campbell" initials="B." surname="Campbell"/>
+            <author fullname="J. Bradley" initials="J." surname="Bradley"/>
+            <author fullname="N. Sakimura" initials="N." surname="Sakimura"/>
+            <author fullname="T. Lodderstedt" initials="T." surname="Lodderstedt"/>
+            <date month="February" year="2020"/>
+            <abstract>
+              <t indent="0">This document describes OAuth client authentication and certificate-bound access and refresh tokens using mutual Transport Layer Security (TLS) authentication with X.509 certificates. OAuth clients are provided a mechanism for authentication to the authorization server using mutual TLS, based on either self-signed certificates or public key infrastructure (PKI). OAuth authorization servers are provided a mechanism for binding access tokens to a client's mutual-TLS certificate, and OAuth protected resources are provided a method for ensuring that such an access token presented to it was issued to the client presenting the token.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8705"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8705"/>
+        </reference>
+        <reference anchor="RFC8446" target="https://www.rfc-editor.org/info/rfc8446" quoteTitle="true" derivedAnchor="TLS">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="August" year="2018"/>
+            <abstract>
+              <t indent="0">This document specifies version 1.3 of the Transport Layer Security (TLS) protocol. TLS allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t>
+              <t indent="0">This document updates RFCs 5705 and 6066, and obsoletes RFCs 5077, 5246, and 6961. This document also specifies new requirements for TLS 1.2 implementations.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8446"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8446"/>
+        </reference>
+        <reference anchor="RFC5246" target="https://www.rfc-editor.org/info/rfc5246" quoteTitle="true" derivedAnchor="TLS1.2">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.2</title>
+            <author fullname="T. Dierks" initials="T." surname="Dierks"/>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="August" year="2008"/>
+            <abstract>
+              <t indent="0">This document specifies Version 1.2 of the Transport Layer Security (TLS) protocol. The TLS protocol provides communications security over the Internet. The protocol allows client/server applications to communicate in a way that is designed to prevent eavesdropping, tampering, or message forgery. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5246"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5246"/>
+        </reference>
+      </references>
+    </references>
+    <section anchor="example" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-example">Example</name>
+      <t indent="0" pn="section-appendix.a-1">In a hypothetical example where a TLS client
+      would present the client and intermediate certificate from <xref target="example-chain" format="default" sectionFormat="of" derivedContent="Figure 1"/> when establishing a mutually authenticated TLS
+      connection with the TTRP, the proxy would send the Client-Cert
+      field shown in <xref target="example-header" format="default" sectionFormat="of" derivedContent="Figure 2"/> to the backend. Note that
+      line breaks and extra spaces have been added to the field value in Figures <xref target="example-header" format="counter" sectionFormat="of" derivedContent="2"/> and <xref target="example-chain-header" format="counter" sectionFormat="of" derivedContent="3"/> for
+      display and formatting purposes only.</t>
+      <figure anchor="example-chain" align="left" suppress-title="false" pn="figure-1">
+        <name slugifiedName="name-certificate-chain-with-clie">Certificate Chain (with Client Certificate First)</name>
+        <sourcecode markers="false" pn="section-appendix.a-2.1">
+-----BEGIN CERTIFICATE-----
+MIIBqDCCAU6gAwIBAgIBBzAKBggqhkjOPQQDAjA6MRswGQYDVQQKDBJMZXQncyBB
+dXRoZW50aWNhdGUxGzAZBgNVBAMMEkxBIEludGVybWVkaWF0ZSBDQTAeFw0yMDAx
+MTQyMjU1MzNaFw0yMTAxMjMyMjU1MzNaMA0xCzAJBgNVBAMMAkJDMFkwEwYHKoZI
+zj0CAQYIKoZIzj0DAQcDQgAE8YnXXfaUgmnMtOXU/IncWalRhebrXmckC8vdgJ1p
+5Be5F/3YC8OthxM4+k1M6aEAEFcGzkJiNy6J84y7uzo9M6NyMHAwCQYDVR0TBAIw
+ADAfBgNVHSMEGDAWgBRm3WjLa38lbEYCuiCPct0ZaSED2DAOBgNVHQ8BAf8EBAMC
+BsAwEwYDVR0lBAwwCgYIKwYBBQUHAwIwHQYDVR0RAQH/BBMwEYEPYmRjQGV4YW1w
+bGUuY29tMAoGCCqGSM49BAMCA0gAMEUCIBHda/r1vaL6G3VliL4/Di6YK0Q6bMje
+SkC3dFCOOB8TAiEAx/kHSB4urmiZ0NX5r5XarmPk0wmuydBVoU4hBVZ1yhk=
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIIB5jCCAYugAwIBAgIBFjAKBggqhkjOPQQDAjBWMQswCQYDVQQGEwJVUzEbMBkG
+A1UECgwSTGV0J3MgQXV0aGVudGljYXRlMSowKAYDVQQDDCFMZXQncyBBdXRoZW50
+aWNhdGUgUm9vdCBBdXRob3JpdHkwHhcNMjAwMTE0MjEzMjMwWhcNMzAwMTExMjEz
+MjMwWjA6MRswGQYDVQQKDBJMZXQncyBBdXRoZW50aWNhdGUxGzAZBgNVBAMMEkxB
+IEludGVybWVkaWF0ZSBDQTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJf+aA54
+RC5pyLAR5yfXVYmNpgd+CGUTDp2KOGhc0gK91zxhHesEYkdXkpS2UN8Kati+yHtW
+CV3kkhCngGyv7RqjZjBkMB0GA1UdDgQWBBRm3WjLa38lbEYCuiCPct0ZaSED2DAf
+BgNVHSMEGDAWgBTEA2Q6eecKu9g9yb5glbkhhVINGDASBgNVHRMBAf8ECDAGAQH/
+AgEAMA4GA1UdDwEB/wQEAwIBhjAKBggqhkjOPQQDAgNJADBGAiEA5pLvaFwRRkxo
+mIAtDIwg9D7gC1xzxBl4r28EzmSO1pcCIQCJUShpSXO9HDIQMUgH69fNDEMHXD3R
+RX5gP7kuu2KGMg==
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIICBjCCAaygAwIBAgIJAKS0yiqKtlhoMAoGCCqGSM49BAMCMFYxCzAJBgNVBAYT
+AlVTMRswGQYDVQQKDBJMZXQncyBBdXRoZW50aWNhdGUxKjAoBgNVBAMMIUxldCdz
+IEF1dGhlbnRpY2F0ZSBSb290IEF1dGhvcml0eTAeFw0yMDAxMTQyMTI1NDVaFw00
+MDAxMDkyMTI1NDVaMFYxCzAJBgNVBAYTAlVTMRswGQYDVQQKDBJMZXQncyBBdXRo
+ZW50aWNhdGUxKjAoBgNVBAMMIUxldCdzIEF1dGhlbnRpY2F0ZSBSb290IEF1dGhv
+cml0eTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABFoaHU+Z5bPKmGzlYXtCf+E6
+HYj62fORaHDOrt+yyh3H/rTcs7ynFfGn+gyFsrSP3Ez88rajv+U2NfD0o0uZ4Pmj
+YzBhMB0GA1UdDgQWBBTEA2Q6eecKu9g9yb5glbkhhVINGDAfBgNVHSMEGDAWgBTE
+A2Q6eecKu9g9yb5glbkhhVINGDAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQE
+AwIBhjAKBggqhkjOPQQDAgNIADBFAiEAmAeg1ycKHriqHnaD4M/UDBpQRpkmdcRF
+YGMg1Qyrkx4CIB4ivz3wQcQkGhcsUZ1SOImd/lq1Q0FLf09rGfLQPWDc
+-----END CERTIFICATE-----
+</sourcecode>
+      </figure>
+      <figure anchor="example-header" align="left" suppress-title="false" pn="figure-2">
+        <name slugifiedName="name-header-field-in-http-reques">Header Field in HTTP Request to Origin Server</name>
+        <sourcecode markers="false" pn="section-appendix.a-3.1">
+Client-Cert: :MIIBqDCCAU6gAwIBAgIBBzAKBggqhkjOPQQDAjA6MRswGQYDVQQKDBJ
+ MZXQncyBBdXRoZW50aWNhdGUxGzAZBgNVBAMMEkxBIEludGVybWVkaWF0ZSBDQTAeFw0
+ yMDAxMTQyMjU1MzNaFw0yMTAxMjMyMjU1MzNaMA0xCzAJBgNVBAMMAkJDMFkwEwYHKoZ
+ Izj0CAQYIKoZIzj0DAQcDQgAE8YnXXfaUgmnMtOXU/IncWalRhebrXmckC8vdgJ1p5Be
+ 5F/3YC8OthxM4+k1M6aEAEFcGzkJiNy6J84y7uzo9M6NyMHAwCQYDVR0TBAIwADAfBgN
+ VHSMEGDAWgBRm3WjLa38lbEYCuiCPct0ZaSED2DAOBgNVHQ8BAf8EBAMCBsAwEwYDVR0
+ lBAwwCgYIKwYBBQUHAwIwHQYDVR0RAQH/BBMwEYEPYmRjQGV4YW1wbGUuY29tMAoGCCq
+ GSM49BAMCA0gAMEUCIBHda/r1vaL6G3VliL4/Di6YK0Q6bMjeSkC3dFCOOB8TAiEAx/k
+ HSB4urmiZ0NX5r5XarmPk0wmuydBVoU4hBVZ1yhk=:
+</sourcecode>
+      </figure>
+      <t indent="0" pn="section-appendix.a-4">If the proxy were configured to also include the certificate chain, it would
+also include the Client-Cert-Chain header field. Note that while
+the following example does illustrate the TTRP inserting the root certificate,
+many deployments will opt to omit the trust anchor.</t>
+      <figure anchor="example-chain-header" align="left" suppress-title="false" pn="figure-3">
+        <name slugifiedName="name-certificate-chain-in-http-r">Certificate Chain in HTTP Request to Origin Server</name>
+        <sourcecode markers="false" pn="section-appendix.a-5.1">
+Client-Cert-Chain: :MIIB5jCCAYugAwIBAgIBFjAKBggqhkjOPQQDAjBWMQsw
+ CQYDVQQGEwJVUzEbMBkGA1UECgwSTGV0J3MgQXV0aGVudGljYXRlMSowKAYDVQQ
+ DDCFMZXQncyBBdXRoZW50aWNhdGUgUm9vdCBBdXRob3JpdHkwHhcNMjAwMTE0Mj
+ EzMjMwWhcNMzAwMTExMjEzMjMwWjA6MRswGQYDVQQKDBJMZXQncyBBdXRoZW50a
+ WNhdGUxGzAZBgNVBAMMEkxBIEludGVybWVkaWF0ZSBDQTBZMBMGByqGSM49AgEG
+ CCqGSM49AwEHA0IABJf+aA54RC5pyLAR5yfXVYmNpgd+CGUTDp2KOGhc0gK91zx
+ hHesEYkdXkpS2UN8Kati+yHtWCV3kkhCngGyv7RqjZjBkMB0GA1UdDgQWBBRm3W
+ jLa38lbEYCuiCPct0ZaSED2DAfBgNVHSMEGDAWgBTEA2Q6eecKu9g9yb5glbkhh
+ VINGDASBgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBhjAKBggqhkjO
+ PQQDAgNJADBGAiEA5pLvaFwRRkxomIAtDIwg9D7gC1xzxBl4r28EzmSO1pcCIQC
+ JUShpSXO9HDIQMUgH69fNDEMHXD3RRX5gP7kuu2KGMg==:, :MIICBjCCAaygAw
+ IBAgIJAKS0yiqKtlhoMAoGCCqGSM49BAMCMFYxCzAJBgNVBAYTAlVTMRswGQYDV
+ QQKDBJMZXQncyBBdXRoZW50aWNhdGUxKjAoBgNVBAMMIUxldCdzIEF1dGhlbnRp
+ Y2F0ZSBSb290IEF1dGhvcml0eTAeFw0yMDAxMTQyMTI1NDVaFw00MDAxMDkyMTI
+ 1NDVaMFYxCzAJBgNVBAYTAlVTMRswGQYDVQQKDBJMZXQncyBBdXRoZW50aWNhdG
+ UxKjAoBgNVBAMMIUxldCdzIEF1dGhlbnRpY2F0ZSBSb290IEF1dGhvcml0eTBZM
+ BMGByqGSM49AgEGCCqGSM49AwEHA0IABFoaHU+Z5bPKmGzlYXtCf+E6HYj62fOR
+ aHDOrt+yyh3H/rTcs7ynFfGn+gyFsrSP3Ez88rajv+U2NfD0o0uZ4PmjYzBhMB0
+ GA1UdDgQWBBTEA2Q6eecKu9g9yb5glbkhhVINGDAfBgNVHSMEGDAWgBTEA2Q6ee
+ cKu9g9yb5glbkhhVINGDAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwIBh
+ jAKBggqhkjOPQQDAgNIADBFAiEAmAeg1ycKHriqHnaD4M/UDBpQRpkmdcRFYGMg
+ 1Qyrkx4CIB4ivz3wQcQkGhcsUZ1SOImd/lq1Q0FLf09rGfLQPWDc:
+</sourcecode>
+      </figure>
+    </section>
+    <section anchor="select-design-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-select-design-consideration">Select Design Considerations</name>
+      <section anchor="field-injection" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.1">
+        <name slugifiedName="name-field-injection">Field Injection</name>
+        <t indent="0" pn="section-appendix.b.1-1">This document requires that the TTRP sanitize the fields of the incoming request by
+removing or overwriting any existing instances of the Client-Cert
+and Client-Cert-Chain header fields
+before dispatching that request to the backend application. Otherwise, a client
+could inject its own values that would appear to the backend to
+have come from the TTRP. Although numerous other methods of detecting and preventing
+field injection are possible, such as the use of a unique secret value as part
+of the field name or value or the application of a signature, HMAC, or AEAD,
+there is no common general mechanism. The potential problem of
+client field injection is not at all unique to the functionality of this document;
+therefore, it would be inappropriate for this document to define a one-off
+solution. Since a generic common solution does not currently exist,
+stripping and sanitizing the fields is the de facto means of protecting against
+field injection in practice. Sanitizing the fields is sufficient when
+properly implemented and is a normative requirement of <xref target="sec" format="default" sectionFormat="of" derivedContent="Section 4"/>.</t>
+      </section>
+      <section anchor="the-forwarded-http-extension" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.2">
+        <name slugifiedName="name-the-forwarded-http-extensio">The Forwarded HTTP Extension</name>
+        <t indent="0" pn="section-appendix.b.2-1">The Forwarded HTTP header field defined in <xref target="RFC7239" format="default" sectionFormat="of" derivedContent="RFC7239"/> allows proxy components to disclose information
+        lost in the proxying process. The TLS client certificate information
+        of concern to this document could have been communicated with an
+        extension parameter to the Forwarded field; however, doing so
+        would have had some disadvantages that this document endeavored to
+        avoid. The Forwarded field syntax allows for information
+        about a full chain of proxied HTTP requests, whereas the
+        Client-Cert and Client-Cert-Chain header fields of
+        this document are concerned only with conveying information about the
+        certificate presented by the originating client on the TLS connection
+        to the TTRP (which appears as the server from that client's
+        perspective) to backend applications.  The multi-hop syntax of the
+        Forwarded field is expressive but also more complicated,
+        which would make processing it more cumbersome and, more importantly,
+        would make properly sanitizing its content, as required by <xref target="sec" format="default" sectionFormat="of" derivedContent="Section 4"/> to prevent field injection, considerably more difficult
+        and error-prone. Thus, this document opted for a flatter and more
+        straightforward structure.</t>
+      </section>
+      <section anchor="the-whole-certificate-and-certificate-chain" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b.3">
+        <name slugifiedName="name-the-whole-certificate-and-c">The Whole Certificate and Certificate Chain</name>
+        <t indent="0" pn="section-appendix.b.3-1">Different applications will have varying requirements about what
+        information from the client certificate is needed, such as the subject
+        and/or issuer distinguished name, subject alternative name(s), serial
+        number, subject public key info, fingerprint, etc. Furthermore, some
+        applications, such as that described in <xref target="RFC8705" format="default" sectionFormat="of" derivedContent="RFC8705"/>, make
+        use of the entire certificate. In order to accommodate the latter and
+        ensure wide applicability by not trying to cherry-pick particular
+        certificate information, this document opted to pass the full, encoded
+        certificate as the value of the Client-Cert field.</t>
+        <t indent="0" pn="section-appendix.b.3-2">The validation of the client certificate and chain of the mutually
+        authenticated TLS connection is typically performed by the TTRP during
+        the handshake.  With the responsibility of certificate validation
+        falling on the TTRP, the end-entity certificate is oftentimes
+        sufficient for the needs of the origin server.  The separate
+        Client-Cert-Chain field can convey the certificate chain for
+        origin server deployments that require this additional
+        information.</t>
+      </section>
+    </section>
+    <section anchor="acknowledgements" toc="include" numbered="false" removeInRFC="false" pn="section-appendix.c">
+      <name slugifiedName="name-acknowledgements">Acknowledgements</name>
+      <t indent="0" pn="section-appendix.c-1">The authors would like to thank the following individuals who have contributed to this document in various ways, ranging from just being generally supportive of bringing forth the document to providing specific feedback or content:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-appendix.c-2">
+        <li pn="section-appendix.c-2.1">
+          <t indent="0" pn="section-appendix.c-2.1.1"><contact fullname="Evan Anderson"/></t>
+        </li>
+        <li pn="section-appendix.c-2.2">
+          <t indent="0" pn="section-appendix.c-2.2.1"><contact fullname="Annabelle Backman"/></t>
+        </li>
+        <li pn="section-appendix.c-2.3">
+          <t indent="0" pn="section-appendix.c-2.3.1"><contact fullname="Alan Frindell"/></t>
+        </li>
+        <li pn="section-appendix.c-2.4">
+          <t indent="0" pn="section-appendix.c-2.4.1"><contact fullname="Rory Hewitt"/></t>
+        </li>
+        <li pn="section-appendix.c-2.5">
+          <t indent="0" pn="section-appendix.c-2.5.1"><contact fullname="Fredrik Jeansson"/></t>
+        </li>
+        <li pn="section-appendix.c-2.6">
+          <t indent="0" pn="section-appendix.c-2.6.1"><contact fullname="Benjamin Kaduk"/></t>
+        </li>
+        <li pn="section-appendix.c-2.7">
+          <t indent="0" pn="section-appendix.c-2.7.1"><contact fullname="Torsten Lodderstedt"/></t>
+        </li>
+        <li pn="section-appendix.c-2.8">
+          <t indent="0" pn="section-appendix.c-2.8.1"><contact fullname="Kathleen Moriarty"/></t>
+        </li>
+        <li pn="section-appendix.c-2.9">
+          <t indent="0" pn="section-appendix.c-2.9.1"><contact fullname="Mark Nottingham"/></t>
+        </li>
+        <li pn="section-appendix.c-2.10">
+          <t indent="0" pn="section-appendix.c-2.10.1"><contact fullname="Erik Nygren"/></t>
+        </li>
+        <li pn="section-appendix.c-2.11">
+          <t indent="0" pn="section-appendix.c-2.11.1"><contact fullname="Mike Ounsworth"/></t>
+        </li>
+        <li pn="section-appendix.c-2.12">
+          <t indent="0" pn="section-appendix.c-2.12.1"><contact fullname="Lucas Pardue"/></t>
+        </li>
+        <li pn="section-appendix.c-2.13">
+          <t indent="0" pn="section-appendix.c-2.13.1"><contact fullname="Matt Peterson"/></t>
+        </li>
+        <li pn="section-appendix.c-2.14">
+          <t indent="0" pn="section-appendix.c-2.14.1"><contact fullname="Eric Rescorla"/></t>
+        </li>
+        <li pn="section-appendix.c-2.15">
+          <t indent="0" pn="section-appendix.c-2.15.1"><contact fullname="Justin Richer"/></t>
+        </li>
+        <li pn="section-appendix.c-2.16">
+          <t indent="0" pn="section-appendix.c-2.16.1"><contact fullname="Michael Richardson"/></t>
+        </li>
+        <li pn="section-appendix.c-2.17">
+          <t indent="0" pn="section-appendix.c-2.17.1"><contact fullname="Joe Salowey"/></t>
+        </li>
+        <li pn="section-appendix.c-2.18">
+          <t indent="0" pn="section-appendix.c-2.18.1"><contact fullname="Rich Salz"/></t>
+        </li>
+        <li pn="section-appendix.c-2.19">
+          <t indent="0" pn="section-appendix.c-2.19.1"><contact fullname="Mohit Sethi"/></t>
+        </li>
+        <li pn="section-appendix.c-2.20">
+          <t indent="0" pn="section-appendix.c-2.20.1"><contact fullname="Rifaat Shekh-Yusef"/></t>
+        </li>
+        <li pn="section-appendix.c-2.21">
+          <t indent="0" pn="section-appendix.c-2.21.1"><contact fullname="Travis Spencer"/></t>
+        </li>
+        <li pn="section-appendix.c-2.22">
+          <t indent="0" pn="section-appendix.c-2.22.1"><contact fullname="Nick Sullivan"/></t>
+        </li>
+        <li pn="section-appendix.c-2.23">
+          <t indent="0" pn="section-appendix.c-2.23.1"><contact fullname="Willy Tarreau"/></t>
+        </li>
+        <li pn="section-appendix.c-2.24">
+          <t indent="0" pn="section-appendix.c-2.24.1"><contact fullname="Martin Thomson"/></t>
+        </li>
+        <li pn="section-appendix.c-2.25">
+          <t indent="0" pn="section-appendix.c-2.25.1"><contact fullname="Peter Wu"/></t>
+        </li>
+        <li pn="section-appendix.c-2.26">
+          <t indent="0" pn="section-appendix.c-2.26.1"><contact fullname="Hans Zandbelt"/></t>
+        </li>
+      </ul>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.d">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="B." surname="Campbell" fullname="Brian Campbell">
+        <organization showOnFrontPage="true">Ping Identity</organization>
+        <address>
+          <email>bcampbell@pingidentity.com</email>
+        </address>
+      </author>
+      <author initials="M." surname="Bishop" fullname="Mike Bishop" role="editor">
+        <organization showOnFrontPage="true">Akamai</organization>
+        <address>
+          <email>mbishop@evequefou.be</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>
