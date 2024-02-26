@@ -1,6 +1,8 @@
 ---
   suppress_site: true
   markdown: kramdown
+  include:
+    - .well-known
   exclude:
       - sass-cache/
       - .jekyll-cache/
