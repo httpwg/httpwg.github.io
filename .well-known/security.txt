@@ -1,0 +1,12 @@
+
+# The Working Group Chairs, for confidential disclosures
+Contact: mailto:httpbis-chairs@ietf.org
+
+# The Working Group e-mail list; will be made public
+# Subscribe first by sending e-mail to ietf-http-wg-request@w3.org
+Contact: mailto:ietf-http-wg@w3.org
+
+# IETF Vulnerability reporting policy
+Policy: https://www.ietf.org/standards/rfcs/vulnerabilities/
+
+Preferred-Languages: en
