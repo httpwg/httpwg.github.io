@@ -39,6 +39,7 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<ul>
 			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> {%include github.html link="https://github.com/httpwg/http-extensions" %}</li>
 			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
+      <li>The [HTTP Directorate](/admin/directorate/)</li>
 		</ul>
 	</div>
 
