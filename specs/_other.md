@@ -27,7 +27,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC 6266: [Content-Disposition](/specs/rfc6266.html)
 * RFC 7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
 * RFC 8144: [Prefer Header Field](/specs/rfc7240.html)
-* RFC 8288: [Web Linking](/specs/rfc8288.html) - *link relations*
+* RFC 8288: [Web Linking](/specs/rfc8288.html)
 
 ### Connection and Intermediary Extensions
 
@@ -48,5 +48,5 @@ list of HTTP extensions, see the relevant registry.
 * RFC 7617: [HTTP Basic Authentication](/specs/rfc7617.html)
 * RFC 8188: [Encrypted Content-Encoding](/specs/rfc8188.html)
 * RFC 8470: [Using Early Data in HTTP](/specs/rfc8470.html)
-* RFC 9421: [HTTP Message Signatures](/specs/rfc9421.html) -- [online demo](https://httpsig.org)
+* RFC 9421: [HTTP Message Signatures](/specs/rfc9421.html) ([online demo](https://httpsig.org))
 * RFC 9530: [Digest Fields](/specs/rfc9530.html)

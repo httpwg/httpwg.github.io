@@ -21,7 +21,7 @@ These RFCs collectively obsolete all preceding RFCs defining HTTP, including **R
 
 Also relevant is the Structured Field Values specification, which is used in a growing number of headers and trailers:
 
- * RFC 8941: [Structured Field Values for HTTP](/specs/rfc8941.html)
+ * RFC 8941: [Structured Field Values for HTTP](/specs/rfc8941.html) ([test suite](https://github.com/httpwg/structured-field-tests))
  
 Protocols built "on top" of HTTP should follow Best Current Practice, as documented here:
 
