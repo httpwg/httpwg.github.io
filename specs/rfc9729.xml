@@ -1,0 +1,1110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-ietf-httpbis-unprompted-auth-12" category="std" consensus="true" submissionType="IETF" number="9729" obsoletes="" updates="" xml:lang="en" tocInclude="true" sortRefs="true" symRefs="true" prepTime="2025-02-14T10:42:28" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-unprompted-auth-12" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9729" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title>The Concealed HTTP Authentication Scheme</title>
+    <seriesInfo name="RFC" value="9729" stream="IETF"/>
+    <author initials="D." surname="Schinazi" fullname="David Schinazi">
+      <organization showOnFrontPage="true">Google LLC</organization>
+      <address>
+        <postal>
+          <street>1600 Amphitheatre Parkway</street>
+          <city>Mountain View</city>
+          <region>CA</region>
+          <code>94043</code>
+          <country>United States of America</country>
+        </postal>
+        <email>dschinazi.ietf@gmail.com</email>
+      </address>
+    </author>
+    <author initials="D." surname="Oliver" fullname="David M. Oliver">
+      <organization showOnFrontPage="true">Guardian Project</organization>
+      <address>
+        <email>david@guardianproject.info</email>
+        <uri>https://guardianproject.info</uri>
+      </address>
+    </author>
+    <author initials="J." surname="Hoyland" fullname="Jonathan Hoyland">
+      <organization showOnFrontPage="true">Cloudflare Inc.</organization>
+      <address>
+        <email>jonathan.hoyland@gmail.com</email>
+      </address>
+    </author>
+    <date month="02" year="2025"/>
+    <area>Web and Internet Transport</area>
+    <workgroup>HTTPBIS</workgroup>
+    <keyword>secure</keyword>
+    <keyword>tunnels</keyword>
+    <keyword>masque</keyword>
+    <keyword>http-ng</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">Most HTTP authentication schemes are probeable in the sense that it is possible
+for an unauthenticated client to probe whether an origin serves resources that
+require authentication. It is possible for an origin to hide the fact that it
+requires authentication by not generating Unauthorized status codes; however,
+that only works with non-cryptographic authentication schemes: cryptographic
+signatures require a fresh nonce to be signed. Prior to this document, there
+was no existing way for the origin to share such a nonce without exposing the
+fact that it serves resources that require authentication. This document
+defines a new non-probeable cryptographic authentication scheme.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9729" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-conventions-and-definitions">Conventions and Definitions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-concealed-http-authenti">The Concealed HTTP Authentication Scheme</xref></t>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-client-handling">Client Handling</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.3.2">
+              <li pn="section-toc.1-1.3.2.1">
+                <t indent="0" pn="section-toc.1-1.3.2.1.1"><xref derivedContent="3.1" format="counter" sectionFormat="of" target="section-3.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-key-exporter-context">Key Exporter Context</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.3.2.1.2">
+                  <li pn="section-toc.1-1.3.2.1.2.1">
+                    <t indent="0" pn="section-toc.1-1.3.2.1.2.1.1"><xref derivedContent="3.1.1" format="counter" sectionFormat="of" target="section-3.1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-public-key-encoding">Public Key Encoding</xref></t>
+                  </li>
+                </ul>
+              </li>
+              <li pn="section-toc.1-1.3.2.2">
+                <t indent="0" pn="section-toc.1-1.3.2.2.1"><xref derivedContent="3.2" format="counter" sectionFormat="of" target="section-3.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-key-exporter-output">Key Exporter Output</xref></t>
+              </li>
+              <li pn="section-toc.1-1.3.2.3">
+                <t indent="0" pn="section-toc.1-1.3.2.3.1"><xref derivedContent="3.3" format="counter" sectionFormat="of" target="section-3.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-signature-computation">Signature Computation</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-authentication-parameters">Authentication Parameters</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.4.2">
+              <li pn="section-toc.1-1.4.2.1">
+                <t indent="0" pn="section-toc.1-1.4.2.1.1"><xref derivedContent="4.1" format="counter" sectionFormat="of" target="section-4.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-k-parameter">The k Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.2">
+                <t indent="0" pn="section-toc.1-1.4.2.2.1"><xref derivedContent="4.2" format="counter" sectionFormat="of" target="section-4.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-a-parameter">The a Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.3">
+                <t indent="0" pn="section-toc.1-1.4.2.3.1"><xref derivedContent="4.3" format="counter" sectionFormat="of" target="section-4.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-p-parameter">The p Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.4">
+                <t indent="0" pn="section-toc.1-1.4.2.4.1"><xref derivedContent="4.4" format="counter" sectionFormat="of" target="section-4.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-s-parameter">The s Parameter</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.5">
+                <t indent="0" pn="section-toc.1-1.4.2.5.1"><xref derivedContent="4.5" format="counter" sectionFormat="of" target="section-4.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-v-parameter">The v Parameter</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-example">Example</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-server-handling">Server Handling</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-frontend-handling">Frontend Handling</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-communication-between-front">Communication Between Frontend and Backend</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.3">
+                <t indent="0" pn="section-toc.1-1.6.2.3.1"><xref derivedContent="6.3" format="counter" sectionFormat="of" target="section-6.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-backend-handling">Backend Handling</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.4">
+                <t indent="0" pn="section-toc.1-1.6.2.4.1"><xref derivedContent="6.4" format="counter" sectionFormat="of" target="section-6.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-non-probeable-server-handli">Non-Probeable Server Handling</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="7" format="counter" sectionFormat="of" target="section-7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-requirements-on-tls-usage">Requirements on TLS Usage</xref></t>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="8" format="counter" sectionFormat="of" target="section-8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.9">
+            <t indent="0" pn="section-toc.1-1.9.1"><xref derivedContent="9" format="counter" sectionFormat="of" target="section-9"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.9.2">
+              <li pn="section-toc.1-1.9.2.1">
+                <t indent="0" pn="section-toc.1-1.9.2.1.1"><xref derivedContent="9.1" format="counter" sectionFormat="of" target="section-9.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-authentication-schemes">HTTP Authentication Schemes Registry</xref></t>
+              </li>
+              <li pn="section-toc.1-1.9.2.2">
+                <t indent="0" pn="section-toc.1-1.9.2.2.1"><xref derivedContent="9.2" format="counter" sectionFormat="of" target="section-9.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-tls-keying-material-exporte">TLS Keying Material Exporter Labels</xref></t>
+              </li>
+              <li pn="section-toc.1-1.9.2.3">
+                <t indent="0" pn="section-toc.1-1.9.2.3.1"><xref derivedContent="9.3" format="counter" sectionFormat="of" target="section-9.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-http-field-name">HTTP Field Name</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.10">
+            <t indent="0" pn="section-toc.1-1.10.1"><xref derivedContent="10" format="counter" sectionFormat="of" target="section-10"/>. <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.10.2">
+              <li pn="section-toc.1-1.10.2.1">
+                <t indent="0" pn="section-toc.1-1.10.2.1.1"><xref derivedContent="10.1" format="counter" sectionFormat="of" target="section-10.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.10.2.2">
+                <t indent="0" pn="section-toc.1-1.10.2.2.1"><xref derivedContent="10.2" format="counter" sectionFormat="of" target="section-10.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.11">
+            <t indent="0" pn="section-toc.1-1.11.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgments">Acknowledgments</xref></t>
+          </li>
+          <li pn="section-toc.1-1.12">
+            <t indent="0" pn="section-toc.1-1.12.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.b"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">HTTP authentication schemes (see <xref section="11" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-11" derivedContent="HTTP"/>) allow origins
+to restrict access for some resources to only authenticated requests. While
+these schemes commonly involve a challenge where the origin asks the client to
+provide authentication information, it is possible for clients to send such
+information unprompted. This is particularly useful in cases where an origin
+wants to offer a service or capability only to "those who know", while all
+others are given no indication the service or capability exists. Such designs
+rely on an externally defined mechanism by which keys are distributed. For
+example, a company might offer remote employee access to company services
+directly via its website using their employee credentials or offer access to
+limited special capabilities for specific employees while making discovering
+(or probing for) such capabilities difficult. As another example, members of
+less well-defined communities might use more ephemeral keys to acquire access
+to geography- or capability-specific resources, as issued by an entity whose
+user base is larger than the available resources can support (by having that
+entity metering the availability of keys temporally or geographically).</t>
+      <t indent="0" pn="section-1-2">While digital-signature-based HTTP authentication schemes already exist (e.g.,
+<xref target="RFC7486" format="default" sectionFormat="of" derivedContent="HOBA"/>), they rely on the origin explicitly sending a fresh
+challenge to the client, to ensure that the signature input is fresh. That
+makes the origin probeable as it sends the challenge to unauthenticated
+clients. This document defines a new signature-based authentication scheme that
+is not probeable.</t>
+      <section anchor="conventions" numbered="true" removeInRFC="false" toc="include" pn="section-1.1">
+        <name slugifiedName="name-conventions-and-definitions">Conventions and Definitions</name>
+        <t indent="0" pn="section-1.1-1">The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+"<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> when, and only when, they
+appear in all capitals, as shown here.</t>
+        <t indent="0" pn="section-1.1-2">This document uses the notation from <xref section="1.3" sectionFormat="of" target="RFC9000" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9000#section-1.3" derivedContent="QUIC"/>.</t>
+        <t indent="0" pn="section-1.1-3">Various examples in this document contain long lines that may be folded,
+as described in <xref target="RFC8792" format="default" sectionFormat="of" derivedContent="RFC8792"/>.</t>
+      </section>
+    </section>
+    <section anchor="the-concealed-http-authentication-scheme" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-the-concealed-http-authenti">The Concealed HTTP Authentication Scheme</name>
+      <t indent="0" pn="section-2-1">This document defines the "Concealed" HTTP authentication scheme. It uses
+asymmetric cryptography. Clients possess a key ID and a public/private key
+pair, and origin servers maintain a mapping of authorized key IDs to associated
+public keys.</t>
+      <t indent="0" pn="section-2-2">The client uses a TLS keying material exporter to generate data to be signed
+(see <xref target="client" format="default" sectionFormat="of" derivedContent="Section 3"/>) then sends the signature using the Authorization (or
+Proxy-Authorization) header field (see <xref section="11" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-11" derivedContent="HTTP"/>). The signature
+and additional information are exchanged using authentication parameters (see
+<xref target="auth-params" format="default" sectionFormat="of" derivedContent="Section 4"/>). Once the server receives these, it can check whether the
+signature validates against an entry in its database of known keys. The server
+can then use the validation result to influence its response to the client, for
+example, by restricting access to certain resources.</t>
+    </section>
+    <section anchor="client" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-client-handling">Client Handling</name>
+      <t indent="0" pn="section-3-1">When a client wishes to use the Concealed HTTP authentication scheme with a
+request, it <bcp14>SHALL</bcp14> compute the authentication proof using a TLS keying material
+exporter with the following parameters:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-3-2">
+        <li pn="section-3-2.1">
+          <t indent="0" pn="section-3-2.1.1">The label is set to "EXPORTER-HTTP-Concealed-Authentication".</t>
+        </li>
+        <li pn="section-3-2.2">
+          <t indent="0" pn="section-3-2.2.1">The context is set to the structure described in <xref target="context" format="default" sectionFormat="of" derivedContent="Section 3.1"/>.</t>
+        </li>
+        <li pn="section-3-2.3">
+          <t indent="0" pn="section-3-2.3.1">The exporter output length is set to 48 bytes (see <xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/>).</t>
+        </li>
+      </ul>
+      <t indent="0" pn="section-3-3">Note that TLS 1.3 keying material exporters are defined in <xref section="7.5" sectionFormat="of" target="RFC8446" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8446#section-7.5" derivedContent="TLS"/>, while TLS 1.2 keying material exporters are defined in
+<xref target="RFC5705" format="default" sectionFormat="of" derivedContent="KEY-EXPORT"/>.</t>
+      <section anchor="context" numbered="true" removeInRFC="false" toc="include" pn="section-3.1">
+        <name slugifiedName="name-key-exporter-context">Key Exporter Context</name>
+        <t indent="0" pn="section-3.1-1">The TLS key exporter context is described in <xref target="fig-context" format="default" sectionFormat="of" derivedContent="Figure 1"/>, using the
+notation from <xref section="1.3" sectionFormat="of" target="RFC9000" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9000#section-1.3" derivedContent="QUIC"/>:</t>
+        <figure anchor="fig-context" align="left" suppress-title="false" pn="figure-1">
+          <name slugifiedName="name-key-exporter-context-format">Key Exporter Context Format</name>
+          <artwork align="left" pn="section-3.1-2.1">
+  Signature Algorithm (16),
+  Key ID Length (i),
+  Key ID (..),
+  Public Key Length (i),
+  Public Key (..),
+  Scheme Length (i),
+  Scheme (..),
+  Host Length (i),
+  Host (..),
+  Port (16),
+  Realm Length (i),
+  Realm (..),
+</artwork>
+        </figure>
+        <t indent="0" pn="section-3.1-3">The key exporter context contains the following fields:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-3.1-4">
+          <dt pn="section-3.1-4.1">Signature Algorithm:</dt>
+          <dd pn="section-3.1-4.2">
+            <t indent="0" pn="section-3.1-4.2.1">The signature scheme sent in the <tt>s</tt> Parameter (see <xref target="parameter-s" format="default" sectionFormat="of" derivedContent="Section 4.4"/>).</t>
+          </dd>
+          <dt pn="section-3.1-4.3">Key ID:</dt>
+          <dd pn="section-3.1-4.4">
+            <t indent="0" pn="section-3.1-4.4.1">The key ID sent in the <tt>k</tt> Parameter (see <xref target="parameter-k" format="default" sectionFormat="of" derivedContent="Section 4.1"/>).</t>
+          </dd>
+          <dt pn="section-3.1-4.5">Public Key:</dt>
+          <dd pn="section-3.1-4.6">
+            <t indent="0" pn="section-3.1-4.6.1">The public key used by the server to validate the signature provided by the
+client. Its encoding is described in <xref target="public-key-encoding" format="default" sectionFormat="of" derivedContent="Section 3.1.1"/>.</t>
+          </dd>
+          <dt pn="section-3.1-4.7">Scheme:</dt>
+          <dd pn="section-3.1-4.8">
+            <t indent="0" pn="section-3.1-4.8.1">The scheme for this request, encoded using the format of the scheme portion
+of a URI as defined in <xref section="3.1" sectionFormat="of" target="RFC3986" format="default" derivedLink="https://rfc-editor.org/rfc/rfc3986#section-3.1" derivedContent="URI"/>.</t>
+          </dd>
+          <dt pn="section-3.1-4.9">Host:</dt>
+          <dd pn="section-3.1-4.10">
+            <t indent="0" pn="section-3.1-4.10.1">The host for this request, encoded using the format of the host portion of a
+URI as defined in <xref section="3.2.2" sectionFormat="of" target="RFC3986" format="default" derivedLink="https://rfc-editor.org/rfc/rfc3986#section-3.2.2" derivedContent="URI"/>.</t>
+          </dd>
+          <dt pn="section-3.1-4.11">Port:</dt>
+          <dd pn="section-3.1-4.12">
+            <t indent="0" pn="section-3.1-4.12.1">The port for this request, encoded in network byte order. Note that the port
+is either included in the URI or is the default port for the scheme in use;
+see <xref section="3.2.3" sectionFormat="of" target="RFC3986" format="default" derivedLink="https://rfc-editor.org/rfc/rfc3986#section-3.2.3" derivedContent="URI"/>.</t>
+          </dd>
+          <dt pn="section-3.1-4.13">Realm:</dt>
+          <dd pn="section-3.1-4.14">
+            <t indent="0" pn="section-3.1-4.14.1">The realm of authentication that is sent in the realm authentication
+parameter (see <xref section="11.5" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-11.5" derivedContent="HTTP"/>). If the realm authentication parameter is
+not present, this <bcp14>SHALL</bcp14> be empty. This document does not define a means for the
+origin to communicate a realm to the client. If a client is not configured to
+use a specific realm, it <bcp14>SHALL</bcp14> use an empty realm and <bcp14>SHALL NOT</bcp14> send the realm
+authentication parameter.</t>
+          </dd>
+        </dl>
+        <t indent="0" pn="section-3.1-5">The Signature Algorithm and Port fields are encoded as unsigned 16-bit integers
+in network byte order. The Key ID, Public Key, Scheme, Host, and Realm fields
+are length-prefixed strings; they are preceded by a Length field that
+represents their length in bytes. These length fields are encoded using the
+variable-length integer encoding from <xref section="16" sectionFormat="of" target="RFC9000" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9000#section-16" derivedContent="QUIC"/> and <bcp14>MUST</bcp14> be
+encoded in the minimum number of bytes necessary.</t>
+        <section anchor="public-key-encoding" numbered="true" removeInRFC="false" toc="include" pn="section-3.1.1">
+          <name slugifiedName="name-public-key-encoding">Public Key Encoding</name>
+          <t indent="0" pn="section-3.1.1-1">Both the "Public Key" field of the TLS key exporter context (see above) and the
+<tt>a</tt> Parameter (see <xref target="parameter-a" format="default" sectionFormat="of" derivedContent="Section 4.2"/>) carry the same public key. The encoding of
+the public key is determined by the signature algorithm in use as follows:</t>
+          <dl indent="3" newline="false" spacing="normal" pn="section-3.1.1-2">
+            <dt pn="section-3.1.1-2.1">RSASSA-PSS algorithms:</dt>
+            <dd pn="section-3.1.1-2.2">
+              <t indent="0" pn="section-3.1.1-2.2.1">The public key is an RSAPublicKey structure <xref target="RFC8017" format="default" sectionFormat="of" derivedContent="PKCS1"/> encoded in DER
+<xref target="X.690" format="default" sectionFormat="of" derivedContent="X.690"/>. BER encodings that are not DER <bcp14>MUST</bcp14> be rejected.</t>
+            </dd>
+            <dt pn="section-3.1.1-2.3">ECDSA algorithms:</dt>
+            <dd pn="section-3.1.1-2.4">
+              <t indent="0" pn="section-3.1.1-2.4.1">The public key is an UncompressedPointRepresentation structure defined in
+<xref section="4.2.8.2" sectionFormat="of" target="RFC8446" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8446#section-4.2.8.2" derivedContent="TLS"/>, using the curve specified by the SignatureScheme.</t>
+            </dd>
+            <dt pn="section-3.1.1-2.5">EdDSA algorithms:</dt>
+            <dd pn="section-3.1.1-2.6">
+              <t indent="0" pn="section-3.1.1-2.6.1">The public key is the byte string encoding defined in <xref target="RFC8032" format="default" sectionFormat="of" derivedContent="EdDSA"/>.</t>
+            </dd>
+          </dl>
+          <t indent="0" pn="section-3.1.1-3">This document does not define the public key encodings for other algorithms. In
+order for a SignatureScheme to be usable with the Concealed HTTP authentication
+scheme, its public key encoding needs to be defined in a corresponding document.</t>
+        </section>
+      </section>
+      <section anchor="output" numbered="true" removeInRFC="false" toc="include" pn="section-3.2">
+        <name slugifiedName="name-key-exporter-output">Key Exporter Output</name>
+        <t indent="0" pn="section-3.2-1">The key exporter output is 48 bytes long. Of those, the first 32 bytes are part
+of the input to the signature and the next 16 bytes are sent alongside the
+signature. This allows the recipient to confirm that the exporter produces the
+right values. This is described in <xref target="fig-output" format="default" sectionFormat="of" derivedContent="Figure 2"/>, using the notation from
+<xref section="1.3" sectionFormat="of" target="RFC9000" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9000#section-1.3" derivedContent="QUIC"/>:</t>
+        <figure anchor="fig-output" align="left" suppress-title="false" pn="figure-2">
+          <name slugifiedName="name-key-exporter-output-format">Key Exporter Output Format</name>
+          <artwork align="left" pn="section-3.2-2.1">
+  Signature Input (256),
+  Verification (128),
+</artwork>
+        </figure>
+        <t indent="0" pn="section-3.2-3">The key exporter output contains the following fields:</t>
+        <dl indent="3" newline="false" spacing="normal" pn="section-3.2-4">
+          <dt pn="section-3.2-4.1">Signature Input:</dt>
+          <dd pn="section-3.2-4.2">
+            <t indent="0" pn="section-3.2-4.2.1">This is part of the data signed using the client's chosen asymmetric private
+key (see <xref target="computation" format="default" sectionFormat="of" derivedContent="Section 3.3"/>).</t>
+          </dd>
+          <dt pn="section-3.2-4.3">Verification:</dt>
+          <dd pn="section-3.2-4.4">
+            <t indent="0" pn="section-3.2-4.4.1">The verification is transmitted to the server using the <tt>v</tt> Parameter (see
+<xref target="parameter-v" format="default" sectionFormat="of" derivedContent="Section 4.5"/>).</t>
+          </dd>
+        </dl>
+      </section>
+      <section anchor="computation" numbered="true" removeInRFC="false" toc="include" pn="section-3.3">
+        <name slugifiedName="name-signature-computation">Signature Computation</name>
+        <t indent="0" pn="section-3.3-1">Once the Signature Input has been extracted from the key exporter output (see
+<xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/>), it is prefixed with static data before being signed. The signature
+is computed over the concatenation of:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-3.3-2">
+          <li pn="section-3.3-2.1">
+            <t indent="0" pn="section-3.3-2.1.1">A string that consists of octet 32 (0x20) repeated 64 times</t>
+          </li>
+          <li pn="section-3.3-2.2">
+            <t indent="0" pn="section-3.3-2.2.1">The context string "HTTP Concealed Authentication"</t>
+          </li>
+          <li pn="section-3.3-2.3">
+            <t indent="0" pn="section-3.3-2.3.1">A single 0 byte that serves as a separator</t>
+          </li>
+          <li pn="section-3.3-2.4">
+            <t indent="0" pn="section-3.3-2.4.1">The Signature Input extracted from the key exporter output (see <xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/>)</t>
+          </li>
+        </ul>
+        <t indent="0" pn="section-3.3-3">For example, if the Signature Input has all its 32 bytes set to 01, the content
+covered by the signature (in hexadecimal format) would be:</t>
+        <figure anchor="fig-sig-example" align="left" suppress-title="false" pn="figure-3">
+          <name slugifiedName="name-example-content-covered-by-">Example Content Covered by Signature</name>
+          <artwork align="left" pn="section-3.3-4.1">
+2020202020202020202020202020202020202020202020202020202020202020
+2020202020202020202020202020202020202020202020202020202020202020
+48545450205369676E61747572652041757468656E7469636174696F6E
+00
+0101010101010101010101010101010101010101010101010101010101010101
+</artwork>
+        </figure>
+        <t indent="0" pn="section-3.3-5">The purpose of this static prefix is to mitigate issues that could arise if
+authentication asymmetric keys were accidentally reused across protocols (even
+though this is forbidden, see <xref target="security" format="default" sectionFormat="of" derivedContent="Section 8"/>). This construction mirrors that of
+the TLS 1.3 CertificateVerify message defined in <xref section="4.4.3" sectionFormat="of" target="RFC8446" format="default" derivedLink="https://rfc-editor.org/rfc/rfc8446#section-4.4.3" derivedContent="TLS"/>.</t>
+        <t indent="0" pn="section-3.3-6">The resulting signature is then transmitted to the server using the <tt>p</tt>
+Parameter (see <xref target="parameter-p" format="default" sectionFormat="of" derivedContent="Section 4.3"/>).</t>
+      </section>
+    </section>
+    <section anchor="auth-params" numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-authentication-parameters">Authentication Parameters</name>
+      <t indent="0" pn="section-4-1">This specification defines the following authentication parameters.</t>
+      <t indent="0" pn="section-4-2">All of the byte sequences below are encoded using base64url (see <xref section="5" sectionFormat="of" target="RFC4648" format="default" derivedLink="https://rfc-editor.org/rfc/rfc4648#section-5" derivedContent="BASE64"/>) without quotes and without padding. In other words, the
+values of these byte-sequence authentication parameters <bcp14>MUST NOT</bcp14> include any
+characters other than ASCII letters, digits, dash, and underscore.</t>
+      <t indent="0" pn="section-4-3">The integer below is encoded without a minus and without leading zeroes. In
+other words, the value of this integer authentication parameter <bcp14>MUST NOT</bcp14>
+include any characters other than digits and <bcp14>MUST NOT</bcp14> start with a zero unless
+the full value is "0".</t>
+      <t indent="0" pn="section-4-4">Using the syntax from <xref target="RFC5234" format="default" sectionFormat="of" derivedContent="ABNF"/>:</t>
+      <figure anchor="fig-param" align="left" suppress-title="false" pn="figure-4">
+        <name slugifiedName="name-authentication-parameter-va">Authentication Parameter Value ABNF</name>
+        <sourcecode type="abnf" markers="false" pn="section-4-5.1">
+concealed-byte-sequence-param-value = *( ALPHA / DIGIT / "-" / "_" )
+concealed-integer-param-value =  %x31-39 1*4( DIGIT ) / "0"
+</sourcecode>
+      </figure>
+      <section anchor="parameter-k" numbered="true" removeInRFC="false" toc="include" pn="section-4.1">
+        <name slugifiedName="name-the-k-parameter">The k Parameter</name>
+        <t indent="0" pn="section-4.1-1">The <bcp14>REQUIRED</bcp14> "k" (key ID) Parameter is a byte sequence that identifies which
+key the client wishes to use to authenticate. This is used by the backend to
+point to an entry in a server-side database of known keys (see <xref target="backend" format="default" sectionFormat="of" derivedContent="Section 6.3"/>).</t>
+      </section>
+      <section anchor="parameter-a" numbered="true" removeInRFC="false" toc="include" pn="section-4.2">
+        <name slugifiedName="name-the-a-parameter">The a Parameter</name>
+        <t indent="0" pn="section-4.2-1">The <bcp14>REQUIRED</bcp14> "a" (public key) Parameter is a byte sequence that specifies the
+public key used by the server to validate the signature provided by the client.
+This avoids key confusion issues (see <xref target="SEEMS-LEGIT" format="default" sectionFormat="of" derivedContent="SEEMS-LEGIT"/>). The encoding of the
+public key is described in <xref target="public-key-encoding" format="default" sectionFormat="of" derivedContent="Section 3.1.1"/>.</t>
+      </section>
+      <section anchor="parameter-p" numbered="true" removeInRFC="false" toc="include" pn="section-4.3">
+        <name slugifiedName="name-the-p-parameter">The p Parameter</name>
+        <t indent="0" pn="section-4.3-1">The <bcp14>REQUIRED</bcp14> "p" (proof) Parameter is a byte sequence that specifies the proof
+that the client provides to attest to possessing the credential that matches
+its key ID.</t>
+      </section>
+      <section anchor="parameter-s" numbered="true" removeInRFC="false" toc="include" pn="section-4.4">
+        <name slugifiedName="name-the-s-parameter">The s Parameter</name>
+        <t indent="0" pn="section-4.4-1">The <bcp14>REQUIRED</bcp14> "s" (signature scheme) Parameter is an integer that specifies the
+signature scheme used to compute the proof transmitted in the <tt>p</tt> Parameter.
+Its value is an integer between 0 and 65535 inclusive from the IANA "TLS
+SignatureScheme" registry maintained at
+<eref target="https://www.iana.org/assignments/tls-parameters" brackets="angle"/>.</t>
+      </section>
+      <section anchor="parameter-v" numbered="true" removeInRFC="false" toc="include" pn="section-4.5">
+        <name slugifiedName="name-the-v-parameter">The v Parameter</name>
+        <t indent="0" pn="section-4.5-1">The <bcp14>REQUIRED</bcp14> "v" (verification) Parameter is a byte sequence that specifies the
+verification that the client provides to attest to possessing the key exporter
+output (see <xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/> for details). This avoids issues with signature schemes
+where certain keys can generate signatures that are valid for multiple inputs
+(see <xref target="SEEMS-LEGIT" format="default" sectionFormat="of" derivedContent="SEEMS-LEGIT"/>).</t>
+      </section>
+    </section>
+    <section anchor="example" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-example">Example</name>
+      <t indent="0" pn="section-5-1">For example, a client using the key ID "basement" and the signature algorithm
+Ed25519 <xref target="RFC8410" format="default" sectionFormat="of" derivedContent="ED25519"/> could produce the following header field:</t>
+      <figure anchor="fig-hdr-example" align="left" suppress-title="false" pn="figure-5">
+        <name slugifiedName="name-example-header-field">Example Header Field</name>
+        <sourcecode type="http-message" markers="false" pn="section-5-2.1">
+NOTE: '\' line wrapping per RFC 8792
+
+Authorization: Concealed \
+  k=YmFzZW1lbnQ, \
+  a=VGhpcyBpcyBh-HB1YmxpYyBrZXkgaW4gdXNl_GhlcmU, \
+  s=2055, \
+  v=dmVyaWZpY2F0aW9u_zE2Qg, \
+  p=QzpcV2luZG93c_xTeXN0ZW0zMlxkcml2ZXJz-ENyb3dkU\
+    3RyaWtlXEMtMDAwMDAwMDAyOTEtMD-wMC0w_DAwLnN5cw
+</sourcecode>
+      </figure>
+    </section>
+    <section anchor="server-handling" numbered="true" removeInRFC="false" toc="include" pn="section-6">
+      <name slugifiedName="name-server-handling">Server Handling</name>
+      <t indent="0" pn="section-6-1">In this section, we subdivide the server role in two:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-6-2">
+        <li pn="section-6-2.1">
+          <t indent="0" pn="section-6-2.1.1">The "frontend" runs in the HTTP server that terminates the TLS or QUIC
+connection created by the client.</t>
+        </li>
+        <li pn="section-6-2.2">
+          <t indent="0" pn="section-6-2.2.1">The "backend" runs in the HTTP server that has access to the database of
+accepted key identifiers and public keys.</t>
+        </li>
+      </ul>
+      <t indent="0" pn="section-6-3">In most deployments, we expect both the frontend and backend roles to be
+implemented in a single HTTP origin server (as defined in <xref section="3.6" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3.6" derivedContent="HTTP"/>). However, these roles can be split such that the frontend is an HTTP
+gateway (as defined in <xref section="3.7" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3.7" derivedContent="HTTP"/>) and the backend is an HTTP
+origin server.</t>
+      <section anchor="frontend-handling" numbered="true" removeInRFC="false" toc="include" pn="section-6.1">
+        <name slugifiedName="name-frontend-handling">Frontend Handling</name>
+        <t indent="0" pn="section-6.1-1">If a frontend is configured to check the Concealed HTTP authentication scheme, it
+will parse the Authorization (or Proxy-Authorization) header field. If the
+authentication scheme is set to "Concealed", the frontend <bcp14>MUST</bcp14> validate that
+all the required authentication parameters are present and can be parsed
+correctly as defined in <xref target="auth-params" format="default" sectionFormat="of" derivedContent="Section 4"/>. If any parameter is missing or fails
+to parse, the frontend <bcp14>MUST</bcp14> ignore the entire Authorization (or
+Proxy-Authorization) header field.</t>
+        <t indent="0" pn="section-6.1-2">The frontend then uses the data from these authentication parameters to compute
+the key exporter output, as defined in <xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/>. The frontend then shares the
+header field and the key exporter output with the backend.</t>
+      </section>
+      <section anchor="communication-between-frontend-and-backend" numbered="true" removeInRFC="false" toc="include" pn="section-6.2">
+        <name slugifiedName="name-communication-between-front">Communication Between Frontend and Backend</name>
+        <t indent="0" pn="section-6.2-1">If the frontend and backend roles are implemented in the same machine, this can
+be handled by a simple function call.</t>
+        <t indent="0" pn="section-6.2-2">If the roles are split between two separate HTTP servers, then the backend
+won't be able to directly access the TLS keying material exporter from the TLS
+connection between the client and frontend, so the frontend needs to explicitly
+send it. This document defines the "Concealed-Auth-Export" request header field
+for this purpose. The Concealed-Auth-Export header field's value is a
+Structured Field Byte Sequence (see <xref section="3.3.5" sectionFormat="of" target="RFC9651" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.3.5" derivedContent="STRUCTURED-FIELDS"/>) that contains the 48-byte key exporter output
+(see <xref target="output" format="default" sectionFormat="of" derivedContent="Section 3.2"/>), without any parameters. Note that Structured Field Byte
+Sequences are encoded using the non-URL-safe variant of base64. For example:</t>
+        <figure anchor="fig-int-hdr-example" align="left" suppress-title="false" pn="figure-6">
+          <name slugifiedName="name-example-concealed-auth-expo">Example Concealed-Auth-Export Header Field</name>
+          <sourcecode type="http-message" markers="false" pn="section-6.2-3.1">
+NOTE: '\' line wrapping per RFC 8792
+
+Concealed-Auth-Export: :VGhpc+BleGFtcGxlIFRMU/BleHBvcn\
+  Rlc+BvdXRwdXQ/aXMgNDggYnl0ZXMgI/+h:
+</sourcecode>
+        </figure>
+        <t indent="0" pn="section-6.2-4">The frontend <bcp14>SHALL</bcp14> forward the HTTP request to the backend, including the
+original unmodified Authorization (or Proxy-Authorization) header field and the
+newly added Concealed-Auth-Export header field.</t>
+        <t indent="0" pn="section-6.2-5">Note that, since the security of this mechanism requires the key exporter
+output to be correct, backends need to trust frontends to send it truthfully.
+This trust relationship is common because the frontend already needs access to
+the TLS certificate private key in order to respond to requests. HTTP servers
+that parse the Concealed-Auth-Export header field <bcp14>MUST</bcp14> ignore it unless they
+have already established that they trust the sender. Similarly, frontends that
+send the Concealed-Auth-Export header field <bcp14>MUST</bcp14> ensure that they do not
+forward any Concealed-Auth-Export header field received from the client.</t>
+      </section>
+      <section anchor="backend" numbered="true" removeInRFC="false" toc="include" pn="section-6.3">
+        <name slugifiedName="name-backend-handling">Backend Handling</name>
+        <t indent="0" pn="section-6.3-1">Once the backend receives the Authorization (or Proxy-Authorization) header
+field and the key exporter output, it looks up the key ID in its database of
+public keys. The backend <bcp14>SHALL</bcp14> then perform the following checks:</t>
+        <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-6.3-2">
+          <li pn="section-6.3-2.1">
+            <t indent="0" pn="section-6.3-2.1.1">validate that all the required authentication parameters are present and can
+be parsed correctly as defined in <xref target="auth-params" format="default" sectionFormat="of" derivedContent="Section 4"/></t>
+          </li>
+          <li pn="section-6.3-2.2">
+            <t indent="0" pn="section-6.3-2.2.1">ensure the key ID is present in the backend's database and maps to a
+corresponding public key</t>
+          </li>
+          <li pn="section-6.3-2.3">
+            <t indent="0" pn="section-6.3-2.3.1">validate that the public key from the database is equal to the one in the
+Authorization (or Proxy-Authorization) header field</t>
+          </li>
+          <li pn="section-6.3-2.4">
+            <t indent="0" pn="section-6.3-2.4.1">validate that the verification field from the Authorization (or
+Proxy-Authorization) header field matches the one extracted from the key
+exporter output</t>
+          </li>
+          <li pn="section-6.3-2.5">
+            <t indent="0" pn="section-6.3-2.5.1">verify the cryptographic signature as defined in <xref target="computation" format="default" sectionFormat="of" derivedContent="Section 3.3"/></t>
+          </li>
+        </ul>
+        <t indent="0" pn="section-6.3-3">If all of these checks succeed, the backend can consider the request to be
+properly authenticated and can reply accordingly (the backend can also forward
+the request to another HTTP server).</t>
+        <t indent="0" pn="section-6.3-4">If any of the above checks fail, the backend <bcp14>MUST</bcp14> treat it as if the
+Authorization (or Proxy-Authorization) header field was missing.</t>
+      </section>
+      <section anchor="non-probeable-server-handling" numbered="true" removeInRFC="false" toc="include" pn="section-6.4">
+        <name slugifiedName="name-non-probeable-server-handli">Non-Probeable Server Handling</name>
+        <t indent="0" pn="section-6.4-1">Servers that wish to introduce resources whose existence cannot be probed need
+to ensure that they do not reveal any information about those resources to
+unauthenticated clients. In particular, such servers <bcp14>MUST</bcp14> respond to
+authentication failures with the exact same response that they would have used
+for nonexistent resources. For example, this can mean using HTTP status code
+404 (Not Found) instead of 401 (Unauthorized).</t>
+        <t indent="0" pn="section-6.4-2">The authentication checks described above can take time to compute, and an
+attacker could detect use of this mechanism if that time is observable by
+comparing the timing of a request for a known nonexistent resource to the
+timing of a request for a potentially authenticated resource. Servers can
+mitigate this observability by slightly delaying responses to some nonexistent
+resources such that the timing of the authentication verification is not
+observable. This delay needs to be carefully considered to avoid having the
+delay itself leak the fact that this origin uses this mechanism at all.</t>
+        <t indent="0" pn="section-6.4-3">Non-probeable resources also need to be non-discoverable for unauthenticated
+users. For example, if a server operator wishes to hide an authenticated
+resource by pretending it does not exist to unauthenticated users, then the
+server operator needs to ensure there are no unauthenticated pages with links
+to that resource and no other out-of-band ways for unauthenticated users to
+discover this resource.</t>
+      </section>
+    </section>
+    <section anchor="requirements-on-tls-usage" numbered="true" removeInRFC="false" toc="include" pn="section-7">
+      <name slugifiedName="name-requirements-on-tls-usage">Requirements on TLS Usage</name>
+      <t indent="0" pn="section-7-1">This authentication scheme is only defined for uses of HTTP with TLS
+<xref target="RFC8446" format="default" sectionFormat="of" derivedContent="TLS"/>. This includes any use of HTTP over TLS as typically used for
+HTTP/2 <xref target="RFC9113" format="default" sectionFormat="of" derivedContent="HTTP/2"/>, or HTTP/3 <xref target="RFC9114" format="default" sectionFormat="of" derivedContent="HTTP/3"/> where the transport protocol uses TLS as its
+authentication and key exchange mechanism <xref target="RFC9001" format="default" sectionFormat="of" derivedContent="QUIC-TLS"/>.</t>
+      <t indent="0" pn="section-7-2">Because the TLS keying material exporter is only secure for authentication when
+it is uniquely bound to the TLS session <xref target="RFC7627" format="default" sectionFormat="of" derivedContent="RFC7627"/>, the Concealed
+authentication scheme requires either one of the following properties:</t>
+      <ul spacing="normal" bare="false" empty="false" indent="3" pn="section-7-3">
+        <li pn="section-7-3.1">
+          <t indent="0" pn="section-7-3.1.1">The TLS version in use is greater than or equal to 1.3 <xref target="RFC8446" format="default" sectionFormat="of" derivedContent="TLS"/>.</t>
+        </li>
+        <li pn="section-7-3.2">
+          <t indent="0" pn="section-7-3.2.1">The TLS version in use is 1.2, and the extended master secret extension
+<xref target="RFC7627" format="default" sectionFormat="of" derivedContent="RFC7627"/> has been negotiated.</t>
+        </li>
+      </ul>
+      <t indent="0" pn="section-7-4">Clients <bcp14>MUST NOT</bcp14> use the Concealed HTTP authentication scheme on connections that do
+not meet one of the two properties above. If a server receives a request that
+uses this authentication scheme on a connection that meets neither of the above
+properties, the server <bcp14>MUST</bcp14> treat the request as if the authentication were not
+present.</t>
+    </section>
+    <section anchor="security" numbered="true" removeInRFC="false" toc="include" pn="section-8">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-8-1">The Concealed HTTP authentication scheme allows a client to authenticate to an
+origin server while guaranteeing freshness and without the need for the server
+to transmit a nonce to the client. This allows the server to accept
+authenticated clients without revealing that it supports or expects
+authentication for some resources. It also allows authentication without the
+client leaking the presence of authentication to observers due to cleartext
+TLS Client Hello extensions.</t>
+      <t indent="0" pn="section-8-2">Since the freshness described above is provided by a TLS key exporter, it can
+be as old as the underlying TLS connection. Servers can require better
+freshness by forcing clients to create new connections using mechanisms such as
+the GOAWAY frame (see <xref section="5.2" sectionFormat="of" target="RFC9114" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9114#section-5.2" derivedContent="HTTP/3"/>).</t>
+      <t indent="0" pn="section-8-3">The authentication proofs described in this document are not bound to
+individual HTTP requests; if the key is used for authentication proofs on
+multiple requests on the same connection, they will all be identical. This
+allows for better compression when sending over the wire, but it implies that
+client implementations that multiplex different security contexts over a single
+HTTP connection need to ensure that those contexts cannot read each other's
+header fields. Otherwise, one context would be able to replay the Authorization
+header field of another. This constraint is met by modern web browsers. If an
+attacker were to compromise the browser such that it could access another
+context's memory, the attacker might also be able to access the corresponding
+key, so binding authentication to requests would not provide much benefit in
+practice.</t>
+      <t indent="0" pn="section-8-4">Authentication asymmetric keys used for the Concealed HTTP authentication
+scheme <bcp14>MUST NOT</bcp14> be reused in other protocols. Even though we attempt to
+mitigate these issues by adding a static prefix to the signed data (see
+<xref target="computation" format="default" sectionFormat="of" derivedContent="Section 3.3"/>), reusing keys could undermine the security guarantees of the
+authentication.</t>
+      <t indent="0" pn="section-8-5">Origins offering this scheme can link requests that use the same key.
+However, requests are not linkable across origins if the keys used are specific
+to the individual origins using this scheme.</t>
+    </section>
+    <section anchor="iana" numbered="true" removeInRFC="false" toc="include" pn="section-9">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <section anchor="iana-schemes" numbered="true" removeInRFC="false" toc="include" pn="section-9.1">
+        <name slugifiedName="name-http-authentication-schemes">HTTP Authentication Schemes Registry</name>
+        <t indent="0" pn="section-9.1-1">IANA has registered the following entry in
+the "HTTP Authentication Schemes" registry maintained at
+<eref target="https://www.iana.org/assignments/http-authschemes" brackets="angle"/>:</t>
+        <dl spacing="compact" indent="3" newline="false" pn="section-9.1-2">
+          <dt pn="section-9.1-2.1">Authentication Scheme Name:</dt>
+          <dd pn="section-9.1-2.2">Concealed</dd>
+          <dt pn="section-9.1-2.3">Reference:</dt>
+          <dd pn="section-9.1-2.4">RFC 9729</dd>
+          <dt pn="section-9.1-2.5">Notes:</dt>
+          <dd pn="section-9.1-2.6">None</dd>
+        </dl>
+      </section>
+      <section anchor="iana-exporter-label" numbered="true" removeInRFC="false" toc="include" pn="section-9.2">
+        <name slugifiedName="name-tls-keying-material-exporte">TLS Keying Material Exporter Labels</name>
+        <t indent="0" pn="section-9.2-1">IANA has registered the following entry in
+the "TLS Exporter Labels" registry maintained at
+<eref target="https://www.iana.org/assignments/tls-parameters" brackets="angle"/>:</t>
+        <dl spacing="compact" indent="3" newline="false" pn="section-9.2-2">
+          <dt pn="section-9.2-2.1">Value:</dt>
+          <dd pn="section-9.2-2.2">EXPORTER-HTTP-Concealed-Authentication</dd>
+          <dt pn="section-9.2-2.3">DTLS-OK:</dt>
+          <dd pn="section-9.2-2.4">N</dd>
+          <dt pn="section-9.2-2.5">Recommended:</dt>
+          <dd pn="section-9.2-2.6">Y</dd>
+          <dt pn="section-9.2-2.7">Reference:</dt>
+          <dd pn="section-9.2-2.8">RFC 9729</dd>
+        </dl>
+      </section>
+      <section anchor="http-field-name" numbered="true" removeInRFC="false" toc="include" pn="section-9.3">
+        <name slugifiedName="name-http-field-name">HTTP Field Name</name>
+        <t indent="0" pn="section-9.3-1">IANA has registered the following entry in
+the "Hypertext Transfer Protocol (HTTP) Field Name Registry" maintained at
+<eref target="https://www.iana.org/assignments/http-fields" brackets="angle"/>:</t>
+        <dl spacing="compact" indent="3" newline="false" pn="section-9.3-2">
+          <dt pn="section-9.3-2.1">Field Name:</dt>
+          <dd pn="section-9.3-2.2">Concealed-Auth-Export</dd>
+          <dt pn="section-9.3-2.3">Status:</dt>
+          <dd pn="section-9.3-2.4">permanent</dd>
+          <dt pn="section-9.3-2.5">Structured Type:</dt>
+          <dd pn="section-9.3-2.6">Item</dd>
+          <dt pn="section-9.3-2.7">Reference:</dt>
+          <dd pn="section-9.3-2.8">RFC 9729</dd>
+          <dt pn="section-9.3-2.9">Comments:</dt>
+          <dd pn="section-9.3-2.10">None</dd>
+        </dl>
+      </section>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="I-D.schinazi-masque" to="MASQUE-ORIGINAL"/>
+    <displayreference target="RFC3986" to="URI"/>
+    <displayreference target="RFC4648" to="BASE64"/>
+    <displayreference target="RFC5234" to="ABNF"/>
+    <displayreference target="RFC5705" to="KEY-EXPORT"/>
+    <displayreference target="RFC7486" to="HOBA"/>
+    <displayreference target="RFC8017" to="PKCS1"/>
+    <displayreference target="RFC8032" to="EdDSA"/>
+    <displayreference target="RFC8410" to="ED25519"/>
+    <displayreference target="RFC8446" to="TLS"/>
+    <displayreference target="RFC9000" to="QUIC"/>
+    <displayreference target="RFC9001" to="QUIC-TLS"/>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="RFC9113" to="HTTP/2"/>
+    <displayreference target="RFC9114" to="HTTP/3"/>
+    <displayreference target="RFC9651" to="STRUCTURED-FIELDS"/>
+    <references anchor="sec-combined-references" pn="section-10">
+      <name slugifiedName="name-references">References</name>
+      <references anchor="sec-normative-references" pn="section-10.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC5234" target="https://www.rfc-editor.org/info/rfc5234" quoteTitle="true" derivedAnchor="ABNF">
+          <front>
+            <title>Augmented BNF for Syntax Specifications: ABNF</title>
+            <author fullname="D. Crocker" initials="D." role="editor" surname="Crocker"/>
+            <author fullname="P. Overell" initials="P." surname="Overell"/>
+            <date month="January" year="2008"/>
+            <abstract>
+              <t indent="0">Internet technical specifications often need to define a formal syntax. Over the years, a modified version of Backus-Naur Form (BNF), called Augmented BNF (ABNF), has been popular among many Internet specifications. The current specification documents ABNF. It balances compactness and simplicity with reasonable representational power. The differences between standard BNF and ABNF involve naming rules, repetition, alternatives, order-independence, and value ranges. This specification also supplies additional rule definitions and encoding for a core lexical analyzer of the type common to several Internet specifications. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="68"/>
+          <seriesInfo name="RFC" value="5234"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5234"/>
+        </reference>
+        <reference anchor="RFC4648" target="https://www.rfc-editor.org/info/rfc4648" quoteTitle="true" derivedAnchor="BASE64">
+          <front>
+            <title>The Base16, Base32, and Base64 Data Encodings</title>
+            <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+            <date month="October" year="2006"/>
+            <abstract>
+              <t indent="0">This document describes the commonly used base 64, base 32, and base 16 encoding schemes. It also discusses the use of line-feeds in encoded data, use of padding in encoded data, use of non-alphabet characters in encoded data, use of different encoding alphabets, and canonical encodings. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="4648"/>
+          <seriesInfo name="DOI" value="10.17487/RFC4648"/>
+        </reference>
+        <reference anchor="RFC8032" target="https://www.rfc-editor.org/info/rfc8032" quoteTitle="true" derivedAnchor="EdDSA">
+          <front>
+            <title>Edwards-Curve Digital Signature Algorithm (EdDSA)</title>
+            <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+            <author fullname="I. Liusvaara" initials="I." surname="Liusvaara"/>
+            <date month="January" year="2017"/>
+            <abstract>
+              <t indent="0">This document describes elliptic curve signature scheme Edwards-curve Digital Signature Algorithm (EdDSA). The algorithm is instantiated with recommended parameters for the edwards25519 and edwards448 curves. An example implementation and test vectors are provided.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8032"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8032"/>
+        </reference>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC5705" target="https://www.rfc-editor.org/info/rfc5705" quoteTitle="true" derivedAnchor="KEY-EXPORT">
+          <front>
+            <title>Keying Material Exporters for Transport Layer Security (TLS)</title>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="March" year="2010"/>
+            <abstract>
+              <t indent="0">A number of protocols wish to leverage Transport Layer Security (TLS) to perform key establishment but then use some of the keying material for their own purposes. This document describes a general mechanism for allowing that. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5705"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5705"/>
+        </reference>
+        <reference anchor="RFC8017" target="https://www.rfc-editor.org/info/rfc8017" quoteTitle="true" derivedAnchor="PKCS1">
+          <front>
+            <title>PKCS #1: RSA Cryptography Specifications Version 2.2</title>
+            <author fullname="K. Moriarty" initials="K." role="editor" surname="Moriarty"/>
+            <author fullname="B. Kaliski" initials="B." surname="Kaliski"/>
+            <author fullname="J. Jonsson" initials="J." surname="Jonsson"/>
+            <author fullname="A. Rusch" initials="A." surname="Rusch"/>
+            <date month="November" year="2016"/>
+            <abstract>
+              <t indent="0">This document provides recommendations for the implementation of public-key cryptography based on the RSA algorithm, covering cryptographic primitives, encryption schemes, signature schemes with appendix, and ASN.1 syntax for representing keys and for identifying the schemes.</t>
+              <t indent="0">This document represents a republication of PKCS #1 v2.2 from RSA Laboratories' Public-Key Cryptography Standards (PKCS) series. By publishing this RFC, change control is transferred to the IETF.</t>
+              <t indent="0">This document also obsoletes RFC 3447.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8017"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8017"/>
+        </reference>
+        <reference anchor="RFC9000" target="https://www.rfc-editor.org/info/rfc9000" quoteTitle="true" derivedAnchor="QUIC">
+          <front>
+            <title>QUIC: A UDP-Based Multiplexed and Secure Transport</title>
+            <author fullname="J. Iyengar" initials="J." role="editor" surname="Iyengar"/>
+            <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson"/>
+            <date month="May" year="2021"/>
+            <abstract>
+              <t indent="0">This document defines the core of the QUIC transport protocol. QUIC provides applications with flow-controlled streams for structured communication, low-latency connection establishment, and network path migration. QUIC includes security measures that ensure confidentiality, integrity, and availability in a range of deployment circumstances. Accompanying documents describe the integration of TLS for key negotiation, loss detection, and an exemplary congestion control algorithm.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9000"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9000"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC7627" target="https://www.rfc-editor.org/info/rfc7627" quoteTitle="true" derivedAnchor="RFC7627">
+          <front>
+            <title>Transport Layer Security (TLS) Session Hash and Extended Master Secret Extension</title>
+            <author fullname="K. Bhargavan" initials="K." role="editor" surname="Bhargavan"/>
+            <author fullname="A. Delignat-Lavaud" initials="A." surname="Delignat-Lavaud"/>
+            <author fullname="A. Pironti" initials="A." surname="Pironti"/>
+            <author fullname="A. Langley" initials="A." surname="Langley"/>
+            <author fullname="M. Ray" initials="M." surname="Ray"/>
+            <date month="September" year="2015"/>
+            <abstract>
+              <t indent="0">The Transport Layer Security (TLS) master secret is not cryptographically bound to important session parameters such as the server certificate. Consequently, it is possible for an active attacker to set up two sessions, one with a client and another with a server, such that the master secrets on the two sessions are the same. Thereafter, any mechanism that relies on the master secret for authentication, including session resumption, becomes vulnerable to a man-in-the-middle attack, where the attacker can simply forward messages back and forth between the client and server. This specification defines a TLS extension that contextually binds the master secret to a log of the full handshake that computes it, thus preventing such attacks.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7627"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7627"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC8792" target="https://www.rfc-editor.org/info/rfc8792" quoteTitle="true" derivedAnchor="RFC8792">
+          <front>
+            <title>Handling Long Lines in Content of Internet-Drafts and RFCs</title>
+            <author fullname="K. Watsen" initials="K." surname="Watsen"/>
+            <author fullname="E. Auerswald" initials="E." surname="Auerswald"/>
+            <author fullname="A. Farrel" initials="A." surname="Farrel"/>
+            <author fullname="Q. Wu" initials="Q." surname="Wu"/>
+            <date month="June" year="2020"/>
+            <abstract>
+              <t indent="0">This document defines two strategies for handling long lines in width-bounded text content. One strategy, called the "single backslash" strategy, is based on the historical use of a single backslash ('\') character to indicate where line-folding has occurred, with the continuation occurring with the first character that is not a space character (' ') on the next line. The second strategy, called the "double backslash" strategy, extends the first strategy by adding a second backslash character to identify where the continuation begins and is thereby able to handle cases not supported by the first strategy. Both strategies use a self-describing header enabling automated reconstitution of the original content.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8792"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8792"/>
+        </reference>
+        <reference anchor="RFC9651" target="https://www.rfc-editor.org/info/rfc9651" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" surname="P-H. Kamp"/>
+            <date month="September" year="2024"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields.</t>
+              <t indent="0">This document obsoletes RFC 8941.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9651"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9651"/>
+        </reference>
+        <reference anchor="RFC8446" target="https://www.rfc-editor.org/info/rfc8446" quoteTitle="true" derivedAnchor="TLS">
+          <front>
+            <title>The Transport Layer Security (TLS) Protocol Version 1.3</title>
+            <author fullname="E. Rescorla" initials="E." surname="Rescorla"/>
+            <date month="August" year="2018"/>
+            <abstract>
+              <t indent="0">This document specifies version 1.3 of the Transport Layer Security (TLS) protocol. TLS allows client/server applications to communicate over the Internet in a way that is designed to prevent eavesdropping, tampering, and message forgery.</t>
+              <t indent="0">This document updates RFCs 5705 and 6066, and obsoletes RFCs 5077, 5246, and 6961. This document also specifies new requirements for TLS 1.2 implementations.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8446"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8446"/>
+        </reference>
+        <reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986" quoteTitle="true" derivedAnchor="URI">
+          <front>
+            <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+            <author fullname="T. Berners-Lee" initials="T." surname="Berners-Lee"/>
+            <author fullname="R. Fielding" initials="R." surname="Fielding"/>
+            <author fullname="L. Masinter" initials="L." surname="Masinter"/>
+            <date month="January" year="2005"/>
+            <abstract>
+              <t indent="0">A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource. This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet. The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier. This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="66"/>
+          <seriesInfo name="RFC" value="3986"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3986"/>
+        </reference>
+        <reference anchor="X.690" target="https://www.itu.int/rec/T-REC-X.690" quoteTitle="true" derivedAnchor="X.690">
+          <front>
+            <title>Information technology - ASN.1 encoding Rules: Specification of Basic Encoding Rules (BER), Canonical Encoding Rules (CER) and Distinguished Encoding Rules (DER)</title>
+            <author>
+              <organization showOnFrontPage="true">ITU-T</organization>
+            </author>
+            <date year="2021" month="February"/>
+          </front>
+          <seriesInfo name="ITU-T" value="Recommendation X690"/>
+          <seriesInfo name="ISO/IEC" value="8825-1:2021"/>
+        </reference>
+      </references>
+      <references anchor="sec-informative-references" pn="section-10.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="RFC8410" target="https://www.rfc-editor.org/info/rfc8410" quoteTitle="true" derivedAnchor="ED25519">
+          <front>
+            <title>Algorithm Identifiers for Ed25519, Ed448, X25519, and X448 for Use in the Internet X.509 Public Key Infrastructure</title>
+            <author fullname="S. Josefsson" initials="S." surname="Josefsson"/>
+            <author fullname="J. Schaad" initials="J." surname="Schaad"/>
+            <date month="August" year="2018"/>
+            <abstract>
+              <t indent="0">This document specifies algorithm identifiers and ASN.1 encoding formats for elliptic curve constructs using the curve25519 and curve448 curves. The signature algorithms covered are Ed25519 and Ed448. The key agreement algorithms covered are X25519 and X448. The encoding for public key, private key, and Edwards-curve Digital Signature Algorithm (EdDSA) structures is provided.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8410"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8410"/>
+        </reference>
+        <reference anchor="RFC7486" target="https://www.rfc-editor.org/info/rfc7486" quoteTitle="true" derivedAnchor="HOBA">
+          <front>
+            <title>HTTP Origin-Bound Authentication (HOBA)</title>
+            <author fullname="S. Farrell" initials="S." surname="Farrell"/>
+            <author fullname="P. Hoffman" initials="P." surname="Hoffman"/>
+            <author fullname="M. Thomas" initials="M." surname="Thomas"/>
+            <date month="March" year="2015"/>
+            <abstract>
+              <t indent="0">HTTP Origin-Bound Authentication (HOBA) is a digital-signature-based design for an HTTP authentication method. The design can also be used in JavaScript-based authentication embedded in HTML. HOBA is an alternative to HTTP authentication schemes that require passwords and therefore avoids all problems related to passwords, such as leakage of server-side password databases.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="7486"/>
+          <seriesInfo name="DOI" value="10.17487/RFC7486"/>
+        </reference>
+        <reference anchor="RFC9113" target="https://www.rfc-editor.org/info/rfc9113" quoteTitle="true" derivedAnchor="HTTP/2">
+          <front>
+            <title>HTTP/2</title>
+            <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson"/>
+            <author fullname="C. Benfield" initials="C." role="editor" surname="Benfield"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This specification describes an optimized expression of the semantics of the Hypertext Transfer Protocol (HTTP), referred to as HTTP version 2 (HTTP/2). HTTP/2 enables a more efficient use of network resources and a reduced latency by introducing field compression and allowing multiple concurrent exchanges on the same connection.</t>
+              <t indent="0">This document obsoletes RFCs 7540 and 8740.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9113"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9113"/>
+        </reference>
+        <reference anchor="RFC9114" target="https://www.rfc-editor.org/info/rfc9114" quoteTitle="true" derivedAnchor="HTTP/3">
+          <front>
+            <title>HTTP/3</title>
+            <author fullname="M. Bishop" initials="M." role="editor" surname="Bishop"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The QUIC transport protocol has several features that are desirable in a transport for HTTP, such as stream multiplexing, per-stream flow control, and low-latency connection establishment. This document describes a mapping of HTTP semantics over QUIC. This document also identifies HTTP/2 features that are subsumed by QUIC and describes how HTTP/2 extensions can be ported to HTTP/3.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9114"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9114"/>
+        </reference>
+        <reference anchor="I-D.schinazi-masque" target="https://datatracker.ietf.org/doc/html/draft-schinazi-masque-00" quoteTitle="true" derivedAnchor="MASQUE-ORIGINAL">
+          <front>
+            <title>The MASQUE Protocol</title>
+            <author initials="D." surname="Schinazi" fullname="David Schinazi">
+              <organization showOnFrontPage="true">Google LLC</organization>
+            </author>
+            <date month="February" day="28" year="2019"/>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-schinazi-masque-00"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="RFC9001" target="https://www.rfc-editor.org/info/rfc9001" quoteTitle="true" derivedAnchor="QUIC-TLS">
+          <front>
+            <title>Using TLS to Secure QUIC</title>
+            <author fullname="M. Thomson" initials="M." role="editor" surname="Thomson"/>
+            <author fullname="S. Turner" initials="S." role="editor" surname="Turner"/>
+            <date month="May" year="2021"/>
+            <abstract>
+              <t indent="0">This document describes how Transport Layer Security (TLS) is used to secure QUIC.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9001"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9001"/>
+        </reference>
+        <reference anchor="SEEMS-LEGIT" quoteTitle="true" target="https://doi.org/10.1145/3319535.3339813" derivedAnchor="SEEMS-LEGIT">
+          <front>
+            <title>Seems Legit: Automated Analysis of Subtle Attacks on Protocols That Use Signatures</title>
+            <author initials="D." surname="Jackson" fullname="Dennis Jackson">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="C." surname="Cremers" fullname="Cas Cremers">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="K." surname="Cohn-Gordon" fullname="Katriel Cohn-Gordon">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <author initials="R." surname="Sasse" fullname="Ralf Sasse">
+              <organization showOnFrontPage="true"/>
+            </author>
+            <date year="2019" month="November"/>
+          </front>
+          <seriesInfo name="DOI" value="10.1145/3319535.3339813"/>
+          <refcontent>CCS '19: Proceedings of the 2019 ACM SIGSAC Conference on Computer and Communications Security</refcontent>
+          <refcontent>pp. 2165-2180</refcontent>
+        </reference>
+      </references>
+    </references>
+    <section numbered="false" anchor="acknowledgments" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-acknowledgments">Acknowledgments</name>
+      <t indent="0" pn="section-appendix.a-1">The authors would like to thank many members of the IETF community, as this
+document is the fruit of many hallway conversations. In particular, the authors
+would like to thank <contact fullname="David Benjamin"/>, <contact fullname="Reese Enghardt"/>, <contact fullname="Nick Harper"/>, <contact fullname="Dennis Jackson"/>, <contact fullname="Ilari Liusvaara"/>, <contact fullname="François Michel"/>,
+<contact fullname="Lucas Pardue"/>, <contact fullname="Justin Richer"/>, <contact fullname="Ben Schwartz"/>, <contact fullname="Martin Thomson"/>, and <contact fullname="Chris A. Wood"/> for their reviews and contributions. The
+mechanism described in this document was originally part of the first iteration
+of MASQUE <xref target="I-D.schinazi-masque" format="default" sectionFormat="of" derivedContent="MASQUE-ORIGINAL"/>.</t>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="D." surname="Schinazi" fullname="David Schinazi">
+        <organization showOnFrontPage="true">Google LLC</organization>
+        <address>
+          <postal>
+            <street>1600 Amphitheatre Parkway</street>
+            <city>Mountain View</city>
+            <region>CA</region>
+            <code>94043</code>
+            <country>United States of America</country>
+          </postal>
+          <email>dschinazi.ietf@gmail.com</email>
+        </address>
+      </author>
+      <author initials="D." surname="Oliver" fullname="David M. Oliver">
+        <organization showOnFrontPage="true">Guardian Project</organization>
+        <address>
+          <email>david@guardianproject.info</email>
+          <uri>https://guardianproject.info</uri>
+        </address>
+      </author>
+      <author initials="J." surname="Hoyland" fullname="Jonathan Hoyland">
+        <organization showOnFrontPage="true">Cloudflare Inc.</organization>
+        <address>
+          <email>jonathan.hoyland@gmail.com</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

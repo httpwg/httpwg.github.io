@@ -50,3 +50,4 @@ list of HTTP extensions, see the relevant registry.
 * RFC 8470: [Using Early Data in HTTP](/specs/rfc8470.html)
 * RFC 9421: [HTTP Message Signatures](/specs/rfc9421.html) ([online demo](https://httpsig.org))
 * RFC 9530: [Digest Fields](/specs/rfc9530.html)
+* RFC 9729: [HTTP Concealed Authentication](/specs/rfc9729.html)
