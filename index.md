@@ -37,7 +37,8 @@ description: We maintain and develop the Hypertext Transfer Protocol - the core 
 		<h2>👷‍♀️ Work In Progress</h2>
 		<p>See what's under development and what's coming, including:</p>
 		<ul>
-			<li><a href="https://httpwg.org/http-extensions/">HTTP Extension Development</a> {%include github.html link="https://github.com/httpwg/http-extensions" %}</li>
+			<li><a href="https://httpwg.org/http-extensions/">HTTP extensions under development</a> {%include github.html link="https://github.com/httpwg/http-extensions" %}</li>
+            <li>The <a href="https://datatracker.ietf.org/wg/httpbis/documents/">IETF datatracker view</a> of those documents</li>
 			<li>Possible <a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li>
       <li>The <a href="/admin/directorate/">HTTP Directorate</a></li>
 		</ul>
