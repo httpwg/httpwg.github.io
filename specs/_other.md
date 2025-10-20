@@ -28,6 +28,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC 7694: [Client Initiated Content-Encoding](/specs/rfc7694.html)
 * RFC 8144: [Prefer Header Field](/specs/rfc7240.html)
 * RFC 8288: [Web Linking](/specs/rfc8288.html)
+* RFC 9842: [Compression Dictionary Transport](/specs/rfc9842.html)
 
 ### Connection and Intermediary Extensions
 
