@@ -20,6 +20,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC 8246: [Cache-Control: immutable](/specs/rfc8246.html)
 * RFC 9211: [Cache-Status Header Field](/specs/rfc9211.html)
 * RFC 9213: [Targeted Cache Control Fields](/specs/rfc9213.html)
+* RFC 9875: [HTTP Cache Groups](/specs/rfc9875.html)
 
 ### Content-Related Extensions
 

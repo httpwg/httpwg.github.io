@@ -1,0 +1,343 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-ietf-httpbis-cache-groups-07" number="9875" submissionType="IETF" updates="" obsoletes="" category="std" consensus="true" tocInclude="true" sortRefs="true" symRefs="true" xml:lang="en" prepTime="2025-10-30T11:13:59" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-cache-groups-07" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc9875" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title abbrev="HTTP Cache Groups">HTTP Cache Groups</title>
+    <seriesInfo name="RFC" value="9875" stream="IETF"/>
+    <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+      <organization showOnFrontPage="true">Cloudflare</organization>
+      <address>
+        <postal>
+          <postalLine>Melbourne</postalLine>
+          <postalLine>Australia</postalLine>
+        </postal>
+        <email>mnot@mnot.net</email>
+        <uri>https://www.mnot.net/</uri>
+      </address>
+    </author>
+    <date month="10" year="2025"/>
+    <area>WIT</area>
+    <workgroup>httpbis</workgroup>
+    <keyword>HTTP</keyword>
+    <keyword>Caching</keyword>
+    <keyword>Invalidation</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This specification introduces a means of describing the relationships between stored responses in HTTP caches, grouping them by associating a stored response with one or more strings.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc9875" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-cache-groups-response-h">The Cache-Groups Response Header Field</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-identifying-grouped-respons">Identifying Grouped Responses</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-cache-behaviour">Cache Behaviour</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2.2.2">
+                  <li pn="section-toc.1-1.2.2.2.2.1">
+                    <t indent="0" pn="section-toc.1-1.2.2.2.2.1.1"><xref derivedContent="2.2.1" format="counter" sectionFormat="of" target="section-2.2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-invalidation">Invalidation</xref></t>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-cache-group-invalidatio">The Cache-Group-Invalidation Response Header Field</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgements">Acknowledgements</xref></t>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.b"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-address">Author's Address</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">HTTP caching <xref target="RFC9111" format="default" sectionFormat="of" derivedContent="HTTP-CACHING"/> operates at the granularity of a single resource; the freshness of one stored response does not affect that of others. This granularity can make caching more efficient -- for example, when a page is composed of many assets that have different requirements for caching.</t>
+      <t indent="0" pn="section-1-2">However, there are also cases where the relationship between stored responses could be used to improve cache efficiency.</t>
+      <t indent="0" pn="section-1-3">For example, it is often necessary to invalidate a set of related resources. This might be because a state-changing request has side effects on other resources, or it might be purely for administrative convenience (e.g., "invalidate this part of the site"). Grouping responses together provides a dedicated way to express these relationships, instead of relying on things like URL structure.</t>
+      <t indent="0" pn="section-1-4">In addition to sharing invalidation events, the relationships indicated by grouping can also be used by caches to optimise their operation (e.g., to inform the operation of cache eviction algorithms).</t>
+      <t indent="0" pn="section-1-5"><xref target="cache-groups" format="default" sectionFormat="of" derivedContent="Section 2"/> introduces a means of describing the relationships between stored responses in HTTP caches, by associating those responses with one or more groups that reflect those relationships. It also describes how caches can use that information to apply invalidation events to members of a group.</t>
+      <t indent="0" pn="section-1-6"><xref target="cache-group-invalidation" format="default" sectionFormat="of" derivedContent="Section 3"/> introduces one new source of such events: an HTTP response header field that allows a state-changing response to trigger a group invalidation.</t>
+      <t indent="0" pn="section-1-7">These mechanisms operate within a single cache, across the stored responses associated with a single origin server (see <xref target="identify" format="default" sectionFormat="of" derivedContent="Section 2.1"/>). They do not address the issues of synchronising state between multiple caches (e.g., in a hierarchy or mesh), nor do they facilitate association of stored responses from disparate origins.</t>
+      <section anchor="notational-conventions" numbered="true" removeInRFC="false" toc="include" pn="section-1.1">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.1-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>",
+    "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>",
+    "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>",
+    "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be
+    interpreted as described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> when, and only when, they appear in all capitals, as
+    shown here.
+        </t>
+        <t indent="0" pn="section-1.1-2">This specification uses the following terminology from <xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>: List, String, and Parameter.</t>
+      </section>
+    </section>
+    <section anchor="cache-groups" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-the-cache-groups-response-h">The Cache-Groups Response Header Field</name>
+      <t indent="0" pn="section-2-1">The Cache-Groups response header field is a List of Strings (Sections <xref target="RFC9651" section="3.1" sectionFormat="bare" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.1" derivedContent="STRUCTURED-FIELDS"/> and <xref target="RFC9651" section="3.3.3" sectionFormat="bare" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" derivedContent="STRUCTURED-FIELDS"/> of <xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>). Each member of the List is a value that identifies a group that the response belongs to. These Strings are opaque -- while they might have some meaning to the server that creates them, the cache does not have any insight into their structure or content (beyond uniquely identifying a group).</t>
+      <sourcecode type="http-message" markers="false" pn="section-2-2">
+HTTP/1.1 200 OK
+Content-Type: application/javascript
+Cache-Control: max-age=3600
+Cache-Groups: "scripts"
+</sourcecode>
+      <t indent="0" pn="section-2-3">The ordering of members is not significant. Unrecognised Parameters are to be ignored.</t>
+      <t indent="0" pn="section-2-4">Implementations <bcp14>MUST</bcp14> support at least 32 groups in a field value, with up to at least 32 characters in each member. Note that generic limitations on HTTP field lengths may constrain the size of this field value in practice.</t>
+      <section anchor="identify" numbered="true" removeInRFC="false" toc="include" pn="section-2.1">
+        <name slugifiedName="name-identifying-grouped-respons">Identifying Grouped Responses</name>
+        <t indent="0" pn="section-2.1-1">Two responses stored in the same cache are considered to belong to the same group when all of the following conditions are met:</t>
+        <ol spacing="normal" type="1" indent="adaptive" start="1" pn="section-2.1-2"><li pn="section-2.1-2.1" derivedCounter="1.">
+            <t indent="0" pn="section-2.1-2.1.1">They both contain a Cache-Groups response header field that contains the same String (in any position in the List), when compared character-by-character (case sensitive).</t>
+          </li>
+          <li pn="section-2.1-2.2" derivedCounter="2.">
+            <t indent="0" pn="section-2.1-2.2.1">They both share the same URI origin (per <xref section="4.3.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-4.3.1" derivedContent="HTTP"/>).</t>
+          </li>
+        </ol>
+      </section>
+      <section anchor="cache-behaviour" numbered="true" removeInRFC="false" toc="include" pn="section-2.2">
+        <name slugifiedName="name-cache-behaviour">Cache Behaviour</name>
+        <section anchor="invalidation" numbered="true" removeInRFC="false" toc="include" pn="section-2.2.1">
+          <name slugifiedName="name-invalidation">Invalidation</name>
+          <t indent="0" pn="section-2.2.1-1">A cache that invalidates a stored response <bcp14>MAY</bcp14> invalidate any stored responses that share groups (per <xref target="identify" format="default" sectionFormat="of" derivedContent="Section 2.1"/>) with that response. Note that further grouped invalidations are not triggered by a grouped invalidation; i.e., this mechanism does not cascade.</t>
+          <t indent="0" pn="section-2.2.1-2">Cache extensions can explicitly strengthen the requirement above. For example, a targeted cache control header field <xref target="RFC9213" format="default" sectionFormat="of" derivedContent="TARGETED"/> might specify that caches processing it are required to invalidate such responses.</t>
+        </section>
+      </section>
+    </section>
+    <section anchor="cache-group-invalidation" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-the-cache-group-invalidatio">The Cache-Group-Invalidation Response Header Field</name>
+      <t indent="0" pn="section-3-1">The Cache-Group-Invalidation response header field is a List of Strings (Sections <xref target="RFC9651" section="3.1" sectionFormat="bare" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.1" derivedContent="STRUCTURED-FIELDS"/> and <xref target="RFC9651" section="3.3.3" sectionFormat="bare" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.3.3" derivedContent="STRUCTURED-FIELDS"/> of <xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>). Each member of the List is a value that identifies a group that the response invalidates, per <xref target="invalidation" format="default" sectionFormat="of" derivedContent="Section 2.2.1"/>.</t>
+      <t indent="0" pn="section-3-2">For example, following a POST request that has side effects on two cache groups, the corresponding response could indicate that stored responses associated with either or both of those groups should be invalidated with:</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-3">
+HTTP/1.1 200 OK
+Content-Type: text/html
+Cache-Group-Invalidation: "eurovision-results", "australia"
+</sourcecode>
+      <t indent="0" pn="section-3-4">The Cache-Group-Invalidation header field <bcp14>MUST</bcp14> be ignored on responses to requests that have a safe method (e.g., GET; see <xref section="9.2.1" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.2.1" derivedContent="HTTP"/>).</t>
+      <t indent="0" pn="section-3-5">A cache that receives a Cache-Group-Invalidation header field on a response to an unsafe request <bcp14>MAY</bcp14> invalidate any stored responses that share groups (per <xref target="identify" format="default" sectionFormat="of" derivedContent="Section 2.1"/>) with any of the listed groups.</t>
+      <t indent="0" pn="section-3-6">Cache extensions can explicitly strengthen the requirement above. For example, a targeted cache control header field <xref target="RFC9213" format="default" sectionFormat="of" derivedContent="TARGETED"/> might specify that caches processing it are required to respect the Cache-Group-Invalidation signal.</t>
+      <t indent="0" pn="section-3-7">The ordering of members is not significant. Unrecognised Parameters are to be ignored.</t>
+      <t indent="0" pn="section-3-8">Implementations <bcp14>MUST</bcp14> support at least 32 groups in a field value, with up to at least 32 characters in each member. Note that generic limitations on HTTP field lengths may constrain the size of this field value in practice.</t>
+    </section>
+    <section anchor="iana-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-4-1">IANA has added the following entries to the "Hypertext Transfer Protocol (HTTP) Field Name Registry":</t>
+      <dl spacing="compact" newline="false" indent="3" pn="section-4-2">
+        <dt pn="section-4-2.1">Field Name:</dt>
+        <dd pn="section-4-2.2">Cache-Groups</dd>
+        <dt pn="section-4-2.3">Status:</dt>
+        <dd pn="section-4-2.4">permanent</dd>
+        <dt pn="section-4-2.5">Reference:</dt>
+        <dd pn="section-4-2.6">RFC 9875</dd>
+      </dl>
+      <dl spacing="compact" newline="false" indent="3" pn="section-4-3">
+        <dt pn="section-4-3.1">Field Name:</dt>
+        <dd pn="section-4-3.2">Cache-Group-Invalidation</dd>
+        <dt pn="section-4-3.3">Status:</dt>
+        <dd pn="section-4-3.4">permanent</dd>
+        <dt pn="section-4-3.5">Reference:</dt>
+        <dd pn="section-4-3.6">RFC 9875</dd>
+      </dl>
+    </section>
+    <section anchor="security-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-5-1">This mechanism allows resources that share an origin to invalidate each other. Because of this,
+origins that represent multiple parties (sometimes referred to as "shared hosting") might allow
+one party to group its resources with those of others or to send signals that have side effects upon them.</t>
+      <t indent="0" pn="section-5-2">Shared hosts that wish to mitigate these risks can control access to the header fields defined in this specification.</t>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="RFC9111" to="HTTP-CACHING"/>
+    <displayreference target="RFC9651" to="STRUCTURED-FIELDS"/>
+    <displayreference target="RFC9213" to="TARGETED"/>
+    <references anchor="sec-combined-references" pn="section-6">
+      <name slugifiedName="name-references">References</name>
+      <references anchor="sec-normative-references" pn="section-6.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC9111" target="https://www.rfc-editor.org/info/rfc9111" quoteTitle="true" derivedAnchor="HTTP-CACHING">
+          <front>
+            <title>HTTP Caching</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t>
+              <t indent="0">This document obsoletes RFC 7234.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC9651" target="https://www.rfc-editor.org/info/rfc9651" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" surname="P-H. Kamp"/>
+            <date month="September" year="2024"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields.</t>
+              <t indent="0">This document obsoletes RFC 8941.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9651"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9651"/>
+        </reference>
+      </references>
+      <references anchor="sec-informative-references" pn="section-6.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="RFC9213" target="https://www.rfc-editor.org/info/rfc9213" quoteTitle="true" derivedAnchor="TARGETED">
+          <front>
+            <title>Targeted HTTP Cache Control</title>
+            <author fullname="S. Ludin" initials="S." surname="Ludin"/>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="Y. Wu" initials="Y." surname="Wu"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This specification defines a convention for HTTP response header fields that allow cache directives to be targeted at specific caches or classes of caches. It also defines one such header field, the CDN-Cache-Control response header field, which is targeted at content delivery network (CDN) caches.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9213"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9213"/>
+        </reference>
+      </references>
+    </references>
+    <section anchor="acknowledgements" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-acknowledgements">Acknowledgements</name>
+      <t indent="0" pn="section-appendix.a-1">Thanks to <contact fullname="Stephen Ludin"/> for his review and suggestions.</t>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-authors-address">Author's Address</name>
+      <author initials="M." surname="Nottingham" fullname="Mark Nottingham">
+        <organization showOnFrontPage="true">Cloudflare</organization>
+        <address>
+          <postal>
+            <postalLine>Melbourne</postalLine>
+            <postalLine>Australia</postalLine>
+          </postal>
+          <email>mnot@mnot.net</email>
+          <uri>https://www.mnot.net/</uri>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>
