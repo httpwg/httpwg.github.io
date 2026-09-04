@@ -1,0 +1,517 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" ipr="trust200902" docName="draft-ietf-httpbis-incremental-04" category="std" consensus="true" submissionType="IETF" xml:lang="en" number="10036" tocInclude="true" sortRefs="true" symRefs="true" prepTime="2026-08-21T18:41:14" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://dx.doi.org/10.17487/rfc10036" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-incremental-04" rel="prev"/>
+  <front>
+    <title>Incremental Forwarding of HTTP Messages</title>
+    <seriesInfo name="RFC" value="10036" stream="IETF"/>
+    <author fullname="奥 一穂" asciiFullname="Kazuho Oku" initials="K." surname="Oku">
+      <organization showOnFrontPage="true">Fastly</organization>
+      <address>
+        <email>kazuhooku@gmail.com</email>
+      </address>
+    </author>
+    <author fullname="Tommy Pauly" initials="T." surname="Pauly">
+      <organization showOnFrontPage="true">Apple</organization>
+      <address>
+        <email>tpauly@apple.com</email>
+      </address>
+    </author>
+    <author fullname="Martin Thomson" initials="M." surname="Thomson">
+      <organization showOnFrontPage="true">Mozilla</organization>
+      <address>
+        <email>mt@lowentropy.net</email>
+      </address>
+    </author>
+    <date month="08" year="2026"/>
+    <area>WIT</area>
+    <workgroup>httpbis</workgroup>
+    <keyword>stream</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">This document specifies the "Incremental" HTTP header field, which instructs
+HTTP intermediaries to forward the HTTP message incrementally.</t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc10036" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-conventions-and-definitions">Conventions and Definitions</xref></t>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-incremental-header-fiel">The Incremental Header Field</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.4.2">
+              <li pn="section-toc.1-1.4.2.1">
+                <t indent="0" pn="section-toc.1-1.4.2.1.1"><xref derivedContent="4.1" format="counter" sectionFormat="of" target="section-4.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-permanent-rejection">Permanent Rejection</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.2">
+                <t indent="0" pn="section-toc.1-1.4.2.2.1"><xref derivedContent="4.2" format="counter" sectionFormat="of" target="section-4.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-temporary-rejection">Temporary Rejection</xref></t>
+              </li>
+              <li pn="section-toc.1-1.4.2.3">
+                <t indent="0" pn="section-toc.1-1.4.2.3.1"><xref derivedContent="4.3" format="counter" sectionFormat="of" target="section-4.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-handling-of-small-packets">Handling of Small Packets</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.a"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgments">Acknowledgments</xref></t>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.b"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">HTTP <xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/> permits receivers to begin processing portions of HTTP
+messages as they arrive, rather than requiring them to wait for the entire HTTP
+message to be received before acting.</t>
+      <t indent="0" pn="section-1-2">Some applications are specifically designed to take advantage of this
+capability.</t>
+      <t indent="0" pn="section-1-3">For example, Server-Sent Events <xref target="SSE" format="default" sectionFormat="of" derivedContent="SSE"/> uses a long-running HTTP response, where
+the server continually sends notifications as they become available.</t>
+      <t indent="0" pn="section-1-4">In the case of Chunked Oblivious HTTP Messages
+<xref target="I-D.ietf-ohai-chunked-ohttp" format="default" sectionFormat="of" derivedContent="CHUNKED-OHTTP"/>, the client opens an HTTP request
+and incrementally sends application data, while the server can start responding
+even before the HTTP request is fully complete. In this way, the HTTP
+request-response pair could create what is, in effect, a bidirectional
+communication channel.</t>
+      <t indent="0" pn="section-1-5">Applications that rely on incremental delivery of data are fragile when HTTP intermediaries are involved.
+This is because HTTP intermediaries are not only permitted but are frequently
+deployed to buffer complete HTTP messages before forwarding them downstream
+(<xref section="7.6" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-7.6" derivedContent="HTTP"/>).</t>
+      <t indent="0" pn="section-1-6">If such a buffering HTTP intermediary exists between the client and the server,
+these applications may fail to function as intended.</t>
+      <t indent="0" pn="section-1-7">In the case of Server-Sent Events, an intermediary that tries to buffer the HTTP
+response completely before forwarding it could be left waiting indefinitely.
+A client might never receive any portion of the response.</t>
+      <t indent="0" pn="section-1-8">In the case of requests that involve any bidirectional exchange,
+an intermediary that tries to buffer entire messages --
+either request or response -- prevents any data from being delivered.</t>
+      <t indent="0" pn="section-1-9">To help avoid such behavior, this document specifies the "Incremental" HTTP header
+field, which requests that HTTP intermediaries begin forwarding the HTTP message
+downstream before receiving the complete message.</t>
+      <t indent="0" pn="section-1-10">This indication might not be supported by intermediaries.
+Intermediaries that are unaware of this field will not change their behavior.
+Intermediaries that support the field might choose instead to reject a request;
+see <xref target="security" format="default" sectionFormat="of" derivedContent="Section 4"/>.</t>
+    </section>
+    <section anchor="conventions-and-definitions" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-conventions-and-definitions">Conventions and Definitions</name>
+      <t indent="0" pn="section-2-1">The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+"<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> when, and only when, they
+appear in all capitals, as shown here.</t>
+      <t indent="0" pn="section-2-2">This document relies on structured field definitions
+of Item and Boolean <xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>.</t>
+    </section>
+    <section anchor="the-incremental-header-field" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-the-incremental-header-fiel">The Incremental Header Field</name>
+      <t indent="0" pn="section-3-1">The Incremental HTTP header field expresses the sender's intent for HTTP
+intermediaries to start forwarding the message downstream before the entire
+message is received.</t>
+      <t indent="0" pn="section-3-2">The Incremental header field is defined as a structured field
+<xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/> of type Item.
+Only Boolean values (<xref section="3.3.6" sectionFormat="of" target="RFC9651" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-3.3.6" derivedContent="STRUCTURED-FIELDS"/>) are valid;
+a recipient ignores the field if it contains any other type.</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-3">
+Incremental: ?1
+</sourcecode>
+      <t indent="0" pn="section-3-4">A true value ("?1") indicates that the sender requests intermediaries to forward
+the message incrementally, as described below.</t>
+      <sourcecode type="http-message" markers="false" pn="section-3-5">
+Incremental: ?0
+</sourcecode>
+      <t indent="0" pn="section-3-6">A false value ("?0") indicates the default behavior defined in <xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/>, where
+intermediaries might buffer the entire message before forwarding it. However,
+this explicit signal might give an intermediary greater confidence in
+choosing to buffer.</t>
+      <t indent="0" pn="section-3-7">The Incremental HTTP header field applies to each HTTP message. Therefore, if
+both the HTTP request and response need to be forwarded incrementally, the
+Incremental HTTP header field <bcp14>MUST</bcp14> be set for both the HTTP request and the
+response.</t>
+      <t indent="0" pn="section-3-8">Upon receiving a header section that includes an Incremental header field with a
+true value, HTTP intermediaries <bcp14>SHOULD NOT</bcp14> buffer the entire message before
+forwarding it.  Instead, intermediaries <bcp14>SHOULD</bcp14> transmit the header section
+downstream and continuously forward the bytes of the message content as they
+arrive. As the Incremental header field indicates only how the message content is
+to be forwarded, intermediaries can still buffer the entire header and trailer
+sections of the message before forwarding them downstream.</t>
+      <t indent="0" pn="section-3-9">If an intermediary decides outright to refuse forwarding the message body
+incrementally, the intermediary <bcp14>MUST</bcp14> generate an error response rather than
+buffering an entire message before forwarding. Typical scenarios under which an
+intermediary might refuse are discussed in <xref target="security" format="default" sectionFormat="of" derivedContent="Section 4"/>.</t>
+      <t indent="0" pn="section-3-10">The request to use incremental forwarding also applies to HTTP implementations.
+Though most HTTP APIs provide the ability to incrementally transfer message content,
+those that do not for any reason <bcp14>SHOULD</bcp14> use the presence of the Incremental
+header field to reduce or disable buffering.</t>
+      <t indent="0" pn="section-3-11">The Incremental field might not be supported by intermediaries.
+Intermediaries that are unaware of the field
+or that do not support the field might buffer messages,
+even when explicitly requested otherwise.
+Clients and servers therefore cannot expect all intermediaries to understand
+and respect a request to deliver messages incrementally.
+Clients that depend on support for incremental forwarding can rely on prior knowledge
+or probe for support on individual resources.</t>
+      <t indent="0" pn="section-3-12">The Incremental header field facilitates the establishment of a bidirectional
+byte channel over HTTP, as its presence in both requests and responses requests that
+intermediaries forward early responses (<xref section="7.5" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-7.5" derivedContent="HTTP"/>) and 
+transmit message contents incrementally in both directions.  However, when developing
+bidirectional protocols over HTTP, Extended CONNECT <xref target="RFC8441" format="default" sectionFormat="of" derivedContent="RFC8441"/><xref target="RFC9220" format="default" sectionFormat="of" derivedContent="RFC9220"/> is
+generally more consistent with HTTP's architecture.</t>
+      <t indent="0" pn="section-3-13">This document does not define any parameters for the Incremental header field
+value, but future documents might define parameters. Receivers <bcp14>MUST</bcp14> ignore
+unknown parameters.</t>
+    </section>
+    <section anchor="security" numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-4-1">When receiving a request or response that asks for incremental forwarding,
+intermediaries might reject the HTTP request due to security concerns.
+The following subsections explore typical scenarios
+under which the intermediaries might reject requests.</t>
+      <t indent="0" pn="section-4-2">Note that rejecting requests based on the value of the Incremental field
+only occurs when an intermediary understands the field.</t>
+      <section anchor="permanent-rejection" numbered="true" removeInRFC="false" toc="include" pn="section-4.1">
+        <name slugifiedName="name-permanent-rejection">Permanent Rejection</name>
+        <t indent="0" pn="section-4.1-1">Some intermediaries inspect the content of HTTP messages and forward them only
+if their content is deemed safe. Any feature that depends on seeing the
+entirety of the message in this way is incompatible with incremental delivery.</t>
+        <t indent="0" pn="section-4.1-2">When an intermediary is asked to incrementally forward a message and cannot --
+whether that message is a request or a response --
+due to security concerns about the message content,
+the intermediary <bcp14>SHOULD</bcp14> respond with a 501 (Not Implemented) error
+with an incremental_refused Proxy-Status response header field
+(<xref target="iana-considerations" format="default" sectionFormat="of" derivedContent="Section 5"/>).</t>
+      </section>
+      <section anchor="temporary-rejection" numbered="true" removeInRFC="false" toc="include" pn="section-4.2">
+        <name slugifiedName="name-temporary-rejection">Temporary Rejection</name>
+        <t indent="0" pn="section-4.2-1">To conserve resources required to handle HTTP requests or connections, it is
+common for intermediaries to impose limits on the maximum number of concurrent
+HTTP requests that they forward, while buffering requests that exceed this
+limit.</t>
+        <t indent="0" pn="section-4.2-2">Such intermediaries could apply a more restrictive concurrency limit to requests
+marked as incremental to ensure that capacity remains available for
+non-incremental requests, even when the maximum number of incremental requests
+is reached. This approach helps balance the processing of different types of
+requests and maintains service availability across all requests.</t>
+        <t indent="0" pn="section-4.2-3">When rejecting incremental requests due to reaching the concurrency limit,
+intermediaries <bcp14>SHOULD</bcp14> respond with a 429 (Too Many Requests) error
+(<xref section="4" sectionFormat="of" target="RFC6585" format="default" derivedLink="https://rfc-editor.org/rfc/rfc6585#section-4" derivedContent="EXTRA-STATUS"/>),
+accompanied by a connection_limit_reached Proxy-Status response header field
+(<xref section="2.3.12" sectionFormat="of" target="RFC9209" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9209#section-2.3.12" derivedContent="PROXY-STATUS"/>).</t>
+      </section>
+      <section anchor="handling-of-small-packets" numbered="true" removeInRFC="false" toc="include" pn="section-4.3">
+        <name slugifiedName="name-handling-of-small-packets">Handling of Small Packets</name>
+        <t indent="0" pn="section-4.3-1">For performance and efficiency reasons, a small amount of buffering might be
+used by intermediaries, even for incremental messages. Immediate forwarding
+might be exploited to cause an intermediary to waste effort on many small
+packets.  Enabling incremental delivery might instead set limits on the number of
+bytes that are buffered or the length of time that buffers are held before forwarding.
+Any buffering could adversely affect application latency, even if it improves
+efficiency.  In all cases, intermediaries cannot hold data in buffers
+indefinitely, so data needs to be forwarded when either the time limit or the
+byte limit is reached.</t>
+      </section>
+    </section>
+    <section anchor="iana-considerations" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <t indent="0" pn="section-5-1">An HTTP field named Incremental has been registered
+in the "Hypertext Transfer Protocol (HTTP) Field Name Registry"
+following the procedures in <xref section="18.4" sectionFormat="of" target="RFC9110" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-18.4" derivedContent="HTTP"/>.
+The following values are registered:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-5-2">
+        <dt pn="section-5-2.1">Field Name:</dt>
+        <dd pn="section-5-2.2">
+          <t indent="0" pn="section-5-2.2.1">Incremental</t>
+        </dd>
+        <dt pn="section-5-2.3">Status:</dt>
+        <dd pn="section-5-2.4">
+          <t indent="0" pn="section-5-2.4.1">permanent</t>
+        </dd>
+        <dt pn="section-5-2.5">Structured Type:</dt>
+        <dd pn="section-5-2.6">
+          <t indent="0" pn="section-5-2.6.1">Item</t>
+        </dd>
+        <dt pn="section-5-2.7">Reference:</dt>
+        <dd pn="section-5-2.8">
+          <t indent="0" pn="section-5-2.8.1">This document</t>
+        </dd>
+        <dt pn="section-5-2.9">Comments:</dt>
+        <dd pn="section-5-2.10">
+          <t indent="0" pn="section-5-2.10.1">None</t>
+        </dd>
+      </dl>
+      <t indent="0" pn="section-5-3">An HTTP Proxy Error Type has been registered in the "HTTP Proxy Error Types" registry as
+shown below:</t>
+      <dl spacing="compact" indent="3" newline="false" pn="section-5-4">
+        <dt pn="section-5-4.1">Name:</dt>
+        <dd pn="section-5-4.2">
+          <t indent="0" pn="section-5-4.2.1">incremental_refused</t>
+        </dd>
+        <dt pn="section-5-4.3">Description:</dt>
+        <dd pn="section-5-4.4">
+          <t indent="0" pn="section-5-4.4.1">The HTTP message contained the Incremental HTTP header field, but the
+intermediary refused to forward the message incrementally.</t>
+        </dd>
+        <dt pn="section-5-4.5">Extra Parameters:</dt>
+        <dd pn="section-5-4.6">
+          <t indent="0" pn="section-5-4.6.1">none</t>
+        </dd>
+        <dt pn="section-5-4.7">Recommended HTTP Status Code:</dt>
+        <dd pn="section-5-4.8">
+          <t indent="0" pn="section-5-4.8.1">501</t>
+        </dd>
+        <dt pn="section-5-4.9">Response Only Generated By Intermediaries:</dt>
+        <dd pn="section-5-4.10">
+          <t indent="0" pn="section-5-4.10.1">true</t>
+        </dd>
+        <dt pn="section-5-4.11">Reference:</dt>
+        <dd pn="section-5-4.12">
+          <t indent="0" pn="section-5-4.12.1">This document</t>
+        </dd>
+      </dl>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC6585" to="EXTRA-STATUS"/>
+    <displayreference target="RFC9209" to="PROXY-STATUS"/>
+    <displayreference target="RFC9651" to="STRUCTURED-FIELDS"/>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="I-D.ietf-ohai-chunked-ohttp" to="CHUNKED-OHTTP"/>
+    <references anchor="sec-combined-references" pn="section-6">
+      <name slugifiedName="name-references">References</name>
+      <references anchor="sec-normative-references" pn="section-6.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC6585" target="https://www.rfc-editor.org/info/rfc6585" quoteTitle="true" derivedAnchor="EXTRA-STATUS">
+          <front>
+            <title>Additional HTTP Status Codes</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="R. Fielding" initials="R." surname="Fielding"/>
+            <date month="April" year="2012"/>
+            <abstract>
+              <t indent="0">This document specifies additional HyperText Transfer Protocol (HTTP) status codes for a variety of common situations. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="6585"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6585"/>
+        </reference>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC9209" target="https://www.rfc-editor.org/info/rfc9209" quoteTitle="true" derivedAnchor="PROXY-STATUS">
+          <front>
+            <title>The Proxy-Status HTTP Response Header Field</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P. Sikora" initials="P." surname="Sikora"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">This document defines the Proxy-Status HTTP response field to convey the details of an intermediary's response handling, including generated errors.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9209"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9209"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC9651" target="https://www.rfc-editor.org/info/rfc9651" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" surname="P-H. Kamp"/>
+            <date month="September" year="2024"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields.</t>
+              <t indent="0">This document obsoletes RFC 8941.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9651"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9651"/>
+        </reference>
+      </references>
+      <references anchor="sec-informative-references" pn="section-6.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="I-D.ietf-ohai-chunked-ohttp" target="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-chunked-ohttp-08" quoteTitle="true" derivedAnchor="CHUNKED-OHTTP">
+          <front>
+            <title>Chunked Oblivious HTTP Messages</title>
+            <author fullname="Tommy Pauly" initials="T." surname="Pauly">
+              <organization showOnFrontPage="true">Apple</organization>
+            </author>
+            <author fullname="Martin Thomson" initials="M." surname="Thomson">
+              <organization showOnFrontPage="true">Mozilla</organization>
+            </author>
+            <date day="18" month="February" year="2026"/>
+            <abstract>
+              <t indent="0">This document defines a variant of the Oblivious HTTP message format that allows chunks of requests and responses to be encrypted and decrypted before the entire request or response is processed. This allows incremental processing of Oblivious HTTP messages, which is particularly useful for handling large messages or systems that process messages slowly.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="Internet-Draft" value="draft-ietf-ohai-chunked-ohttp-08"/>
+          <refcontent>Work in Progress</refcontent>
+        </reference>
+        <reference anchor="RFC8441" target="https://www.rfc-editor.org/info/rfc8441" quoteTitle="true" derivedAnchor="RFC8441">
+          <front>
+            <title>Bootstrapping WebSockets with HTTP/2</title>
+            <author fullname="P. McManus" initials="P." surname="McManus"/>
+            <date month="September" year="2018"/>
+            <abstract>
+              <t indent="0">This document defines a mechanism for running the WebSocket Protocol (RFC 6455) over a single stream of an HTTP/2 connection.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="8441"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8441"/>
+        </reference>
+        <reference anchor="RFC9220" target="https://www.rfc-editor.org/info/rfc9220" quoteTitle="true" derivedAnchor="RFC9220">
+          <front>
+            <title>Bootstrapping WebSockets with HTTP/3</title>
+            <author fullname="R. Hamilton" initials="R." surname="Hamilton"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The mechanism for running the WebSocket Protocol over a single stream of an HTTP/2 connection is equally applicable to HTTP/3, but the HTTP-version-specific details need to be specified. This document describes how the mechanism is adapted for HTTP/3.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9220"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9220"/>
+        </reference>
+        <reference anchor="SSE" target="https://html.spec.whatwg.org/multipage/server-sent-events.html" quoteTitle="true" derivedAnchor="SSE">
+          <front>
+            <title>HTML - Server-Sent Events</title>
+            <author>
+              <organization showOnFrontPage="true">WHATWG</organization>
+            </author>
+            <date/>
+          </front>
+          <annotation>Commit snapshot: <eref brackets="angle" target="https://html.spec.whatwg.org/commit-snapshots/6f84b26bd6eb8bd0e0e8df9819e43e901867166b/"/></annotation>
+          <refcontent>WHATWG Living Standard</refcontent>
+        </reference>
+      </references>
+    </references>
+    <section numbered="false" anchor="acknowledgments" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-acknowledgments">Acknowledgments</name>
+      <t indent="0" pn="section-appendix.a-1">The authors would like to thank many members of the IETF HTTP Working Group for
+their discussions and feedback on this specification. In particular, the authors
+would like to thank <contact fullname="Mark Thomas"/>, <contact fullname="Piotr Sikora"/>,
+<contact fullname="Thibault Meunier"/>, <contact fullname="Marius Kleidl"/>, <contact fullname="Ben Schwartz"/>,
+<contact fullname="Willy Tarreau"/>, <contact fullname="Will Hawkins"/>, <contact fullname="Mark Nottingham"/>, and
+<contact fullname="Lucas Pardue"/> for close review and suggested changes.</t>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author fullname="奥 一穂" asciiFullname="Kazuho Oku" initials="K." surname="Oku">
+        <organization showOnFrontPage="true">Fastly</organization>
+        <address>
+          <email>kazuhooku@gmail.com</email>
+        </address>
+      </author>
+      <author fullname="Tommy Pauly" initials="T." surname="Pauly">
+        <organization showOnFrontPage="true">Apple</organization>
+        <address>
+          <email>tpauly@apple.com</email>
+        </address>
+      </author>
+      <author fullname="Martin Thomson" initials="M." surname="Thomson">
+        <organization showOnFrontPage="true">Mozilla</organization>
+        <address>
+          <email>mt@lowentropy.net</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>

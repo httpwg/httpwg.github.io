@@ -44,6 +44,7 @@ list of HTTP extensions, see the relevant registry.
 * RFC 9298: [Proxying UDP in HTTP](https://www.rfc-editor.org/rfc/rfc9298)
 * RFC 9412: [Origin HTTP/3 Frame](/specs/rfc9412.html)
 * RFC 9440: [Client-Cert HTTP Header Field](/specs/rfc9440.html)
+* RFC 10036: [Incremental Forwarding of HTTP Messages](/specs/rfc10036.html)
 
 ### Security-Related Extensions
 

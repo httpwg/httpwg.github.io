@@ -1,0 +1,241 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>RFC 10036 - Incremental Forwarding of HTTP Messages</title><script>
+function getMeta(rfcno, container) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.rfc-editor.org/rfc/rfc" + rfcno + ".json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        var c = data.status;
+        if (c) {
+          var bld = newElementWithText("b", c);
+          cont.appendChild(bld);
+        } else {
+          cont.appendChild(newElementWithText("i", "(document status unknown)"));
+        }
+
+        c = data.updated_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.obsoleted_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.errata_url;
+        if (c) {
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", c);
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+function appendRfcLinks(parent, updates) {
+  var template = "https://www.rfc-editor.org/rfc/rfc{rfc}.html";
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim().toLowerCase();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = parseInt(rfc.substring(3), 10);
+      
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+</script><script>
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8).replace("-",".p.");
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9).replace("-",".p.");
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5).replace("-",".p.");
+          } else {
+            window.location.hash = prefix + "section." + postfix.replace("-",".p.");
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC10036"><meta property="og:description" content="Incremental Forwarding of HTTP Messages"><meta property="og:url" content="https://httpwg.org/specs/rfc10036.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/assets/favicon/apple-icon-180x180.png"><link rel="stylesheet" type="text/css" href="/assets/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #sidebar {
+        margin-top: -10px;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      .toc ul {
+        list-style: none;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 Conventions and Definitions" href="#rfc.section.2"><link rel="Chapter" title="3 The Incremental Header Field" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 IANA Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 References" href="#rfc.section.6"><link rel="Appendix" title="Acknowledgments" href="#rfc.section.unnumbered-4"><link href="https://dx.doi.org/10.17487/rfc10036" rel="alternate"><link href="urn:issn:2070-1721" rel="alternate"><link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-incremental-04" rel="prev"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc10036.txt"><link rel="Help" title="RFC-Editor's Status Page" href="https://www.rfc-editor.org/info/rfc10036"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica https://www.saxonica.com/"><meta name="keywords" content="stream"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Oku, K."><meta name="dcterms.creator" content="Pauly, T."><meta name="dcterms.creator" content="Thomson, M."><meta name="dcterms.identifier" content="urn:ietf:rfc:10036"><meta name="dcterms.issued" content="2026-08"><meta name="dcterms.abstract" content="This document specifies the &#34;Incremental&#34; HTTP header field, which instructs HTTP intermediaries to forward the HTTP message incrementally."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This document specifies the &#34;Incremental&#34; HTTP header field, which instructs HTTP intermediaries to forward the HTTP message incrementally."></head><body onload="getMeta(10036,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark d-print-none navbar-expand-lg fixed-top ps-3 pe-3" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" href="https://httpwg.org/"><img src="https://httpwg.org/assets/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+      
+    <div class="navbar-nav me-auto">
+
+      <a class="nav-item ms-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Work in Progress</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
+      </div>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Participate</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li><li class="divider"></li><li class="dropdown-item"><a href="https://httpwg.org/CONTRIBUTING.html">Contribution Policy</a></li><li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li><li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li><li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li><li class="dropdown-item"><a href="https://httpwg.org/admin/editors/">Document Editor Resources</a></li></ul>
+      </div>
+    </div>
+            
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-lg-4 order-last d-none d-lg-block" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>10036</a></div><br clear="all"><div class=""><div class="toc "><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#conventions-and-definitions">Conventions and Definitions</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#the-incremental-header-field">The Incremental Header Field</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#security">Security Considerations</a><ul><li><a href="#rfc.section.4.1">4.1.</a>&nbsp;&nbsp;&nbsp;<a href="#permanent-rejection">Permanent Rejection</a></li><li><a href="#rfc.section.4.2">4.2.</a>&nbsp;&nbsp;&nbsp;<a href="#temporary-rejection">Temporary Rejection</a></li><li><a href="#rfc.section.4.3">4.3.</a>&nbsp;&nbsp;&nbsp;<a href="#handling-of-small-packets">Handling of Small Packets</a></li></ul></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#acknowledgments">Acknowledgments</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div></div></div></div><div class="col-lg-8 order-first main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">K. Oku</td></tr><tr><td class="text-left">Request for Comments: 10036</td><td class="text-right">Fastly</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">T. Pauly</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right">Apple</td></tr><tr><td class="text-left"></td><td class="text-right">M. Thomson</td></tr><tr><td class="text-left"></td><td class="text-right">Mozilla</td></tr><tr><td class="text-left"></td><td class="text-right">August 2026</td></tr></tbody></table><div id="rfc.title"><h1>Incremental Forwarding of HTTP Messages</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>This document specifies the "Incremental" HTTP header field, which instructs HTTP intermediaries to forward the HTTP message incrementally.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of This Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This is an Internet Standards Track document.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in <a href="https://www.rfc-editor.org/rfc/rfc7841.html#section-2">Section 2 of RFC 7841</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="https://www.rfc-editor.org/info/rfc10036">https://www.rfc-editor.org/info/rfc10036</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright (c) 2026 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.</p></div></section><div class="toc d-lg-none"><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#conventions-and-definitions">Conventions and Definitions</a></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#the-incremental-header-field">The Incremental Header Field</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#security">Security Considerations</a><ul><li><a href="#rfc.section.4.1">4.1.</a>&nbsp;&nbsp;&nbsp;<a href="#permanent-rejection">Permanent Rejection</a></li><li><a href="#rfc.section.4.2">4.2.</a>&nbsp;&nbsp;&nbsp;<a href="#temporary-rejection">Temporary Rejection</a></li><li><a href="#rfc.section.4.3">4.3.</a>&nbsp;&nbsp;&nbsp;<a href="#handling-of-small-packets">Handling of Small Packets</a></li></ul></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana-considerations">IANA Considerations</a></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#acknowledgments">Acknowledgments</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div><hr class="hidden-print"><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>HTTP <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a> permits receivers to begin processing portions of HTTP messages as they arrive, rather than requiring them to wait for the entire HTTP message to be received before acting.</p></div><div id="rfc.section.1.p.2"><p>Some applications are specifically designed to take advantage of this capability.</p></div><div id="rfc.section.1.p.3"><p>For example, Server-Sent Events <a href="#SSE"><cite title="HTML - Server-Sent Events">[SSE]</cite></a> uses a long-running HTTP response, where the server continually sends notifications as they become available.</p></div><div id="rfc.section.1.p.4"><p>In the case of Chunked Oblivious HTTP Messages <a href="#I-D.ietf-ohai-chunked-ohttp"><cite title="Chunked Oblivious HTTP Messages">[CHUNKED-OHTTP]</cite></a>, the client opens an HTTP request and incrementally sends application data, while the server can start responding even before the HTTP request is fully complete. In this way, the HTTP request-response pair could create what is, in effect, a bidirectional communication channel.</p></div><div id="rfc.section.1.p.5"><p>Applications that rely on incremental delivery of data are fragile when HTTP intermediaries are involved. This is because HTTP intermediaries are not only permitted but are frequently deployed to buffer complete HTTP messages before forwarding them downstream (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-7.6">Section 7.6</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div id="rfc.section.1.p.6"><p>If such a buffering HTTP intermediary exists between the client and the server, these applications may fail to function as intended.</p></div><div id="rfc.section.1.p.7"><p>In the case of Server-Sent Events, an intermediary that tries to buffer the HTTP response completely before forwarding it could be left waiting indefinitely. A client might never receive any portion of the response.</p></div><div id="rfc.section.1.p.8"><p>In the case of requests that involve any bidirectional exchange, an intermediary that tries to buffer entire messages -- either request or response -- prevents any data from being delivered.</p></div><div id="rfc.section.1.p.9"><p>To help avoid such behavior, this document specifies the "Incremental" HTTP header field, which requests that HTTP intermediaries begin forwarding the HTTP message downstream before receiving the complete message.</p></div><div id="rfc.section.1.p.10"><p>This indication might not be supported by intermediaries. Intermediaries that are unaware of this field will not change their behavior. Intermediaries that support the field might choose instead to reject a request; see <a href="#security" title="Security Considerations">Section 4</a>.</p></div></section><hr class="hidden-print"><section id="conventions-and-definitions"><h2 id="rfc.section.2" class="np"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#conventions-and-definitions">Conventions and Definitions</a></h2><div id="rfc.section.2.p.1"><p>The key words "<em class="bcp14">MUST</em>", "<em class="bcp14">MUST NOT</em>", "<em class="bcp14">REQUIRED</em>", "<em class="bcp14">SHALL</em>", "<em class="bcp14">SHALL NOT</em>", "<em class="bcp14">SHOULD</em>", "<em class="bcp14">SHOULD NOT</em>", "<em class="bcp14">RECOMMENDED</em>", "<em class="bcp14">NOT RECOMMENDED</em>", "<em class="bcp14">MAY</em>", and "<em class="bcp14">OPTIONAL</em>" in this document are to be interpreted as described in <span class="nobr">BCP 14</span> <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div><div id="rfc.section.2.p.2"><p>This document relies on structured field definitions of Item and Boolean <a href="#RFC9651"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>.</p></div></section><hr class="hidden-print"><section id="the-incremental-header-field"><h2 id="rfc.section.3" class="np"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#the-incremental-header-field">The Incremental Header Field</a></h2><div id="rfc.section.3.p.1"><p>The Incremental HTTP header field expresses the sender's intent for HTTP intermediaries to start forwarding the message downstream before the entire message is received.</p></div><div id="rfc.section.3.p.2"><p>The Incremental header field is defined as a structured field <a href="#RFC9651"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a> of type Item. Only Boolean values (<a href="https://www.rfc-editor.org/rfc/rfc9651.html#section-3.3.6">Section 3.3.6</a> of <a href="#RFC9651"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>) are valid; a recipient ignores the field if it contains any other type.</p></div><div id="rfc.section.3.p.3"><pre class="text">
+Incremental: ?1
+</pre></div><div id="rfc.section.3.p.4"><p>A true value ("?1") indicates that the sender requests intermediaries to forward the message incrementally, as described below.</p></div><div id="rfc.section.3.p.5"><pre class="text">
+Incremental: ?0
+</pre></div><div id="rfc.section.3.p.6"><p>A false value ("?0") indicates the default behavior defined in <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, where intermediaries might buffer the entire message before forwarding it. However, this explicit signal might give an intermediary greater confidence in choosing to buffer.</p></div><div id="rfc.section.3.p.7"><p>The Incremental HTTP header field applies to each HTTP message. Therefore, if both the HTTP request and response need to be forwarded incrementally, the Incremental HTTP header field <em class="bcp14">MUST</em> be set for both the HTTP request and the response.</p></div><div id="rfc.section.3.p.8"><p>Upon receiving a header section that includes an Incremental header field with a true value, HTTP intermediaries <em class="bcp14">SHOULD NOT</em> buffer the entire message before forwarding it. Instead, intermediaries <em class="bcp14">SHOULD</em> transmit the header section downstream and continuously forward the bytes of the message content as they arrive. As the Incremental header field indicates only how the message content is to be forwarded, intermediaries can still buffer the entire header and trailer sections of the message before forwarding them downstream.</p></div><div id="rfc.section.3.p.9"><p>If an intermediary decides outright to refuse forwarding the message body incrementally, the intermediary <em class="bcp14">MUST</em> generate an error response rather than buffering an entire message before forwarding. Typical scenarios under which an intermediary might refuse are discussed in <a href="#security" title="Security Considerations">Section 4</a>.</p></div><div id="rfc.section.3.p.10"><p>The request to use incremental forwarding also applies to HTTP implementations. Though most HTTP APIs provide the ability to incrementally transfer message content, those that do not for any reason <em class="bcp14">SHOULD</em> use the presence of the Incremental header field to reduce or disable buffering.</p></div><div id="rfc.section.3.p.11"><p>The Incremental field might not be supported by intermediaries. Intermediaries that are unaware of the field or that do not support the field might buffer messages, even when explicitly requested otherwise. Clients and servers therefore cannot expect all intermediaries to understand and respect a request to deliver messages incrementally. Clients that depend on support for incremental forwarding can rely on prior knowledge or probe for support on individual resources.</p></div><div id="rfc.section.3.p.12"><p>The Incremental header field facilitates the establishment of a bidirectional byte channel over HTTP, as its presence in both requests and responses requests that intermediaries forward early responses (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-7.5">Section 7.5</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) and transmit message contents incrementally in both directions. However, when developing bidirectional protocols over HTTP, Extended CONNECT <a href="#RFC8441"><cite title="Bootstrapping WebSockets with HTTP/2">[RFC8441]</cite></a><a href="#RFC9220"><cite title="Bootstrapping WebSockets with HTTP/3">[RFC9220]</cite></a> is generally more consistent with HTTP's architecture.</p></div><div id="rfc.section.3.p.13"><p>This document does not define any parameters for the Incremental header field value, but future documents might define parameters. Receivers <em class="bcp14">MUST</em> ignore unknown parameters.</p></div></section><hr class="hidden-print"><section id="security"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#security">Security Considerations</a></h2><div id="rfc.section.4.p.1"><p>When receiving a request or response that asks for incremental forwarding, intermediaries might reject the HTTP request due to security concerns. The following subsections explore typical scenarios under which the intermediaries might reject requests.</p></div><div id="rfc.section.4.p.2"><p>Note that rejecting requests based on the value of the Incremental field only occurs when an intermediary understands the field.</p></div><section id="permanent-rejection"><h3 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a>&nbsp;<a href="#permanent-rejection">Permanent Rejection</a></h3><div id="rfc.section.4.1.p.1"><p>Some intermediaries inspect the content of HTTP messages and forward them only if their content is deemed safe. Any feature that depends on seeing the entirety of the message in this way is incompatible with incremental delivery.</p></div><div id="rfc.section.4.1.p.2"><p>When an intermediary is asked to incrementally forward a message and cannot -- whether that message is a request or a response -- due to security concerns about the message content, the intermediary <em class="bcp14">SHOULD</em> respond with a 501 (Not Implemented) error with an incremental_refused Proxy-Status response header field (<a href="#iana-considerations" title="IANA Considerations">Section 5</a>).</p></div></section><section id="temporary-rejection"><h3 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a>&nbsp;<a href="#temporary-rejection">Temporary Rejection</a></h3><div id="rfc.section.4.2.p.1"><p>To conserve resources required to handle HTTP requests or connections, it is common for intermediaries to impose limits on the maximum number of concurrent HTTP requests that they forward, while buffering requests that exceed this limit.</p></div><div id="rfc.section.4.2.p.2"><p>Such intermediaries could apply a more restrictive concurrency limit to requests marked as incremental to ensure that capacity remains available for non-incremental requests, even when the maximum number of incremental requests is reached. This approach helps balance the processing of different types of requests and maintains service availability across all requests.</p></div><div id="rfc.section.4.2.p.3"><p>When rejecting incremental requests due to reaching the concurrency limit, intermediaries <em class="bcp14">SHOULD</em> respond with a 429 (Too Many Requests) error (<a href="https://www.rfc-editor.org/rfc/rfc6585.html#section-4">Section 4</a> of <a href="#RFC6585"><cite title="Additional HTTP Status Codes">[EXTRA-STATUS]</cite></a>), accompanied by a connection_limit_reached Proxy-Status response header field (<a href="https://www.rfc-editor.org/rfc/rfc9209.html#section-2.3.12">Section 2.3.12</a> of <a href="#RFC9209"><cite title="The Proxy-Status HTTP Response Header Field">[PROXY-STATUS]</cite></a>).</p></div></section><section id="handling-of-small-packets"><h3 id="rfc.section.4.3"><a href="#rfc.section.4.3">4.3.</a>&nbsp;<a href="#handling-of-small-packets">Handling of Small Packets</a></h3><div id="rfc.section.4.3.p.1"><p>For performance and efficiency reasons, a small amount of buffering might be used by intermediaries, even for incremental messages. Immediate forwarding might be exploited to cause an intermediary to waste effort on many small packets. Enabling incremental delivery might instead set limits on the number of bytes that are buffered or the length of time that buffers are held before forwarding. Any buffering could adversely affect application latency, even if it improves efficiency. In all cases, intermediaries cannot hold data in buffers indefinitely, so data needs to be forwarded when either the time limit or the byte limit is reached.</p></div></section></section><hr class="hidden-print"><section id="iana-considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#iana-considerations">IANA Considerations</a></h2><div id="rfc.section.5.p.1" class="avoidbreakafter"><p>An HTTP field named Incremental has been registered in the "Hypertext Transfer Protocol (HTTP) Field Name Registry" following the procedures in <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-18.4">Section 18.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>. The following values are registered:</p></div><div id="rfc.section.5.p.2"><dl class="compact"><dt>Field Name:</dt><dd style="margin-left: 1.5em"><div>Incremental</div></dd><dt>Status:</dt><dd style="margin-left: 1.5em"><div>permanent</div></dd><dt>Structured Type:</dt><dd style="margin-left: 1.5em"><div>Item</div></dd><dt>Reference:</dt><dd style="margin-left: 1.5em"><div>This document</div></dd><dt>Comments:</dt><dd style="margin-left: 1.5em"><div>None</div></dd></dl></div><div id="rfc.section.5.p.3" class="avoidbreakafter"><p>An HTTP Proxy Error Type has been registered in the "HTTP Proxy Error Types" registry as shown below:</p></div><div id="rfc.section.5.p.4"><dl class="compact"><dt>Name:</dt><dd style="margin-left: 1.5em"><div>incremental_refused</div></dd><dt>Description:</dt><dd style="margin-left: 1.5em"><div>The HTTP message contained the Incremental HTTP header field, but the intermediary refused to forward the message incrementally.</div></dd><dt>Extra Parameters:</dt><dd style="margin-left: 1.5em"><div>none</div></dd><dt>Recommended HTTP Status Code:</dt><dd style="margin-left: 1.5em"><div>501</div></dd><dt>Response Only Generated By Intermediaries:</dt><dd style="margin-left: 1.5em"><div>true</div></dd><dt>Reference:</dt><dd style="margin-left: 1.5em"><div>This document</div></dd></dl></div></section><section id="sec-combined-references" class="np"><div id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section id="sec-normative-references"><div id="rfc.references.2"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC6585">[<a href="#RFC6585" class="smpl">EXTRA-STATUS</a>]</dt><dd>Nottingham, M. and R. Fielding, “<a href="https://www.rfc-editor.org/rfc/rfc6585.html">Additional HTTP Status Codes</a>”, RFC 6585, <a href="https://dx.doi.org/10.17487/RFC6585">DOI 10.17487/RFC6585</a>, April 2012, &lt;<a href="https://www.rfc-editor.org/info/rfc6585">https://www.rfc-editor.org/info/rfc6585</a>&gt;.</dd><dt id="RFC9110">[<a href="#RFC9110" class="smpl">HTTP</a>]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, <a href="https://www.rfc-editor.org/info/std97">STD 97</a>, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="RFC9209">[<a href="#RFC9209" class="smpl">PROXY-STATUS</a>]</dt><dd>Nottingham, M. and P. Sikora, “<a href="https://www.rfc-editor.org/rfc/rfc9209.html">The Proxy-Status HTTP Response Header Field</a>”, RFC 9209, <a href="https://dx.doi.org/10.17487/RFC9209">DOI 10.17487/RFC9209</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9209">https://www.rfc-editor.org/info/rfc9209</a>&gt;.</dd><dt id="RFC2119">[<a href="#RFC2119" class="smpl">RFC2119</a>]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, <a href="https://www.rfc-editor.org/info/bcp14">BCP 14</a>, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[<a href="#RFC8174" class="smpl">RFC8174</a>]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, <a href="https://www.rfc-editor.org/info/bcp14">BCP 14</a>, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="RFC9651">[<a href="#RFC9651" class="smpl">STRUCTURED-FIELDS</a>]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc9651.html">Structured Field Values for HTTP</a>”, RFC 9651, <a href="https://dx.doi.org/10.17487/RFC9651">DOI 10.17487/RFC9651</a>, September 2024, &lt;<a href="https://www.rfc-editor.org/info/rfc9651">https://www.rfc-editor.org/info/rfc9651</a>&gt;.</dd></dl></div></section><section id="sec-informative-references"><div id="rfc.references.3"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="I-D.ietf-ohai-chunked-ohttp">[<a href="#I-D.ietf-ohai-chunked-ohttp" class="smpl">CHUNKED-OHTTP</a>]</dt><dd>Pauly, T. and M. Thomson, “<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-chunked-ohttp-08">Chunked Oblivious HTTP Messages</a>”, <a href="https://datatracker.ietf.org/doc/draft-ietf-ohai-chunked-ohttp">Work in Progress</a>, draft-ietf-ohai-chunked-ohttp-08, Work in Progress, February 2026, &lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-ohai-chunked-ohttp-08">https://datatracker.ietf.org/doc/html/draft-ietf-ohai-chunked-ohttp-08</a>&gt;.</dd><dt id="RFC8441">[<a href="#RFC8441" class="smpl">RFC8441</a>]</dt><dd>McManus, P., “<a href="https://www.rfc-editor.org/rfc/rfc8441.html">Bootstrapping WebSockets with HTTP/2</a>”, RFC 8441, <a href="https://dx.doi.org/10.17487/RFC8441">DOI 10.17487/RFC8441</a>, September 2018, &lt;<a href="https://www.rfc-editor.org/info/rfc8441">https://www.rfc-editor.org/info/rfc8441</a>&gt;.</dd><dt id="RFC9220">[<a href="#RFC9220" class="smpl">RFC9220</a>]</dt><dd>Hamilton, R., “<a href="https://www.rfc-editor.org/rfc/rfc9220.html">Bootstrapping WebSockets with HTTP/3</a>”, RFC 9220, <a href="https://dx.doi.org/10.17487/RFC9220">DOI 10.17487/RFC9220</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9220">https://www.rfc-editor.org/info/rfc9220</a>&gt;.</dd><dt id="SSE">[<a href="#SSE" class="smpl">SSE</a>]</dt><dd>WHATWG, “<a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">HTML - Server-Sent Events</a>”, WHATWG Living Standard, &lt;<a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">https://html.spec.whatwg.org/multipage/server-sent-events.html</a>&gt;.<br>Commit snapshot: &lt;<a href="https://html.spec.whatwg.org/commit-snapshots/6f84b26bd6eb8bd0e0e8df9819e43e901867166b/">https://html.spec.whatwg.org/commit-snapshots/6f84b26bd6eb8bd0e0e8df9819e43e901867166b/</a>&gt;</dd></dl></div></section></div></section><hr class="hidden-print"><section id="acknowledgments"><h2 id="rfc.section.unnumbered-4" class="np"><a href="#acknowledgments">Acknowledgments</a></h2><div id="rfc.section.unnumbered-4.p.1"><p>The authors would like to thank many members of the IETF HTTP Working Group for their discussions and feedback on this specification. In particular, the authors would like to thank Mark Thomas, Piotr Sikora, Thibault Meunier, Marius Kleidl, Ben Schwartz, Willy Tarreau, Will Hawkins, Mark Nottingham, and Lucas Pardue for close review and suggested changes.</p></div></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Kazuho Oku</b><br>Fastly<br>EMail: <a href="mailto:kazuhooku@gmail.com">kazuhooku@gmail.com</a><br><br><em>Additional contact information:</em><br><b>奥 一穂</b><br>Fastly<br>EMail: <a href="mailto:kazuhooku@gmail.com">kazuhooku@gmail.com</a></address><address><b>Tommy Pauly</b><br>Apple<br>EMail: <a href="mailto:tpauly@apple.com">tpauly@apple.com</a></address><address><b>Martin Thomson</b><br>Mozilla<br>EMail: <a href="mailto:mt@lowentropy.net">mt@lowentropy.net</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>
