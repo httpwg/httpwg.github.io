@@ -1,0 +1,544 @@
+<!DOCTYPE html
+  SYSTEM "about:legacy-compat">
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>RFC 10008 - The HTTP QUERY Method</title><script>
+function getMeta(rfcno, container) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.rfc-editor.org/rfc/rfc" + rfcno + ".json", true);
+  xhr.onload = function (e) {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.response);
+        
+        var cont = document.getElementById(container);
+        // empty the container
+        while (cont.firstChild) {
+          cont.removeChild(myNode.firstChild);
+        }
+
+        var c = data.status;
+        if (c) {
+          var bld = newElementWithText("b", c);
+          cont.appendChild(bld);
+        } else {
+          cont.appendChild(newElementWithText("i", "(document status unknown)"));
+        }
+
+        c = data.updated_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Updated by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.obsoleted_by;
+        if (c && c.length > 0 && c[0] !== null && c[0].length > 0) {
+          cont.appendChild(newElement("br"));
+          cont.appendChild(newText("Obsoleted by: "));
+          appendRfcLinks(cont, c);
+        }
+
+        c = data.errata_url;
+        if (c) {
+          cont.appendChild(newElement("br"));
+          var link = newElementWithText("a", "errata");
+          link.setAttribute("href", c);
+          var errata = newElementWithText("i", "This document has ");
+          errata.appendChild(link);
+          errata.appendChild(newText("."));
+          cont.appendChild(errata);
+        }
+
+        cont.style.display = "block";
+      } else {
+        console.error(xhr.statusText);
+      }
+    }
+  };
+  xhr.onerror = function (e) {
+    console.error(xhr.status + " " + xhr.statusText);
+  };
+  xhr.send(null);
+}
+function appendRfcLinks(parent, updates) {
+  var template = "https://www.rfc-editor.org/rfc/rfc{rfc}.html";
+  for (var i = 0; i < updates.length; i++) {
+    var rfc = updates[i].trim().toLowerCase();
+    if (rfc.substring(0, 3) == "rfc") {
+      var no = parseInt(rfc.substring(3), 10);
+      
+      var link = newElement("a");
+      link.setAttribute("href", template.replace("{rfc}", no));
+      link.appendChild(newText(no));
+      parent.appendChild(link);
+    } else {
+      parent.appendChild(newText(rfc));
+    }
+    if (i != updates.length - 1) {
+      parent.appendChild(newText(", "));
+    }
+  }
+}
+
+// DOM helpers
+function newElement(name) {
+  return document.createElement(name);
+}
+function newElementWithText(name, txt) {
+  var e = document.createElement(name);
+  e.appendChild(newText(txt));
+  return e;
+}
+function newText(text) {
+  return document.createTextNode(text);
+}
+</script><script>
+function anchorRewrite() {
+  map = { };
+  if (window.location.hash.length >= 1) {
+    var fragid = window.location.hash.substr(1);
+    if (fragid) {
+      if (! document.getElementById(fragid)) {
+        var prefix = "rfc.";
+        var mapped = map[fragid];
+        if (mapped) {
+          window.location.hash = mapped;
+        } else if (fragid.indexOf("section-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(8).replace("-",".p.");
+        } else if (fragid.indexOf("appendix-") == 0) {
+          window.location.hash = prefix + "section." + fragid.substring(9).replace("-",".p.");
+        } else if (fragid.indexOf("s-") == 0) {
+          var postfix = fragid.substring(2);
+          if (postfix.startsWith("abstract")) {
+            window.location.hash = prefix + postfix;
+          } else if (postfix.startsWith("note-")) {
+            window.location.hash = prefix + "note." + postfix.substring(5).replace("-",".p.");
+          } else {
+            window.location.hash = prefix + "section." + postfix.replace("-",".p.");
+          }
+        } else if (fragid.indexOf("p-") == 0) {
+          var r = fragid.substring(2);
+          var p = r.indexOf("-");
+          if (p >= 0) {
+            window.location.hash = prefix + "section." + r.substring(0, p) + ".p." + r.substring(p + 1);
+          }
+        }
+      }
+    }  
+  }
+}
+window.addEventListener('hashchange', anchorRewrite);
+window.addEventListener('DOMContentLoaded', anchorRewrite);
+</script><meta name="viewport" content="width=device-width, initial-scale=1"><meta property="og:type" content="article"><meta property="og:title" content="RFC10008"><meta property="og:description" content="The HTTP QUERY Method"><meta property="og:url" content="https://httpwg.org/specs/rfc10008.html"><meta property="og:site_name" content="IETF HTTP Working Group Specifications"><meta property="og:image" content="https://httpwg.org/assets/favicon/apple-icon-180x180.png"><link rel="stylesheet" type="text/css" href="/assets/node_modules/bootstrap/dist/css/bootstrap.min.css"><style type="text/css">
+      body {
+        padding-top: 80px;
+        padding-bottom: 80px;
+        position: relative;
+      }
+      .table.header th, .table.header td {
+        border-top: none;
+        padding: 0;
+      }
+      #sidebar {
+        margin-top: -10px;
+        height: 90%;
+        overflow-y: auto;
+        font-size: 90%;
+      }
+      #rfc\.meta {
+        width: 40%;
+        float: right
+      }
+      .toc ul {
+        list-style: none;
+      }
+      .filename {
+        color: rgb(119, 119, 119);
+        font-size: 23px;
+        font-weight: normal;
+        height: auto;
+        line-height: 23px;
+      }
+      dl {
+        margin-left: 1em;
+      }
+      dl.dl-horizontal: {
+        margin-left: 0;
+      }
+      dl > dt {
+        float: left;
+        margin-right: 1em;
+      }
+      dl.nohang > dt {
+        float: none;
+      }
+      dl > dd {
+        margin-bottom: .5em;
+      }
+      dl.compact > dd {
+        margin-bottom: 0em;
+      }
+      dl > dd > dl {
+        margin-top: 0.5em;
+        margin-bottom: 0em;
+      }
+      ul.empty {
+        list-style-type: none;
+      }
+      ul.empty li {
+        margin-top: .5em;
+      }
+      td.reference {
+        padding-right: 1em;
+        vertical-align: top;
+      }
+      .feedback {
+        position: fixed;
+        bottom: 5px;
+        right: 5px;
+      }
+      .fbbutton {
+        margin-left: 5px;
+      }
+      h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+        color: rgb(51, 51, 51);
+      }
+      span.tt {
+        font: 11pt consolas, monospace;
+        font-size-adjust: none;
+      }
+    </style><link rel="stylesheet" type="text/css" href="/assets/site.css"><link rel="Contents" href="#rfc.toc"><link rel="Author" href="#rfc.authors"><link rel="License" href="#rfc.copyrightnotice"><link rel="Chapter" title="1 Introduction" href="#rfc.section.1"><link rel="Chapter" title="2 QUERY Method" href="#rfc.section.2"><link rel="Chapter" title="3 The Accept-Query Header Field" href="#rfc.section.3"><link rel="Chapter" title="4 Security Considerations" href="#rfc.section.4"><link rel="Chapter" title="5 IANA Considerations" href="#rfc.section.5"><link rel="Chapter" title="6 References" href="#rfc.section.6"><link rel="Appendix" title="A Examples" href="#rfc.section.A"><link rel="Appendix" title="B Selection of the Method Name 'QUERY'" href="#rfc.section.B"><link rel="Appendix" title="Acknowledgements" href="#rfc.section.unnumbered-4"><link rel="Appendix" title="Contributors" href="#rfc.section.unnumbered-5"><link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-safe-method-w-body-14" rel="prev"><link href="https://dx.doi.org/10.17487/rfc10008" rel="alternate"><link href="urn:issn:2070-1721" rel="alternate"><link rel="Alternate" title="Plain Text Version" href="http://www.ietf.org/rfc/rfc10008.txt"><link rel="Help" title="RFC-Editor's Status Page" href="https://www.rfc-editor.org/info/rfc10008"><meta name="viewport" content="initial-scale=1"><meta name="generator" content="https://github.com/mnot/RFCBootstrap XSLT vendor: Saxonica https://www.saxonica.com/"><meta name="keywords" content="http, query, method"><link rel="schema.dcterms" href="http://purl.org/dc/terms/"><meta name="dcterms.creator" content="Reschke, J."><meta name="dcterms.creator" content="Snell, J.M."><meta name="dcterms.creator" content="Bishop, M."><meta name="dcterms.identifier" content="urn:ietf:rfc:10008"><meta name="dcterms.issued" content="2026-06"><meta name="dcterms.abstract" content="This specification defines the QUERY method for HTTP. A QUERY requests that the request target process the enclosed content in a safe and idempotent manner and then respond with the result of that processing. This is similar to POST requests, but QUERY requests can be automatically repeated or restarted without concern for partial state changes."><meta name="dcterms.isPartOf" content="urn:issn:2070-1721"><meta name="description" content="This specification defines the QUERY method for HTTP. A QUERY requests that the request target process the enclosed content in a safe and idempotent manner and then respond with the result of that processing. This is similar to POST requests, but QUERY requests can be automatically repeated or restarted without concern for partial state changes."></head><body onload="getMeta(10008,&#34;rfc.meta&#34;);"><nav class="navbar navbar-dark bg-dark d-print-none navbar-expand-lg fixed-top ps-3 pe-3" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <a class="navbar-brand" href="https://httpwg.org/"><img src="https://httpwg.org/assets/http.svg" height="23"></a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+      
+    <div class="navbar-nav me-auto">
+
+      <a class="nav-item ms-1 text-white" href="https://httpwg.org/specs/">📄 Documentation</a>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Work in Progress</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/http-extensions/">HTTP Extensions</a></li><li class="dropdown-item"><a href="https://github.com/httpwg/admin/issues?q=is%3Aissue+is%3Aopen+label%3Aadoption">Future Work</a></li></ul>
+      </div>
+
+      <div class="dropdown ms-4">
+        <a href="#" class="nav-item dropdown-toggle text-white" data-bs-toggle="dropdown">Participate</a>
+          <ul class="dropdown-menu"><li class="dropdown-item"><a href="https://httpwg.org/about/">About the HTTP Working Group</a></li><li class="divider"></li><li class="dropdown-item"><a href="https://httpwg.org/CONTRIBUTING.html">Contribution Policy</a></li><li class="dropdown-item"><a href="http://datatracker.ietf.org/wg/httpbis/charter/">WG Charter</a></li><li class="dropdown-item"><a href="http://lists.w3.org/Archives/Public/ietf-http-wg/">Group Mailing List 📨</a></li><li class="dropdown-item"><a href="https://httpwg.org/wg-materials/">Meeting Materials</a></li><li class="dropdown-item"><a href="https://httpwg.org/admin/editors/">Document Editor Resources</a></li></ul>
+      </div>
+    </div>
+            
+  </div>
+</nav><div class="container" id="top"><div class="row"><div class="col-lg-4 order-last d-none d-lg-block" id="sidebar" role="navigation"><div class="navbar"><div class="navbar-brand"><a href="#top"><strong>RFC </strong>10008</a></div><br clear="all"><div class=""><div class="toc "><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#terminology">Terminology</a></li><li><a href="#rfc.section.1.2">1.2.</a>&nbsp;&nbsp;&nbsp;<a href="#notational.conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#query">QUERY Method</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#media.types.and.conneg">Media Types and Content Negotiation</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#equivalent-resource">Equivalent Resource</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#content-location">Content-Location Response Field</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#location">Location Response Field</a></li><li><a href="#rfc.section.2.5">2.5.</a>&nbsp;&nbsp;&nbsp;<a href="#redirection">Redirection</a></li><li><a href="#rfc.section.2.6">2.6.</a>&nbsp;&nbsp;&nbsp;<a href="#conditional">Conditional Requests</a></li><li><a href="#rfc.section.2.7">2.7.</a>&nbsp;&nbsp;&nbsp;<a href="#caching">Caching</a></li><li><a href="#rfc.section.2.8">2.8.</a>&nbsp;&nbsp;&nbsp;<a href="#range">Range Requests</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#field.accept-query">The Accept-Query Header Field</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.4">Security Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana.considerations">IANA Considerations</a><ul><li><a href="#rfc.section.5.1">5.1.</a>&nbsp;&nbsp;&nbsp;<a href="#method.registration">Registration of the QUERY Method</a></li><li><a href="#rfc.section.5.2">5.2.</a>&nbsp;&nbsp;&nbsp;<a href="#field.registration">Registration of the Accept-Query Field</a></li></ul></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.section.A">Appendix A.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a><ul><li><a href="#rfc.section.A.1">A.1.</a>&nbsp;&nbsp;&nbsp;<a href="#example.simple">Simple Query</a></li><li><a href="#rfc.section.A.2">A.2.</a>&nbsp;&nbsp;&nbsp;<a href="#example.discovery.method">Discovery of QUERY Support</a></li><li><a href="#rfc.section.A.3">A.3.</a>&nbsp;&nbsp;&nbsp;<a href="#example.discovery.formats">Discovery of QUERY Formats</a></li><li><a href="#rfc.section.A.4">A.4.</a>&nbsp;&nbsp;&nbsp;<a href="#example.content-location.location.indirect">Content-Location, Location, and Indirect Responses</a><ul><li><a href="#rfc.section.A.4.1">A.4.1.</a>&nbsp;&nbsp;&nbsp;<a href="#example.content-location">Using Content-Location</a></li><li><a href="#rfc.section.A.4.2">A.4.2.</a>&nbsp;&nbsp;&nbsp;<a href="#example.location">Using Location</a></li><li><a href="#rfc.section.A.4.3">A.4.3.</a>&nbsp;&nbsp;&nbsp;<a href="#example.indirect">Indirect Responses</a></li></ul></li><li><a href="#rfc.section.A.5">A.5.</a>&nbsp;&nbsp;&nbsp;<a href="#example.conditional">Conditional Requests</a></li><li><a href="#rfc.section.A.6">A.6.</a>&nbsp;&nbsp;&nbsp;<a href="#example.more.query.formats">More Query Formats</a></li></ul></li><li><a href="#rfc.section.B">Appendix B.</a>&nbsp;&nbsp;&nbsp;<a href="#selection.method.name">Selection of the Method Name 'QUERY'</a></li><li><a href="#acknowledgements">Acknowledgements</a></li><li><a href="#contributors">Contributors</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div></div></div></div><div class="col-lg-8 order-first main" role="main"><header><table class="table table-condensed header" id="rfc.headerblock"><tbody><tr><td class="text-left">Internet Engineering Task Force (IETF)</td><td class="text-right">J. Reschke</td></tr><tr><td class="text-left">Request for Comments: 10008</td><td class="text-right">greenbytes</td></tr><tr><td class="text-left">Category: Standards Track</td><td class="text-right">J. Snell</td></tr><tr><td class="text-left">ISSN: 2070-1721</td><td class="text-right">Cloudflare</td></tr><tr><td class="text-left"></td><td class="text-right">M. Bishop</td></tr><tr><td class="text-left"></td><td class="text-right">Akamai</td></tr><tr><td class="text-left"></td><td class="text-right">June 2026</td></tr></tbody></table><div id="rfc.title"><h1>The HTTP QUERY Method</h1></div></header><hr><h2 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h2><div class="lead"><div id="rfc.abstract.p.1"><p>This specification defines the QUERY method for HTTP. A QUERY requests that the request target process the enclosed content in a safe and idempotent manner and then respond with the result of that processing. This is similar to POST requests, but QUERY requests can be automatically repeated or restarted without concern for partial state changes.</p></div></div><aside id="rfc.meta" class="alert alert-info"></aside><section id="rfc.status"><h2><a href="#rfc.status">Status of This Memo</a></h2><div id="rfc.boilerplate.1.p.1"><p>This is an Internet Standards Track document.</p></div><div id="rfc.boilerplate.1.p.2"><p>This document is a product of the Internet Engineering Task Force (IETF). It represents the consensus of the IETF community. It has received public review and has been approved for publication by the Internet Engineering Steering Group (IESG). Further information on Internet Standards is available in <a href="https://www.rfc-editor.org/rfc/rfc7841.html#section-2">Section 2 of RFC 7841</a>.</p></div><div id="rfc.boilerplate.1.p.3"><p>Information about the current status of this document, any errata, and how to provide feedback on it may be obtained at <a href="https://www.rfc-editor.org/info/rfc10008">https://www.rfc-editor.org/info/rfc10008</a>.</p></div></section><section id="rfc.copyrightnotice"><h2><a href="#rfc.copyrightnotice">Copyright Notice</a></h2><div id="rfc.boilerplate.2.p.1"><p>Copyright (c) 2026 IETF Trust and the persons identified as the document authors. All rights reserved.</p></div><div id="rfc.boilerplate.2.p.2"><p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (<a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a>) in effect on the date of publication of this document. Please review these documents carefully, as they describe your rights and restrictions with respect to this document. Code Components extracted from this document must include Revised BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Revised BSD License.</p></div></section><div class="toc d-lg-none"><ul><li><a href="#rfc.section.1">1.</a>&nbsp;&nbsp;&nbsp;<a href="#introduction">Introduction</a><ul><li><a href="#rfc.section.1.1">1.1.</a>&nbsp;&nbsp;&nbsp;<a href="#terminology">Terminology</a></li><li><a href="#rfc.section.1.2">1.2.</a>&nbsp;&nbsp;&nbsp;<a href="#notational.conventions">Notational Conventions</a></li></ul></li><li><a href="#rfc.section.2">2.</a>&nbsp;&nbsp;&nbsp;<a href="#query">QUERY Method</a><ul><li><a href="#rfc.section.2.1">2.1.</a>&nbsp;&nbsp;&nbsp;<a href="#media.types.and.conneg">Media Types and Content Negotiation</a></li><li><a href="#rfc.section.2.2">2.2.</a>&nbsp;&nbsp;&nbsp;<a href="#equivalent-resource">Equivalent Resource</a></li><li><a href="#rfc.section.2.3">2.3.</a>&nbsp;&nbsp;&nbsp;<a href="#content-location">Content-Location Response Field</a></li><li><a href="#rfc.section.2.4">2.4.</a>&nbsp;&nbsp;&nbsp;<a href="#location">Location Response Field</a></li><li><a href="#rfc.section.2.5">2.5.</a>&nbsp;&nbsp;&nbsp;<a href="#redirection">Redirection</a></li><li><a href="#rfc.section.2.6">2.6.</a>&nbsp;&nbsp;&nbsp;<a href="#conditional">Conditional Requests</a></li><li><a href="#rfc.section.2.7">2.7.</a>&nbsp;&nbsp;&nbsp;<a href="#caching">Caching</a></li><li><a href="#rfc.section.2.8">2.8.</a>&nbsp;&nbsp;&nbsp;<a href="#range">Range Requests</a></li></ul></li><li><a href="#rfc.section.3">3.</a>&nbsp;&nbsp;&nbsp;<a href="#field.accept-query">The Accept-Query Header Field</a></li><li><a href="#rfc.section.4">4.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.section.4">Security Considerations</a></li><li><a href="#rfc.section.5">5.</a>&nbsp;&nbsp;&nbsp;<a href="#iana.considerations">IANA Considerations</a><ul><li><a href="#rfc.section.5.1">5.1.</a>&nbsp;&nbsp;&nbsp;<a href="#method.registration">Registration of the QUERY Method</a></li><li><a href="#rfc.section.5.2">5.2.</a>&nbsp;&nbsp;&nbsp;<a href="#field.registration">Registration of the Accept-Query Field</a></li></ul></li><li><a href="#rfc.section.6">6.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references">References</a><ul><li><a href="#rfc.section.6.1">6.1.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.2">Normative References</a></li><li><a href="#rfc.section.6.2">6.2.</a>&nbsp;&nbsp;&nbsp;<a href="#rfc.references.3">Informative References</a></li></ul></li><li><a href="#rfc.section.A">Appendix A.</a>&nbsp;&nbsp;&nbsp;<a href="#examples">Examples</a><ul><li><a href="#rfc.section.A.1">A.1.</a>&nbsp;&nbsp;&nbsp;<a href="#example.simple">Simple Query</a></li><li><a href="#rfc.section.A.2">A.2.</a>&nbsp;&nbsp;&nbsp;<a href="#example.discovery.method">Discovery of QUERY Support</a></li><li><a href="#rfc.section.A.3">A.3.</a>&nbsp;&nbsp;&nbsp;<a href="#example.discovery.formats">Discovery of QUERY Formats</a></li><li><a href="#rfc.section.A.4">A.4.</a>&nbsp;&nbsp;&nbsp;<a href="#example.content-location.location.indirect">Content-Location, Location, and Indirect Responses</a><ul><li><a href="#rfc.section.A.4.1">A.4.1.</a>&nbsp;&nbsp;&nbsp;<a href="#example.content-location">Using Content-Location</a></li><li><a href="#rfc.section.A.4.2">A.4.2.</a>&nbsp;&nbsp;&nbsp;<a href="#example.location">Using Location</a></li><li><a href="#rfc.section.A.4.3">A.4.3.</a>&nbsp;&nbsp;&nbsp;<a href="#example.indirect">Indirect Responses</a></li></ul></li><li><a href="#rfc.section.A.5">A.5.</a>&nbsp;&nbsp;&nbsp;<a href="#example.conditional">Conditional Requests</a></li><li><a href="#rfc.section.A.6">A.6.</a>&nbsp;&nbsp;&nbsp;<a href="#example.more.query.formats">More Query Formats</a></li></ul></li><li><a href="#rfc.section.B">Appendix B.</a>&nbsp;&nbsp;&nbsp;<a href="#selection.method.name">Selection of the Method Name 'QUERY'</a></li><li><a href="#acknowledgements">Acknowledgements</a></li><li><a href="#contributors">Contributors</a></li><li><a href="#rfc.authors">Authors' Addresses</a></li></ul></div><hr class="hidden-print"><section id="introduction"><h2 id="rfc.section.1" class="np"><a href="#rfc.section.1">1.</a>&nbsp;<a href="#introduction">Introduction</a></h2><div id="rfc.section.1.p.1"><p>This specification defines the HTTP QUERY request method as a means of making a safe, idempotent request (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2">Section 9.2</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) that encloses a representation describing how the request is to be processed by the target resource.</p></div><div id="rfc.section.1.p.2" class="avoidbreakafter"><p>A common query pattern is:</p></div><div id="rfc.section.1.p.3"><pre class="text">
+GET /feed?q=foo&amp;limit=10&amp;sort=-published HTTP/1.1
+Host: example.org</pre></div><div id="rfc.section.1.p.4" class="avoidbreakafter"><p>However, when the data conveyed is too voluminous to be encoded in the request's URI, this pattern becomes problematic:</p></div><div id="rfc.section.1.p.5"><ul><li>size limits often are not known ahead of time because a request can pass through many uncoordinated systems (but note that <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-4.1">Section 4.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a> recommends senders and recipients to support at least 8000 octets),</li><li>expressing certain kinds of data in the target URI is inefficient because of the overhead of encoding that data into a valid URI,</li><li>request URIs are more likely to be logged than request content and may also turn up in bookmarks,</li><li>encoding queries directly into the request URI effectively casts every possible combination of query inputs as distinct resources.</li></ul></div><div id="rfc.section.1.p.6"><p>As an alternative to using GET, many implementations make use of the HTTP POST method to perform queries, as illustrated in the example below. In this case, the input to the query operation is passed as the request content as opposed to using the request URI's query component.</p></div><div id="rfc.section.1.p.7" class="avoidbreakafter"><p>A typical use of HTTP POST for requesting a query is:</p></div><div id="rfc.section.1.p.8"><pre class="text">
+POST /feed HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+
+q=foo&amp;limit=10&amp;sort=-published</pre></div><div id="rfc.section.1.p.9"><p>In this variation, however, it is not readily apparent -- without specific knowledge of the resource and server to which the request is being sent -- that a safe, idempotent query is being performed.</p></div><div id="rfc.section.1.p.10" class="avoidbreakafter"><p>The QUERY method provides a solution that spans the gap between the use of GET and POST, with the example above being expressed as:</p></div><div id="rfc.section.1.p.11"><pre class="text">
+QUERY /feed HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+
+q=foo&amp;limit=10&amp;sort=-published</pre></div><div id="rfc.section.1.p.12"><p>As with POST, the input to the query operation is passed as the content of the request rather than as part of the request URI. Unlike POST, however, the method is explicitly safe and idempotent, allowing functions like caching and automatic retries to operate.</p></div><div id="rfc.section.1.p.13"><p>Recognizing the design principle that any important resource ought to be identified by a URI, this specification describes how a server can assign URIs to both the query itself or to a specific query result, for later use in a GET request.</p></div><div id="rfc.section.1.p.14" class="avoidbreakafter"><p>Summarizing:</p></div><div class="table table-condensed table-striped"><table class="v3 text-center"><caption>Table 1: Summary of Relevant Method Properties</caption><thead><tr><th class="text-left" colspan="1" rowspan="1"></th><th class="text-left" colspan="1" rowspan="1">GET</th><th class="text-left" colspan="1" rowspan="1">QUERY</th><th class="text-left" colspan="1" rowspan="1">POST</th></tr></thead><tbody><tr><td class="text-left" colspan="1" rowspan="1">Safe</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">potentially no</td></tr><tr><td class="text-left" colspan="1" rowspan="1">Idempotent</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">potentially no</td></tr><tr><td class="text-left" colspan="1" rowspan="1">URI for query itself</td><td class="text-left" colspan="1" rowspan="1">yes (by definition)</td><td class="text-left" colspan="1" rowspan="1">optional (Location response field)</td><td class="text-left" colspan="1" rowspan="1">no</td></tr><tr><td class="text-left" colspan="1" rowspan="1">URI for query result</td><td class="text-left" colspan="1" rowspan="1">optional (Content-Location response field)</td><td class="text-left" colspan="1" rowspan="1">optional (Content-Location response field)</td><td class="text-left" colspan="1" rowspan="1">optional (Content-Location response field)</td></tr><tr><td class="text-left" colspan="1" rowspan="1">Cacheable</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">yes, but only for future GET or HEAD requests</td></tr><tr><td class="text-left" colspan="1" rowspan="1">Content (body)</td><td class="text-left" colspan="1" rowspan="1">"no defined semantics"</td><td class="text-left" colspan="1" rowspan="1">expected (semantics per target resource)</td><td class="text-left" colspan="1" rowspan="1">expected (semantics per target resource)</td></tr></tbody></table></div><section id="terminology"><h3 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a>&nbsp;<a href="#terminology">Terminology</a></h3><div id="rfc.section.1.1.p.1"><p>This document uses terminology defined in <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-3">Section 3</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>.</p></div><div id="rfc.section.1.1.p.2"><p>Furthermore, it uses the terms <em>URI query parameter</em> for parameters in the query component of a URI (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-4.2.2">Section 4.2.2</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) and <em>query content</em> for the request content (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-6.4">Section 6.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) of a QUERY request.</p></div></section><section id="notational.conventions"><h3 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2.</a>&nbsp;<a href="#notational.conventions">Notational Conventions</a></h3><div id="rfc.section.1.2.p.1"><p>The key words "<em class="bcp14">MUST</em>", "<em class="bcp14">MUST NOT</em>", "<em class="bcp14">REQUIRED</em>", "<em class="bcp14">SHALL</em>", "<em class="bcp14">SHALL NOT</em>", "<em class="bcp14">SHOULD</em>", "<em class="bcp14">SHOULD NOT</em>", "<em class="bcp14">RECOMMENDED</em>", "<em class="bcp14">NOT RECOMMENDED</em>", "<em class="bcp14">MAY</em>", and "<em class="bcp14">OPTIONAL</em>" in this document are to be interpreted as described in <span class="nobr">BCP 14</span> <a href="#RFC2119"><cite title="Key words for use in RFCs to Indicate Requirement Levels">[RFC2119]</cite></a> <a href="#RFC8174"><cite title="Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words">[RFC8174]</cite></a> when, and only when, they appear in all capitals, as shown here.</p></div></section></section><hr class="hidden-print"><section id="query"><h2 id="rfc.section.2" class="np"><a href="#rfc.section.2">2.</a>&nbsp;<a href="#query">QUERY Method</a></h2><div id="rfc.section.2.p.1"><p>The QUERY method is used to initiate a server-side query. Unlike the GET method, which requests a representation of the resource identified by the target URI (as defined by <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-7.1">Section 7.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>), the QUERY method is used to ask the target resource to perform a query operation within the scope of that target resource.</p></div><div id="rfc.section.2.p.2"><p>The content of the request and its media type define the query. The origin server determines the scope of the operation based on the target resource.</p></div><div id="rfc.section.2.p.3"><p>Servers <em class="bcp14">MUST</em> fail the request if the Content-Type request field (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8.3">Section 8.3</a>) is missing or is inconsistent with the request content.</p></div><div id="rfc.section.2.p.4"><p>As for all HTTP methods, the target URI's query part takes part in identifying the resource being queried. Whether and how it directly affects the result of the query is specific to the resource and is out of scope for this specification.</p></div><div id="rfc.section.2.p.5"><p>QUERY requests are safe with regard to the target resource (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.1">Section 9.2.1</a>); that is, the client does not request or expect any change to the state of the target resource. This does not prevent the server from creating additional HTTP resources through which additional information can be retrieved (see Sections <a href="#content-location" title="Content-Location Response Field">2.3</a> and <a href="#location" title="Location Response Field">2.4</a>).</p></div><div id="rfc.section.2.p.6"><p>Furthermore, QUERY requests are idempotent (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2">Section 9.2.2</a>); they can be retried or repeated when needed, for instance, after a connection failure.</p></div><div id="rfc.section.2.p.7"><p>As per <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3">Section 15.3</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, a 2xx (Successful) response code signals that the request was successfully received, understood, and accepted.</p></div><div id="rfc.section.2.p.8"><p>In particular, a 200 (OK) response indicates that the query was successfully processed and the results of that processing are enclosed as the response content.</p></div><section id="media.types.and.conneg"><h3 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a>&nbsp;<a href="#media.types.and.conneg">Media Types and Content Negotiation</a></h3><div id="rfc.section.2.1.p.1"><p>The semantics of a QUERY request depend both on the request content and the associated metadata, such as the media type (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8.3.1">Section 8.3.1</a>). In general, any problem with requests where content and metadata are inconsistent <em class="bcp14">MUST</em> be rejected with a 4xx (Client Error) response (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5">Section 15.5</a>).</p></div><div id="rfc.section.2.1.p.2" class="avoidbreakafter"><p>The list below describes various cases of failures and recommends specific status codes:</p></div><div id="rfc.section.2.1.p.3"><ul><li>If a request lacks media type information, it is incorrect by definition and needs to fail with a 4xx status code such as 400 (Client Error).</li><li>If a media type is specified but is not supported by the resource, a 415 (Unsupported Media Type) is appropriate. This specifically includes the case where the media type is known in principle, but it lacks semantics specific to a QUERY to the target resource. In both cases, the Accept-Query response field (<a href="#field.accept-query" title="The Accept-Query Header Field">Section 3</a>) can be used to inform the client of the media types that are supported.</li><li>If a media type is specified but is inconsistent with the actual request content, a 400 (Bad Request) can be returned. That is, a server is not allowed to infer a media type from the request content and then override a missing or "erroneous" value (i.e., "content sniffing").</li><li>If the media type is specified and understood, and the content is indeed consistent with the type, but the query cannot be processed due to the actual contents of the query, the status 422 (Unprocessable Content) can be used. An example would be a syntactically correct SQL query that identifies a non-existent table.</li><li>If the client requests a specific response media type using the Accept field (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1">Section 12.5.1</a>) that is not supported by the resource, a status code of 406 (Not Acceptable) is appropriate.</li></ul></div></section><section id="equivalent-resource"><h3 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a>&nbsp;<a href="#equivalent-resource">Equivalent Resource</a></h3><div id="rfc.section.2.2.p.1"><p>The <em>equivalent resource</em> for any given QUERY request is a resource that responds to GET requests, represents that QUERY request and its target, and takes both message content and metadata into account (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-6">Section 6</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>). In particular, this includes representation metadata (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8">Section 8</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) such as the content's media type.</p></div><div id="rfc.section.2.2.p.2"><p>In other words, the equivalent resource is derived from the resource implementing QUERY by incorporating the request content.</p></div><div id="rfc.section.2.2.p.3"><p>The term <em>equivalent resource</em> is used as a means to define behavior for other HTTP aspects, such as selected representations. Servers can but do not have to assign URIs to these resources (see <a href="https://www.rfc-editor.org/rfc/rfc3986.html#section-1.1">Section 1.1</a> of <a href="#RFC3986"><cite title="Uniform Resource Identifier (URI): Generic Syntax">[URI]</cite></a>). If they do so, these resources will become accessible for GET requests.</p></div></section><section id="content-location"><h3 id="rfc.section.2.3"><a href="#rfc.section.2.3">2.3.</a>&nbsp;<a href="#content-location">Content-Location Response Field</a></h3><div id="rfc.section.2.3.p.1"><p>A successful response (2xx, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3">Section 15.3</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) can include a Content-Location header field containing an identifier for a resource corresponding to the results of the operation; see <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8.7">Section 8.7</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a> for details. This represents a claim from the server that a client can send a GET request for the indicated URI to retrieve the results of the query operation just performed. The indicated resource might be temporary.</p></div><div id="rfc.section.2.3.p.2"><p>See <a href="#example.content-location" title="Using Content-Location">Appendix A.4.1</a> for an example.</p></div></section><section id="location"><h3 id="rfc.section.2.4"><a href="#rfc.section.2.4">2.4.</a>&nbsp;<a href="#location">Location Response Field</a></h3><div id="rfc.section.2.4.p.1"><p>A server can assign a URI to the equivalent resource (<a href="#equivalent-resource" title="Equivalent Resource">Section 2.2</a>) of a QUERY request. If the server does so, the URI of that resource can be included in the Location header field of the 2xx response (see <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.2">Section 10.2.2</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>). This represents a claim that a client can send a GET request to the indicated URI to repeat the query operation just performed without resending the query content. This resource's URI might be temporary; if a future request fails, the client can retry using the original QUERY request target and the previously submitted content.</p></div><div id="rfc.section.2.4.p.2"><p>See <a href="#example.location" title="Using Location">Appendix A.4.2</a> for an example.</p></div></section><section id="redirection"><h3 id="rfc.section.2.5"><a href="#rfc.section.2.5">2.5.</a>&nbsp;<a href="#redirection">Redirection</a></h3><div id="rfc.section.2.5.p.1"><p>In some cases, the server may choose to respond indirectly to the QUERY request by redirecting the user agent to a different URI (see <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4">Section 15.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div id="rfc.section.2.5.p.2"><p>A response with either status codes 301 (Moved Permanently, <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.2">Section 15.4.2</a>) or 308 (Permanent Redirect, <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.9">Section 15.4.9</a>) indicates that the target resource has permanently moved to a different URI referenced by the Location response field (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.2">Section 10.2.2</a>). Likewise, a response with either status codes 302 (Found, <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.3">Section 15.4.3</a>) or 307 (Temporary Redirect, <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.8">Section 15.4.8</a>) indicates that the target resource has temporarily moved. In all four cases, the server is suggesting that the user agent can accomplish its original QUERY request by sending a similar QUERY request to the new target URI referenced by the Location.</p></div><div id="rfc.section.2.5.p.3"><p>Note that the exceptions for redirecting a POST as a GET request after a 301 or 302 response do not apply to QUERY requests.</p></div><div id="rfc.section.2.5.p.4"><p>A response to QUERY with the status code 303 (See Other, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.4">Section 15.4.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) indicates that the original query can be accomplished via a normal retrieval request on the URI referenced by the Location response field (<a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.2">Section 10.2.2</a>). For HTTP, this means sending a GET request to the new target URI, as illustrated by the example in <a href="#example.indirect" title="Indirect Responses">Appendix A.4.3</a>.</p></div></section><section id="conditional"><h3 id="rfc.section.2.6"><a href="#rfc.section.2.6">2.6.</a>&nbsp;<a href="#conditional">Conditional Requests</a></h3><div id="rfc.section.2.6.p.1"><p>The selected representation (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-3.2">Section 3.2</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) of a QUERY request is the same as for a GET request to the equivalent resource (<a href="#equivalent-resource" title="Equivalent Resource">Section 2.2</a>) of that QUERY request.</p></div><div id="rfc.section.2.6.p.2"><p>A conditional QUERY requests that the selected representation (i.e., the query results after any content negotiation) be returned in the response only under the circumstances described by the conditional header field(s), as defined in <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-13">Section 13</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>.</p></div><div id="rfc.section.2.6.p.3"><p>See <a href="#example.conditional" title="Conditional Requests">Appendix A.5</a> for examples.</p></div></section><section id="caching"><h3 id="rfc.section.2.7"><a href="#rfc.section.2.7">2.7.</a>&nbsp;<a href="#caching">Caching</a></h3><div id="rfc.section.2.7.p.1"><p>The response to a QUERY method is cacheable; a cache <em class="bcp14">MAY</em> use it to satisfy subsequent QUERY requests as per <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4">Section 4</a> of <a href="#RFC9111"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>.</p></div><div id="rfc.section.2.7.p.2"><p>The cache key for a QUERY request (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-2">Section 2</a> of <a href="#RFC9111"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) <em class="bcp14">MUST</em> incorporate the request content (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-6">Section 6</a> of <a href="#RFC9111"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) and related metadata (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8">Section 8</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div id="rfc.section.2.7.p.3" class="avoidbreakafter"><p>To improve cache efficiency, caches <em class="bcp14">MAY</em> remove semantically insignificant differences from request content and related metadata first. For instance, by:</p></div><div id="rfc.section.2.7.p.4"><ul><li>removing content encoding(s) (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-8.4">Section 8.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</li><li>normalizing based upon knowledge of format conventions, as indicated by any media subtype suffix in the request's Content-Type field (e.g., "+json"; see <a href="https://www.rfc-editor.org/rfc/rfc6838.html#section-4.2.8">Section 4.2.8</a> of <a href="#RFC6838"><cite title="Media Type Specifications and Registration Procedures">[RFC6838]</cite></a>).</li><li>normalizing based upon knowledge of the semantics of the content itself, as indicated by the request's Content-Type field.</li></ul></div><div id="rfc.section.2.7.p.5"><p>Note that any such transformation is performed solely for the purpose of generating a cache key; it does not change the request itself.</p></div><div id="rfc.section.2.7.p.6"><p>Clients can indicate, using the "no-transform" cache directive (<a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.1.6">Section 5.2.1.6</a> of <a href="#RFC9111"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) that they wish that no such transformation happens (but note that this directive is just advisory).</p></div><div id="rfc.section.2.7.p.7"><p>Note that caching QUERY method responses is inherently more complex than caching responses to GET, as complete reading of the request's content is needed in order to determine the cache key. If a QUERY response supplies a Location response field (<a href="#location" title="Location Response Field">Section 2.4</a>) to indicate a URI for an equivalent resource (<a href="#equivalent-resource" title="Equivalent Resource">Section 2.2</a>), clients can switch to GET for subsequent requests, thereby simplifying processing.</p></div></section><section id="range"><h3 id="rfc.section.2.8"><a href="#rfc.section.2.8">2.8.</a>&nbsp;<a href="#range">Range Requests</a></h3><div id="rfc.section.2.8.p.1"><p>The semantics of Range Requests for QUERY are identical to those for GET, as defined in <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-14">Section 14</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>. Byte Range Requests (the only range unit defined at the time of writing), however, offer little value for the results of a QUERY request.</p></div><div id="rfc.section.2.8.p.2"><p>Query formats often define their own way of limiting or paging through result sets, such as with "FETCH FIRST ... ROWS ONLY" in SQL. It is expected that these built-in features will be used instead of HTTP Range Requests.</p></div></section></section><hr class="hidden-print"><section id="field.accept-query"><h2 id="rfc.section.3" class="np"><a href="#rfc.section.3">3.</a>&nbsp;<a href="#field.accept-query">The Accept-Query Header Field</a></h2><div id="rfc.section.3.p.1"><p>The "Accept-Query" response header field can be used by a resource to directly signal support for the QUERY method while identifying the specific query format media type(s) that may be used.</p></div><div id="rfc.section.3.p.2"><p>Accept-Query contains a list of media ranges (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1">Section 12.5.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) using "Structured Fields" syntax <a href="#RFC9651"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>. Media ranges are represented by a List Structured Header Field of either Tokens or Strings, containing the media range value without parameters.</p></div><div id="rfc.section.3.p.3"><p>Media type parameters, if any, are mapped to Structured Field Parameters with the String or Token type. The choice of Token versus String is semantically insignificant. That is, recipients <em class="bcp14">MAY</em> convert Tokens to Strings, but <em class="bcp14">MUST NOT</em> process them differently based on the received type.</p></div><div id="rfc.section.3.p.4"><p>Media types do not exactly map to Tokens; for instance, they allow a leading digit. In cases like these, the String format needs to be used.</p></div><div id="rfc.section.3.p.5"><p>The only supported uses of wildcards are "*/*", which matches any type, or "xxxx/*", which matches any subtype of the indicated type.</p></div><div id="rfc.section.3.p.6"><p>The order of types listed in the field value is not significant.</p></div><div id="rfc.section.3.p.7"><p>The value of the Accept-Query field applies to every URI on the server that shares the same path; in other words, the query component is ignored. If requests to the same resource return different Accept-Query values, the most recently received fresh value (per <a href="https://www.rfc-editor.org/rfc/rfc9111.html#section-4.2">Section 4.2</a> of <a href="#RFC9111"><cite title="HTTP Caching">[HTTP-CACHING]</cite></a>) is used.</p></div><div id="rfc.section.3.p.8" class="avoidbreakafter"><p>For example:</p></div><div id="rfc.section.3.p.9"><pre class="text">
+Accept-Query: "application/jsonpath", application/sql;charset="UTF-8"</pre></div><div id="rfc.section.3.p.10"><p>Although the syntax for this field appears to be similar to other fields, such as "Accept" (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1">Section 12.5.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>), it is a Structured Field and thus <em class="bcp14">MUST</em> be processed as specified in <a href="https://www.rfc-editor.org/rfc/rfc9651.html#section-4">Section 4</a> of <a href="#RFC9651"><cite title="Structured Field Values for HTTP">[STRUCTURED-FIELDS]</cite></a>.</p></div></section><hr class="hidden-print"><section id="n-security-considerations"><h2 id="rfc.section.4" class="np"><a href="#rfc.section.4">4.</a>&nbsp;<a href="#n-security-considerations">Security Considerations</a></h2><div id="rfc.section.4.p.1"><p>The QUERY method is subject to the same general security considerations as all HTTP methods as described in <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>.</p></div><div id="rfc.section.4.p.2"><p>It can be used as an alternative to passing request information in the URI (e.g., in the query component). This is preferred in some cases, as the URI is more likely to be logged or otherwise processed by intermediaries than the request content. In other cases, where the query contains sensitive information, the potential for logging of the URI might motivate the use of QUERY over GET.</p></div><div id="rfc.section.4.p.3"><p>If a server creates a temporary resource to represent the results of a QUERY request (e.g., for use in the Location or Content-Location field), assigns a URI to that resource, and the request contains sensitive information that cannot be logged, then that URI <em class="bcp14">SHOULD</em> be chosen such that it does not include any sensitive portions of the original request content.</p></div><div id="rfc.section.4.p.4"><p>Caches that normalize QUERY content incorrectly or in ways that are significantly different from how the resource processes the content can return an incorrect response if normalization results in a false positive.</p></div><div id="rfc.section.4.p.5"><p>A QUERY request from user agents implementing Cross-Origin Resource Sharing (CORS) will require a "preflight" request, as QUERY does not belong to the set of CORS-safelisted methods (see <a href="#FETCH"><cite title="FETCH">[FETCH]</cite></a>).</p></div></section><hr class="hidden-print"><section id="iana.considerations"><h2 id="rfc.section.5" class="np"><a href="#rfc.section.5">5.</a>&nbsp;<a href="#iana.considerations">IANA Considerations</a></h2><section id="method.registration"><h3 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a>&nbsp;<a href="#method.registration">Registration of the QUERY Method</a></h3><div id="rfc.section.5.1.p.1"><p>IANA has added the QUERY method to the "Hypertext Transfer Protocol (HTTP) Method Registry" at &lt;<a href="http://www.iana.org/assignments/http-methods">http://www.iana.org/assignments/http-methods</a>&gt; (see <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-16.3.1">Section 16.3.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div class="table table-condensed table-striped"><table class="v3 text-center"><caption>Table 2: QUERY Method Definition</caption><thead><tr><th class="text-left" colspan="1" rowspan="1">Method Name</th><th class="text-left" colspan="1" rowspan="1">Safe</th><th class="text-left" colspan="1" rowspan="1">Idempotent</th><th class="text-left" colspan="1" rowspan="1">Specification</th></tr></thead><tbody><tr><td class="text-left" colspan="1" rowspan="1">QUERY</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1">yes</td><td class="text-left" colspan="1" rowspan="1"><a href="#query" title="QUERY Method">Section 2</a> of RFC 10008</td></tr></tbody></table></div></section><section id="field.registration"><h3 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a>&nbsp;<a href="#field.registration">Registration of the Accept-Query Field</a></h3><div id="rfc.section.5.2.p.1"><p>IANA has added the Accept-Query field to the "Hypertext Transfer Protocol (HTTP) Field Name Registry" at &lt;<a href="https://www.iana.org/assignments/http-fields">https://www.iana.org/assignments/http-fields</a>&gt; (see <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-16.1.1">Section 16.1.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div class="table table-condensed table-striped"><table class="v3 text-center"><caption>Table 3: Accept-Query Field Definition</caption><thead><tr><th class="text-left" colspan="1" rowspan="1">Field Name</th><th class="text-left" colspan="1" rowspan="1">Status</th><th class="text-left" colspan="1" rowspan="1">Structured Type</th><th class="text-left" colspan="1" rowspan="1">Reference</th><th class="text-left" colspan="1" rowspan="1">Comments</th></tr></thead><tbody><tr><td class="text-left" colspan="1" rowspan="1">Accept-Query</td><td class="text-left" colspan="1" rowspan="1">permanent</td><td class="text-left" colspan="1" rowspan="1">List</td><td class="text-left" colspan="1" rowspan="1"><a href="#field.accept-query" title="The Accept-Query Header Field">Section 3</a> of RFC 10008</td><td class="text-left" colspan="1" rowspan="1"></td></tr></tbody></table></div></section></section><section class="np"><div id="rfc.references"><h2 id="rfc.section.6"><a href="#rfc.section.6">6.</a> References</h2><section><div id="rfc.references.2"><h3 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> Normative References</h3><dl class="dl-horizontal"><dt id="RFC9111">[<a href="#RFC9111" class="smpl">HTTP-CACHING</a>]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9111.html">HTTP Caching</a>”, <a href="https://www.rfc-editor.org/info/std98">STD 98</a>, RFC 9111, <a href="https://dx.doi.org/10.17487/RFC9111">DOI 10.17487/RFC9111</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9111">https://www.rfc-editor.org/info/rfc9111</a>&gt;.</dd><dt id="RFC9110">[<a href="#RFC9110" class="smpl">HTTP</a>]</dt><dd>Fielding, R., Ed., Nottingham, M., Ed., and J. Reschke, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9110.html">HTTP Semantics</a>”, <a href="https://www.rfc-editor.org/info/std97">STD 97</a>, RFC 9110, <a href="https://dx.doi.org/10.17487/RFC9110">DOI 10.17487/RFC9110</a>, June 2022, &lt;<a href="https://www.rfc-editor.org/info/rfc9110">https://www.rfc-editor.org/info/rfc9110</a>&gt;.</dd><dt id="RFC2119">[<a href="#RFC2119" class="smpl">RFC2119</a>]</dt><dd>Bradner, S., “<a href="https://www.rfc-editor.org/rfc/rfc2119.html">Key words for use in RFCs to Indicate Requirement Levels</a>”, <a href="https://www.rfc-editor.org/info/bcp14">BCP 14</a>, RFC 2119, <a href="https://dx.doi.org/10.17487/RFC2119">DOI 10.17487/RFC2119</a>, March 1997, &lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;.</dd><dt id="RFC8174">[<a href="#RFC8174" class="smpl">RFC8174</a>]</dt><dd>Leiba, B., “<a href="https://www.rfc-editor.org/rfc/rfc8174.html">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>”, <a href="https://www.rfc-editor.org/info/bcp14">BCP 14</a>, RFC 8174, <a href="https://dx.doi.org/10.17487/RFC8174">DOI 10.17487/RFC8174</a>, May 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;.</dd><dt id="RFC9651">[<a href="#RFC9651" class="smpl">STRUCTURED-FIELDS</a>]</dt><dd>Nottingham, M. and P-H. Kamp, “<a href="https://www.rfc-editor.org/rfc/rfc9651.html">Structured Field Values for HTTP</a>”, RFC 9651, <a href="https://dx.doi.org/10.17487/RFC9651">DOI 10.17487/RFC9651</a>, September 2024, &lt;<a href="https://www.rfc-editor.org/info/rfc9651">https://www.rfc-editor.org/info/rfc9651</a>&gt;.</dd><dt id="RFC3986">[<a href="#RFC3986" class="smpl">URI</a>]</dt><dd>Berners-Lee, T., Fielding, R., and L. Masinter, “<a href="https://www.rfc-editor.org/rfc/rfc3986.html">Uniform Resource Identifier (URI): Generic Syntax</a>”, <a href="https://www.rfc-editor.org/info/std66">STD 66</a>, RFC 3986, <a href="https://dx.doi.org/10.17487/RFC3986">DOI 10.17487/RFC3986</a>, January 2005, &lt;<a href="https://www.rfc-editor.org/info/rfc3986">https://www.rfc-editor.org/info/rfc3986</a>&gt;.</dd></dl></div></section><section><div id="rfc.references.3"><h3 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> Informative References</h3><dl class="dl-horizontal"><dt id="FETCH">[<a href="#FETCH" class="smpl">FETCH</a>]</dt><dd>WHATWG, “<a href="https://fetch.spec.whatwg.org">FETCH</a>”, WHATWG Living Standard, &lt;<a href="https://fetch.spec.whatwg.org">https://fetch.spec.whatwg.org</a>&gt;.<br>Commit snapshot: &lt;<a href="https://fetch.spec.whatwg.org/commit-snapshots/3bab31a55154bda73f25b45a23df718616f2f64e/">https://fetch.spec.whatwg.org/commit-snapshots/3bab31a55154bda73f25b45a23df718616f2f64e/</a>&gt;.</dd><dt id="RFC3253">[<a href="#RFC3253" class="smpl">RFC3253</a>]</dt><dd>Clemm, G., Amsden, J., Ellison, T., Kaler, C., and J. Whitehead, “<a href="https://www.rfc-editor.org/rfc/rfc3253.html">Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)</a>”, RFC 3253, <a href="https://dx.doi.org/10.17487/RFC3253">DOI 10.17487/RFC3253</a>, March 2002, &lt;<a href="https://www.rfc-editor.org/info/rfc3253">https://www.rfc-editor.org/info/rfc3253</a>&gt;.</dd><dt id="RFC4918">[<a href="#RFC4918" class="smpl">RFC4918</a>]</dt><dd>Dusseault, L., Ed., “<a href="https://www.rfc-editor.org/rfc/rfc4918.html">HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)</a>”, RFC 4918, <a href="https://dx.doi.org/10.17487/RFC4918">DOI 10.17487/RFC4918</a>, June 2007, &lt;<a href="https://www.rfc-editor.org/info/rfc4918">https://www.rfc-editor.org/info/rfc4918</a>&gt;.</dd><dt id="RFC5323">[<a href="#RFC5323" class="smpl">RFC5323</a>]</dt><dd>Reschke, J., Ed., Reddy, S., Davis, J., and A. Babich, “<a href="https://www.rfc-editor.org/rfc/rfc5323.html">Web Distributed Authoring and Versioning (WebDAV) SEARCH</a>”, RFC 5323, <a href="https://dx.doi.org/10.17487/RFC5323">DOI 10.17487/RFC5323</a>, November 2008, &lt;<a href="https://www.rfc-editor.org/info/rfc5323">https://www.rfc-editor.org/info/rfc5323</a>&gt;.</dd><dt id="RFC6838">[<a href="#RFC6838" class="smpl">RFC6838</a>]</dt><dd>Freed, N., Klensin, J., and T. Hansen, “<a href="https://www.rfc-editor.org/rfc/rfc6838.html">Media Type Specifications and Registration Procedures</a>”, <a href="https://www.rfc-editor.org/info/bcp13">BCP 13</a>, RFC 6838, <a href="https://dx.doi.org/10.17487/RFC6838">DOI 10.17487/RFC6838</a>, January 2013, &lt;<a href="https://www.rfc-editor.org/info/rfc6838">https://www.rfc-editor.org/info/rfc6838</a>&gt;.</dd><dt id="RFC8259">[<a href="#RFC8259" class="smpl">RFC8259</a>]</dt><dd>Bray, T., Ed., “<a href="https://www.rfc-editor.org/rfc/rfc8259.html">The JavaScript Object Notation (JSON) Data Interchange Format</a>”, <a href="https://www.rfc-editor.org/info/std90">STD 90</a>, RFC 8259, <a href="https://dx.doi.org/10.17487/RFC8259">DOI 10.17487/RFC8259</a>, December 2017, &lt;<a href="https://www.rfc-editor.org/info/rfc8259">https://www.rfc-editor.org/info/rfc8259</a>&gt;.</dd><dt id="RFC9535">[<a href="#RFC9535" class="smpl">RFC9535</a>]</dt><dd>Gössner, S., Ed., Normington, G., Ed., and C. Bormann, Ed., “<a href="https://www.rfc-editor.org/rfc/rfc9535.html">JSONPath: Query Expressions for JSON</a>”, RFC 9535, <a href="https://dx.doi.org/10.17487/RFC9535">DOI 10.17487/RFC9535</a>, February 2024, &lt;<a href="https://www.rfc-editor.org/info/rfc9535">https://www.rfc-editor.org/info/rfc9535</a>&gt;.</dd><dt id="URL">[<a href="#URL" class="smpl">URL</a>]</dt><dd>WHATWG, “<a href="https://url.spec.whatwg.org">URL</a>”, WHATWG Living Standard, &lt;<a href="https://url.spec.whatwg.org">https://url.spec.whatwg.org</a>&gt;.<br>Commit snapshot: &lt;<a href="https://url.spec.whatwg.org/commit-snapshots/52526653e848c5a56598c84aa4bc8ac9025fb66b/">https://url.spec.whatwg.org/commit-snapshots/52526653e848c5a56598c84aa4bc8ac9025fb66b/</a>&gt;.</dd><dt id="XSLT">[<a href="#XSLT" class="smpl">XSLT</a>]</dt><dd>Kay, M., Ed., “<a href="https://www.w3.org/TR/2017/REC-xslt-30-20170608/">XSL Transformations (XSLT) Version 3.0</a>”, W3C Recommendation, June 2017, &lt;<a href="https://www.w3.org/TR/2017/REC-xslt-30-20170608/">https://www.w3.org/TR/2017/REC-xslt-30-20170608/</a>&gt;.<br>Latest version available at <a href="https://www.w3.org/TR/xslt-30/">https://www.w3.org/TR/xslt-30/</a>.</dd></dl></div></section></div></section><hr class="hidden-print"><section id="examples"><h2 id="rfc.section.A" class="np"><a href="#rfc.section.A">Appendix A.</a>&nbsp;<a href="#examples">Examples</a></h2><div id="rfc.section.A.p.1"><p>The examples below are for illustrative purposes only; if one needs to send queries that are actually this short, it is likely better to use GET.</p></div><div id="rfc.section.A.p.2"><p>The media type used in most examples is "application/x-www-form-urlencoded" (as used in POST requests from browser user clients, defined in <a href="https://url.spec.whatwg.org/#application/x-www-form-urlencoded">"application/x-www-form-urlencoded"</a> in <a href="#URL"><cite title="URL">[URL]</cite></a>). The Content-Length fields have been omitted for brevity.</p></div><section id="example.simple"><h3 id="rfc.section.A.1"><a href="#rfc.section.A.1">A.1.</a>&nbsp;<a href="#example.simple">Simple Query</a></h3><div id="rfc.section.A.1.p.1" class="avoidbreakafter"><p>Below is a simple query with a direct response:</p></div><div id="rfc.section.A.1.p.2"><pre class="text">
+QUERY /contacts HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+select=surname,givenname,email&amp;limit=10&amp;match=%22email=*@example.*%22</pre></div><div id="rfc.section.A.1.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.1.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</pre></div></section><section id="example.discovery.method"><h3 id="rfc.section.A.2"><a href="#rfc.section.A.2">A.2.</a>&nbsp;<a href="#example.discovery.method">Discovery of QUERY Support</a></h3><div id="rfc.section.A.2.p.1" class="avoidbreakafter"><p>A simple way to discover support for QUERY is provided by the OPTIONS (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.7">Section 9.3.7</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) method:</p></div><div id="rfc.section.A.2.p.2"><pre class="text">
+OPTIONS /contacts HTTP/1.1
+Host: example.org</pre></div><div id="rfc.section.A.2.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.2.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Allow: GET, QUERY, OPTIONS, HEAD</pre></div><div id="rfc.section.A.2.p.5"><p>The Allow response field (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-10.2.1">Section 10.2.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) denotes the set of supported methods on the specified resource.</p></div><div id="rfc.section.A.2.p.6"><p>There are alternatives to the use of OPTIONS. For instance, a QUERY request can be tried without prior knowledge of server support. The server would then either process the request, or it could respond with a 4xx status such as 405 (Method Not Allowed, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.6">Section 15.5.6</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>), including the Allow response field.</p></div></section><section id="example.discovery.formats"><h3 id="rfc.section.A.3"><a href="#rfc.section.A.3">A.3.</a>&nbsp;<a href="#example.discovery.formats">Discovery of QUERY Formats</a></h3><div id="rfc.section.A.3.p.1" class="avoidbreakafter"><p>The discovery of supported media types for QUERY is possible via the Accept-Query response field (<a href="#field.accept-query" title="The Accept-Query Header Field">Section 3</a>):</p></div><div id="rfc.section.A.3.p.2"><pre class="text">
+HEAD /contacts HTTP/1.1
+Host: example.org</pre></div><div id="rfc.section.A.3.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.3.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: application/xhtml
+Accept-Query: application/x-www-form-urlencoded, application/sql</pre></div><div id="rfc.section.A.3.p.5"><p>Responses to which request methods will contain Accept-Query will depend on the resource being accessed.</p></div><div id="rfc.section.A.3.p.6" class="avoidbreakafter"><p>An alternative to checking Accept-Query would be to make a QUERY request, and then -- in case of a 4xx status such as a 415 response (Unsupported Media Type, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.5.16">Section 15.5.16</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) -- to inspect the Accept response field (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1">Section 12.5.1</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>):</p></div><div id="rfc.section.A.3.p.7"><pre class="text">
+HTTP/1.1 415 Unsupported Media Type
+Content-Type: application/xhtml
+Accept: application/x-www-form-urlencoded, application/sql</pre></div></section><section id="example.content-location.location.indirect"><h3 id="rfc.section.A.4"><a href="#rfc.section.A.4">A.4.</a>&nbsp;<a href="#example.content-location.location.indirect">Content-Location, Location, and Indirect Responses</a></h3><div id="rfc.section.A.4.p.1" class="avoidbreakafter"><p>As described in Sections <a href="#content-location" title="Content-Location Response Field">2.3</a> and <a href="#location" title="Location Response Field">2.4</a>, the Content-Location and Location response fields in success responses (2xx, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3">Section 15.3</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>) provide a way to identify alternate resources that will respond to GET requests, either for the received result of the request or for future requests to perform the same operation. Going back to the example from <a href="#example.simple" title="Simple Query">Appendix A.1</a>:</p></div><div id="rfc.section.A.4.p.2"><pre class="text">
+QUERY /contacts HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+select=surname,givenname,email&amp;limit=10&amp;match=%22email=*@example.*%22</pre></div><div id="rfc.section.A.4.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.4.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Location: /contacts/stored-results/17
+Location: /contacts/stored-queries/42
+Last-Modified: Sat, 25 Aug 2012 23:34:45 GMT
+Date: Sun, 17 Nov 2024, 16:10:24 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</pre></div><section id="example.content-location"><h4 id="rfc.section.A.4.1"><a href="#rfc.section.A.4.1">A.4.1.</a>&nbsp;<a href="#example.content-location">Using Content-Location</a></h4><div id="rfc.section.A.4.1.p.1" class="avoidbreakafter"><p>The Content-Location response field received above identifies a resource holding the result for the QUERY response it appeared on:</p></div><div id="rfc.section.A.4.1.p.2"><pre class="text">
+GET /contacts/stored-results/17 HTTP/1.1
+Host: example.org
+Accept: application/json</pre></div><div id="rfc.section.A.4.1.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.4.1.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Last-Modified: Sat, 25 Aug 2012 23:34:45 GMT
+Date: Sun, 17 Nov 2024, 16:10:25 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</pre></div><div id="rfc.section.A.4.1.p.5"><p>Note that there is no guarantee that the server will implement this resource indefinitely, so, after an error response, the client would need to redo the original QUERY request in order to obtain a new alternative location.</p></div></section><section id="example.location"><h4 id="rfc.section.A.4.2"><a href="#rfc.section.A.4.2">A.4.2.</a>&nbsp;<a href="#example.location">Using Location</a></h4><div id="rfc.section.A.4.2.p.1"><p>The Location response field identifies a resource that will respond to GET with a current result for the same process and parameters as the original QUERY request.</p></div><div id="rfc.section.A.4.2.p.2"><pre class="text">
+GET /contacts/stored-queries/42 HTTP/1.1
+Host: example.org
+Accept: application/json</pre></div><div id="rfc.section.A.4.2.p.3" class="avoidbreakafter"><p>In this example, one entry was removed at 2024-11-17T16:12:01Z (as indicated in the Last-Modified field), so the response only contains two entries:</p></div><div id="rfc.section.A.4.2.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Last-Modified: Sun, 17 November 2024, 16:12:01 GMT
+ETag: "42-1"
+Date: Sun, 17 Nov 2024, 16:13:17 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</pre></div><div id="rfc.section.A.4.2.p.5" class="avoidbreakafter"><p>Assuming that the server still exposes the resource and that there was no change in the query result, a subsequent conditional GET request with the following:</p></div><div id="rfc.section.A.4.2.p.6"><pre class="text">
+If-None-Match: "42-1"</pre></div><div id="rfc.section.A.4.2.p.7"><p>would result in a 304 (Not Modified) response (<a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.5">Section 15.4.5</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div></section><section id="example.indirect"><h4 id="rfc.section.A.4.3"><a href="#rfc.section.A.4.3">A.4.3.</a>&nbsp;<a href="#example.indirect">Indirect Responses</a></h4><div id="rfc.section.A.4.3.p.1"><p>Servers can send "indirect" responses (<a href="#redirection" title="Redirection">Section 2.5</a>) using the status code 303 (See Other, <a href="https://www.rfc-editor.org/rfc/rfc9110.html#section-15.4.4">Section 15.4.4</a> of <a href="#RFC9110"><cite title="HTTP Semantics">[HTTP]</cite></a>).</p></div><div id="rfc.section.A.4.3.p.2" class="avoidbreakafter"><p>Given the request at the beginning of <a href="#example.content-location.location.indirect" title="Content-Location, Location, and Indirect Responses">Appendix A.4</a>, a server might respond with:</p></div><div id="rfc.section.A.4.3.p.3"><pre class="text">
+HTTP/1.1 303 See Other
+Content-Type: text/plain
+Date: Sun, 17 Nov 2024, 16:13:17 GMT
+Location: /contacts/stored-queries/42
+
+See stored query at "/contacts/stored-queries/42".</pre></div><div id="rfc.section.A.4.3.p.4"><p>This is similar to including Location on a direct response, except that no result for the query is returned. This allows the server to only generate or reuse an alternative resource. This resource could then be used as shown in <a href="#example.location" title="Using Location">Appendix A.4.2</a>.</p></div></section></section><section id="example.conditional"><h3 id="rfc.section.A.5"><a href="#rfc.section.A.5">A.5.</a>&nbsp;<a href="#example.conditional">Conditional Requests</a></h3><div id="rfc.section.A.5.p.1" class="avoidbreakafter"><p>Consider a resource implementing QUERY that supports "application/sql" and "application/xslt+xml" <a href="#XSLT"><cite title="XSL Transformations (XSLT) Version 3.0">[XSLT]</cite></a> as request media types, and which can generate responses as "text/csv". The data set being queried contains RFC document information, and the query returns information grouped by decade:</p></div><div id="rfc.section.A.5.p.2"><pre class="text">
+QUERY /rfc-index.xml HTTP/1.1
+Host: example.org
+Date: Sun, 7 Sep 2025, 00:00:00 GMT
+Content-Type: application/xslt+xml
+Accept: text/csv
+
+...Query content using XSLT...</pre></div><div id="rfc.section.A.5.p.3" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.5.p.4"><pre class="text">
+HTTP/1.1 200 OK
+Date: Sun, 7 Sep 2025, 00:00:00 GMT
+Location: /stored-queries/4815162342
+Content-Type: text/csv
+Accept-Query: "application/sql", "application/xslt+xml"
+Last-Modified: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Encoding, Content-Type
+
+decade, total, with errata, % with errata, average page count
+1960, 26, 5, 19.2, 5.3
+1970, 666, 18, 2.7, 6.1
+1980, 376, 44, 11.7, 23.4
+1990, 1593, 269, 16.9, 25.5
+2000, 2888, 1048, 36.3, 27.3
+2010, 2954, 895, 30.3, 26.1
+2020, 1133, 230, 20.3, 26.2</pre></div><div id="rfc.section.A.5.p.5"><p>Here, the server has assigned the path "/stored-queries/4815162342" to the equivalent resource (<a href="#location" title="Location Response Field">Section 2.4</a>) for subsequent use with GET.</p></div><div id="rfc.section.A.5.p.6" class="avoidbreakafter"><p>Later on, the client repeats the query, but specifies that results should only be returned when changed:</p></div><div id="rfc.section.A.5.p.7"><pre class="text">
+QUERY /rfc-index.xml HTTP/1.1
+Host: example.org
+Date: Mon, 8, Sep 2025, 11:00:00 GMT
+Content-Type: application/sql
+Accept: text/csv
+If-Modified-Since: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Type
+
+...Same query, but using SQL...</pre></div><div id="rfc.section.A.5.p.8" class="avoidbreakafter"><p>The data being queried did not change, therefore the server responds with:</p></div><div id="rfc.section.A.5.p.9"><pre class="text">
+HTTP/1.1 304 Not Modified
+Date: Mon, 8 Sep 2025, 11:00:00 GMT
+Content-Type: text/csv
+Location: /stored-queries/4815162342
+Accept-Query: "application/sql", "application/xslt+xml"
+Last-Modified: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Type</pre></div><div id="rfc.section.A.5.p.10" class="avoidbreakafter"><p>As the server identified a URI for the equivalent resource, that resource can be accessed with GET. In particular, this avoids resending the query request's content:</p></div><div id="rfc.section.A.5.p.11"><pre class="text">
+GET /stored-queries/4815162342 HTTP/1.1
+Host: example.org
+Date: Sun, 21, Sep 2025, 12:08:00 GMT
+Accept: text/csv
+If-Modified-Since: Sun, 31 Aug 2025, 00:00:00 GMT</pre></div><div id="rfc.section.A.5.p.12" class="avoidbreakafter"><p>Here, the state of the data set indeed changed, so new content is returned:</p></div><div id="rfc.section.A.5.p.13"><pre class="text">
+HTTP/1.1 200 OK
+Date: Sun, 21, Sep 2025, 12:08:00 GMT
+Content-Type: text/csv
+Last-Modified: Thu, 18 Sep 2025, 19:56:00 GMT
+Vary: Accept-Query, Content-Encoding, Content-Type
+
+decade, total, with errata, % with errata, average page count
+1960, 26, 5, 19.2, 5.3
+1970, 666, 18, 2.7, 6.1
+1980, 376, 44, 11.7, 23.4
+1990, 1593, 269, 16.9, 25.5
+2000, 2888, 1048, 36.3, 27.3
+2010, 2954, 895, 30.3, 26.1
+2020, 1133, 230, 20.3, 26.2</pre></div><div id="rfc.section.A.5.p.14"><p>(Note the change in the row for this decade.)</p></div><div id="rfc.section.A.5.p.15"><p>The diagrams below illustrate the use of conditional requests and how they can differ when a URI is assigned to the equivalent resource (and when the client is taking advantage of it). The fictitious field name "Validator" is used for demonstration purposes.</p></div><div id="rfc.figure.1"><div class="artwork art-svg"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" version="1.1" height="496" width="416" viewBox="0 0 416 496" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round"><path d="M 8,48 L 8,480" fill="none" stroke="black"/><path d="M 288,304 L 288,336" fill="none" stroke="black"/><path d="M 344,48 L 344,296" fill="none" stroke="black"/><path d="M 344,344 L 344,480" fill="none" stroke="black"/><path d="M 408,304 L 408,336" fill="none" stroke="black"/><path d="M 8,80 L 336,80" fill="none" stroke="black"/><path d="M 16,144 L 344,144" fill="none" stroke="black"/><path d="M 8,208 L 336,208" fill="none" stroke="black"/><path d="M 16,272 L 344,272" fill="none" stroke="black"/><path d="M 288,304 L 408,304" fill="none" stroke="black"/><path d="M 288,336 L 408,336" fill="none" stroke="black"/><path d="M 8,400 L 336,400" fill="none" stroke="black"/><path d="M 16,464 L 344,464" fill="none" stroke="black"/><polygon class="arrowhead" points="344,400 332,394.4 332,405.6" fill="black" transform="rotate(0,336,400)"/><polygon class="arrowhead" points="344,208 332,202.4 332,213.6" fill="black" transform="rotate(0,336,208)"/><polygon class="arrowhead" points="344,80 332,74.4 332,85.6" fill="black" transform="rotate(0,336,80)"/><polygon class="arrowhead" points="24,464 12,458.4 12,469.6" fill="black" transform="rotate(180,16,464)"/><polygon class="arrowhead" points="24,272 12,266.4 12,277.6" fill="black" transform="rotate(180,16,272)"/><polygon class="arrowhead" points="24,144 12,138.4 12,149.6" fill="black" transform="rotate(180,16,144)"/><g class="text">
+                  <text x="28" y="36">Client</text>
+                  <text x="316" y="36">Resource</text>
+                  <text x="92" y="68">QUERY with content</text>
+                  <text x="308" y="116">200 OK</text>
+                  <text x="276" y="132">Validator: foo</text>
+                  <text x="92" y="180">QUERY with content</text>
+                  <text x="108" y="196">(conditional on 'foo')</text>
+                  <text x="268" y="244">304 Not Modified</text>
+                  <text x="276" y="260">Validator: foo</text>
+                  <text x="348" y="324">State Change</text>
+                  <text x="92" y="372">QUERY with content</text>
+                  <text x="108" y="388">(conditional on 'foo')</text>
+                  <text x="308" y="436">200 OK</text>
+                  <text x="276" y="452">Validator: bar</text>
+                </g></svg></div></div><p class="figure">Figure 1: Data Flow with QUERY Only</p><div id="rfc.figure.2"><div class="artwork art-svg"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xi="http://www.w3.org/2001/XInclude" version="1.1" height="512" width="560" viewBox="0 0 560 512" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round"><path d="M 8,48 L 8,496" fill="none" stroke="black"/><path d="M 264,48 L 264,192" fill="none" stroke="black"/><path d="M 432,336 L 432,368" fill="none" stroke="black"/><path d="M 488,88 L 488,328" fill="none" stroke="black"/><path d="M 488,376 L 488,496" fill="none" stroke="black"/><path d="M 552,336 L 552,368" fill="none" stroke="black"/><path d="M 8,80 L 256,80" fill="none" stroke="black"/><path d="M 264,96 L 480,96" fill="none" stroke="black"/><path d="M 16,176 L 264,176" fill="none" stroke="black"/><path d="M 8,240 L 480,240" fill="none" stroke="black"/><path d="M 16,304 L 488,304" fill="none" stroke="black"/><path d="M 432,336 L 552,336" fill="none" stroke="black"/><path d="M 432,368 L 552,368" fill="none" stroke="black"/><path d="M 8,416 L 480,416" fill="none" stroke="black"/><path d="M 16,480 L 488,480" fill="none" stroke="black"/><polygon class="arrowhead" points="488,416 476,410.4 476,421.6" fill="black" transform="rotate(0,480,416)"/><polygon class="arrowhead" points="488,240 476,234.4 476,245.6" fill="black" transform="rotate(0,480,240)"/><polygon class="arrowhead" points="264,80 252,74.4 252,85.6" fill="black" transform="rotate(0,256,80)"/><polygon class="arrowhead" points="24,480 12,474.4 12,485.6" fill="black" transform="rotate(180,16,480)"/><polygon class="arrowhead" points="24,304 12,298.4 12,309.6" fill="black" transform="rotate(180,16,304)"/><polygon class="arrowhead" points="24,176 12,170.4 12,181.6" fill="black" transform="rotate(180,16,176)"/><circle cx="488" cy="96" r="6" class="opendot" fill="white" stroke="black"/><g class="text">
+                  <text x="28" y="36">Client</text>
+                  <text x="236" y="36">Resource</text>
+                  <text x="92" y="68">QUERY with content</text>
+                  <text x="416" y="68">Equivalent Resource</text>
+                  <text x="428" y="84">(generates /xyz)</text>
+                  <text x="228" y="132">200 OK</text>
+                  <text x="196" y="148">Validator: foo</text>
+                  <text x="196" y="164">Location: /xyz</text>
+                  <text x="32" y="212">GET</text>
+                  <text x="108" y="228">(conditional on 'foo')</text>
+                  <text x="412" y="276">304 Not Modified</text>
+                  <text x="420" y="292">Validator: foo</text>
+                  <text x="492" y="356">State Change</text>
+                  <text x="32" y="388">GET</text>
+                  <text x="108" y="404">(conditional on 'foo')</text>
+                  <text x="452" y="452">200 OK</text>
+                  <text x="420" y="468">Validator: bar</text>
+                </g></svg></div></div><p class="figure">Figure 2: Data Flow with GET to Equivalent Resource</p></section><section id="example.more.query.formats"><h3 id="rfc.section.A.6"><a href="#rfc.section.A.6">A.6.</a>&nbsp;<a href="#example.more.query.formats">More Query Formats</a></h3><div id="rfc.section.A.6.p.1"><p>The following examples show requests on a JSON-shaped <a href="#RFC8259"><cite title="The JavaScript Object Notation (JSON) Data Interchange Format">[RFC8259]</cite></a> database of RFC errata.</p></div><div id="rfc.section.A.6.p.2"><p>The request below uses eXtensible Stylesheet Language Transformations (XSLT) to extract errata information summarized per year and the defined errata types.</p></div><div id="rfc.section.A.6.p.3"><pre class="text">
+QUERY /errata.json HTTP/1.1
+Host: example.org
+Content-Type: application/xslt+xml
+Accept: application/xml, text/csv
+
+&lt;transform xmlns="http://www.w3.org/1999/XSL/Transform"
+  xmlns:j="http://www.w3.org/2005/xpath-functions"
+  version="3.0"&gt;
+
+  &lt;output method="text"/&gt;
+
+  &lt;param name="input"/&gt;
+
+  &lt;variable name="json"
+    select="json-to-xml(unparsed-text($input))"/&gt;
+
+  &lt;variable name="sc"&gt;errata_status_code&lt;/variable&gt;
+  &lt;variable name="sd"&gt;submit_date&lt;/variable&gt;
+
+  &lt;template match="/"&gt;
+    &lt;text&gt;year, total, rejected, verified, hdu, reported&lt;/text&gt;
+    &lt;text&gt;&amp;#10;&lt;/text&gt;
+    &lt;variable name="en" select="$json//j:map"/&gt;
+    &lt;for-each-group select="$en"
+      group-by="substring-before(j:string[@key=$sd],'-')"&gt;
+      &lt;sort select="current-grouping-key()"/&gt;
+      &lt;variable name="year" select="current-grouping-key()"/&gt;
+      &lt;variable name="errata" select=
+        "$en[$year=substring-before(j:string[@key=$sd],'-')]"/&gt;
+      &lt;value-of select="concat(
+        $year,
+        ', ',
+        count($errata),
+        ', ',
+        count($errata['Rejected'=j:string[@key=$sc]]),
+        ', ',
+        count($errata['Verified'=j:string[@key=$sc]]),
+        ', ',
+        count(
+          $errata['Held for Document Update'=j:string[@key=$sc]]),
+        ', ',
+        count($errata['Reported'=j:string[@key=$sc]]),
+        '&amp;#10;')"/&gt;
+    &lt;/for-each-group&gt;
+  &lt;/template&gt;
+
+&lt;/transform&gt;</pre></div><div id="rfc.section.A.6.p.4" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.6.p.5"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: text/csv
+Accept-Query: "application/jsonpath", "application/xslt+xml"
+Date: Wed, 19 Feb 2025, 17:10:01 GMT
+
+year, total, rejected, verified, hdu, reported
+2000, 14, 0, 14, 0, 0
+2001, 72, 1, 70, 1, 0
+2002, 124, 8, 104, 12, 0
+2003, 63, 0, 61, 2, 0
+2004, 89, 1, 83, 5, 0
+2005, 156, 10, 96, 50, 0
+2006, 444, 54, 176, 214, 0
+2007, 429, 48, 188, 193, 0
+2008, 423, 52, 165, 206, 0
+2009, 331, 39, 148, 144, 0
+2010, 538, 80, 232, 222, 4
+2011, 367, 47, 170, 150, 0
+2012, 348, 54, 149, 145, 0
+2013, 341, 61, 169, 106, 5
+2014, 342, 73, 180, 72, 17
+2015, 343, 79, 145, 89, 30
+2016, 295, 46, 122, 82, 45
+2017, 303, 46, 120, 84, 53
+2018, 350, 61, 118, 98, 73
+2019, 335, 47, 131, 94, 63
+2020, 387, 68, 117, 123, 79
+2021, 321, 44, 148, 63, 66
+2022, 358, 37, 198, 40, 83
+2023, 262, 38, 121, 33, 70
+2024, 322, 33, 125, 23, 141
+9999, 1, 0, 0, 1, 0</pre></div><div id="rfc.section.A.6.p.6" class="avoidbreakafter"><p>Note the Accept-Query response field indicating that another query format, JSONPath <a href="#RFC9535"><cite title="JSONPath: Query Expressions for JSON">[RFC9535]</cite></a>, is supported as well. The request below would report the identifiers of all rejected errata submitted since 2024:</p></div><div id="rfc.section.A.6.p.7"><pre class="text">
+QUERY /errata.json HTTP/1.1
+Host: example.org
+Content-Type: application/jsonpath
+Accept: application/json
+
+$..[
+     ?@.errata_status_code=="Rejected"
+     &amp;&amp; @.submit_date&gt;"2024"
+   ]
+   ["doc-id"]</pre></div><div id="rfc.section.A.6.p.8" class="avoidbreakafter"><p>Response:</p></div><div id="rfc.section.A.6.p.9"><pre class="text">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Accept-Query: "application/jsonpath", "application/xslt+xml"
+Date: Thu, 20 Feb 2025, 09:55:42 GMT
+Last-Modified: Thu, 20 Feb 2025 06:10:01 GMT
+
+[
+  "RFC1185","RFC8407","RFC6350","RFC8467","RFC1157","RFC9543",
+  "RFC9076","RFC7656","RFC2822","RFC9460","RFC2104","RFC6797",
+  "RFC9499","RFC9557","RFC2131","RFC2328","RFC9001","RFC3325",
+  "RFC9438","RFC2526","RFC2985","RFC7643","RFC9132","RFC6376",
+  "RFC9110","RFC9460","RFC7748","RFC9497","RFC8463","RFC4035",
+  "RFC7239","RFC9083","RFC9537","RFC9537","RFC9420","RFC9000",
+  "RFC9656","RFC9110","RFC2324","RFC2549","RFC6797","RFC2549",
+  "RFC8894"
+]</pre></div></section></section><hr class="hidden-print"><section id="selection.method.name"><h2 id="rfc.section.B" class="np"><a href="#rfc.section.B">Appendix B.</a>&nbsp;<a href="#selection.method.name">Selection of the Method Name 'QUERY'</a></h2><div id="rfc.section.B.p.1"><p>The "Hypertext Transfer Protocol (HTTP) Method Registry" (&lt;<a href="http://www.iana.org/assignments/http-methods">http://www.iana.org/assignments/http-methods</a>&gt;) already contains three other methods with the properties "safe" and "idempotent": "PROPFIND" <a href="#RFC4918"><cite title="HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)">[RFC4918]</cite></a>, "REPORT" <a href="#RFC3253"><cite title="Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)">[RFC3253]</cite></a>, and "SEARCH" <a href="#RFC5323"><cite title="Web Distributed Authoring and Versioning (WebDAV) SEARCH">[RFC5323]</cite></a>.</p></div><div id="rfc.section.B.p.2"><p>It would have been possible to reuse any of these, updating it in a way that it matches what this specification defines as the new method "QUERY". Indeed, the early stages of this specification used "SEARCH".</p></div><div id="rfc.section.B.p.3" class="avoidbreakafter"><p>The method name "QUERY" ultimately was chosen because:</p></div><div id="rfc.section.B.p.4"><ul><li>The alternatives use a generic media type for the request content ("application/xml"); the semantics of the request depend solely on the request content.</li><li>Furthermore, they all originate from the WebDAV activity, about which many have mixed feelings.</li><li>"QUERY" captures the relation with the URI's query component well.</li></ul></div></section><hr class="hidden-print"><section id="acknowledgements"><h2 id="rfc.section.unnumbered-4" class="np"><a href="#acknowledgements">Acknowledgements</a></h2><div id="rfc.section.unnumbered-4.p.1"><p>We thank all members of the HTTP Working Group for their ideas, reviews, and feedback.</p></div><div id="rfc.section.unnumbered-4.p.2"><p>The following individuals deserve special recognition: Carsten Bormann, Mark Nottingham, Martin Thomson, Michael Thornburgh, Roberto Polli, Roy Fielding, and Will Hawkins.</p></div></section><hr class="hidden-print"><section id="contributors"><h2 id="rfc.section.unnumbered-5" class="np"><a href="#contributors">Contributors</a></h2><div id="rfc.section.unnumbered-5.p.1" class="avoidbreakafter"><p>Ashok Malhotra participated in early discussions leading to this specification:</p></div><address><b>Ashok Malhotra</b><br>EMail: <a href="mailto:malhotrasahib@gmail.com">malhotrasahib@gmail.com</a></address><div id="rfc.section.unnumbered-5.p.2" class="avoidbreakafter"><p>Discussion on this HTTP method was reopened by Asbjørn Ulsberg during the HTTP Workshop in 2019:</p></div><address><b>Asbjørn Ulsberg</b><br>EMail: <a href="mailto:asbjorn@ulsberg.no">asbjorn@ulsberg.no</a><br>URI: <a href="https://asbjor.nu/">https://asbjor.nu/</a></address></section><hr class="hidden-print"><section id="rfc.authors" class="np"><h2><a href="#rfc.authors">Authors' Addresses</a></h2><address><b>Julian Reschke</b><br>greenbytes GmbH<br>Hafenweg 16<br>Münster, 48155<br>Germany<br>EMail: <a href="mailto:julian.reschke@greenbytes.de">julian.reschke@greenbytes.de</a><br>URI: <a href="https://greenbytes.de/tech/webdav/">https://greenbytes.de/tech/webdav/</a></address><address><b>James M Snell</b><br>Cloudflare<br>EMail: <a href="mailto:jasnell@gmail.com">jasnell@gmail.com</a></address><address><b>Mike Bishop</b><br>Akamai<br>EMail: <a href="mailto:mbishop@evequefou.be">mbishop@evequefou.be</a></address></section></div></div></div><script src="/assets/node_modules/jquery/dist/jquery.min.js"></script><script src="/assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script></body></html>

@@ -7,6 +7,7 @@ list of HTTP extensions, see the relevant registry.
 ### Methods 
 
 * RFC 5789: [PATCH Method](/specs/rfc5789.html)
+* RFC 10008: [QUERY Method](/specs/rfc10008.html)
 
 ### Status Codes
 

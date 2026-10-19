@@ -1,0 +1,1669 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" version="3" category="std" ipr="trust200902" docName="draft-ietf-httpbis-safe-method-w-body-14" number="10008" updates="" obsoletes="" symRefs="true" sortRefs="true" xml:lang="en" tocInclude="true" submissionType="IETF" consensus="true" prepTime="2026-06-16T01:31:41" indexInclude="true" scripts="Common,Latin" tocDepth="3">
+  <link href="https://datatracker.ietf.org/doc/draft-ietf-httpbis-safe-method-w-body-14" rel="prev"/>
+  <link href="https://dx.doi.org/10.17487/rfc10008" rel="alternate"/>
+  <link href="urn:issn:2070-1721" rel="alternate"/>
+  <front>
+    <title>The HTTP QUERY Method</title>
+    <seriesInfo name="RFC" value="10008" stream="IETF"/>
+    <author initials="J." surname="Reschke" fullname="Julian Reschke">
+      <organization abbrev="greenbytes" showOnFrontPage="true">greenbytes GmbH</organization>
+      <address>
+        <postal>
+          <street>Hafenweg 16</street>
+          <city>Münster</city>
+          <code>48155</code>
+          <country>Germany</country>
+        </postal>
+        <email>julian.reschke@greenbytes.de</email>
+        <uri>https://greenbytes.de/tech/webdav/</uri>
+      </address>
+    </author>
+    <author initials="J.M." surname="Snell" fullname="James M Snell">
+      <organization showOnFrontPage="true">Cloudflare</organization>
+      <address>
+        <email>jasnell@gmail.com</email>
+      </address>
+    </author>
+    <author initials="M." surname="Bishop" fullname="Mike Bishop">
+      <organization showOnFrontPage="true">Akamai</organization>
+      <address>
+        <email>mbishop@evequefou.be</email>
+      </address>
+    </author>
+    <date month="06" year="2026"/>
+    <area>WIT</area>
+    <workgroup>httpbis</workgroup>
+    <keyword>http</keyword>
+    <keyword>query</keyword>
+    <keyword>method</keyword>
+    <abstract pn="section-abstract">
+      <t indent="0" pn="section-abstract-1">
+        This specification defines the QUERY method for HTTP.
+        A QUERY requests that the request target process the enclosed
+        content in a safe and idempotent manner and then respond with the
+        result of that processing. This is similar to POST requests, but QUERY requests
+        can be automatically repeated or restarted without concern for
+        partial state changes.
+      </t>
+    </abstract>
+    <boilerplate>
+      <section anchor="status-of-memo" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.1">
+        <name slugifiedName="name-status-of-this-memo">Status of This Memo</name>
+        <t indent="0" pn="section-boilerplate.1-1">
+            This is an Internet Standards Track document.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-2">
+            This document is a product of the Internet Engineering Task Force
+            (IETF).  It represents the consensus of the IETF community.  It has
+            received public review and has been approved for publication by
+            the Internet Engineering Steering Group (IESG).  Further
+            information on Internet Standards is available in Section 2 of 
+            RFC 7841.
+        </t>
+        <t indent="0" pn="section-boilerplate.1-3">
+            Information about the current status of this document, any
+            errata, and how to provide feedback on it may be obtained at
+            <eref target="https://www.rfc-editor.org/info/rfc10008" brackets="none"/>.
+        </t>
+      </section>
+      <section anchor="copyright" numbered="false" removeInRFC="false" toc="exclude" pn="section-boilerplate.2">
+        <name slugifiedName="name-copyright-notice">Copyright Notice</name>
+        <t indent="0" pn="section-boilerplate.2-1">
+            Copyright (c) 2026 IETF Trust and the persons identified as the
+            document authors. All rights reserved.
+        </t>
+        <t indent="0" pn="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<eref target="https://trustee.ietf.org/license-info" brackets="none"/>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.
+        </t>
+      </section>
+    </boilerplate>
+    <toc>
+      <section anchor="toc" numbered="false" removeInRFC="false" toc="exclude" pn="section-toc.1">
+        <name slugifiedName="name-table-of-contents">Table of Contents</name>
+        <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1">
+          <li pn="section-toc.1-1.1">
+            <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.1"><xref derivedContent="1" format="counter" sectionFormat="of" target="section-1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-introduction">Introduction</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.1.2">
+              <li pn="section-toc.1-1.1.2.1">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.1.1"><xref derivedContent="1.1" format="counter" sectionFormat="of" target="section-1.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-terminology">Terminology</xref></t>
+              </li>
+              <li pn="section-toc.1-1.1.2.2">
+                <t indent="0" keepWithNext="true" pn="section-toc.1-1.1.2.2.1"><xref derivedContent="1.2" format="counter" sectionFormat="of" target="section-1.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-notational-conventions">Notational Conventions</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.2">
+            <t indent="0" pn="section-toc.1-1.2.1"><xref derivedContent="2" format="counter" sectionFormat="of" target="section-2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-query-method">QUERY Method</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.2.2">
+              <li pn="section-toc.1-1.2.2.1">
+                <t indent="0" pn="section-toc.1-1.2.2.1.1"><xref derivedContent="2.1" format="counter" sectionFormat="of" target="section-2.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-media-types-and-content-neg">Media Types and Content Negotiation</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.2">
+                <t indent="0" pn="section-toc.1-1.2.2.2.1"><xref derivedContent="2.2" format="counter" sectionFormat="of" target="section-2.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-equivalent-resource">Equivalent Resource</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.3">
+                <t indent="0" pn="section-toc.1-1.2.2.3.1"><xref derivedContent="2.3" format="counter" sectionFormat="of" target="section-2.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-content-location-response-f">Content-Location Response Field</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.4">
+                <t indent="0" pn="section-toc.1-1.2.2.4.1"><xref derivedContent="2.4" format="counter" sectionFormat="of" target="section-2.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-location-response-field">Location Response Field</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.5">
+                <t indent="0" pn="section-toc.1-1.2.2.5.1"><xref derivedContent="2.5" format="counter" sectionFormat="of" target="section-2.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-redirection">Redirection</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.6">
+                <t indent="0" pn="section-toc.1-1.2.2.6.1"><xref derivedContent="2.6" format="counter" sectionFormat="of" target="section-2.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-conditional-requests">Conditional Requests</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.7">
+                <t indent="0" pn="section-toc.1-1.2.2.7.1"><xref derivedContent="2.7" format="counter" sectionFormat="of" target="section-2.7"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-caching">Caching</xref></t>
+              </li>
+              <li pn="section-toc.1-1.2.2.8">
+                <t indent="0" pn="section-toc.1-1.2.2.8.1"><xref derivedContent="2.8" format="counter" sectionFormat="of" target="section-2.8"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-range-requests">Range Requests</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.3">
+            <t indent="0" pn="section-toc.1-1.3.1"><xref derivedContent="3" format="counter" sectionFormat="of" target="section-3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-the-accept-query-header-fie">The Accept-Query Header Field</xref></t>
+          </li>
+          <li pn="section-toc.1-1.4">
+            <t indent="0" pn="section-toc.1-1.4.1"><xref derivedContent="4" format="counter" sectionFormat="of" target="section-4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-security-considerations">Security Considerations</xref></t>
+          </li>
+          <li pn="section-toc.1-1.5">
+            <t indent="0" pn="section-toc.1-1.5.1"><xref derivedContent="5" format="counter" sectionFormat="of" target="section-5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-iana-considerations">IANA Considerations</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.5.2">
+              <li pn="section-toc.1-1.5.2.1">
+                <t indent="0" pn="section-toc.1-1.5.2.1.1"><xref derivedContent="5.1" format="counter" sectionFormat="of" target="section-5.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-registration-of-the-query-m">Registration of the QUERY Method</xref></t>
+              </li>
+              <li pn="section-toc.1-1.5.2.2">
+                <t indent="0" pn="section-toc.1-1.5.2.2.1"><xref derivedContent="5.2" format="counter" sectionFormat="of" target="section-5.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-registration-of-the-accept-">Registration of the Accept-Query Field</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.6">
+            <t indent="0" pn="section-toc.1-1.6.1"><xref derivedContent="6" format="counter" sectionFormat="of" target="section-6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-references">References</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.6.2">
+              <li pn="section-toc.1-1.6.2.1">
+                <t indent="0" pn="section-toc.1-1.6.2.1.1"><xref derivedContent="6.1" format="counter" sectionFormat="of" target="section-6.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-normative-references">Normative References</xref></t>
+              </li>
+              <li pn="section-toc.1-1.6.2.2">
+                <t indent="0" pn="section-toc.1-1.6.2.2.1"><xref derivedContent="6.2" format="counter" sectionFormat="of" target="section-6.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-informative-references">Informative References</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.7">
+            <t indent="0" pn="section-toc.1-1.7.1"><xref derivedContent="Appendix A" format="default" sectionFormat="of" target="section-appendix.a"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-examples">Examples</xref></t>
+            <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.7.2">
+              <li pn="section-toc.1-1.7.2.1">
+                <t indent="0" pn="section-toc.1-1.7.2.1.1"><xref derivedContent="A.1" format="counter" sectionFormat="of" target="section-appendix.a.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-simple-query">Simple Query</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.2">
+                <t indent="0" pn="section-toc.1-1.7.2.2.1"><xref derivedContent="A.2" format="counter" sectionFormat="of" target="section-appendix.a.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-discovery-of-query-support">Discovery of QUERY Support</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.3">
+                <t indent="0" pn="section-toc.1-1.7.2.3.1"><xref derivedContent="A.3" format="counter" sectionFormat="of" target="section-appendix.a.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-discovery-of-query-formats">Discovery of QUERY Formats</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.4">
+                <t indent="0" pn="section-toc.1-1.7.2.4.1"><xref derivedContent="A.4" format="counter" sectionFormat="of" target="section-appendix.a.4"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-content-location-location-a">Content-Location, Location, and Indirect Responses</xref></t>
+                <ul bare="true" empty="true" indent="2" spacing="compact" pn="section-toc.1-1.7.2.4.2">
+                  <li pn="section-toc.1-1.7.2.4.2.1">
+                    <t indent="0" pn="section-toc.1-1.7.2.4.2.1.1"><xref derivedContent="A.4.1" format="counter" sectionFormat="of" target="section-appendix.a.4.1"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-using-content-location">Using Content-Location</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.7.2.4.2.2">
+                    <t indent="0" pn="section-toc.1-1.7.2.4.2.2.1"><xref derivedContent="A.4.2" format="counter" sectionFormat="of" target="section-appendix.a.4.2"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-using-location">Using Location</xref></t>
+                  </li>
+                  <li pn="section-toc.1-1.7.2.4.2.3">
+                    <t indent="0" pn="section-toc.1-1.7.2.4.2.3.1"><xref derivedContent="A.4.3" format="counter" sectionFormat="of" target="section-appendix.a.4.3"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-indirect-responses">Indirect Responses</xref></t>
+                  </li>
+                </ul>
+              </li>
+              <li pn="section-toc.1-1.7.2.5">
+                <t indent="0" pn="section-toc.1-1.7.2.5.1"><xref derivedContent="A.5" format="counter" sectionFormat="of" target="section-appendix.a.5"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-conditional-requests-2">Conditional Requests</xref></t>
+              </li>
+              <li pn="section-toc.1-1.7.2.6">
+                <t indent="0" pn="section-toc.1-1.7.2.6.1"><xref derivedContent="A.6" format="counter" sectionFormat="of" target="section-appendix.a.6"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-more-query-formats">More Query Formats</xref></t>
+              </li>
+            </ul>
+          </li>
+          <li pn="section-toc.1-1.8">
+            <t indent="0" pn="section-toc.1-1.8.1"><xref derivedContent="Appendix B" format="default" sectionFormat="of" target="section-appendix.b"/>.  <xref derivedContent="" format="title" sectionFormat="of" target="name-selection-of-the-method-nam">Selection of the Method Name 'QUERY'</xref></t>
+          </li>
+          <li pn="section-toc.1-1.9">
+            <t indent="0" pn="section-toc.1-1.9.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.c"/><xref derivedContent="" format="title" sectionFormat="of" target="name-acknowledgements">Acknowledgements</xref></t>
+          </li>
+          <li pn="section-toc.1-1.10">
+            <t indent="0" pn="section-toc.1-1.10.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.d"/><xref derivedContent="" format="title" sectionFormat="of" target="name-contributors">Contributors</xref></t>
+          </li>
+          <li pn="section-toc.1-1.11">
+            <t indent="0" pn="section-toc.1-1.11.1"><xref derivedContent="" format="none" sectionFormat="of" target="section-appendix.e"/><xref derivedContent="" format="title" sectionFormat="of" target="name-authors-addresses">Authors' Addresses</xref></t>
+          </li>
+        </ul>
+      </section>
+    </toc>
+  </front>
+  <middle>
+    <section anchor="introduction" numbered="true" removeInRFC="false" toc="include" pn="section-1">
+      <name slugifiedName="name-introduction">Introduction</name>
+      <t indent="0" pn="section-1-1">
+      This specification defines the HTTP QUERY request method as a means of
+      making a safe, idempotent request (<xref target="RFC9110" section="9.2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.2" derivedContent="HTTP"/>) that
+      encloses a representation describing how the request is to be processed by the target resource.
+      </t>
+      <t indent="0" pn="section-1-2">
+      A common query pattern is:
+      </t>
+      <sourcecode type="http-message" markers="false" pn="section-1-3">
+GET /feed?q=foo&amp;limit=10&amp;sort=-published HTTP/1.1
+Host: example.org</sourcecode>
+      <t indent="0" pn="section-1-4">
+      However, when the data conveyed is too voluminous to be encoded in the request's URI,
+      this pattern becomes problematic:
+      </t>
+      <ul bare="false" empty="false" indent="3" spacing="normal" pn="section-1-5">
+        <li pn="section-1-5.1">size limits often are not known ahead of time because a request can pass through many uncoordinated
+      systems (but note that <xref section="4.1" target="RFC9110" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-4.1" derivedContent="HTTP"/> recommends senders and recipients to support at least 8000 octets),</li>
+        <li pn="section-1-5.2">expressing certain kinds of data in the target URI is inefficient because of the overhead of encoding that data into a valid URI,</li>
+        <li pn="section-1-5.3">request URIs are more likely to be logged than request content and may also turn up in bookmarks,</li>
+        <li pn="section-1-5.4">encoding queries directly into the request URI effectively casts every possible combination of query inputs as distinct
+          resources.</li>
+      </ul>
+      <t indent="0" pn="section-1-6">
+      As an alternative to using GET, many implementations make use of the
+      HTTP POST method to perform queries, as illustrated in the example
+      below. In this case, the input to the query operation is
+      passed as the request content as opposed to using the
+      request URI's query component.
+      </t>
+      <t indent="0" pn="section-1-7">
+      A typical use of HTTP POST for requesting a query is:
+      </t>
+      <sourcecode type="http-message" markers="false" pn="section-1-8">
+POST /feed HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+
+q=foo&amp;limit=10&amp;sort=-published</sourcecode>
+      <t indent="0" pn="section-1-9">
+      In this variation, however, it is not readily apparent -- without specific knowledge of the
+      resource and server to which the request is being sent -- that a safe,
+      idempotent query is being performed.
+      </t>
+      <t indent="0" pn="section-1-10">
+      The QUERY method provides a solution that spans the gap between the use of GET and POST, with
+      the example above being expressed as:
+      </t>
+      <sourcecode type="http-message" markers="false" pn="section-1-11">
+QUERY /feed HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+
+q=foo&amp;limit=10&amp;sort=-published</sourcecode>
+      <t indent="0" pn="section-1-12">
+      As with POST, the input to the query operation is passed as the content of the request
+      rather than as part of the request URI. Unlike POST, however, the method is explicitly safe
+      and idempotent, allowing functions like caching and automatic retries to operate.
+      </t>
+      <t indent="0" pn="section-1-13">
+      Recognizing the design principle that any important resource ought to be
+      identified by a URI, this specification describes how a server can assign URIs to both
+      the query itself or to a specific query result, for later use in a GET request.
+      </t>
+      <t indent="0" pn="section-1-14">Summarizing:</t>
+      <table align="center" pn="table-1">
+        <name slugifiedName="name-summary-of-relevant-method-">Summary of Relevant Method Properties</name>
+        <thead>
+          <tr>
+            <th align="left" colspan="1" rowspan="1"/>
+            <th align="left" colspan="1" rowspan="1">GET</th>
+            <th align="left" colspan="1" rowspan="1">QUERY</th>
+            <th align="left" colspan="1" rowspan="1">POST</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">Safe</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">potentially no</td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">Idempotent</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">potentially no</td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">URI for query itself</td>
+            <td align="left" colspan="1" rowspan="1">yes (by definition)</td>
+            <td align="left" colspan="1" rowspan="1">optional (Location response field)</td>
+            <td align="left" colspan="1" rowspan="1">no</td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">URI for query result</td>
+            <td align="left" colspan="1" rowspan="1">optional (Content-Location response field)</td>
+            <td align="left" colspan="1" rowspan="1">optional (Content-Location response field)</td>
+            <td align="left" colspan="1" rowspan="1">optional (Content-Location response field)</td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">Cacheable</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">yes</td>
+            <td align="left" colspan="1" rowspan="1">yes, but only for future GET or HEAD requests</td>
+          </tr>
+          <tr>
+            <td align="left" colspan="1" rowspan="1">Content (body)</td>
+            <td align="left" colspan="1" rowspan="1">"no defined semantics"</td>
+            <td align="left" colspan="1" rowspan="1">expected (semantics per target resource)</td>
+            <td align="left" colspan="1" rowspan="1">expected (semantics per target resource)</td>
+          </tr>
+        </tbody>
+      </table>
+      <section anchor="terminology" numbered="true" removeInRFC="false" toc="include" pn="section-1.1">
+        <name slugifiedName="name-terminology">Terminology</name>
+        <t indent="0" pn="section-1.1-1">
+        This document uses terminology defined in <xref section="3" target="RFC9110" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3" derivedContent="HTTP"/>.
+        </t>
+        <t indent="0" pn="section-1.1-2">
+        Furthermore, it uses the terms <em>URI query parameter</em> for parameters
+        in the query component of a URI (<xref target="RFC9110" section="4.2.2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-4.2.2" derivedContent="HTTP"/>) and
+        <em>query content</em> for the request content (<xref target="RFC9110" section="6.4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6.4" derivedContent="HTTP"/>)
+        of a QUERY request.
+        </t>
+      </section>
+      <section anchor="notational.conventions" numbered="true" removeInRFC="false" toc="include" pn="section-1.2">
+        <name slugifiedName="name-notational-conventions">Notational Conventions</name>
+        <t indent="0" pn="section-1.2-1">
+    The key words "<bcp14>MUST</bcp14>", "<bcp14>MUST NOT</bcp14>", "<bcp14>REQUIRED</bcp14>", "<bcp14>SHALL</bcp14>", "<bcp14>SHALL NOT</bcp14>", "<bcp14>SHOULD</bcp14>", "<bcp14>SHOULD NOT</bcp14>", "<bcp14>RECOMMENDED</bcp14>", "<bcp14>NOT RECOMMENDED</bcp14>",
+    "<bcp14>MAY</bcp14>", and "<bcp14>OPTIONAL</bcp14>" in this document are to be interpreted as
+    described in BCP 14 <xref target="RFC2119" format="default" sectionFormat="of" derivedContent="RFC2119"/> <xref target="RFC8174" format="default" sectionFormat="of" derivedContent="RFC8174"/> 
+    when, and only when, they appear in all capitals, as shown here.
+        </t>
+      </section>
+    </section>
+    <section anchor="query" numbered="true" removeInRFC="false" toc="include" pn="section-2">
+      <name slugifiedName="name-query-method">QUERY Method</name>
+      <t indent="0" pn="section-2-1">
+      The QUERY method is used to initiate a server-side query. Unlike
+      the GET method, which requests a
+      representation of the resource identified by the target URI
+      (as defined by <xref target="RFC9110" section="7.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-7.1" derivedContent="HTTP"/>), the QUERY
+      method is used to ask the target resource to perform a query operation
+      within the scope of that target resource.
+      </t>
+      <t indent="0" pn="section-2-2">
+      The content of the request and its media type define the query.
+      The origin server determines the scope of the operation based on the target resource.
+      </t>
+      <t indent="0" pn="section-2-3">
+      Servers <bcp14>MUST</bcp14> fail the request if the Content-Type
+      request field (<xref target="RFC9110" sectionFormat="comma" section="8.3" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.3" derivedContent="HTTP"/>)
+      is missing or is inconsistent with the request content.
+      </t>
+      <t indent="0" pn="section-2-4">
+      As for all HTTP methods, the target URI's query part
+      takes part in identifying the resource being queried. Whether and how it
+      directly affects the result of the query is specific to the resource
+      and is out of scope for this specification.
+      </t>
+      <t indent="0" pn="section-2-5">
+      QUERY requests are safe with regard to the target resource
+      (<xref target="RFC9110" sectionFormat="comma" section="9.2.1" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.2.1" derivedContent="HTTP"/>);
+      that is, the client does not request or expect any change to the
+      state of the target resource. This does not prevent the server
+      from creating additional HTTP resources through which additional
+      information can be retrieved (see Sections <xref target="content-location" format="counter" sectionFormat="of" derivedContent="2.3"/>
+      and <xref target="location" format="counter" sectionFormat="of" derivedContent="2.4"/>).
+      </t>
+      <t indent="0" pn="section-2-6">
+      Furthermore, QUERY requests are idempotent
+      (<xref target="RFC9110" sectionFormat="comma" section="9.2.2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.2.2" derivedContent="HTTP"/>);
+      they can be retried or repeated when needed, for instance, after
+      a connection failure.
+      </t>
+      <t indent="0" pn="section-2-7">
+      As per <xref target="RFC9110" section="15.3" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.3" derivedContent="HTTP"/>, a 2xx (Successful) response code signals that
+      the request was successfully received, understood, and accepted.
+      </t>
+      <t indent="0" pn="section-2-8">
+      In particular, a 200 (OK) response indicates that the query
+      was successfully processed and the results of that processing are
+      enclosed as the response content.
+      </t>
+      <section anchor="media.types.and.conneg" numbered="true" removeInRFC="false" toc="include" pn="section-2.1">
+        <name slugifiedName="name-media-types-and-content-neg">Media Types and Content Negotiation</name>
+        <t indent="0" pn="section-2.1-1">
+        The semantics of a QUERY request depend both on the request content and the associated
+        metadata, such as the media type (<xref target="RFC9110" sectionFormat="comma" section="8.3.1" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.3.1" derivedContent="HTTP"/>).
+        In general, any problem with requests where content and metadata are inconsistent <bcp14>MUST</bcp14> be
+        rejected with a 4xx (Client Error) response (<xref target="RFC9110" sectionFormat="comma" section="15.5" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.5" derivedContent="HTTP"/>).
+        </t>
+        <t indent="0" pn="section-2.1-2">
+        The list below describes various cases of failures and recommends specific status codes:
+        </t>
+        <ul bare="false" empty="false" indent="3" spacing="normal" pn="section-2.1-3">
+          <li pn="section-2.1-3.1">
+          If a request lacks media type information, it is incorrect by definition and needs to fail with a 4xx status code such as 400 (Client Error).
+        </li>
+          <li pn="section-2.1-3.2">
+          If a media type is specified but is not supported by the resource, a 415 (Unsupported Media Type)
+          is appropriate. This specifically includes the case where the media type is
+          known in principle, but it lacks semantics specific to a QUERY to the target resource. In both cases,
+          the Accept-Query response field (<xref target="field.accept-query" format="default" sectionFormat="of" derivedContent="Section 3"/>) can be used to inform
+          the client of the media types that are supported.
+        </li>
+          <li pn="section-2.1-3.3">
+          If a media type is specified but is inconsistent with the actual request content,
+          a 400 (Bad Request) can be returned. That is, a server is not allowed to infer
+          a media type from the request content and then override a missing or "erroneous" value
+          (i.e., "content sniffing").
+        </li>
+          <li pn="section-2.1-3.4">
+          If the media type is specified and understood, and the content is indeed consistent with the
+          type, but the query cannot be processed due to the actual contents of the query,
+          the status 422 (Unprocessable Content) can be used. An example would be a syntactically
+          correct SQL query that identifies a non-existent table.
+        </li>
+          <li pn="section-2.1-3.5">
+          If the client requests a specific response media type using the Accept
+          field (<xref target="RFC9110" sectionFormat="comma" section="12.5.1" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" derivedContent="HTTP"/>) that is not supported
+          by the resource, a status code of 406 (Not Acceptable) is appropriate.
+        </li>
+        </ul>
+      </section>
+      <section anchor="equivalent-resource" numbered="true" removeInRFC="false" toc="include" pn="section-2.2">
+        <name slugifiedName="name-equivalent-resource">Equivalent Resource</name>
+        <t indent="0" pn="section-2.2-1">
+        The <em>equivalent resource</em> for any given QUERY request is a resource
+        that responds to GET requests, represents that QUERY request and its target, and takes
+        both message content and metadata into account (<xref target="RFC9110" section="6" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-6" derivedContent="HTTP"/>).
+        In particular, this includes representation metadata (<xref target="RFC9110" section="8" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8" derivedContent="HTTP"/>)
+        such as the content's media type.
+        </t>
+        <t indent="0" pn="section-2.2-2">
+        In other words, the equivalent resource is derived from the resource
+        implementing QUERY by incorporating the request content.
+        </t>
+        <t indent="0" pn="section-2.2-3">
+        The term <em>equivalent resource</em> is used as a means to define
+        behavior for other HTTP aspects, such as selected representations. Servers can
+        but do not have to assign URIs to these resources (see
+        <xref target="RFC3986" section="1.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc3986#section-1.1" derivedContent="URI"/>). If they do so, these resources will become accessible
+        for GET requests.
+        </t>
+      </section>
+      <section anchor="content-location" numbered="true" removeInRFC="false" toc="include" pn="section-2.3">
+        <name slugifiedName="name-content-location-response-f">Content-Location Response Field</name>
+        <t indent="0" pn="section-2.3-1">
+        A successful response (2xx, <xref target="RFC9110" section="15.3" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.3" derivedContent="HTTP"/>)
+        can include a Content-Location
+        header field containing an
+        identifier for a resource corresponding to the results of the
+        operation; see <xref target="RFC9110" section="8.7" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.7" derivedContent="HTTP"/> for details. This represents a claim from the server that a client can send
+        a GET request for the indicated URI to retrieve the results of the query
+        operation just performed. The indicated resource might be temporary.
+        </t>
+        <t indent="0" pn="section-2.3-2">
+        See <xref target="example.content-location" format="default" sectionFormat="of" derivedContent="Appendix A.4.1"/> for an example.
+        </t>
+      </section>
+      <section anchor="location" numbered="true" removeInRFC="false" toc="include" pn="section-2.4">
+        <name slugifiedName="name-location-response-field">Location Response Field</name>
+        <t indent="0" pn="section-2.4-1">
+        A server can assign a URI to the equivalent resource (<xref target="equivalent-resource" format="default" sectionFormat="of" derivedContent="Section 2.2"/>)
+        of a QUERY request. If the server does so, the URI of that resource
+        can be included in the Location header field of the 2xx response (see <xref target="RFC9110" section="10.2.2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-10.2.2" derivedContent="HTTP"/>). This represents a claim that a client can
+        send a GET request to the indicated URI to repeat the query operation just
+        performed without resending the query content. This resource's URI might be
+        temporary; if a future request fails, the client can retry using the
+        original QUERY request target and the previously submitted content.
+        </t>
+        <t indent="0" pn="section-2.4-2">
+        See <xref target="example.location" format="default" sectionFormat="of" derivedContent="Appendix A.4.2"/> for an example.
+        </t>
+      </section>
+      <section anchor="redirection" numbered="true" removeInRFC="false" toc="include" pn="section-2.5">
+        <name slugifiedName="name-redirection">Redirection</name>
+        <t indent="0" pn="section-2.5-1">
+        In some cases, the server may choose to respond indirectly to the QUERY
+        request by redirecting the user agent to a different URI (see
+        <xref target="RFC9110" section="15.4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4" derivedContent="HTTP"/>).
+        </t>
+        <t indent="0" pn="section-2.5-2">
+        A response with either status codes
+        301 (Moved Permanently, <xref target="RFC9110" sectionFormat="comma" section="15.4.2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.2" derivedContent="HTTP"/>) or
+        308 (Permanent Redirect, <xref target="RFC9110" sectionFormat="comma" section="15.4.9" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.9" derivedContent="HTTP"/>)
+        indicates that the target resource has permanently moved to a different URI referenced by the
+        Location response field (<xref target="RFC9110" sectionFormat="comma" section="10.2.2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-10.2.2" derivedContent="HTTP"/>).
+        Likewise, a response with either status codes
+        302 (Found, <xref target="RFC9110" sectionFormat="comma" section="15.4.3" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.3" derivedContent="HTTP"/>) or
+        307 (Temporary Redirect, <xref target="RFC9110" sectionFormat="comma" section="15.4.8" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.8" derivedContent="HTTP"/>)
+        indicates that the target resource has temporarily moved. In all four cases, the server is
+        suggesting that the user agent can accomplish its original QUERY request by sending a
+        similar QUERY request to the new target URI referenced by the Location.
+        </t>
+        <t indent="0" pn="section-2.5-3">
+        Note that the exceptions for redirecting a POST as a GET request after a 301 or 302 response
+        do not apply to QUERY requests.
+        </t>
+        <t indent="0" pn="section-2.5-4">
+        A response to QUERY with the status code 303 (See Other, <xref target="RFC9110" section="15.4.4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.4" derivedContent="HTTP"/>)
+        indicates that the original query can be accomplished via a normal retrieval request on the URI referenced
+        by the Location response field (<xref target="RFC9110" sectionFormat="comma" section="10.2.2" format="default" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-10.2.2" derivedContent="HTTP"/>).
+        For HTTP, this means sending a GET request to the new target URI, as illustrated by the example
+        in <xref target="example.indirect" format="default" sectionFormat="of" derivedContent="Appendix A.4.3"/>.
+        </t>
+      </section>
+      <section anchor="conditional" numbered="true" removeInRFC="false" toc="include" pn="section-2.6">
+        <name slugifiedName="name-conditional-requests">Conditional Requests</name>
+        <t indent="0" pn="section-2.6-1">
+        The selected representation (<xref target="RFC9110" section="3.2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-3.2" derivedContent="HTTP"/>) of a QUERY
+        request is the same as for a GET request to the equivalent resource
+        (<xref target="equivalent-resource" format="default" sectionFormat="of" derivedContent="Section 2.2"/>) of that QUERY request.
+        </t>
+        <t indent="0" pn="section-2.6-2">
+        A conditional QUERY requests that the selected representation
+        (i.e., the query results after any content negotiation) be
+        returned in the response only under the circumstances described by the
+        conditional header field(s), as defined in
+        <xref target="RFC9110" section="13" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-13" derivedContent="HTTP"/>.
+        </t>
+        <t indent="0" pn="section-2.6-3">
+        See <xref target="example.conditional" format="default" sectionFormat="of" derivedContent="Appendix A.5"/> for examples.
+        </t>
+      </section>
+      <section anchor="caching" numbered="true" removeInRFC="false" toc="include" pn="section-2.7">
+        <name slugifiedName="name-caching">Caching</name>
+        <t indent="0" pn="section-2.7-1">
+        The response to a QUERY method is cacheable; a cache <bcp14>MAY</bcp14> use it to satisfy subsequent
+        QUERY requests as per <xref target="RFC9111" section="4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4" derivedContent="HTTP-CACHING"/>.
+        </t>
+        <t indent="0" pn="section-2.7-2">
+        The cache key for a QUERY request (<xref target="RFC9111" section="2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-2" derivedContent="HTTP-CACHING"/>) <bcp14>MUST</bcp14>
+        incorporate the request content (<xref target="RFC9111" section="6" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-6" derivedContent="HTTP-CACHING"/>) and related
+        metadata (<xref target="RFC9110" section="8" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8" derivedContent="HTTP"/>).
+        </t>
+        <t indent="0" pn="section-2.7-3">
+        To improve cache efficiency, caches <bcp14>MAY</bcp14> remove semantically
+        insignificant differences from request content and related metadata first. For instance, by:
+        </t>
+        <ul bare="false" empty="false" indent="3" spacing="normal" pn="section-2.7-4">
+          <li pn="section-2.7-4.1">removing content encoding(s) (<xref target="RFC9110" section="8.4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-8.4" derivedContent="HTTP"/>).</li>
+          <li pn="section-2.7-4.2">normalizing based upon knowledge of format conventions, as indicated by any
+          media subtype suffix in the request's Content-Type field (e.g., "+json"; see
+          <xref target="RFC6838" section="4.2.8" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc6838#section-4.2.8" derivedContent="RFC6838"/>).</li>
+          <li pn="section-2.7-4.3">normalizing based upon knowledge of the semantics of the content itself, as indicated by
+          the request's Content-Type field.</li>
+        </ul>
+        <t indent="0" pn="section-2.7-5">
+        Note that any such transformation is performed solely for the purpose of generating a cache key; it
+        does not change the request itself.
+        </t>
+        <t indent="0" pn="section-2.7-6">
+        Clients can indicate, using the "no-transform" cache directive (<xref target="RFC9111" section="5.2.1.6" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-5.2.1.6" derivedContent="HTTP-CACHING"/>)
+        that they wish that no such transformation happens (but note that this directive is just
+        advisory).
+        </t>
+        <t indent="0" pn="section-2.7-7">
+        Note that caching QUERY method responses is inherently more complex than caching responses
+        to GET, as complete reading of the request's content is needed in order to determine
+        the cache key. If a QUERY response supplies a Location response field (<xref target="location" format="default" sectionFormat="of" derivedContent="Section 2.4"/>)
+        to indicate a URI for an equivalent resource (<xref target="equivalent-resource" format="default" sectionFormat="of" derivedContent="Section 2.2"/>), clients
+        can switch to GET for subsequent requests, thereby simplifying processing.
+        </t>
+      </section>
+      <section anchor="range" numbered="true" removeInRFC="false" toc="include" pn="section-2.8">
+        <name slugifiedName="name-range-requests">Range Requests</name>
+        <t indent="0" pn="section-2.8-1">
+        The semantics of Range Requests for QUERY are identical to those for GET,
+        as defined in <xref target="RFC9110" section="14" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-14" derivedContent="HTTP"/>.
+        Byte Range Requests (the only range unit defined at the time of writing),
+        however, offer little value for the results of a QUERY request.
+        </t>
+        <t indent="0" pn="section-2.8-2">
+        Query formats often define their own way of limiting or paging through result
+        sets, such as with "FETCH FIRST ... ROWS ONLY" in SQL. It is expected that these
+        built-in features will be used instead of HTTP Range Requests.
+        </t>
+      </section>
+    </section>
+    <section anchor="field.accept-query" numbered="true" removeInRFC="false" toc="include" pn="section-3">
+      <name slugifiedName="name-the-accept-query-header-fie">The Accept-Query Header Field</name>
+      <t indent="0" pn="section-3-1">
+      The "Accept-Query" response header field can be used by a resource to
+      directly signal support for the QUERY method while identifying
+      the specific query format media type(s) that may be used.
+      </t>
+      <t indent="0" pn="section-3-2">
+      Accept-Query contains a list of media ranges (<xref target="RFC9110" section="12.5.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" derivedContent="HTTP"/>)
+      using "Structured Fields" syntax <xref target="RFC9651" format="default" sectionFormat="of" derivedContent="STRUCTURED-FIELDS"/>.
+      Media ranges are represented by a List Structured Header Field of either Tokens or
+      Strings, containing the media range value without parameters.
+      </t>
+      <t indent="0" pn="section-3-3">
+      Media type parameters, if any, are mapped to Structured Field Parameters
+      with the String or Token type. The choice of Token versus String is
+      semantically insignificant. That is, recipients <bcp14>MAY</bcp14>
+      convert Tokens to Strings, but <bcp14>MUST NOT</bcp14> process them
+      differently based on the received type.
+      </t>
+      <t indent="0" pn="section-3-4">
+      Media types do not exactly map to Tokens; for instance, they
+      allow a leading digit. In cases like these, the String format needs to
+      be used.
+      </t>
+      <t indent="0" pn="section-3-5">
+      The only supported uses of wildcards are "*/*", which matches any type,
+      or "xxxx/*", which matches any subtype of the indicated type.
+      </t>
+      <t indent="0" pn="section-3-6">
+      The order of types listed in the field value is not significant.
+      </t>
+      <t indent="0" pn="section-3-7">
+      The value of the Accept-Query field applies to every URI on the server that shares the same path; in
+      other words, the query component is ignored. If requests to the same resource return
+      different Accept-Query values, the most recently received fresh value (per
+      <xref target="RFC9111" section="4.2" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9111#section-4.2" derivedContent="HTTP-CACHING"/>) is used.
+      </t>
+      <t indent="0" pn="section-3-8">
+      For example:
+      </t>
+      <sourcecode markers="false" pn="section-3-9">
+Accept-Query: "application/jsonpath", application/sql;charset="UTF-8"</sourcecode>
+      <t indent="0" pn="section-3-10">
+      Although the syntax for this field appears to be similar to other
+      fields, such as "Accept" (<xref target="RFC9110" section="12.5.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" derivedContent="HTTP"/>),
+      it is a Structured Field and thus <bcp14>MUST</bcp14> be processed as specified in
+      <xref target="RFC9651" section="4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9651#section-4" derivedContent="STRUCTURED-FIELDS"/>.
+      </t>
+    </section>
+    <section numbered="true" removeInRFC="false" toc="include" pn="section-4">
+      <name slugifiedName="name-security-considerations">Security Considerations</name>
+      <t indent="0" pn="section-4-1">
+      The QUERY method is subject to the same general security
+      considerations as all HTTP methods as described in
+      <xref target="RFC9110" format="default" sectionFormat="of" derivedContent="HTTP"/>.
+      </t>
+      <t indent="0" pn="section-4-2">
+      It can be used as an alternative to passing request
+      information in the URI (e.g., in the query component). This is preferred in some
+      cases, as the URI is more likely to be logged or otherwise processed
+      by intermediaries than the request content. In other cases, where the query
+      contains sensitive information, the potential for logging of the URI might
+      motivate the use of QUERY over GET.
+      </t>
+      <t indent="0" pn="section-4-3">
+      If a server creates a temporary resource to represent the results of a QUERY
+      request (e.g., for use in the Location or Content-Location field), assigns a URI
+      to that resource, and the request contains sensitive information that cannot be logged,
+      then that URI <bcp14>SHOULD</bcp14> be chosen such that it does not include any sensitive
+      portions of the original request content.
+      </t>
+      <t indent="0" pn="section-4-4">
+      Caches that normalize QUERY content incorrectly or in ways that are
+      significantly different from how the resource processes the content
+      can return an incorrect response if normalization results in a false positive.
+      </t>
+      <t indent="0" pn="section-4-5">
+      A QUERY request from user agents implementing Cross-Origin Resource Sharing (CORS)
+      will require a "preflight" request,
+      as QUERY does not belong to the set of CORS-safelisted methods
+      (see <xref target="FETCH" format="default" sectionFormat="of" derivedContent="FETCH"/>).
+      </t>
+    </section>
+    <section anchor="iana.considerations" numbered="true" removeInRFC="false" toc="include" pn="section-5">
+      <name slugifiedName="name-iana-considerations">IANA Considerations</name>
+      <section anchor="method.registration" numbered="true" removeInRFC="false" toc="include" pn="section-5.1">
+        <name slugifiedName="name-registration-of-the-query-m">Registration of the QUERY Method</name>
+        <t indent="0" pn="section-5.1-1">
+        IANA has added the QUERY method to the "Hypertext Transfer Protocol (HTTP) Method Registry" at <eref brackets="angle" target="http://www.iana.org/assignments/http-methods"/>
+        (see <xref target="RFC9110" section="16.3.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-16.3.1" derivedContent="HTTP"/>).
+        </t>
+        <table align="center" pn="table-2">
+          <name slugifiedName="name-query-method-definition">QUERY Method Definition</name>
+          <thead>
+            <tr>
+              <th align="left" colspan="1" rowspan="1">Method Name</th>
+              <th align="left" colspan="1" rowspan="1">Safe</th>
+              <th align="left" colspan="1" rowspan="1">Idempotent</th>
+              <th align="left" colspan="1" rowspan="1">Specification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">QUERY</td>
+              <td align="left" colspan="1" rowspan="1">yes</td>
+              <td align="left" colspan="1" rowspan="1">yes</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="query" format="default" sectionFormat="of" derivedContent="Section 2"/> of RFC 10008</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section anchor="field.registration" numbered="true" removeInRFC="false" toc="include" pn="section-5.2">
+        <name slugifiedName="name-registration-of-the-accept-">Registration of the Accept-Query Field</name>
+        <t indent="0" pn="section-5.2-1">
+        IANA has added the Accept-Query field to the "Hypertext Transfer Protocol (HTTP) Field Name Registry"
+        at <eref brackets="angle" target="https://www.iana.org/assignments/http-fields"/>
+        (see <xref target="RFC9110" section="16.1.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-16.1.1" derivedContent="HTTP"/>).
+        </t>
+        <table align="center" pn="table-3">
+          <name slugifiedName="name-accept-query-field-definiti">Accept-Query Field Definition</name>
+          <thead>
+            <tr>
+              <th align="left" colspan="1" rowspan="1">Field Name</th>
+              <th align="left" colspan="1" rowspan="1">Status</th>
+              <th align="left" colspan="1" rowspan="1">Structured Type</th>
+              <th align="left" colspan="1" rowspan="1">Reference</th>
+              <th align="left" colspan="1" rowspan="1">Comments</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td align="left" colspan="1" rowspan="1">Accept-Query</td>
+              <td align="left" colspan="1" rowspan="1">permanent</td>
+              <td align="left" colspan="1" rowspan="1">List</td>
+              <td align="left" colspan="1" rowspan="1">
+                <xref target="field.accept-query" format="default" sectionFormat="of" derivedContent="Section 3"/> of RFC 10008</td>
+              <td align="left" colspan="1" rowspan="1"/>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </middle>
+  <back>
+    <displayreference target="RFC9110" to="HTTP"/>
+    <displayreference target="RFC9111" to="HTTP-CACHING"/>
+    <displayreference target="RFC9651" to="STRUCTURED-FIELDS"/>
+    <displayreference target="RFC3986" to="URI"/>
+    <references pn="section-6">
+      <name slugifiedName="name-references">References</name>
+      <references pn="section-6.1">
+        <name slugifiedName="name-normative-references">Normative References</name>
+        <reference anchor="RFC9110" target="https://www.rfc-editor.org/info/rfc9110" quoteTitle="true" derivedAnchor="HTTP">
+          <front>
+            <title>HTTP Semantics</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and the "http" and "https" Uniform Resource Identifier (URI) schemes.</t>
+              <t indent="0">This document updates RFC 3864 and obsoletes RFCs 2818, 7231, 7232, 7233, 7235, 7538, 7615, 7694, and portions of 7230.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="97"/>
+          <seriesInfo name="RFC" value="9110"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9110"/>
+        </reference>
+        <reference anchor="RFC9111" target="https://www.rfc-editor.org/info/rfc9111" quoteTitle="true" derivedAnchor="HTTP-CACHING">
+          <front>
+            <title>HTTP Caching</title>
+            <author fullname="R. Fielding" initials="R." role="editor" surname="Fielding"/>
+            <author fullname="M. Nottingham" initials="M." role="editor" surname="Nottingham"/>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <date month="June" year="2022"/>
+            <abstract>
+              <t indent="0">The Hypertext Transfer Protocol (HTTP) is a stateless application-level protocol for distributed, collaborative, hypertext information systems. This document defines HTTP caches and the associated header fields that control cache behavior or indicate cacheable response messages.</t>
+              <t indent="0">This document obsoletes RFC 7234.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="98"/>
+          <seriesInfo name="RFC" value="9111"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9111"/>
+        </reference>
+        <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119" quoteTitle="true" derivedAnchor="RFC2119">
+          <front>
+            <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+            <author fullname="S. Bradner" initials="S." surname="Bradner"/>
+            <date month="March" year="1997"/>
+            <abstract>
+              <t indent="0">In many standards track documents several words are used to signify the requirements in the specification. These words are often capitalized. This document defines these words as they should be interpreted in IETF documents. This document specifies an Internet Best Current Practices for the Internet Community, and requests discussion and suggestions for improvements.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="2119"/>
+          <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+        </reference>
+        <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174" quoteTitle="true" derivedAnchor="RFC8174">
+          <front>
+            <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+            <author fullname="B. Leiba" initials="B." surname="Leiba"/>
+            <date month="May" year="2017"/>
+            <abstract>
+              <t indent="0">RFC 2119 specifies common key words that may be used in protocol specifications. This document aims to reduce the ambiguity by clarifying that only UPPERCASE usage of the key words have the defined special meanings.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="14"/>
+          <seriesInfo name="RFC" value="8174"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+        </reference>
+        <reference anchor="RFC9651" target="https://www.rfc-editor.org/info/rfc9651" quoteTitle="true" derivedAnchor="STRUCTURED-FIELDS">
+          <front>
+            <title>Structured Field Values for HTTP</title>
+            <author fullname="M. Nottingham" initials="M." surname="Nottingham"/>
+            <author fullname="P-H. Kamp" surname="P-H. Kamp"/>
+            <date month="September" year="2024"/>
+            <abstract>
+              <t indent="0">This document describes a set of data types and associated algorithms that are intended to make it easier and safer to define and handle HTTP header and trailer fields, known as "Structured Fields", "Structured Headers", or "Structured Trailers". It is intended for use by specifications of new HTTP fields.</t>
+              <t indent="0">This document obsoletes RFC 8941.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9651"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9651"/>
+        </reference>
+        <reference anchor="RFC3986" target="https://www.rfc-editor.org/info/rfc3986" quoteTitle="true" derivedAnchor="URI">
+          <front>
+            <title>Uniform Resource Identifier (URI): Generic Syntax</title>
+            <author fullname="T. Berners-Lee" initials="T." surname="Berners-Lee"/>
+            <author fullname="R. Fielding" initials="R." surname="Fielding"/>
+            <author fullname="L. Masinter" initials="L." surname="Masinter"/>
+            <date month="January" year="2005"/>
+            <abstract>
+              <t indent="0">A Uniform Resource Identifier (URI) is a compact sequence of characters that identifies an abstract or physical resource. This specification defines the generic URI syntax and a process for resolving URI references that might be in relative form, along with guidelines and security considerations for the use of URIs on the Internet. The URI syntax defines a grammar that is a superset of all valid URIs, allowing an implementation to parse the common components of a URI reference without knowing the scheme-specific requirements of every possible identifier. This specification does not define a generative grammar for URIs; that task is performed by the individual specifications of each URI scheme. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="66"/>
+          <seriesInfo name="RFC" value="3986"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3986"/>
+        </reference>
+      </references>
+      <references pn="section-6.2">
+        <name slugifiedName="name-informative-references">Informative References</name>
+        <reference anchor="FETCH" target="https://fetch.spec.whatwg.org" quoteTitle="true" derivedAnchor="FETCH">
+          <front>
+            <title>FETCH</title>
+            <author>
+              <organization showOnFrontPage="true">WHATWG</organization>
+            </author>
+          </front>
+          <refcontent>WHATWG Living Standard</refcontent>
+          <annotation>Commit snapshot: <eref brackets="angle" target="https://fetch.spec.whatwg.org/commit-snapshots/3bab31a55154bda73f25b45a23df718616f2f64e/"/>.</annotation>
+        </reference>
+        <reference anchor="RFC3253" target="https://www.rfc-editor.org/info/rfc3253" quoteTitle="true" derivedAnchor="RFC3253">
+          <front>
+            <title>Versioning Extensions to WebDAV (Web Distributed Authoring and Versioning)</title>
+            <author fullname="G. Clemm" initials="G." surname="Clemm"/>
+            <author fullname="J. Amsden" initials="J." surname="Amsden"/>
+            <author fullname="T. Ellison" initials="T." surname="Ellison"/>
+            <author fullname="C. Kaler" initials="C." surname="Kaler"/>
+            <author fullname="J. Whitehead" initials="J." surname="Whitehead"/>
+            <date month="March" year="2002"/>
+            <abstract>
+              <t indent="0">This document specifies a set of methods, headers, and resource types that define the WebDAV (Web Distributed Authoring and Versioning) versioning extensions to the HTTP/1.1 protocol. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="3253"/>
+          <seriesInfo name="DOI" value="10.17487/RFC3253"/>
+        </reference>
+        <reference anchor="RFC4918" target="https://www.rfc-editor.org/info/rfc4918" quoteTitle="true" derivedAnchor="RFC4918">
+          <front>
+            <title>HTTP Extensions for Web Distributed Authoring and Versioning (WebDAV)</title>
+            <author fullname="L. Dusseault" initials="L." role="editor" surname="Dusseault"/>
+            <date month="June" year="2007"/>
+            <abstract>
+              <t indent="0">Web Distributed Authoring and Versioning (WebDAV) consists of a set of methods, headers, and content-types ancillary to HTTP/1.1 for the management of resource properties, creation and management of resource collections, URL namespace manipulation, and resource locking (collision avoidance).</t>
+              <t indent="0">RFC 2518 was published in February 1999, and this specification obsoletes RFC 2518 with minor revisions mostly due to interoperability experience. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="4918"/>
+          <seriesInfo name="DOI" value="10.17487/RFC4918"/>
+        </reference>
+        <reference anchor="RFC5323" target="https://www.rfc-editor.org/info/rfc5323" quoteTitle="true" derivedAnchor="RFC5323">
+          <front>
+            <title>Web Distributed Authoring and Versioning (WebDAV) SEARCH</title>
+            <author fullname="J. Reschke" initials="J." role="editor" surname="Reschke"/>
+            <author fullname="S. Reddy" initials="S." surname="Reddy"/>
+            <author fullname="J. Davis" initials="J." surname="Davis"/>
+            <author fullname="A. Babich" initials="A." surname="Babich"/>
+            <date month="November" year="2008"/>
+            <abstract>
+              <t indent="0">This document specifies a set of methods, headers, and properties composing Web Distributed Authoring and Versioning (WebDAV) SEARCH, an application of the HTTP/1.1 protocol to efficiently search for DAV resources based upon a set of client-supplied criteria. [STANDARDS-TRACK]</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="5323"/>
+          <seriesInfo name="DOI" value="10.17487/RFC5323"/>
+        </reference>
+        <reference anchor="RFC6838" target="https://www.rfc-editor.org/info/rfc6838" quoteTitle="true" derivedAnchor="RFC6838">
+          <front>
+            <title>Media Type Specifications and Registration Procedures</title>
+            <author fullname="N. Freed" initials="N." surname="Freed"/>
+            <author fullname="J. Klensin" initials="J." surname="Klensin"/>
+            <author fullname="T. Hansen" initials="T." surname="Hansen"/>
+            <date month="January" year="2013"/>
+            <abstract>
+              <t indent="0">This document defines procedures for the specification and registration of media types for use in HTTP, MIME, and other Internet protocols. This memo documents an Internet Best Current Practice.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="BCP" value="13"/>
+          <seriesInfo name="RFC" value="6838"/>
+          <seriesInfo name="DOI" value="10.17487/RFC6838"/>
+        </reference>
+        <reference anchor="RFC8259" target="https://www.rfc-editor.org/info/rfc8259" quoteTitle="true" derivedAnchor="RFC8259">
+          <front>
+            <title>The JavaScript Object Notation (JSON) Data Interchange Format</title>
+            <author fullname="T. Bray" initials="T." role="editor" surname="Bray"/>
+            <date month="December" year="2017"/>
+            <abstract>
+              <t indent="0">JavaScript Object Notation (JSON) is a lightweight, text-based, language-independent data interchange format. It was derived from the ECMAScript Programming Language Standard. JSON defines a small set of formatting rules for the portable representation of structured data.</t>
+              <t indent="0">This document removes inconsistencies with other specifications of JSON, repairs specification errors, and offers experience-based interoperability guidance.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="STD" value="90"/>
+          <seriesInfo name="RFC" value="8259"/>
+          <seriesInfo name="DOI" value="10.17487/RFC8259"/>
+        </reference>
+        <reference anchor="RFC9535" target="https://www.rfc-editor.org/info/rfc9535" quoteTitle="true" derivedAnchor="RFC9535">
+          <front>
+            <title>JSONPath: Query Expressions for JSON</title>
+            <author fullname="S. Gössner" initials="S." role="editor" surname="Gössner"/>
+            <author fullname="G. Normington" initials="G." role="editor" surname="Normington"/>
+            <author fullname="C. Bormann" initials="C." role="editor" surname="Bormann"/>
+            <date month="February" year="2024"/>
+            <abstract>
+              <t indent="0">JSONPath defines a string syntax for selecting and extracting JSON (RFC 8259) values from within a given JSON value.</t>
+            </abstract>
+          </front>
+          <seriesInfo name="RFC" value="9535"/>
+          <seriesInfo name="DOI" value="10.17487/RFC9535"/>
+        </reference>
+        <reference anchor="URL" target="https://url.spec.whatwg.org" quoteTitle="true" derivedAnchor="URL">
+          <front>
+            <title>URL</title>
+            <author>
+              <organization showOnFrontPage="true">WHATWG</organization>
+            </author>
+          </front>
+          <refcontent>WHATWG Living Standard</refcontent>
+          <annotation>Commit snapshot: <eref brackets="angle" target="https://url.spec.whatwg.org/commit-snapshots/52526653e848c5a56598c84aa4bc8ac9025fb66b/"/>.</annotation>
+        </reference>
+        <reference anchor="XSLT" target="https://www.w3.org/TR/2017/REC-xslt-30-20170608/" quoteTitle="true" derivedAnchor="XSLT">
+          <front>
+            <title>XSL Transformations (XSLT) Version 3.0</title>
+            <author fullname="Michael Kay" surname="Kay" initials="M." role="editor"/>
+            <date year="2017" month="June" day="08"/>
+          </front>
+          <refcontent>W3C Recommendation</refcontent>
+          <annotation>
+        Latest version available at
+        <eref target="https://www.w3.org/TR/xslt-30/"/>.
+          </annotation>
+        </reference>
+      </references>
+    </references>
+    <section anchor="examples" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a">
+      <name slugifiedName="name-examples">Examples</name>
+      <t indent="0" pn="section-appendix.a-1">
+      The examples below are for illustrative purposes only; if one needs to
+      send queries that are actually this short, it is likely better to use GET.
+      </t>
+      <t indent="0" pn="section-appendix.a-2">
+      The media type used in most examples is "application/x-www-form-urlencoded"
+      (as used in POST requests from browser user clients, defined in
+      <eref target="https://url.spec.whatwg.org/#application/x-www-form-urlencoded" brackets="none">"application/x-www-form-urlencoded"</eref> in
+      <xref target="URL" format="default" sectionFormat="of" derivedContent="URL"/>).
+      The Content-Length fields have been omitted for brevity.
+      </t>
+      <section anchor="example.simple" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.1">
+        <name slugifiedName="name-simple-query">Simple Query</name>
+        <t indent="0" pn="section-appendix.a.1-1">Below is a simple query with a direct response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.1-2">
+QUERY /contacts HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+select=surname,givenname,email&amp;limit=10&amp;match=%22email=*@example.*%22</sourcecode>
+        <t indent="0" pn="section-appendix.a.1-3">Response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.1-4">
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</sourcecode>
+      </section>
+      <section anchor="example.discovery.method" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.2">
+        <name slugifiedName="name-discovery-of-query-support">Discovery of QUERY Support</name>
+        <t indent="0" pn="section-appendix.a.2-1">
+        A simple way to discover support for QUERY is provided by the OPTIONS
+        (<xref target="RFC9110" section="9.3.7" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-9.3.7" derivedContent="HTTP"/>) method:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.2-2">
+OPTIONS /contacts HTTP/1.1
+Host: example.org</sourcecode>
+        <t indent="0" pn="section-appendix.a.2-3">Response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.2-4">
+HTTP/1.1 200 OK
+Allow: GET, QUERY, OPTIONS, HEAD</sourcecode>
+        <t indent="0" pn="section-appendix.a.2-5">
+        The Allow response field (<xref target="RFC9110" section="10.2.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-10.2.1" derivedContent="HTTP"/>) denotes the set of
+        supported methods on the specified resource.
+        </t>
+        <t indent="0" pn="section-appendix.a.2-6">
+        There are alternatives to the use of OPTIONS. For instance, a QUERY request
+        can be tried without prior knowledge of server support. The server would then
+        either process the request, or it could respond with a 4xx status such as 405 (Method Not Allowed,
+        <xref target="RFC9110" section="15.5.6" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.5.6" derivedContent="HTTP"/>), including the Allow response field.
+        </t>
+      </section>
+      <section anchor="example.discovery.formats" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.3">
+        <name slugifiedName="name-discovery-of-query-formats">Discovery of QUERY Formats</name>
+        <t indent="0" pn="section-appendix.a.3-1">
+        The discovery of supported media types for QUERY is possible via the Accept-Query
+        response field (<xref target="field.accept-query" format="default" sectionFormat="of" derivedContent="Section 3"/>):
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.3-2">
+HEAD /contacts HTTP/1.1
+Host: example.org</sourcecode>
+        <t indent="0" pn="section-appendix.a.3-3">Response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.3-4">
+HTTP/1.1 200 OK
+Content-Type: application/xhtml
+Accept-Query: application/x-www-form-urlencoded, application/sql</sourcecode>
+        <t indent="0" pn="section-appendix.a.3-5">
+        Responses to which request methods will contain Accept-Query will depend on
+        the resource being accessed.
+        </t>
+        <t indent="0" pn="section-appendix.a.3-6">
+        An alternative to checking Accept-Query would be to make a QUERY request, and then
+        -- in case of a 4xx status such as a 415 response (Unsupported Media Type, <xref target="RFC9110" section="15.5.16" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.5.16" derivedContent="HTTP"/>) --
+        to inspect the Accept response field (<xref target="RFC9110" section="12.5.1" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-12.5.1" derivedContent="HTTP"/>):
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.3-7">
+HTTP/1.1 415 Unsupported Media Type
+Content-Type: application/xhtml
+Accept: application/x-www-form-urlencoded, application/sql</sourcecode>
+      </section>
+      <section anchor="example.content-location.location.indirect" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.4">
+        <name slugifiedName="name-content-location-location-a">Content-Location, Location, and Indirect Responses</name>
+        <t indent="0" pn="section-appendix.a.4-1">
+        As described in Sections <xref format="counter" target="content-location" sectionFormat="of" derivedContent="2.3"/> and
+        <xref format="counter" target="location" sectionFormat="of" derivedContent="2.4"/>, the Content-Location and Location response fields in success responses
+        (2xx, <xref target="RFC9110" section="15.3" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.3" derivedContent="HTTP"/>) provide a way to identify alternate resources
+        that will respond to GET requests, either for the received result of the request or for future
+        requests to perform the same operation. Going back to the example from <xref target="example.simple" format="default" sectionFormat="of" derivedContent="Appendix A.1"/>:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.4-2">
+QUERY /contacts HTTP/1.1
+Host: example.org
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+select=surname,givenname,email&amp;limit=10&amp;match=%22email=*@example.*%22</sourcecode>
+        <t indent="0" pn="section-appendix.a.4-3">Response:</t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.4-4">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Location: /contacts/stored-results/17
+Location: /contacts/stored-queries/42
+Last-Modified: Sat, 25 Aug 2012 23:34:45 GMT
+Date: Sun, 17 Nov 2024, 16:10:24 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</sourcecode>
+        <section anchor="example.content-location" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.4.1">
+          <name slugifiedName="name-using-content-location">Using Content-Location</name>
+          <t indent="0" pn="section-appendix.a.4.1-1">
+          The Content-Location response field received above identifies a resource holding
+          the result for the QUERY response it appeared on:
+          </t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.1-2">
+GET /contacts/stored-results/17 HTTP/1.1
+Host: example.org
+Accept: application/json</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.1-3">Response:</t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.1-4">
+HTTP/1.1 200 OK
+Last-Modified: Sat, 25 Aug 2012 23:34:45 GMT
+Date: Sun, 17 Nov 2024, 16:10:25 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Jones",
+    "givenname": "Sally",
+    "email": "sally.jones@example.com" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.1-5">
+          Note that there is no guarantee that the server will implement this resource
+          indefinitely, so, after an error response, the client would need to redo
+          the original QUERY request in order to obtain a new alternative location.
+          </t>
+        </section>
+        <section anchor="example.location" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.4.2">
+          <name slugifiedName="name-using-location">Using Location</name>
+          <t indent="0" pn="section-appendix.a.4.2-1">
+          The Location response field identifies a resource that will respond to GET
+          with a current result for the same process and parameters as the original
+          QUERY request.
+          </t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.2-2">
+GET /contacts/stored-queries/42 HTTP/1.1
+Host: example.org
+Accept: application/json</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.2-3">
+          In this example, one entry was removed at 2024-11-17T16:12:01Z (as indicated in
+          the Last-Modified field), so the response only contains two entries:
+          </t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.2-4">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Last-Modified: Sun, 17 November 2024, 16:12:01 GMT
+ETag: "42-1"
+Date: Sun, 17 Nov 2024, 16:13:17 GMT
+
+[
+  { "surname": "Smith",
+    "givenname": "John",
+    "email": "smith@example.org" },
+  { "surname": "Dubois",
+    "givenname": "Camille",
+    "email": "camille.dubois@example.net" }
+]</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.2-5">
+          Assuming that the server still exposes the resource and that there was no change
+          in the query result, a subsequent conditional GET request with the following:
+          </t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.2-6">
+If-None-Match: "42-1"</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.2-7">
+          would result in a 304 (Not Modified) response (<xref target="RFC9110" section="15.4.5" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.5" derivedContent="HTTP"/>).
+          </t>
+        </section>
+        <section anchor="example.indirect" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.4.3">
+          <name slugifiedName="name-indirect-responses">Indirect Responses</name>
+          <t indent="0" pn="section-appendix.a.4.3-1">
+          Servers can send "indirect" responses (<xref target="redirection" format="default" sectionFormat="of" derivedContent="Section 2.5"/>) using the status code 303 (See Other,
+          <xref target="RFC9110" section="15.4.4" format="default" sectionFormat="of" derivedLink="https://rfc-editor.org/rfc/rfc9110#section-15.4.4" derivedContent="HTTP"/>).
+          </t>
+          <t indent="0" pn="section-appendix.a.4.3-2">
+          Given the request at the beginning of <xref target="example.content-location.location.indirect" format="default" sectionFormat="of" derivedContent="Appendix A.4"/>,
+          a server might respond with:
+          </t>
+          <sourcecode type="http-message" markers="false" pn="section-appendix.a.4.3-3">
+HTTP/1.1 303 See Other
+Content-Type: text/plain
+Date: Sun, 17 Nov 2024, 16:13:17 GMT
+Location: /contacts/stored-queries/42
+
+See stored query at "/contacts/stored-queries/42".</sourcecode>
+          <t indent="0" pn="section-appendix.a.4.3-4">
+          This is similar to including Location on a direct response, except that no result
+          for the query is returned. This allows the server to only generate or reuse an alternative
+          resource. This resource could then be used as shown in
+          <xref target="example.location" format="default" sectionFormat="of" derivedContent="Appendix A.4.2"/>.
+          </t>
+        </section>
+      </section>
+      <section anchor="example.conditional" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.5">
+        <name slugifiedName="name-conditional-requests-2">Conditional Requests</name>
+        <t indent="0" pn="section-appendix.a.5-1">
+        Consider a resource implementing QUERY that supports "application/sql" and
+        "application/xslt+xml" <xref target="XSLT" format="default" sectionFormat="of" derivedContent="XSLT"/> as request media types, and
+        which can generate responses as "text/csv". The data set being queried contains RFC document
+        information, and the query returns information grouped by decade:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-2">
+QUERY /rfc-index.xml HTTP/1.1
+Host: example.org
+Date: Sun, 7 Sep 2025, 00:00:00 GMT
+Content-Type: application/xslt+xml
+Accept: text/csv
+
+...Query content using XSLT...</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-3">
+        Response:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-4">
+HTTP/1.1 200 OK
+Date: Sun, 7 Sep 2025, 00:00:00 GMT
+Location: /stored-queries/4815162342
+Content-Type: text/csv
+Accept-Query: "application/sql", "application/xslt+xml"
+Last-Modified: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Encoding, Content-Type
+
+decade, total, with errata, % with errata, average page count
+1960, 26, 5, 19.2, 5.3
+1970, 666, 18, 2.7, 6.1
+1980, 376, 44, 11.7, 23.4
+1990, 1593, 269, 16.9, 25.5
+2000, 2888, 1048, 36.3, 27.3
+2010, 2954, 895, 30.3, 26.1
+2020, 1133, 230, 20.3, 26.2</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-5">
+        Here, the server has assigned the path "/stored-queries/4815162342" to the equivalent
+        resource (<xref target="location" format="default" sectionFormat="of" derivedContent="Section 2.4"/>) for subsequent use with GET.
+        </t>
+        <t indent="0" pn="section-appendix.a.5-6">
+        Later on, the client repeats the query, but specifies that results should only
+        be returned when changed:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-7">
+QUERY /rfc-index.xml HTTP/1.1
+Host: example.org
+Date: Mon, 8, Sep 2025, 11:00:00 GMT
+Content-Type: application/sql
+Accept: text/csv
+If-Modified-Since: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Type
+
+...Same query, but using SQL...</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-8">
+        The data being queried did not change, therefore the server responds with:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-9">
+HTTP/1.1 304 Not Modified
+Date: Mon, 8 Sep 2025, 11:00:00 GMT
+Content-Type: text/csv
+Location: /stored-queries/4815162342
+Accept-Query: "application/sql", "application/xslt+xml"
+Last-Modified: Sun, 31 Aug 2025, 08:44:00 GMT
+Vary: Accept-Query, Content-Type</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-10">
+        As the server identified a URI for the equivalent resource, that resource can
+        be accessed with GET. In particular, this avoids resending the query request's
+        content:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-11">
+GET /stored-queries/4815162342 HTTP/1.1
+Host: example.org
+Date: Sun, 21, Sep 2025, 12:08:00 GMT
+Accept: text/csv
+If-Modified-Since: Sun, 31 Aug 2025, 00:00:00 GMT</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-12">
+        Here, the state of the data set indeed changed, so new content is returned:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.5-13">
+HTTP/1.1 200 OK
+Date: Sun, 21, Sep 2025, 12:08:00 GMT
+Content-Type: text/csv
+Last-Modified: Thu, 18 Sep 2025, 19:56:00 GMT
+Vary: Accept-Query, Content-Encoding, Content-Type
+
+decade, total, with errata, % with errata, average page count
+1960, 26, 5, 19.2, 5.3
+1970, 666, 18, 2.7, 6.1
+1980, 376, 44, 11.7, 23.4
+1990, 1593, 269, 16.9, 25.5
+2000, 2888, 1048, 36.3, 27.3
+2010, 2954, 895, 30.3, 26.1
+2020, 1133, 230, 20.3, 26.2</sourcecode>
+        <t indent="0" pn="section-appendix.a.5-14">
+        (Note the change in the row for this decade.)
+        </t>
+        <t indent="0" pn="section-appendix.a.5-15">
+        The diagrams below illustrate the use of conditional requests and how they can differ
+        when a URI is assigned to the equivalent resource (and when the client is taking advantage
+        of it). The fictitious field name "Validator" is used for demonstration purposes.
+        </t>
+        <figure align="left" suppress-title="false" pn="figure-1">
+          <name slugifiedName="name-data-flow-with-query-only">Data Flow with QUERY Only</name>
+          <artset pn="section-appendix.a.5-16.1">
+            <artwork type="ascii-art" name="flow-query" align="center" pn="section-appendix.a.5-16.1.1">
+Client                             Resource
+|                                         |
+| QUERY with content                      |
++----------------------------------------&gt;|
+|                                         |
+|                                  200 OK |
+|                          Validator: foo |
+|&lt;----------------------------------------+
+|                                         |
+| QUERY with content                      |
+| (conditional on 'foo')                  |
++----------------------------------------&gt;|
+|                                         |
+|                        304 Not Modified |
+|                          Validator: foo |
+|&lt;----------------------------------------+
+|                                         |
+|                                  +--------------+
+|                                  | State Change |
+|                                  +--------------+
+|                                         |
+| QUERY with content                      |
+| (conditional on 'foo')                  |
++----------------------------------------&gt;|
+|                                         |
+|                                  200 OK |
+|                          Validator: bar |
+|&lt;----------------------------------------+
+|                                         |</artwork>
+            <artwork type="svg" align="left" pn="section-appendix.a.5-16.1.2">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="496" width="416" viewBox="0 0 416 496" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,48 L 8,480" fill="none" stroke="black"/>
+                <path d="M 288,304 L 288,336" fill="none" stroke="black"/>
+                <path d="M 344,48 L 344,296" fill="none" stroke="black"/>
+                <path d="M 344,344 L 344,480" fill="none" stroke="black"/>
+                <path d="M 408,304 L 408,336" fill="none" stroke="black"/>
+                <path d="M 8,80 L 336,80" fill="none" stroke="black"/>
+                <path d="M 16,144 L 344,144" fill="none" stroke="black"/>
+                <path d="M 8,208 L 336,208" fill="none" stroke="black"/>
+                <path d="M 16,272 L 344,272" fill="none" stroke="black"/>
+                <path d="M 288,304 L 408,304" fill="none" stroke="black"/>
+                <path d="M 288,336 L 408,336" fill="none" stroke="black"/>
+                <path d="M 8,400 L 336,400" fill="none" stroke="black"/>
+                <path d="M 16,464 L 344,464" fill="none" stroke="black"/>
+                <polygon class="arrowhead" points="344,400 332,394.4 332,405.6" fill="black" transform="rotate(0,336,400)"/>
+                <polygon class="arrowhead" points="344,208 332,202.4 332,213.6" fill="black" transform="rotate(0,336,208)"/>
+                <polygon class="arrowhead" points="344,80 332,74.4 332,85.6" fill="black" transform="rotate(0,336,80)"/>
+                <polygon class="arrowhead" points="24,464 12,458.4 12,469.6" fill="black" transform="rotate(180,16,464)"/>
+                <polygon class="arrowhead" points="24,272 12,266.4 12,277.6" fill="black" transform="rotate(180,16,272)"/>
+                <polygon class="arrowhead" points="24,144 12,138.4 12,149.6" fill="black" transform="rotate(180,16,144)"/>
+                <g class="text">
+                  <text x="28" y="36">Client</text>
+                  <text x="316" y="36">Resource</text>
+                  <text x="92" y="68">QUERY with content</text>
+                  <text x="308" y="116">200 OK</text>
+                  <text x="276" y="132">Validator: foo</text>
+                  <text x="92" y="180">QUERY with content</text>
+                  <text x="108" y="196">(conditional on 'foo')</text>
+                  <text x="268" y="244">304 Not Modified</text>
+                  <text x="276" y="260">Validator: foo</text>
+                  <text x="348" y="324">State Change</text>
+                  <text x="92" y="372">QUERY with content</text>
+                  <text x="108" y="388">(conditional on 'foo')</text>
+                  <text x="308" y="436">200 OK</text>
+                  <text x="276" y="452">Validator: bar</text>
+                </g>
+              </svg>
+            </artwork>
+          </artset>
+        </figure>
+        <figure align="left" suppress-title="false" pn="figure-2">
+          <name slugifiedName="name-data-flow-with-get-to-equiv">Data Flow with GET to Equivalent Resource</name>
+          <artset pn="section-appendix.a.5-17.1">
+            <artwork type="ascii-art" name="flow-query-get" align="center" pn="section-appendix.a.5-17.1.1">
+Client                   Resource
+|                               |
+| QUERY with content            |         Equivalent Resource
++------------------------------&gt;|            (generates /xyz)
+|                               +---------------------------o
+|                               |                           |
+|                        200 OK |                           |
+|                Validator: foo |                           |
+|                Location: /xyz |                           |
+|&lt;------------------------------+                           |
+|                               |                           |
+| GET                                                       |
+| (conditional on 'foo')                                    |
++----------------------------------------------------------&gt;|
+|                                                           |
+|                                          304 Not Modified |
+|                                            Validator: foo |
+|&lt;----------------------------------------------------------+
+|                                                           |
+|                                                    +--------------+
+|                                                    | State Change |
+|                                                    +--------------+
+| GET                                                       |
+| (conditional on 'foo')                                    |
++----------------------------------------------------------&gt;|
+|                                                           |
+|                                                    200 OK |
+|                                            Validator: bar |
+|&lt;----------------------------------------------------------+
+|                                                           |</artwork>
+            <artwork type="svg" align="left" pn="section-appendix.a.5-17.1.2">
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="512" width="560" viewBox="0 0 560 512" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
+                <path d="M 8,48 L 8,496" fill="none" stroke="black"/>
+                <path d="M 264,48 L 264,192" fill="none" stroke="black"/>
+                <path d="M 432,336 L 432,368" fill="none" stroke="black"/>
+                <path d="M 488,88 L 488,328" fill="none" stroke="black"/>
+                <path d="M 488,376 L 488,496" fill="none" stroke="black"/>
+                <path d="M 552,336 L 552,368" fill="none" stroke="black"/>
+                <path d="M 8,80 L 256,80" fill="none" stroke="black"/>
+                <path d="M 264,96 L 480,96" fill="none" stroke="black"/>
+                <path d="M 16,176 L 264,176" fill="none" stroke="black"/>
+                <path d="M 8,240 L 480,240" fill="none" stroke="black"/>
+                <path d="M 16,304 L 488,304" fill="none" stroke="black"/>
+                <path d="M 432,336 L 552,336" fill="none" stroke="black"/>
+                <path d="M 432,368 L 552,368" fill="none" stroke="black"/>
+                <path d="M 8,416 L 480,416" fill="none" stroke="black"/>
+                <path d="M 16,480 L 488,480" fill="none" stroke="black"/>
+                <polygon class="arrowhead" points="488,416 476,410.4 476,421.6" fill="black" transform="rotate(0,480,416)"/>
+                <polygon class="arrowhead" points="488,240 476,234.4 476,245.6" fill="black" transform="rotate(0,480,240)"/>
+                <polygon class="arrowhead" points="264,80 252,74.4 252,85.6" fill="black" transform="rotate(0,256,80)"/>
+                <polygon class="arrowhead" points="24,480 12,474.4 12,485.6" fill="black" transform="rotate(180,16,480)"/>
+                <polygon class="arrowhead" points="24,304 12,298.4 12,309.6" fill="black" transform="rotate(180,16,304)"/>
+                <polygon class="arrowhead" points="24,176 12,170.4 12,181.6" fill="black" transform="rotate(180,16,176)"/>
+                <circle cx="488" cy="96" r="6" class="opendot" fill="white" stroke="black"/>
+                <g class="text">
+                  <text x="28" y="36">Client</text>
+                  <text x="236" y="36">Resource</text>
+                  <text x="92" y="68">QUERY with content</text>
+                  <text x="416" y="68">Equivalent Resource</text>
+                  <text x="428" y="84">(generates /xyz)</text>
+                  <text x="228" y="132">200 OK</text>
+                  <text x="196" y="148">Validator: foo</text>
+                  <text x="196" y="164">Location: /xyz</text>
+                  <text x="32" y="212">GET</text>
+                  <text x="108" y="228">(conditional on 'foo')</text>
+                  <text x="412" y="276">304 Not Modified</text>
+                  <text x="420" y="292">Validator: foo</text>
+                  <text x="492" y="356">State Change</text>
+                  <text x="32" y="388">GET</text>
+                  <text x="108" y="404">(conditional on 'foo')</text>
+                  <text x="452" y="452">200 OK</text>
+                  <text x="420" y="468">Validator: bar</text>
+                </g>
+              </svg>
+            </artwork>
+          </artset>
+        </figure>
+      </section>
+      <section anchor="example.more.query.formats" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.a.6">
+        <name slugifiedName="name-more-query-formats">More Query Formats</name>
+        <t indent="0" pn="section-appendix.a.6-1">
+        The following examples show requests on a JSON-shaped <xref target="RFC8259" format="default" sectionFormat="of" derivedContent="RFC8259"/> database of
+        RFC errata.
+        </t>
+        <t indent="0" pn="section-appendix.a.6-2">
+        The request below uses eXtensible Stylesheet Language Transformations (XSLT) to extract errata information summarized per year and
+        the defined errata types.
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.6-3">
+QUERY /errata.json HTTP/1.1
+Host: example.org
+Content-Type: application/xslt+xml
+Accept: application/xml, text/csv
+
+&lt;transform xmlns="http://www.w3.org/1999/XSL/Transform"
+  xmlns:j="http://www.w3.org/2005/xpath-functions"
+  version="3.0"&gt;
+
+  &lt;output method="text"/&gt;
+
+  &lt;param name="input"/&gt;
+
+  &lt;variable name="json"
+    select="json-to-xml(unparsed-text($input))"/&gt;
+
+  &lt;variable name="sc"&gt;errata_status_code&lt;/variable&gt;
+  &lt;variable name="sd"&gt;submit_date&lt;/variable&gt;
+
+  &lt;template match="/"&gt;
+    &lt;text&gt;year, total, rejected, verified, hdu, reported&lt;/text&gt;
+    &lt;text&gt;&amp;#10;&lt;/text&gt;
+    &lt;variable name="en" select="$json//j:map"/&gt;
+    &lt;for-each-group select="$en"
+      group-by="substring-before(j:string[@key=$sd],'-')"&gt;
+      &lt;sort select="current-grouping-key()"/&gt;
+      &lt;variable name="year" select="current-grouping-key()"/&gt;
+      &lt;variable name="errata" select=
+        "$en[$year=substring-before(j:string[@key=$sd],'-')]"/&gt;
+      &lt;value-of select="concat(
+        $year,
+        ', ',
+        count($errata),
+        ', ',
+        count($errata['Rejected'=j:string[@key=$sc]]),
+        ', ',
+        count($errata['Verified'=j:string[@key=$sc]]),
+        ', ',
+        count(
+          $errata['Held for Document Update'=j:string[@key=$sc]]),
+        ', ',
+        count($errata['Reported'=j:string[@key=$sc]]),
+        '&amp;#10;')"/&gt;
+    &lt;/for-each-group&gt;
+  &lt;/template&gt;
+
+&lt;/transform&gt;</sourcecode>
+        <t indent="0" pn="section-appendix.a.6-4">
+      Response:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.6-5">
+HTTP/1.1 200 OK
+Content-Type: text/csv
+Accept-Query: "application/jsonpath", "application/xslt+xml"
+Date: Wed, 19 Feb 2025, 17:10:01 GMT
+
+year, total, rejected, verified, hdu, reported
+2000, 14, 0, 14, 0, 0
+2001, 72, 1, 70, 1, 0
+2002, 124, 8, 104, 12, 0
+2003, 63, 0, 61, 2, 0
+2004, 89, 1, 83, 5, 0
+2005, 156, 10, 96, 50, 0
+2006, 444, 54, 176, 214, 0
+2007, 429, 48, 188, 193, 0
+2008, 423, 52, 165, 206, 0
+2009, 331, 39, 148, 144, 0
+2010, 538, 80, 232, 222, 4
+2011, 367, 47, 170, 150, 0
+2012, 348, 54, 149, 145, 0
+2013, 341, 61, 169, 106, 5
+2014, 342, 73, 180, 72, 17
+2015, 343, 79, 145, 89, 30
+2016, 295, 46, 122, 82, 45
+2017, 303, 46, 120, 84, 53
+2018, 350, 61, 118, 98, 73
+2019, 335, 47, 131, 94, 63
+2020, 387, 68, 117, 123, 79
+2021, 321, 44, 148, 63, 66
+2022, 358, 37, 198, 40, 83
+2023, 262, 38, 121, 33, 70
+2024, 322, 33, 125, 23, 141
+9999, 1, 0, 0, 1, 0</sourcecode>
+        <t indent="0" pn="section-appendix.a.6-6">
+      Note the Accept-Query response field indicating that another query format, JSONPath
+      <xref target="RFC9535" format="default" sectionFormat="of" derivedContent="RFC9535"/>, is supported as well. The request below would report the
+      identifiers of all rejected errata submitted since 2024:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.6-7">
+QUERY /errata.json HTTP/1.1
+Host: example.org
+Content-Type: application/jsonpath
+Accept: application/json
+
+$..[
+     ?@.errata_status_code=="Rejected"
+     &amp;&amp; @.submit_date&gt;"2024"
+   ]
+   ["doc-id"]</sourcecode>
+        <t indent="0" pn="section-appendix.a.6-8">
+        Response:
+        </t>
+        <sourcecode type="http-message" markers="false" pn="section-appendix.a.6-9">
+HTTP/1.1 200 OK
+Content-Type: application/json
+Accept-Query: "application/jsonpath", "application/xslt+xml"
+Date: Thu, 20 Feb 2025, 09:55:42 GMT
+Last-Modified: Thu, 20 Feb 2025 06:10:01 GMT
+
+[
+  "RFC1185","RFC8407","RFC6350","RFC8467","RFC1157","RFC9543",
+  "RFC9076","RFC7656","RFC2822","RFC9460","RFC2104","RFC6797",
+  "RFC9499","RFC9557","RFC2131","RFC2328","RFC9001","RFC3325",
+  "RFC9438","RFC2526","RFC2985","RFC7643","RFC9132","RFC6376",
+  "RFC9110","RFC9460","RFC7748","RFC9497","RFC8463","RFC4035",
+  "RFC7239","RFC9083","RFC9537","RFC9537","RFC9420","RFC9000",
+  "RFC9656","RFC9110","RFC2324","RFC2549","RFC6797","RFC2549",
+  "RFC8894"
+]</sourcecode>
+      </section>
+    </section>
+    <section anchor="selection.method.name" numbered="true" removeInRFC="false" toc="include" pn="section-appendix.b">
+      <name slugifiedName="name-selection-of-the-method-nam">Selection of the Method Name 'QUERY'</name>
+      <t indent="0" pn="section-appendix.b-1">
+  The "Hypertext Transfer Protocol (HTTP) Method Registry" (<eref brackets="angle" target="http://www.iana.org/assignments/http-methods"/>)
+  already contains three other methods with the properties "safe" and "idempotent":
+  "PROPFIND" <xref target="RFC4918" format="default" sectionFormat="of" derivedContent="RFC4918"/>, "REPORT" <xref target="RFC3253" format="default" sectionFormat="of" derivedContent="RFC3253"/>, and
+  "SEARCH" <xref target="RFC5323" format="default" sectionFormat="of" derivedContent="RFC5323"/>.
+</t>
+      <t indent="0" pn="section-appendix.b-2">
+  It would have been possible to reuse any of these, updating it in a way that it matches
+  what this specification defines as the new method "QUERY". Indeed, the early stages
+  of this specification used "SEARCH".
+</t>
+      <t indent="0" pn="section-appendix.b-3">
+  The method name "QUERY" ultimately was chosen because:
+</t>
+      <ul bare="false" empty="false" indent="3" spacing="normal" pn="section-appendix.b-4">
+        <li pn="section-appendix.b-4.1">The alternatives use a generic media type for the request content ("application/xml"); the
+  semantics of the request depend solely on the request content.</li>
+        <li pn="section-appendix.b-4.2">Furthermore, they all originate from the WebDAV activity, about which many have mixed feelings.</li>
+        <li pn="section-appendix.b-4.3">"QUERY" captures the relation with the URI's query component well.</li>
+      </ul>
+    </section>
+    <section anchor="acknowledgements" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.c">
+      <name slugifiedName="name-acknowledgements">Acknowledgements</name>
+      <t indent="0" pn="section-appendix.c-1">
+  We thank all members of the HTTP Working Group for their ideas, reviews, and feedback.
+</t>
+      <t indent="0" pn="section-appendix.c-2">
+  The following individuals deserve special recognition:
+  <contact fullname="Carsten Bormann"/>,
+  <contact fullname="Mark Nottingham"/>,
+  <contact fullname="Martin Thomson"/>,
+  <contact fullname="Michael Thornburgh"/>,
+  <contact fullname="Roberto Polli"/>,
+  <contact fullname="Roy Fielding"/>, and
+  <contact fullname="Will Hawkins"/>.
+</t>
+    </section>
+    <section anchor="contributors" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.d">
+      <name slugifiedName="name-contributors">Contributors</name>
+      <t indent="0" pn="section-appendix.d-1">
+  <contact fullname="Ashok Malhotra"/> participated in early discussions leading to this
+  specification:
+</t>
+      <contact initials="A." surname="Malhotra" fullname="Ashok Malhotra">
+        <address>
+          <email>malhotrasahib@gmail.com</email>
+        </address>
+      </contact>
+      <t indent="0" pn="section-appendix.d-2">
+  Discussion on this HTTP method was reopened by <contact fullname="Asbjørn Ulsberg"/> during
+  the HTTP Workshop in 2019:
+</t>
+      <contact initials="A." surname="Ulsberg" fullname="Asbjørn Ulsberg">
+        <address>
+          <email>asbjorn@ulsberg.no</email>
+          <uri>https://asbjor.nu/</uri>
+        </address>
+      </contact>
+    </section>
+    <section anchor="authors-addresses" numbered="false" removeInRFC="false" toc="include" pn="section-appendix.e">
+      <name slugifiedName="name-authors-addresses">Authors' Addresses</name>
+      <author initials="J." surname="Reschke" fullname="Julian Reschke">
+        <organization abbrev="greenbytes" showOnFrontPage="true">greenbytes GmbH</organization>
+        <address>
+          <postal>
+            <street>Hafenweg 16</street>
+            <city>Münster</city>
+            <code>48155</code>
+            <country>Germany</country>
+          </postal>
+          <email>julian.reschke@greenbytes.de</email>
+          <uri>https://greenbytes.de/tech/webdav/</uri>
+        </address>
+      </author>
+      <author initials="J.M." surname="Snell" fullname="James M Snell">
+        <organization showOnFrontPage="true">Cloudflare</organization>
+        <address>
+          <email>jasnell@gmail.com</email>
+        </address>
+      </author>
+      <author initials="M." surname="Bishop" fullname="Mike Bishop">
+        <organization showOnFrontPage="true">Akamai</organization>
+        <address>
+          <email>mbishop@evequefou.be</email>
+        </address>
+      </author>
+    </section>
+  </back>
+</rfc>
