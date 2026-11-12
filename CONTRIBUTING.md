@@ -99,6 +99,12 @@ Once a draft is adopted, the Chairs will assign one or more editors to the docum
 
 The Editor(s) first task will be to upload an initial draft into a Working Group repository. If you're selected as an editor, the Chairs will be in touch with more details.
 
+### Discussing Work in Meetings
+
+We typically meet at all three [IETF plenary meetings](https://www.ietf.org/meeting/upcoming/) each year. Discussion of adopted drafts is prioritised in our meetings; if there is time remaining, we may consider proposals for new work.
+
+Generally, we require work presented at meetings to be available as an Internet-Draft before the meeting's publication cutoff (generally, two weeks before the meeting), and to be discussed on the mailing list before we consider it for inclusion in the agenda. 
+
 ### Other Venues for HTTP Work
 
 There are other places inside and outside the IETF that are doing HTTP-related work. Depending on the nature of your proposal, you might consider taking your work to one of the following venues:
